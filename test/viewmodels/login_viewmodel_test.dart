@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:flutter_test/flutter_test.dart';
 import 'package:gh3/src/services/github_auth_client.dart';
 import 'package:gh3/src/viewmodels/login_viewmodel.dart';
@@ -9,9 +7,12 @@ class FakeGithubAuthClient implements GithubAuthClient {
   final List<Exception> _accessTokenResponses;
   final GithubDeviceCodeResult deviceResult;
 
-  FakeGithubAuthClient({required this.deviceResult, List<Exception>? accessTokenErrors, String? successToken})
-      : _accessTokenResponses = accessTokenErrors ?? [],
-        _accessTokenSuccess = successToken ?? '';
+  FakeGithubAuthClient({
+    required this.deviceResult,
+    List<Exception>? accessTokenErrors,
+    String? successToken,
+  }) : _accessTokenResponses = accessTokenErrors ?? [],
+       _accessTokenSuccess = successToken ?? '';
 
   late final String _accessTokenSuccess;
 
@@ -37,8 +38,7 @@ class FailGithubAuthClient implements GithubAuthClient {
       throw Exception('fail dev');
 
   @override
-  Future<String> createAccessTokenFromDeviceCode(String deviceCode) async =>
-      '';
+  Future<String> createAccessTokenFromDeviceCode(String deviceCode) async => '';
 }
 
 void main() {
