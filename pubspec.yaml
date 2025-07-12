@@ -14,6 +14,8 @@ dependencies:
   get_it: ^8.0.3
   envied: ^1.1.1
   http: ^1.4.0
+  flutter_custom_tabs: ^2.4.0
+  flutter_octicons: ^1.52.0
 
 dev_dependencies:
   flutter_test:

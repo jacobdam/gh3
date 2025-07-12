@@ -15,6 +15,7 @@ import 'package:gh3/src/services/github_auth_client.dart' as _i1035;
 import 'package:gh3/src/services/route.dart' as _i312;
 import 'package:gh3/src/services/service_a.dart' as _i412;
 import 'package:gh3/src/services/service_b.dart' as _i947;
+import 'package:gh3/src/viewmodels/login_viewmodel.dart' as _i876;
 import 'package:http/http.dart' as _i519;
 import 'package:injectable/injectable.dart' as _i526;
 
@@ -45,11 +46,17 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i312.RouteConsumer>(
       () => _i312.RouteConsumer(gh<List<_i312.Route>>(instanceName: 'routes')),
     );
+    gh.factory<_i1035.GithubNonRecoverableException>(
+      () => _i1035.GithubNonRecoverableException(gh<String>(), gh<String>()),
+    );
     gh.factory<_i1035.GithubAuthClient>(
       () => _i1035.GithubAuthClient(
         gh<_i519.Client>(),
         gh<String>(instanceName: 'GithubClientID'),
       ),
+    );
+    gh.factory<_i876.LoginViewModel>(
+      () => _i876.LoginViewModel(gh<_i1035.GithubAuthClient>()),
     );
     return this;
   }
