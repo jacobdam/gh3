@@ -7,4 +7,3 @@ class ServiceA {
     debugPrint('ServiceA says hello!');
   }
 }
-
