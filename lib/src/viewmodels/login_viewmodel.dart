@@ -1,12 +1,10 @@
 import 'dart:async';
 import 'package:flutter/foundation.dart';
-import 'package:injectable/injectable.dart';
 import '../services/github_auth_client.dart';
 import '../services/auth_service.dart';
 import 'auth_viewmodel.dart';
 
 /// ViewModel for handling GitHub device-flow login UI.
-@injectable
 class LoginViewModel extends ChangeNotifier {
   final GithubAuthClient _authClient;
   final AuthService _authService;

@@ -6,30 +6,51 @@ import 'package:gh3/src/screens/home_screen.dart';
 import 'package:gh3/src/screens/login_screen.dart';
 import 'package:gh3/src/screens/loading_screen.dart';
 import 'package:gh3/src/viewmodels/auth_viewmodel.dart';
+import 'package:gh3/src/viewmodels/login_viewmodel.dart';
+import 'package:gh3/src/services/auth_service.dart';
+import 'package:gh3/src/services/github_auth_client.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   configureDependencies();
 
-  // Initialize AuthViewModel to load auth state
-  final authVM = getIt<AuthViewModel>();
+  // Get services from dependency injection
+  final authService = getIt<AuthService>();
+  final githubAuthClient = getIt<GithubAuthClient>();
+
+  // Create ViewModels manually with their dependencies
+  final authVM = AuthViewModel(authService);
   await authVM.init();
 
-  runApp(MyApp(authVM: authVM));
+  runApp(
+    MyApp(
+      authViewModel: authVM,
+      authService: authService,
+      githubAuthClient: githubAuthClient,
+    ),
+  );
 }
 
 // Removed top-level router; instantiate inside MyApp
 
 /// Main app widget using GoRouter
 class MyApp extends StatelessWidget {
-  final AuthViewModel authVM;
-  const MyApp({super.key, required this.authVM});
+  final AuthViewModel authViewModel;
+  final AuthService authService;
+  final GithubAuthClient githubAuthClient;
+
+  const MyApp({
+    super.key,
+    required this.authViewModel,
+    required this.authService,
+    required this.githubAuthClient,
+  });
 
   @override
   Widget build(BuildContext context) {
     // Configure GoRouter
     final router = GoRouter(
-      refreshListenable: authVM,
+      refreshListenable: authViewModel,
       initialLocation: '/loading',
       routes: [
         GoRoute(
@@ -38,19 +59,28 @@ class MyApp extends StatelessWidget {
         ),
         GoRoute(
           path: '/login',
-          builder: (context, state) => const LoginScreen(),
+          builder: (context, state) => LoginScreen(
+            viewModel: LoginViewModel(
+              githubAuthClient,
+              authService,
+              authViewModel,
+            ),
+          ),
         ),
-        GoRoute(path: '/', builder: (context, state) => const HomeScreen()),
+        GoRoute(
+          path: '/',
+          builder: (context, state) => HomeScreen(authViewModel: authViewModel),
+        ),
       ],
       redirect: (context, state) {
-        if (authVM.loading) {
+        if (authViewModel.loading) {
           return '/loading';
         }
         final loc = state.uri.path;
-        if (!authVM.loggedIn && loc != '/login') {
+        if (!authViewModel.loggedIn && loc != '/login') {
           return '/login';
         }
-        if (authVM.loggedIn && (loc == '/login' || loc == '/loading')) {
+        if (authViewModel.loggedIn && (loc == '/login' || loc == '/loading')) {
           return '/';
         }
         return null;
