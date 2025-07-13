@@ -8,4 +8,7 @@ final getIt = GetIt.instance;
   // preferRelativeImports: true, // default
   // asExtension: true, // default
 )
-void configureDependencies() => getIt.init();
+void configureDependencies() {
+  // Initialize generated dependency graph (includes AuthViewModel)
+  getIt.init();
+}
