@@ -15,8 +15,6 @@ import 'package:gh3/src/services/auth_service.dart' as _i336;
 import 'package:gh3/src/services/github_auth_client.dart' as _i1035;
 import 'package:gh3/src/services/scope_service.dart' as _i792;
 import 'package:gh3/src/services/token_storage.dart' as _i895;
-import 'package:gh3/src/viewmodels/auth_viewmodel.dart' as _i750;
-import 'package:gh3/src/viewmodels/login_viewmodel.dart' as _i876;
 import 'package:http/http.dart' as _i519;
 import 'package:injectable/injectable.dart' as _i526;
 
@@ -53,16 +51,6 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i1035.GithubAuthClient>(),
         gh<_i895.ITokenStorage>(),
         gh<_i792.IScopeService>(),
-      ),
-    );
-    gh.lazySingleton<_i750.AuthViewModel>(
-      () => _i750.AuthViewModel(gh<_i336.AuthService>()),
-    );
-    gh.factory<_i876.LoginViewModel>(
-      () => _i876.LoginViewModel(
-        gh<_i1035.GithubAuthClient>(),
-        gh<_i336.AuthService>(),
-        gh<_i750.AuthViewModel>(),
       ),
     );
     return this;

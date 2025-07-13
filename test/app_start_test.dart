@@ -80,7 +80,13 @@ void main() {
       () => LoginViewModel(dummyAuthClient, fakeAuthService, authViewModel),
     );
 
-    await tester.pumpWidget(MyApp(authVM: authViewModel));
+    await tester.pumpWidget(
+      MyApp(
+        authViewModel: authViewModel,
+        authService: fakeAuthService,
+        githubAuthClient: dummyAuthClient,
+      ),
+    );
 
     // Wait for router redirects to complete
     await tester.pump();
@@ -109,7 +115,13 @@ void main() {
       () => LoginViewModel(dummyAuthClient, fakeAuthService, authViewModel),
     );
 
-    await tester.pumpWidget(MyApp(authVM: authViewModel));
+    await tester.pumpWidget(
+      MyApp(
+        authViewModel: authViewModel,
+        authService: fakeAuthService,
+        githubAuthClient: dummyAuthClient,
+      ),
+    );
 
     // Wait for router redirects to complete
     await tester.pump();
