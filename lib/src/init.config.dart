@@ -55,11 +55,15 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i792.IScopeService>(),
       ),
     );
-    gh.factory<_i876.LoginViewModel>(
-      () => _i876.LoginViewModel(gh<_i1035.GithubAuthClient>()),
-    );
     gh.lazySingleton<_i750.AuthViewModel>(
       () => _i750.AuthViewModel(gh<_i336.AuthService>()),
+    );
+    gh.factory<_i876.LoginViewModel>(
+      () => _i876.LoginViewModel(
+        gh<_i1035.GithubAuthClient>(),
+        gh<_i336.AuthService>(),
+        gh<_i750.AuthViewModel>(),
+      ),
     );
     return this;
   }

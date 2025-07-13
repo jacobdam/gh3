@@ -10,7 +10,7 @@ class AuthService {
   final ITokenStorage _tokenStorage;
   final IScopeService _scopeService;
   // Scopes required for GitHub operations
-  static const List<String> _requiredScopes = ['repo', 'read:user'];
+  static const List<String> requiredScopes = ['repo', 'read:user'];
   String? _accessToken;
 
   AuthService(this._authClient, this._tokenStorage, this._scopeService);
@@ -33,7 +33,7 @@ class AuthService {
     // Validate token by fetching associated scopes
     try {
       final scopes = await _scopeService.getScopesFromAccessToken(token);
-      return _requiredScopes.every((scope) => scopes.contains(scope));
+      return requiredScopes.every((scope) => scopes.contains(scope));
     } catch (_) {
       return false;
     }
@@ -50,12 +50,30 @@ class AuthService {
   /// Perform login flow: request device code, poll for token, and store it.
   Future<String> login() async {
     // Initiate device flow with required scopes
-    final device = await _authClient.createDeviceCode(_requiredScopes);
+    final device = await _authClient.createDeviceCode(requiredScopes);
 
     while (true) {
       try {
         final token = await _authClient.createAccessTokenFromDeviceCode(
           device.deviceCode,
+        );
+        _accessToken = token;
+        await _tokenStorage.saveToken(token);
+        return token;
+      } on AuthorizationPendingException {
+        await Future.delayed(const Duration(seconds: 5));
+      } on SlowDownException {
+        await Future.delayed(const Duration(seconds: 10));
+      }
+    }
+  }
+
+  /// Perform login flow with an existing device code (for UI separation).
+  Future<String> loginWithDeviceCode(String deviceCode) async {
+    while (true) {
+      try {
+        final token = await _authClient.createAccessTokenFromDeviceCode(
+          deviceCode,
         );
         _accessToken = token;
         await _tokenStorage.saveToken(token);

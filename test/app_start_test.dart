@@ -70,14 +70,15 @@ void main() {
 
     GetIt.I.registerSingleton<AuthService>(fakeAuthService);
     GetIt.I.registerSingleton<GithubAuthClient>(dummyAuthClient);
-    GetIt.I.registerLazySingleton<LoginViewModel>(
-      () => LoginViewModel(dummyAuthClient),
-    );
 
     // Create and initialize AuthViewModel
     final authViewModel = AuthViewModel(fakeAuthService);
     await authViewModel.init();
     GetIt.I.registerSingleton(authViewModel);
+
+    GetIt.I.registerLazySingleton<LoginViewModel>(
+      () => LoginViewModel(dummyAuthClient, fakeAuthService, authViewModel),
+    );
 
     await tester.pumpWidget(MyApp(authVM: authViewModel));
 
@@ -98,14 +99,15 @@ void main() {
 
     GetIt.I.registerSingleton<AuthService>(fakeAuthService);
     GetIt.I.registerSingleton<GithubAuthClient>(dummyAuthClient);
-    GetIt.I.registerLazySingleton<LoginViewModel>(
-      () => LoginViewModel(dummyAuthClient),
-    );
 
     // Create and initialize AuthViewModel
     final authViewModel = AuthViewModel(fakeAuthService);
     await authViewModel.init();
     GetIt.I.registerSingleton(authViewModel);
+
+    GetIt.I.registerLazySingleton<LoginViewModel>(
+      () => LoginViewModel(dummyAuthClient, fakeAuthService, authViewModel),
+    );
 
     await tester.pumpWidget(MyApp(authVM: authViewModel));
 
