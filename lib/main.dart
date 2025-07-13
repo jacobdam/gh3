@@ -5,6 +5,8 @@ import 'package:go_router/go_router.dart';
 import 'package:gh3/src/screens/home_screen.dart';
 import 'package:gh3/src/screens/login_screen.dart';
 import 'package:gh3/src/screens/loading_screen.dart';
+import 'package:gh3/src/screens/repository_details_screen.dart';
+import 'package:gh3/src/screens/user_details_screen.dart';
 import 'package:gh3/src/viewmodels/auth_viewmodel.dart';
 import 'package:gh3/src/viewmodels/login_viewmodel.dart';
 import 'package:gh3/src/services/auth_service.dart';
@@ -70,6 +72,21 @@ class MyApp extends StatelessWidget {
         GoRoute(
           path: '/',
           builder: (context, state) => HomeScreen(authViewModel: authViewModel),
+        ),
+        GoRoute(
+          path: '/:login/:repo',
+          builder: (context, state) {
+            final login = state.pathParameters['login']!;
+            final repo = state.pathParameters['repo']!;
+            return RepositoryDetailsScreen(login: login, repo: repo);
+          },
+        ),
+        GoRoute(
+          path: '/:login',
+          builder: (context, state) {
+            final login = state.pathParameters['login']!;
+            return UserDetailsScreen(login: login);
+          },
         ),
       ],
       redirect: (context, state) {
