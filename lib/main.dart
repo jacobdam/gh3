@@ -10,7 +10,12 @@ import 'package:gh3/src/viewmodels/auth_viewmodel.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   configureDependencies();
-  runApp(MyApp(authVM: getIt<AuthViewModel>()));
+
+  // Initialize AuthViewModel to load auth state
+  final authVM = getIt<AuthViewModel>();
+  await authVM.init();
+
+  runApp(MyApp(authVM: authVM));
 }
 
 // Removed top-level router; instantiate inside MyApp

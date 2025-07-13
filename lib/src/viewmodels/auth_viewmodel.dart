@@ -18,15 +18,15 @@ class AuthViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> login() async {
-    await _authService.login();
-    loggedIn = _authService.isLoggedIn;
-    notifyListeners();
-  }
-
   Future<void> logout() async {
     await _authService.logout();
     loggedIn = false;
+    notifyListeners();
+  }
+
+  /// Update the logged in state (called by other components when auth state changes)
+  void updateAuthState() {
+    loggedIn = _authService.isLoggedIn;
     notifyListeners();
   }
 }
