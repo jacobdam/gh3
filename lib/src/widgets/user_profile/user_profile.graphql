@@ -1,0 +1,23 @@
+fragment UserProfileFragment on User {
+  id
+  login
+  name
+  email
+  bio
+  location
+  company
+  websiteUrl
+  avatarUrl
+  url
+  repositories {
+    totalCount
+  }
+  followers {
+    totalCount
+  }
+  following {
+    totalCount
+  }
+  createdAt
+  updatedAt
+}

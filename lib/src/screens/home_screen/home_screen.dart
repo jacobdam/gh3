@@ -1,42 +1,43 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import '../viewmodels/auth_viewmodel.dart';
-import '../viewmodels/home_viewmodel.dart';
+import 'home_viewmodel.dart';
+import '../../viewmodels/auth_viewmodel.dart';
+import '../../widgets/user_card/user_card.dart';
 
 class HomeScreen extends StatefulWidget {
   final AuthViewModel authViewModel;
   final HomeViewModel homeViewModel;
 
-  const HomeScreen({
-    super.key,
-    required this.authViewModel,
-    required this.homeViewModel,
-  });
+  const HomeScreen({super.key, required this.authViewModel, required this.homeViewModel});
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  late HomeViewModel _homeViewModel;
   final ScrollController _scrollController = ScrollController();
 
   @override
   void initState() {
     super.initState();
-    widget.homeViewModel.addListener(_onHomeViewModelChanged);
+
+    _homeViewModel = widget.homeViewModel;
+    _homeViewModel.addListener(_onHomeViewModelChanged);
     _scrollController.addListener(_onScroll);
 
     // Load initial data
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      widget.homeViewModel.loadFollowingUsers();
+      _homeViewModel.loadFollowingUsers();
     });
   }
 
   @override
   void dispose() {
-    widget.homeViewModel.removeListener(_onHomeViewModelChanged);
+    _homeViewModel.removeListener(_onHomeViewModelChanged);
     _scrollController.removeListener(_onScroll);
     _scrollController.dispose();
+    _homeViewModel.dispose();
     super.dispose();
   }
 
@@ -49,7 +50,7 @@ class _HomeScreenState extends State<HomeScreen> {
   void _onScroll() {
     if (_scrollController.position.pixels >=
         _scrollController.position.maxScrollExtent - 200) {
-      widget.homeViewModel.loadMoreFollowingUsers();
+      _homeViewModel.loadMoreFollowingUsers();
     }
   }
 
@@ -68,7 +69,7 @@ class _HomeScreenState extends State<HomeScreen> {
         ],
       ),
       body: RefreshIndicator(
-        onRefresh: widget.homeViewModel.refreshFollowingUsers,
+        onRefresh: _homeViewModel.refreshFollowingUsers,
         child: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Column(
@@ -118,8 +119,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  if (widget.homeViewModel.isLoading &&
-                      widget.homeViewModel.followingUsers.isEmpty)
+                  if (_homeViewModel.isLoading && _homeViewModel.isEmpty)
                     const SizedBox(
                       width: 20,
                       height: 20,
@@ -130,7 +130,7 @@ class _HomeScreenState extends State<HomeScreen> {
               const SizedBox(height: 12),
 
               // Error Message
-              if (widget.homeViewModel.errorMessage != null)
+              if (_homeViewModel.error != null)
                 Container(
                   width: double.infinity,
                   padding: const EdgeInsets.all(12),
@@ -146,12 +146,12 @@ class _HomeScreenState extends State<HomeScreen> {
                       const SizedBox(width: 8),
                       Expanded(
                         child: Text(
-                          widget.homeViewModel.errorMessage!,
+                          _homeViewModel.error!,
                           style: TextStyle(color: Colors.red.shade700),
                         ),
                       ),
                       TextButton(
-                        onPressed: widget.homeViewModel.clearError,
+                        onPressed: _homeViewModel.clearError,
                         child: const Text('Dismiss'),
                       ),
                     ],
@@ -168,7 +168,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildFollowingList() {
-    if (widget.homeViewModel.isEmpty && !widget.homeViewModel.isLoading) {
+    if (_homeViewModel.isEmpty && !_homeViewModel.isLoading) {
       return Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -189,7 +189,7 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             const SizedBox(height: 16),
             ElevatedButton.icon(
-              onPressed: widget.homeViewModel.loadFollowingUsers,
+              onPressed: _homeViewModel.loadFollowingUsers,
               icon: const Icon(Icons.refresh),
               label: const Text('Retry'),
             ),
@@ -198,97 +198,30 @@ class _HomeScreenState extends State<HomeScreen> {
       );
     }
 
+    final users = _homeViewModel.followingUsers;
+
     return ListView.builder(
       controller: _scrollController,
-      itemCount:
-          widget.homeViewModel.followingUsers.length +
-          (widget.homeViewModel.isLoading ? 1 : 0),
+      itemCount: users.length + (_homeViewModel.isLoading ? 1 : 0),
       itemBuilder: (context, index) {
         // Loading indicator at the end
-        if (index >= widget.homeViewModel.followingUsers.length) {
+        if (index >= users.length) {
           return const Padding(
             padding: EdgeInsets.all(16.0),
             child: Center(child: CircularProgressIndicator()),
           );
         }
 
-        final user = widget.homeViewModel.followingUsers[index];
-        return Card(
-          margin: const EdgeInsets.only(bottom: 8.0),
-          child: ListTile(
-            leading: CircleAvatar(
-              backgroundImage: NetworkImage(user.avatarUrl),
-              backgroundColor: _getUserAvatarColor(user.login),
-              onBackgroundImageError: (_, _) {},
-              child: user.avatarUrl.isEmpty
-                  ? Text(
-                      user.login[0].toUpperCase(),
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    )
-                  : null,
-            ),
-            title: Text(
-              user.login,
-              style: const TextStyle(fontWeight: FontWeight.w600),
-            ),
-            subtitle: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                if (user.name != null && user.name!.isNotEmpty)
-                  Text(user.name!, style: TextStyle(color: Colors.grey[600])),
-                const SizedBox(height: 4),
-                Row(
-                  children: [
-                    const Icon(Icons.folder, size: 16, color: Colors.grey),
-                    const SizedBox(width: 4),
-                    Text(
-                      '${_formatNumber(user.publicRepos)} repositories',
-                      style: const TextStyle(fontSize: 12),
-                    ),
-                    const SizedBox(width: 16),
-                    const Icon(Icons.people, size: 16, color: Colors.grey),
-                    const SizedBox(width: 4),
-                    Text(
-                      '${_formatNumber(user.followers)} followers',
-                      style: const TextStyle(fontSize: 12),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-            onTap: () {
-              context.push('/${user.login}');
-            },
-            trailing: const Icon(Icons.arrow_forward_ios, size: 16),
-          ),
+        final user = users[index];
+
+        // Use UserCard widget with GraphQL fragment data
+        return UserCard(
+          user: user,
+          onTap: () {
+            context.push('/${user.login}');
+          },
         );
       },
     );
-  }
-
-  Color _getUserAvatarColor(String login) {
-    final colors = [
-      Colors.blue,
-      Colors.green,
-      Colors.orange,
-      Colors.purple,
-      Colors.red,
-      Colors.teal,
-      Colors.indigo,
-      Colors.pink,
-    ];
-    return colors[login.hashCode % colors.length];
-  }
-
-  String _formatNumber(int number) {
-    if (number >= 1000000) {
-      return '${(number / 1000000).toStringAsFixed(1)}M';
-    } else if (number >= 1000) {
-      return '${(number / 1000).toStringAsFixed(1)}K';
-    }
-    return number.toString();
   }
 }

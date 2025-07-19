@@ -1,9 +1,11 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:get_it/get_it.dart';
+import 'package:ferry/ferry.dart';
+import 'package:mockito/mockito.dart';
 
 import 'package:gh3/main.dart';
 import 'package:gh3/src/services/auth_service.dart';
-import 'package:gh3/src/screens/home_screen.dart';
+import 'package:gh3/src/screens/home_screen/home_screen.dart';
 import 'package:gh3/src/screens/login_screen.dart';
 import 'package:gh3/src/services/github_auth_client.dart';
 import 'package:gh3/src/services/token_storage.dart';
@@ -13,6 +15,8 @@ import 'package:gh3/src/models/github_user.dart';
 import 'package:gh3/src/models/github_repository.dart';
 import 'package:gh3/src/viewmodels/login_viewmodel.dart';
 import 'package:gh3/src/viewmodels/auth_viewmodel.dart';
+
+class MockClient extends Mock implements Client {}
 
 /// Dummy implementations to satisfy AuthService constructor, not used directly.
 class DummyAuthClient implements GithubAuthClient {
@@ -109,9 +113,11 @@ void main() {
     // Register required dependencies
     final fakeAuthService = FakeAuthService(true);
     final dummyAuthClient = DummyAuthClient();
+    final mockFerryClient = MockClient();
 
     GetIt.I.registerSingleton<AuthService>(fakeAuthService);
     GetIt.I.registerSingleton<GithubAuthClient>(dummyAuthClient);
+    GetIt.I.registerSingleton<Client>(mockFerryClient);
 
     // Create and initialize AuthViewModel
     final authViewModel = AuthViewModel(fakeAuthService);
@@ -145,9 +151,11 @@ void main() {
     // Register required dependencies
     final fakeAuthService = FakeAuthService(false);
     final dummyAuthClient = DummyAuthClient();
+    final mockFerryClient = MockClient();
 
     GetIt.I.registerSingleton<AuthService>(fakeAuthService);
     GetIt.I.registerSingleton<GithubAuthClient>(dummyAuthClient);
+    GetIt.I.registerSingleton<Client>(mockFerryClient);
 
     // Create and initialize AuthViewModel
     final authViewModel = AuthViewModel(fakeAuthService);
