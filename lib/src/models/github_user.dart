@@ -45,14 +45,18 @@ class GitHubUser {
       location: json['location'] as String?,
       company: json['company'] as String?,
       blog: json['blog'] as String?,
-      avatarUrl: json['avatar_url'] as String,
-      htmlUrl: json['html_url'] as String,
-      publicRepos: json['public_repos'] as int,
-      publicGists: json['public_gists'] as int,
-      followers: json['followers'] as int,
-      following: json['following'] as int,
-      createdAt: DateTime.parse(json['created_at'] as String),
-      updatedAt: DateTime.parse(json['updated_at'] as String),
+      avatarUrl: json['avatar_url'] as String? ?? '',
+      htmlUrl: json['html_url'] as String? ?? '',
+      publicRepos: json['public_repos'] as int? ?? 0,
+      publicGists: json['public_gists'] as int? ?? 0,
+      followers: json['followers'] as int? ?? 0,
+      following: json['following'] as int? ?? 0,
+      createdAt: json['created_at'] != null 
+          ? DateTime.parse(json['created_at'] as String)
+          : DateTime.now(),
+      updatedAt: json['updated_at'] != null 
+          ? DateTime.parse(json['updated_at'] as String)
+          : DateTime.now(),
     );
   }
 
