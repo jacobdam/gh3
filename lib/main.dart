@@ -5,12 +5,12 @@ import 'package:gh3/src/screens/home_screen/home_viewmodel.dart';
 // ...existing imports...
 import 'package:go_router/go_router.dart';
 import 'package:gh3/src/screens/home_screen/home_screen.dart';
-import 'package:gh3/src/screens/login_screen.dart';
+import 'package:gh3/src/screens/login_screen/login_screen.dart';
 import 'package:gh3/src/screens/loading_screen.dart';
 import 'package:gh3/src/screens/repository_details_screen.dart';
 import 'package:gh3/src/screens/user_details_screen.dart';
 import 'package:gh3/src/viewmodels/auth_viewmodel.dart';
-import 'package:gh3/src/viewmodels/login_viewmodel.dart';
+import 'package:gh3/src/screens/login_screen/login_viewmodel.dart';
 import 'package:gh3/src/services/auth_service.dart';
 import 'package:gh3/src/services/github_auth_client.dart';
 import 'package:gh3/src/services/github_api_service.dart';
