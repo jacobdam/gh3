@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'home_viewmodel.dart';
-import '../../viewmodels/auth_viewmodel.dart';
+import 'package:gh3/src/screens/app/auth_viewmodel.dart';
 import '../../widgets/user_card/user_card.dart';
 
 class HomeScreen extends StatefulWidget {

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../viewmodels/auth_viewmodel.dart';
+import 'package:gh3/src/screens/app/auth_viewmodel.dart';
 
 /// Loading screen shown during initialization, listens to AuthViewModel.
 class LoadingScreen extends StatefulWidget {

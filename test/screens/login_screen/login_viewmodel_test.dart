@@ -2,7 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:gh3/src/services/github_auth_client.dart';
 import 'package:gh3/src/services/auth_service.dart';
-import 'package:gh3/src/viewmodels/auth_viewmodel.dart';
+import 'package:gh3/src/screens/app/auth_viewmodel.dart';
 import 'package:gh3/src/screens/login_screen/login_viewmodel.dart';
 
 // A fake implementation of GithubAuthClient to control behavior in tests.
