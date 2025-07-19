@@ -1,0 +1,13 @@
+fragment RepositoryCardFragment on Repository {
+  id
+  name
+  nameWithOwner
+  description
+  stargazerCount
+  forkCount
+  primaryLanguage {
+    name
+    color
+  }
+  updatedAt
+}

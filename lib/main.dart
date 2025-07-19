@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 import 'package:gh3/src/init.dart';
+import 'package:gh3/src/screens/home_screen/home_viewmodel.dart';
 // ...existing imports...
 import 'package:go_router/go_router.dart';
-import 'package:gh3/src/screens/home_screen.dart';
+import 'package:gh3/src/screens/home_screen/home_screen.dart';
 import 'package:gh3/src/screens/login_screen.dart';
 import 'package:gh3/src/screens/loading_screen.dart';
 import 'package:gh3/src/screens/repository_details_screen.dart';
@@ -12,7 +14,6 @@ import 'package:gh3/src/viewmodels/login_viewmodel.dart';
 import 'package:gh3/src/services/auth_service.dart';
 import 'package:gh3/src/services/github_auth_client.dart';
 import 'package:gh3/src/services/github_api_service.dart';
-import 'package:gh3/src/viewmodels/home_viewmodel.dart';
 import 'package:gh3/src/viewmodels/user_details_viewmodel.dart';
 import 'package:gh3/src/viewmodels/repository_details_viewmodel.dart';
 
@@ -24,6 +25,7 @@ Future<void> main() async {
   final authService = getIt<AuthService>();
   final githubAuthClient = getIt<GithubAuthClient>();
   final githubApiService = getIt<GitHubApiService>();
+  final homeViewModel = await GetIt.instance.getAsync<HomeViewModel>();
 
   // Create ViewModels manually with their dependencies
   final authVM = AuthViewModel(authService);
@@ -35,6 +37,7 @@ Future<void> main() async {
       authService: authService,
       githubAuthClient: githubAuthClient,
       githubApiService: githubApiService,
+      homeViewModel: homeViewModel,
     ),
   );
 }
@@ -47,6 +50,7 @@ class MyApp extends StatelessWidget {
   final AuthService authService;
   final GithubAuthClient githubAuthClient;
   final GitHubApiService githubApiService;
+  final HomeViewModel homeViewModel;
 
   const MyApp({
     super.key,
@@ -54,6 +58,7 @@ class MyApp extends StatelessWidget {
     required this.authService,
     required this.githubAuthClient,
     required this.githubApiService,
+    required this.homeViewModel,
   });
 
   @override
@@ -79,10 +84,7 @@ class MyApp extends StatelessWidget {
         ),
         GoRoute(
           path: '/',
-          builder: (context, state) => HomeScreen(
-            authViewModel: authViewModel,
-            homeViewModel: HomeViewModel(githubApiService),
-          ),
+          builder: (context, state) => HomeScreen(authViewModel: authViewModel, homeViewModel: homeViewModel,),
         ),
         GoRoute(
           path: '/:login/:repo',

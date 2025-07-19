@@ -89,10 +89,7 @@ void main() {
 
     test('should handle missing fields (minimal response)', () {
       // This simulates a minimal response with only required fields
-      final json = {
-        'id': 789,
-        'login': 'minimaluser',
-      };
+      final json = {'id': 789, 'login': 'minimaluser'};
 
       final user = GitHubUser.fromJson(json);
 
