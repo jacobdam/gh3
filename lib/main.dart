@@ -92,7 +92,11 @@ class MyApp extends StatelessWidget {
             return RepositoryDetailsScreen(
               login: login,
               repo: repo,
-              viewModel: RepositoryDetailsViewModel(githubApiService, login, repo),
+              viewModel: RepositoryDetailsViewModel(
+                githubApiService,
+                login,
+                repo,
+              ),
             );
           },
         ),

@@ -15,11 +15,7 @@ class GitHubApiException implements Exception {
   final int? statusCode;
   final String? errorType;
 
-  const GitHubApiException(
-    this.message, {
-    this.statusCode,
-    this.errorType,
-  });
+  const GitHubApiException(this.message, {this.statusCode, this.errorType});
 
   @override
   String toString() => 'GitHubApiException: $message';
@@ -30,7 +26,7 @@ class GitHubApiException implements Exception {
 class GitHubApiService {
   final http.Client _httpClient;
   final ITokenStorage _tokenStorage;
-  
+
   static const String _baseUrl = 'https://api.github.com';
   static const Duration _requestTimeout = Duration(seconds: 30);
 
@@ -47,25 +43,25 @@ class GitHubApiService {
     if (username.isEmpty) {
       throw ArgumentError('Username cannot be empty');
     }
-    
+
     final response = await _makeAuthenticatedRequest('GET', '/users/$username');
     return GitHubUser.fromJson(response);
   }
 
   /// Get users that the authenticated user follows
-  Future<List<GitHubUser>> getFollowing({int page = 1, int perPage = 30}) async {
+  Future<List<GitHubUser>> getFollowing({
+    int page = 1,
+    int perPage = 30,
+  }) async {
     if (page < 1) throw ArgumentError('Page must be >= 1');
     if (perPage < 1 || perPage > 100) {
       throw ArgumentError('Per page must be between 1 and 100');
     }
 
     final response = await _makeAuthenticatedRequest(
-      'GET', 
+      'GET',
       '/user/following',
-      queryParams: {
-        'page': page.toString(),
-        'per_page': perPage.toString(),
-      },
+      queryParams: {'page': page.toString(), 'per_page': perPage.toString()},
     );
 
     if (response is! List) {
@@ -95,10 +91,7 @@ class GitHubApiService {
     final response = await _makeAuthenticatedRequest(
       'GET',
       '/users/$username/followers',
-      queryParams: {
-        'page': page.toString(),
-        'per_page': perPage.toString(),
-      },
+      queryParams: {'page': page.toString(), 'per_page': perPage.toString()},
     );
 
     if (response is! List) {
@@ -159,7 +152,10 @@ class GitHubApiService {
     if (owner.isEmpty) throw ArgumentError('Owner cannot be empty');
     if (repo.isEmpty) throw ArgumentError('Repository name cannot be empty');
 
-    final response = await _makeAuthenticatedRequest('GET', '/repos/$owner/$repo');
+    final response = await _makeAuthenticatedRequest(
+      'GET',
+      '/repos/$owner/$repo',
+    );
     return GitHubRepository.fromJson(response);
   }
 
@@ -184,7 +180,9 @@ class GitHubApiService {
       return utf8.decode(decodedBytes);
     } on GitHubApiException catch (e) {
       if (e.statusCode == 404) {
-        throw GitHubApiException('README not found for repository $owner/$repo');
+        throw GitHubApiException(
+          'README not found for repository $owner/$repo',
+        );
       }
       rethrow;
     }
@@ -203,7 +201,7 @@ class GitHubApiService {
     }
 
     final uri = Uri.parse('$_baseUrl$path');
-    final finalUri = queryParams != null 
+    final finalUri = queryParams != null
         ? uri.replace(queryParameters: queryParams)
         : uri;
 
@@ -220,7 +218,7 @@ class GitHubApiService {
 
     try {
       late http.Response response;
-      
+
       switch (method.toUpperCase()) {
         case 'GET':
           response = await _httpClient
@@ -311,7 +309,7 @@ class GitHubApiService {
     // Handle other client errors
     if (response.statusCode >= 400) {
       String errorMessage = 'GitHub API error (${response.statusCode})';
-      
+
       try {
         final errorBody = jsonDecode(response.body) as Map<String, dynamic>;
         final message = errorBody['message'] as String?;

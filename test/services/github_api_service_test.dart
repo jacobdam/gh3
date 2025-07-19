@@ -50,14 +50,18 @@ void main() {
           'updated_at': '2023-01-01T00:00:00Z',
         };
 
-        when(mockHttpClient.get(
-          Uri.parse('$baseUrl/user'),
-          headers: anyNamed('headers'),
-        )).thenAnswer((_) async => http.Response(
-          jsonEncode(userJson),
-          200,
-          headers: {'content-type': 'application/json'},
-        ));
+        when(
+          mockHttpClient.get(
+            Uri.parse('$baseUrl/user'),
+            headers: anyNamed('headers'),
+          ),
+        ).thenAnswer(
+          (_) async => http.Response(
+            jsonEncode(userJson),
+            200,
+            headers: {'content-type': 'application/json'},
+          ),
+        );
 
         final result = await service.getAuthenticatedUser();
 
@@ -65,14 +69,16 @@ void main() {
         expect(result.login, equals('testuser'));
         expect(result.name, equals('Test User'));
         expect(result.email, equals('test@example.com'));
-        
-        verify(mockHttpClient.get(
-          Uri.parse('$baseUrl/user'),
-          headers: argThat(
-            containsPair('Authorization', 'Bearer $testToken'),
-            named: 'headers',
+
+        verify(
+          mockHttpClient.get(
+            Uri.parse('$baseUrl/user'),
+            headers: argThat(
+              containsPair('Authorization', 'Bearer $testToken'),
+              named: 'headers',
+            ),
           ),
-        )).called(1);
+        ).called(1);
       });
 
       test('should throw exception when no token available', () async {
@@ -80,30 +86,31 @@ void main() {
 
         expect(
           () => service.getAuthenticatedUser(),
-          throwsA(isA<GitHubApiException>().having(
-            (e) => e.message,
-            'message',
-            'No authentication token available',
-          )),
+          throwsA(
+            isA<GitHubApiException>().having(
+              (e) => e.message,
+              'message',
+              'No authentication token available',
+            ),
+          ),
         );
       });
 
       test('should handle 401 authentication error', () async {
-        when(mockHttpClient.get(
-          any,
-          headers: anyNamed('headers'),
-        )).thenAnswer((_) async => http.Response(
-          jsonEncode({'message': 'Bad credentials'}),
-          401,
-        ));
+        when(mockHttpClient.get(any, headers: anyNamed('headers'))).thenAnswer(
+          (_) async =>
+              http.Response(jsonEncode({'message': 'Bad credentials'}), 401),
+        );
 
         expect(
           () => service.getAuthenticatedUser(),
-          throwsA(isA<GitHubApiException>().having(
-            (e) => e.statusCode,
-            'statusCode',
-            401,
-          )),
+          throwsA(
+            isA<GitHubApiException>().having(
+              (e) => e.statusCode,
+              'statusCode',
+              401,
+            ),
+          ),
         );
       });
     });
@@ -130,13 +137,12 @@ void main() {
           'updated_at': '2023-01-01T00:00:00Z',
         };
 
-        when(mockHttpClient.get(
-          Uri.parse('$baseUrl/users/$username'),
-          headers: anyNamed('headers'),
-        )).thenAnswer((_) async => http.Response(
-          jsonEncode(userJson),
-          200,
-        ));
+        when(
+          mockHttpClient.get(
+            Uri.parse('$baseUrl/users/$username'),
+            headers: anyNamed('headers'),
+          ),
+        ).thenAnswer((_) async => http.Response(jsonEncode(userJson), 200));
 
         final result = await service.getUser(username);
 
@@ -145,28 +151,23 @@ void main() {
       });
 
       test('should throw ArgumentError for empty username', () async {
-        expect(
-          () => service.getUser(''),
-          throwsA(isA<ArgumentError>()),
-        );
+        expect(() => service.getUser(''), throwsA(isA<ArgumentError>()));
       });
 
       test('should handle 404 not found error', () async {
-        when(mockHttpClient.get(
-          any,
-          headers: anyNamed('headers'),
-        )).thenAnswer((_) async => http.Response(
-          jsonEncode({'message': 'Not Found'}),
-          404,
-        ));
+        when(mockHttpClient.get(any, headers: anyNamed('headers'))).thenAnswer(
+          (_) async => http.Response(jsonEncode({'message': 'Not Found'}), 404),
+        );
 
         expect(
           () => service.getUser('nonexistent'),
-          throwsA(isA<GitHubApiException>().having(
-            (e) => e.statusCode,
-            'statusCode',
-            404,
-          )),
+          throwsA(
+            isA<GitHubApiException>().having(
+              (e) => e.statusCode,
+              'statusCode',
+              404,
+            ),
+          ),
         );
       });
     });
@@ -212,13 +213,14 @@ void main() {
           },
         ];
 
-        when(mockHttpClient.get(
-          Uri.parse('$baseUrl/user/following?page=1&per_page=30'),
-          headers: anyNamed('headers'),
-        )).thenAnswer((_) async => http.Response(
-          jsonEncode(followingJson),
-          200,
-        ));
+        when(
+          mockHttpClient.get(
+            Uri.parse('$baseUrl/user/following?page=1&per_page=30'),
+            headers: anyNamed('headers'),
+          ),
+        ).thenAnswer(
+          (_) async => http.Response(jsonEncode(followingJson), 200),
+        );
 
         final result = await service.getFollowing();
 
@@ -228,20 +230,21 @@ void main() {
       });
 
       test('should handle pagination parameters', () async {
-        when(mockHttpClient.get(
-          Uri.parse('$baseUrl/user/following?page=2&per_page=10'),
-          headers: anyNamed('headers'),
-        )).thenAnswer((_) async => http.Response(
-          jsonEncode([]),
-          200,
-        ));
+        when(
+          mockHttpClient.get(
+            Uri.parse('$baseUrl/user/following?page=2&per_page=10'),
+            headers: anyNamed('headers'),
+          ),
+        ).thenAnswer((_) async => http.Response(jsonEncode([]), 200));
 
         await service.getFollowing(page: 2, perPage: 10);
 
-        verify(mockHttpClient.get(
-          Uri.parse('$baseUrl/user/following?page=2&per_page=10'),
-          headers: anyNamed('headers'),
-        )).called(1);
+        verify(
+          mockHttpClient.get(
+            Uri.parse('$baseUrl/user/following?page=2&per_page=10'),
+            headers: anyNamed('headers'),
+          ),
+        ).called(1);
       });
 
       test('should validate pagination parameters', () async {
@@ -299,7 +302,8 @@ void main() {
               'location': null,
               'company': null,
               'blog': null,
-              'avatar_url': 'https://github.com/images/error/testuser_happy.gif',
+              'avatar_url':
+                  'https://github.com/images/error/testuser_happy.gif',
               'html_url': 'https://github.com/testuser',
               'public_repos': 10,
               'public_gists': 5,
@@ -311,13 +315,14 @@ void main() {
           },
         ];
 
-        when(mockHttpClient.get(
-          Uri.parse('$baseUrl/users/testuser/repos?page=1&per_page=30&sort=updated&direction=desc'),
-          headers: anyNamed('headers'),
-        )).thenAnswer((_) async => http.Response(
-          jsonEncode(reposJson),
-          200,
-        ));
+        when(
+          mockHttpClient.get(
+            Uri.parse(
+              '$baseUrl/users/testuser/repos?page=1&per_page=30&sort=updated&direction=desc',
+            ),
+            headers: anyNamed('headers'),
+          ),
+        ).thenAnswer((_) async => http.Response(jsonEncode(reposJson), 200));
 
         final result = await service.getUserRepositories('testuser');
 
@@ -392,13 +397,12 @@ void main() {
           },
         };
 
-        when(mockHttpClient.get(
-          Uri.parse('$baseUrl/repos/testuser/repo1'),
-          headers: anyNamed('headers'),
-        )).thenAnswer((_) async => http.Response(
-          jsonEncode(repoJson),
-          200,
-        ));
+        when(
+          mockHttpClient.get(
+            Uri.parse('$baseUrl/repos/testuser/repo1'),
+            headers: anyNamed('headers'),
+          ),
+        ).thenAnswer((_) async => http.Response(jsonEncode(repoJson), 200));
 
         final result = await service.getRepository('testuser', 'repo1');
 
@@ -423,20 +427,19 @@ void main() {
       test('should return decoded README content', () async {
         const readmeContent = '# Test Repository\n\nThis is a test README.';
         final encodedContent = base64Encode(utf8.encode(readmeContent));
-        
+
         final readmeJson = {
           'name': 'README.md',
           'content': encodedContent,
           'encoding': 'base64',
         };
 
-        when(mockHttpClient.get(
-          Uri.parse('$baseUrl/repos/testuser/repo1/readme'),
-          headers: anyNamed('headers'),
-        )).thenAnswer((_) async => http.Response(
-          jsonEncode(readmeJson),
-          200,
-        ));
+        when(
+          mockHttpClient.get(
+            Uri.parse('$baseUrl/repos/testuser/repo1/readme'),
+            headers: anyNamed('headers'),
+          ),
+        ).thenAnswer((_) async => http.Response(jsonEncode(readmeJson), 200));
 
         final result = await service.getRepositoryReadme('testuser', 'repo1');
 
@@ -444,21 +447,24 @@ void main() {
       });
 
       test('should handle README not found', () async {
-        when(mockHttpClient.get(
-          Uri.parse('$baseUrl/repos/testuser/repo1/readme'),
-          headers: anyNamed('headers'),
-        )).thenAnswer((_) async => http.Response(
-          jsonEncode({'message': 'Not Found'}),
-          404,
-        ));
+        when(
+          mockHttpClient.get(
+            Uri.parse('$baseUrl/repos/testuser/repo1/readme'),
+            headers: anyNamed('headers'),
+          ),
+        ).thenAnswer(
+          (_) async => http.Response(jsonEncode({'message': 'Not Found'}), 404),
+        );
 
         expect(
           () => service.getRepositoryReadme('testuser', 'repo1'),
-          throwsA(isA<GitHubApiException>().having(
-            (e) => e.message,
-            'message',
-            contains('README not found'),
-          )),
+          throwsA(
+            isA<GitHubApiException>().having(
+              (e) => e.message,
+              'message',
+              contains('README not found'),
+            ),
+          ),
         );
       });
 
@@ -477,60 +483,60 @@ void main() {
 
     group('error handling', () {
       test('should handle rate limiting', () async {
-        when(mockHttpClient.get(
-          any,
-          headers: anyNamed('headers'),
-        )).thenAnswer((_) async => http.Response(
-          jsonEncode({'message': 'API rate limit exceeded'}),
-          403,
-          headers: {
-            'x-ratelimit-remaining': '0',
-            'x-ratelimit-reset': '1640995200',
-          },
-        ));
+        when(mockHttpClient.get(any, headers: anyNamed('headers'))).thenAnswer(
+          (_) async => http.Response(
+            jsonEncode({'message': 'API rate limit exceeded'}),
+            403,
+            headers: {
+              'x-ratelimit-remaining': '0',
+              'x-ratelimit-reset': '1640995200',
+            },
+          ),
+        );
 
         expect(
           () => service.getAuthenticatedUser(),
-          throwsA(isA<GitHubApiException>().having(
-            (e) => e.errorType,
-            'errorType',
-            'rate_limit',
-          )),
+          throwsA(
+            isA<GitHubApiException>().having(
+              (e) => e.errorType,
+              'errorType',
+              'rate_limit',
+            ),
+          ),
         );
       });
 
       test('should handle network timeout', () async {
-        when(mockHttpClient.get(
-          any,
-          headers: anyNamed('headers'),
-        )).thenThrow(TimeoutException('Request timeout', Duration(seconds: 30)));
+        when(
+          mockHttpClient.get(any, headers: anyNamed('headers')),
+        ).thenThrow(TimeoutException('Request timeout', Duration(seconds: 30)));
 
         expect(
           () => service.getAuthenticatedUser(),
-          throwsA(isA<GitHubApiException>().having(
-            (e) => e.message,
-            'message',
-            contains('timed out'),
-          )),
+          throwsA(
+            isA<GitHubApiException>().having(
+              (e) => e.message,
+              'message',
+              contains('timed out'),
+            ),
+          ),
         );
       });
 
       test('should handle server errors', () async {
-        when(mockHttpClient.get(
-          any,
-          headers: anyNamed('headers'),
-        )).thenAnswer((_) async => http.Response(
-          'Internal Server Error',
-          500,
-        ));
+        when(
+          mockHttpClient.get(any, headers: anyNamed('headers')),
+        ).thenAnswer((_) async => http.Response('Internal Server Error', 500));
 
         expect(
           () => service.getAuthenticatedUser(),
-          throwsA(isA<GitHubApiException>().having(
-            (e) => e.statusCode,
-            'statusCode',
-            500,
-          )),
+          throwsA(
+            isA<GitHubApiException>().having(
+              (e) => e.statusCode,
+              'statusCode',
+              500,
+            ),
+          ),
         );
       });
     });

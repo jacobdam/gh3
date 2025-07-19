@@ -48,22 +48,38 @@ class DummyGitHubApiService implements GitHubApiService {
   Future<GitHubUser> getAuthenticatedUser() async => throw UnimplementedError();
 
   @override
-  Future<GitHubUser> getUser(String username) async => throw UnimplementedError();
+  Future<GitHubUser> getUser(String username) async =>
+      throw UnimplementedError();
 
   @override
-  Future<List<GitHubUser>> getFollowing({int page = 1, int perPage = 30}) async => [];
+  Future<List<GitHubUser>> getFollowing({
+    int page = 1,
+    int perPage = 30,
+  }) async => [];
 
   @override
-  Future<List<GitHubUser>> getUserFollowers(String username, {int page = 1, int perPage = 30}) async => [];
+  Future<List<GitHubUser>> getUserFollowers(
+    String username, {
+    int page = 1,
+    int perPage = 30,
+  }) async => [];
 
   @override
-  Future<List<GitHubRepository>> getUserRepositories(String username, {int page = 1, int perPage = 30, String sort = 'updated', String direction = 'desc'}) async => [];
+  Future<List<GitHubRepository>> getUserRepositories(
+    String username, {
+    int page = 1,
+    int perPage = 30,
+    String sort = 'updated',
+    String direction = 'desc',
+  }) async => [];
 
   @override
-  Future<GitHubRepository> getRepository(String owner, String repo) async => throw UnimplementedError();
+  Future<GitHubRepository> getRepository(String owner, String repo) async =>
+      throw UnimplementedError();
 
   @override
-  Future<String> getRepositoryReadme(String owner, String repo) async => throw UnimplementedError();
+  Future<String> getRepositoryReadme(String owner, String repo) async =>
+      throw UnimplementedError();
 }
 
 /// Fake AuthService that simulates init and login state.

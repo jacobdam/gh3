@@ -29,15 +29,12 @@ class HomeViewModel extends ChangeNotifier {
     _clearError();
 
     try {
-      final users = await _apiService.getFollowing(
-        page: 1,
-        perPage: _perPage,
-      );
+      final users = await _apiService.getFollowing(page: 1, perPage: _perPage);
 
       _followingUsers = users;
       _currentPage = 1;
       _hasMore = users.length == _perPage;
-      
+
       notifyListeners();
     } catch (e) {
       _setError(_getErrorMessage(e));
@@ -66,7 +63,7 @@ class HomeViewModel extends ChangeNotifier {
       } else {
         _hasMore = false;
       }
-      
+
       notifyListeners();
     } catch (e) {
       _setError(_getErrorMessage(e));
