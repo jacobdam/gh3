@@ -8,7 +8,11 @@ class HomeScreen extends StatefulWidget {
   final AuthViewModel authViewModel;
   final HomeViewModel homeViewModel;
 
-  const HomeScreen({super.key, required this.authViewModel, required this.homeViewModel});
+  const HomeScreen({
+    super.key,
+    required this.authViewModel,
+    required this.homeViewModel,
+  });
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -37,7 +41,6 @@ class _HomeScreenState extends State<HomeScreen> {
     _homeViewModel.removeListener(_onHomeViewModelChanged);
     _scrollController.removeListener(_onScroll);
     _scrollController.dispose();
-    _homeViewModel.dispose();
     super.dispose();
   }
 
@@ -215,8 +218,8 @@ class _HomeScreenState extends State<HomeScreen> {
         final user = users[index];
 
         // Use UserCard widget with GraphQL fragment data
-        return UserCard(
-          user: user,
+        return UserCard.fromFragment(
+          user,
           onTap: () {
             context.push('/${user.login}');
           },

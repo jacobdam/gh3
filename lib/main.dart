@@ -84,7 +84,10 @@ class MyApp extends StatelessWidget {
         ),
         GoRoute(
           path: '/',
-          builder: (context, state) => HomeScreen(authViewModel: authViewModel, homeViewModel: homeViewModel,),
+          builder: (context, state) => HomeScreen(
+            authViewModel: authViewModel,
+            homeViewModel: homeViewModel,
+          ),
         ),
         GoRoute(
           path: '/:login/:repo',

@@ -1,7 +1,11 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:get_it/get_it.dart';
 import 'package:ferry/ferry.dart';
+import 'package:gh3/src/screens/home_screen/home_viewmodel.dart';
+import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
+import 'package:gh3/src/screens/home_screen/__generated__/home_viewmodel.data.gql.dart';
+import 'package:gh3/src/screens/home_screen/__generated__/home_viewmodel.var.gql.dart';
 
 import 'package:gh3/main.dart';
 import 'package:gh3/src/services/auth_service.dart';
@@ -16,7 +20,8 @@ import 'package:gh3/src/models/github_repository.dart';
 import 'package:gh3/src/viewmodels/login_viewmodel.dart';
 import 'package:gh3/src/viewmodels/auth_viewmodel.dart';
 
-class MockClient extends Mock implements Client {}
+@GenerateNiceMocks([MockSpec<Client>()])
+import 'app_start_test.mocks.dart';
 
 /// Dummy implementations to satisfy AuthService constructor, not used directly.
 class DummyAuthClient implements GithubAuthClient {
@@ -101,6 +106,8 @@ class FakeAuthService extends AuthService {
   bool get isLoggedIn => _loggedIn;
 }
 
+T anyRequest<T>() => any as T;
+
 void main() {
   setUp(() {
     // Reset DI before each test
@@ -114,6 +121,9 @@ void main() {
     final fakeAuthService = FakeAuthService(true);
     final dummyAuthClient = DummyAuthClient();
     final mockFerryClient = MockClient();
+    when(
+      mockFerryClient.request<GGetFollowingData, GGetFollowingVars>(any),
+    ).thenAnswer((_) => const Stream.empty());
 
     GetIt.I.registerSingleton<AuthService>(fakeAuthService);
     GetIt.I.registerSingleton<GithubAuthClient>(dummyAuthClient);
@@ -134,6 +144,7 @@ void main() {
         authService: fakeAuthService,
         githubAuthClient: dummyAuthClient,
         githubApiService: DummyGitHubApiService(),
+        homeViewModel: HomeViewModel(mockFerryClient),
       ),
     );
 
@@ -152,6 +163,10 @@ void main() {
     final fakeAuthService = FakeAuthService(false);
     final dummyAuthClient = DummyAuthClient();
     final mockFerryClient = MockClient();
+    // ignore: argument_type_not_assignable, avoid_redundant_argument_values
+    when(
+      mockFerryClient.request<GGetFollowingData, GGetFollowingVars>(captureAny),
+    ).thenAnswer((_) => const Stream.empty());
 
     GetIt.I.registerSingleton<AuthService>(fakeAuthService);
     GetIt.I.registerSingleton<GithubAuthClient>(dummyAuthClient);
@@ -172,6 +187,7 @@ void main() {
         authService: fakeAuthService,
         githubAuthClient: dummyAuthClient,
         githubApiService: DummyGitHubApiService(),
+        homeViewModel: HomeViewModel(mockFerryClient),
       ),
     );
 

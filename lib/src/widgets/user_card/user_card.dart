@@ -2,10 +2,44 @@ import 'package:flutter/material.dart';
 import '__generated__/user_card.data.gql.dart';
 
 class UserCard extends StatelessWidget {
-  final GUserCardFragment user; // Direct GraphQL fragment consumption
+  final String id;
+  final String login;
+  final String? name;
+  final String avatarUrl;
+  final String? bio;
+  final int repositoryCount;
+  final int followerCount;
   final VoidCallback? onTap;
 
-  const UserCard({super.key, required this.user, this.onTap});
+  const UserCard({
+    super.key,
+    required this.id,
+    required this.login,
+    required this.name,
+    required this.avatarUrl,
+    required this.bio,
+    required this.repositoryCount,
+    required this.followerCount,
+    this.onTap,
+  });
+
+  factory UserCard.fromFragment(
+    GUserCardFragment fragment, {
+    Key? key,
+    VoidCallback? onTap,
+  }) {
+    return UserCard(
+      key: key,
+      id: fragment.id,
+      login: fragment.login,
+      name: fragment.name,
+      avatarUrl: fragment.avatarUrl.value,
+      bio: fragment.bio,
+      repositoryCount: fragment.repositories.totalCount,
+      followerCount: fragment.followers.totalCount,
+      onTap: onTap,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -13,11 +47,11 @@ class UserCard extends StatelessWidget {
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: ListTile(
         leading: CircleAvatar(
-          backgroundImage: NetworkImage(user.avatarUrl.toString()),
-          backgroundColor: _getAvatarColor(user.login),
-          child: user.avatarUrl.toString().isEmpty
+          backgroundImage: NetworkImage(avatarUrl),
+          backgroundColor: _getAvatarColor(login),
+          child: avatarUrl.isEmpty
               ? Text(
-                  user.login.isNotEmpty ? user.login[0].toUpperCase() : '?',
+                  login.isNotEmpty ? login[0].toUpperCase() : '?',
                   style: const TextStyle(
                     color: Colors.white,
                     fontWeight: FontWeight.bold,
@@ -26,17 +60,17 @@ class UserCard extends StatelessWidget {
               : null,
         ),
         title: Text(
-          user.name ?? user.login,
+          name ?? login,
           style: const TextStyle(fontWeight: FontWeight.bold),
         ),
         subtitle: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('@${user.login}'),
-            if (user.bio != null && user.bio!.isNotEmpty) ...[
+            Text('@$login'),
+            if (bio != null && bio!.isNotEmpty) ...[
               const SizedBox(height: 4),
               Text(
-                user.bio!,
+                bio!,
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(color: Colors.grey[600]),
@@ -48,14 +82,14 @@ class UserCard extends StatelessWidget {
                 Icon(Icons.folder, size: 16, color: Colors.grey[600]),
                 const SizedBox(width: 4),
                 Text(
-                  '${user.repositories.totalCount} repos',
+                  '$repositoryCount repos',
                   style: TextStyle(color: Colors.grey[600], fontSize: 12),
                 ),
                 const SizedBox(width: 16),
                 Icon(Icons.people, size: 16, color: Colors.grey[600]),
                 const SizedBox(width: 4),
                 Text(
-                  '${user.followers.totalCount} followers',
+                  '$followerCount followers',
                   style: TextStyle(color: Colors.grey[600], fontSize: 12),
                 ),
               ],
