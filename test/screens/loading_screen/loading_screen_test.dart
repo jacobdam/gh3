@@ -1,7 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter/material.dart';
 import 'package:gh3/src/screens/loading_screen/loading_screen.dart';
-import 'package:gh3/src/viewmodels/auth_viewmodel.dart';
+import 'package:gh3/src/screens/app/auth_viewmodel.dart';
 
 class FakeAuthViewModel extends ChangeNotifier implements AuthViewModel {
   @override
@@ -52,4 +52,4 @@ void main() {
     await tester.pump();
     expect(find.byType(CircularProgressIndicator), findsOneWidget);
   });
-} 
+}

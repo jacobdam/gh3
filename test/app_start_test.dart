@@ -17,7 +17,7 @@ import 'package:gh3/src/services/scope_service.dart';
 import 'package:gh3/src/services/github_api_service.dart';
 import 'package:gh3/src/models/github_user.dart';
 import 'package:gh3/src/models/github_repository.dart';
-import 'package:gh3/src/viewmodels/auth_viewmodel.dart';
+import 'package:gh3/src/screens/app/auth_viewmodel.dart';
 import 'package:gh3/src/screens/login_screen/login_viewmodel.dart';
 
 @GenerateNiceMocks([MockSpec<Client>()])

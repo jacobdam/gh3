@@ -4,7 +4,7 @@ import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'package:gh3/src/screens/home_screen/home_screen.dart';
 import 'package:gh3/src/screens/home_screen/home_viewmodel.dart';
-import 'package:gh3/src/viewmodels/auth_viewmodel.dart';
+import 'package:gh3/src/screens/app/auth_viewmodel.dart';
 import 'package:gh3/src/widgets/user_card/user_card.dart';
 
 import 'home_screen_test.mocks.dart';

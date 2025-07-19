@@ -4,7 +4,7 @@ import 'package:gh3/src/screens/login_screen/login_screen.dart';
 import 'package:gh3/src/screens/login_screen/login_viewmodel.dart';
 import 'package:gh3/src/services/github_auth_client.dart';
 import 'package:gh3/src/services/auth_service.dart';
-import 'package:gh3/src/viewmodels/auth_viewmodel.dart';
+import 'package:gh3/src/screens/app/auth_viewmodel.dart';
 
 class DummyGithubAuthClient implements GithubAuthClient {
   @override

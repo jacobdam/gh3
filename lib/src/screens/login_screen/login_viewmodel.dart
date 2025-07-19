@@ -2,7 +2,7 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import '../../services/github_auth_client.dart';
 import '../../services/auth_service.dart';
-import '../../viewmodels/auth_viewmodel.dart';
+import '../app/auth_viewmodel.dart';
 
 /// ViewModel for handling GitHub device-flow login UI.
 class LoginViewModel extends ChangeNotifier {
