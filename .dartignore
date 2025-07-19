@@ -1,0 +1,20 @@
+# Generated files
+**/__generated__/**
+**/*.g.dart
+**/*.freezed.dart
+**/*.mocks.dart
+
+# Build outputs
+build/
+.dart_tool/
+
+# Coverage reports
+coverage/
+
+# IDE files
+.idea/
+.vscode/
+
+# OS generated files
+.DS_Store
+Thumbs.db 
