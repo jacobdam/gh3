@@ -8,6 +8,9 @@ import 'package:gh3/src/screens/login_screen.dart';
 import 'package:gh3/src/services/github_auth_client.dart';
 import 'package:gh3/src/services/token_storage.dart';
 import 'package:gh3/src/services/scope_service.dart';
+import 'package:gh3/src/services/github_api_service.dart';
+import 'package:gh3/src/models/github_user.dart';
+import 'package:gh3/src/models/github_repository.dart';
 import 'package:gh3/src/viewmodels/login_viewmodel.dart';
 import 'package:gh3/src/viewmodels/auth_viewmodel.dart';
 
@@ -38,6 +41,29 @@ class DummyTokenStorage implements ITokenStorage {
 class DummyScopeService implements IScopeService {
   @override
   Future<List<String>> getScopesFromAccessToken(String accessToken) async => [];
+}
+
+class DummyGitHubApiService implements GitHubApiService {
+  @override
+  Future<GitHubUser> getAuthenticatedUser() async => throw UnimplementedError();
+
+  @override
+  Future<GitHubUser> getUser(String username) async => throw UnimplementedError();
+
+  @override
+  Future<List<GitHubUser>> getFollowing({int page = 1, int perPage = 30}) async => [];
+
+  @override
+  Future<List<GitHubUser>> getUserFollowers(String username, {int page = 1, int perPage = 30}) async => [];
+
+  @override
+  Future<List<GitHubRepository>> getUserRepositories(String username, {int page = 1, int perPage = 30, String sort = 'updated', String direction = 'desc'}) async => [];
+
+  @override
+  Future<GitHubRepository> getRepository(String owner, String repo) async => throw UnimplementedError();
+
+  @override
+  Future<String> getRepositoryReadme(String owner, String repo) async => throw UnimplementedError();
 }
 
 /// Fake AuthService that simulates init and login state.
@@ -85,6 +111,7 @@ void main() {
         authViewModel: authViewModel,
         authService: fakeAuthService,
         githubAuthClient: dummyAuthClient,
+        githubApiService: DummyGitHubApiService(),
       ),
     );
 
@@ -120,6 +147,7 @@ void main() {
         authViewModel: authViewModel,
         authService: fakeAuthService,
         githubAuthClient: dummyAuthClient,
+        githubApiService: DummyGitHubApiService(),
       ),
     );
 

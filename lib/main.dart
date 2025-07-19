@@ -11,6 +11,10 @@ import 'package:gh3/src/viewmodels/auth_viewmodel.dart';
 import 'package:gh3/src/viewmodels/login_viewmodel.dart';
 import 'package:gh3/src/services/auth_service.dart';
 import 'package:gh3/src/services/github_auth_client.dart';
+import 'package:gh3/src/services/github_api_service.dart';
+import 'package:gh3/src/viewmodels/home_viewmodel.dart';
+import 'package:gh3/src/viewmodels/user_details_viewmodel.dart';
+import 'package:gh3/src/viewmodels/repository_details_viewmodel.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -19,6 +23,7 @@ Future<void> main() async {
   // Get services from dependency injection
   final authService = getIt<AuthService>();
   final githubAuthClient = getIt<GithubAuthClient>();
+  final githubApiService = getIt<GitHubApiService>();
 
   // Create ViewModels manually with their dependencies
   final authVM = AuthViewModel(authService);
@@ -29,6 +34,7 @@ Future<void> main() async {
       authViewModel: authVM,
       authService: authService,
       githubAuthClient: githubAuthClient,
+      githubApiService: githubApiService,
     ),
   );
 }
@@ -40,12 +46,14 @@ class MyApp extends StatelessWidget {
   final AuthViewModel authViewModel;
   final AuthService authService;
   final GithubAuthClient githubAuthClient;
+  final GitHubApiService githubApiService;
 
   const MyApp({
     super.key,
     required this.authViewModel,
     required this.authService,
     required this.githubAuthClient,
+    required this.githubApiService,
   });
 
   @override
@@ -71,21 +79,31 @@ class MyApp extends StatelessWidget {
         ),
         GoRoute(
           path: '/',
-          builder: (context, state) => HomeScreen(authViewModel: authViewModel),
+          builder: (context, state) => HomeScreen(
+            authViewModel: authViewModel,
+            homeViewModel: HomeViewModel(githubApiService),
+          ),
         ),
         GoRoute(
           path: '/:login/:repo',
           builder: (context, state) {
             final login = state.pathParameters['login']!;
             final repo = state.pathParameters['repo']!;
-            return RepositoryDetailsScreen(login: login, repo: repo);
+            return RepositoryDetailsScreen(
+              login: login,
+              repo: repo,
+              viewModel: RepositoryDetailsViewModel(githubApiService, login, repo),
+            );
           },
         ),
         GoRoute(
           path: '/:login',
           builder: (context, state) {
             final login = state.pathParameters['login']!;
-            return UserDetailsScreen(login: login);
+            return UserDetailsScreen(
+              login: login,
+              viewModel: UserDetailsViewModel(githubApiService, login),
+            );
           },
         ),
       ],

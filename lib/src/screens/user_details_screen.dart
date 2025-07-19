@@ -1,16 +1,62 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import '../viewmodels/user_details_viewmodel.dart';
 
-class UserDetailsScreen extends StatelessWidget {
+class UserDetailsScreen extends StatefulWidget {
   final String login;
+  final UserDetailsViewModel viewModel;
 
-  const UserDetailsScreen({super.key, required this.login});
+  const UserDetailsScreen({
+    super.key, 
+    required this.login,
+    required this.viewModel,
+  });
+
+  @override
+  State<UserDetailsScreen> createState() => _UserDetailsScreenState();
+}
+
+class _UserDetailsScreenState extends State<UserDetailsScreen> {
+  final ScrollController _scrollController = ScrollController();
+
+  @override
+  void initState() {
+    super.initState();
+    widget.viewModel.addListener(_onViewModelChanged);
+    _scrollController.addListener(_onScroll);
+    
+    // Load initial data
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      widget.viewModel.refresh();
+    });
+  }
+
+  @override
+  void dispose() {
+    widget.viewModel.removeListener(_onViewModelChanged);
+    _scrollController.removeListener(_onScroll);
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  void _onViewModelChanged() {
+    if (mounted) {
+      setState(() {});
+    }
+  }
+
+  void _onScroll() {
+    if (_scrollController.position.pixels >= 
+        _scrollController.position.maxScrollExtent - 200) {
+      widget.viewModel.loadMoreRepositories();
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('@$login'),
+        title: Text('@${widget.login}'),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
@@ -21,152 +67,348 @@ class UserDetailsScreen extends StatelessWidget {
             }
           },
         ),
+        actions: [
+          PopupMenuButton<String>(
+            onSelected: (value) => _handleSortSelection(value),
+            itemBuilder: (context) => [
+              const PopupMenuItem(
+                value: 'updated_desc',
+                child: Text('Recently updated'),
+              ),
+              const PopupMenuItem(
+                value: 'created_desc',
+                child: Text('Recently created'),
+              ),
+              const PopupMenuItem(
+                value: 'pushed_desc',
+                child: Text('Recently pushed'),
+              ),
+              const PopupMenuItem(
+                value: 'full_name_asc',
+                child: Text('Name (A-Z)'),
+              ),
+            ],
+          ),
+        ],
       ),
-      body: Padding(
+      body: RefreshIndicator(
+        onRefresh: widget.viewModel.refresh,
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // User Profile Card
+              _buildUserProfileCard(),
+              const SizedBox(height: 16),
+
+              // Repositories Section
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'Repositories',
+                    style: Theme.of(context).textTheme.titleLarge
+                        ?.copyWith(fontWeight: FontWeight.bold),
+                  ),
+                  if (widget.viewModel.isLoadingRepositories && 
+                      widget.viewModel.repositories.isEmpty)
+                    const SizedBox(
+                      width: 20,
+                      height: 20,
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    ),
+                ],
+              ),
+              const SizedBox(height: 12),
+
+              // Repositories Error
+              if (widget.viewModel.repositoriesError != null)
+                _buildErrorCard(
+                  widget.viewModel.repositoriesError!,
+                  widget.viewModel.clearRepositoriesError,
+                ),
+
+              // Repositories List
+              Expanded(
+                child: _buildRepositoriesList(),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildUserProfileCard() {
+    final user = widget.viewModel.user;
+    final isLoading = widget.viewModel.isLoadingUser;
+    final error = widget.viewModel.userError;
+
+    return Card(
+      child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // User Profile Card
-            Card(
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  children: [
-                    Row(
-                      children: [
-                        CircleAvatar(
-                          radius: 40,
-                          backgroundColor: Colors.grey[300],
-                          child: Icon(
+            if (error != null)
+              _buildErrorCard(error, widget.viewModel.clearUserError)
+            else ...[
+              Row(
+                children: [
+                  CircleAvatar(
+                    radius: 40,
+                    backgroundImage: user?.avatarUrl != null 
+                        ? NetworkImage(user!.avatarUrl) 
+                        : null,
+                    backgroundColor: Colors.grey[300],
+                    onBackgroundImageError: (_, __) {},
+                    child: user?.avatarUrl == null || user!.avatarUrl.isEmpty
+                        ? Icon(
                             Icons.person,
                             size: 40,
                             color: Colors.grey[600],
-                          ),
-                        ),
-                        const SizedBox(width: 16),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                login,
-                                style: Theme.of(context).textTheme.headlineSmall
-                                    ?.copyWith(fontWeight: FontWeight.bold),
-                              ),
-                              const SizedBox(height: 4),
-                              Text(
-                                'Loading user details...',
-                                style: TextStyle(
-                                  color: Colors.grey[600],
-                                  fontStyle: FontStyle.italic,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 16),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          )
+                        : null,
+                  ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        _buildStatColumn('Repositories', 'Loading...'),
-                        _buildStatColumn('Followers', 'Loading...'),
-                        _buildStatColumn('Following', 'Loading...'),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            const SizedBox(height: 16),
-
-            // Repositories Section
-            Text(
-              'Repositories',
-              style: Theme.of(
-                context,
-              ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 12),
-
-            Expanded(
-              child: ListView.builder(
-                itemCount: _sampleRepositories.length,
-                itemBuilder: (context, index) {
-                  final repo = _sampleRepositories[index];
-                  return Card(
-                    margin: const EdgeInsets.only(bottom: 8.0),
-                    child: ListTile(
-                      leading: const Icon(Icons.folder, color: Colors.blue),
-                      title: Text(
-                        repo['name']!,
-                        style: const TextStyle(fontWeight: FontWeight.w600),
-                      ),
-                      subtitle: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          if (repo['description']!.isNotEmpty)
-                            Text(
-                              repo['description']!,
-                              style: TextStyle(color: Colors.grey[600]),
+                        Text(
+                          user?.login ?? widget.login,
+                          style: Theme.of(context).textTheme.headlineSmall
+                              ?.copyWith(fontWeight: FontWeight.bold),
+                        ),
+                        const SizedBox(height: 4),
+                        if (isLoading)
+                          Text(
+                            'Loading user details...',
+                            style: TextStyle(
+                              color: Colors.grey[600],
+                              fontStyle: FontStyle.italic,
                             ),
+                          )
+                        else if (user?.name != null && user!.name!.isNotEmpty)
+                          Text(
+                            user.name!,
+                            style: TextStyle(
+                              color: Colors.grey[600],
+                              fontSize: 16,
+                            ),
+                          ),
+                        if (user?.bio != null && user!.bio!.isNotEmpty) ...[
+                          const SizedBox(height: 8),
+                          Text(
+                            user.bio!,
+                            style: TextStyle(color: Colors.grey[700]),
+                          ),
+                        ],
+                        if (user?.location != null && user!.location!.isNotEmpty) ...[
                           const SizedBox(height: 4),
                           Row(
                             children: [
-                              if (repo['language']!.isNotEmpty) ...[
-                                Container(
-                                  width: 12,
-                                  height: 12,
-                                  decoration: BoxDecoration(
-                                    color: _getLanguageColor(repo['language']!),
-                                    shape: BoxShape.circle,
-                                  ),
-                                ),
-                                const SizedBox(width: 4),
-                                Text(
-                                  repo['language']!,
-                                  style: const TextStyle(fontSize: 12),
-                                ),
-                                const SizedBox(width: 16),
-                              ],
-                              const Icon(
-                                Icons.star,
-                                size: 16,
-                                color: Colors.amber,
-                              ),
-                              const SizedBox(width: 2),
+                              Icon(Icons.location_on, 
+                                   size: 16, color: Colors.grey[600]),
+                              const SizedBox(width: 4),
                               Text(
-                                repo['stars']!,
-                                style: const TextStyle(fontSize: 12),
-                              ),
-                              const SizedBox(width: 16),
-                              const Icon(
-                                Icons.fork_right,
-                                size: 16,
-                                color: Colors.grey,
-                              ),
-                              const SizedBox(width: 2),
-                              Text(
-                                repo['forks']!,
-                                style: const TextStyle(fontSize: 12),
+                                user.location!,
+                                style: TextStyle(color: Colors.grey[600]),
                               ),
                             ],
                           ),
                         ],
-                      ),
-                      onTap: () {
-                        context.push('/$login/${repo['name']}');
-                      },
-                      trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+                        if (user?.company != null && user!.company!.isNotEmpty) ...[
+                          const SizedBox(height: 4),
+                          Row(
+                            children: [
+                              Icon(Icons.business, 
+                                   size: 16, color: Colors.grey[600]),
+                              const SizedBox(width: 4),
+                              Text(
+                                user.company!,
+                                style: TextStyle(color: Colors.grey[600]),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ],
                     ),
-                  );
-                },
+                  ),
+                ],
               ),
+              const SizedBox(height: 16),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  _buildStatColumn(
+                    'Repositories', 
+                    isLoading ? 'Loading...' : _formatNumber(user?.publicRepos ?? 0),
+                  ),
+                  _buildStatColumn(
+                    'Followers', 
+                    isLoading ? 'Loading...' : _formatNumber(user?.followers ?? 0),
+                  ),
+                  _buildStatColumn(
+                    'Following', 
+                    isLoading ? 'Loading...' : _formatNumber(user?.following ?? 0),
+                  ),
+                ],
+              ),
+            ],
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildRepositoriesList() {
+    if (widget.viewModel.isRepositoriesEmpty && 
+        !widget.viewModel.isLoadingRepositories) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.folder_outlined,
+              size: 64,
+              color: Colors.grey[400],
+            ),
+            const SizedBox(height: 16),
+            Text(
+              'No repositories found',
+              style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                color: Colors.grey[600],
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'This user hasn\'t created any public repositories yet',
+              style: TextStyle(color: Colors.grey[500]),
+              textAlign: TextAlign.center,
             ),
           ],
         ),
+      );
+    }
+
+    return ListView.builder(
+      controller: _scrollController,
+      itemCount: widget.viewModel.repositories.length + 
+                 (widget.viewModel.isLoadingRepositories ? 1 : 0),
+      itemBuilder: (context, index) {
+        // Loading indicator at the end
+        if (index >= widget.viewModel.repositories.length) {
+          return const Padding(
+            padding: EdgeInsets.all(16.0),
+            child: Center(
+              child: CircularProgressIndicator(),
+            ),
+          );
+        }
+
+        final repo = widget.viewModel.repositories[index];
+        return Card(
+          margin: const EdgeInsets.only(bottom: 8.0),
+          child: ListTile(
+            leading: Icon(
+              repo.private ? Icons.lock : Icons.folder,
+              color: repo.private ? Colors.orange : Colors.blue,
+            ),
+            title: Text(
+              repo.name,
+              style: const TextStyle(fontWeight: FontWeight.w600),
+            ),
+            subtitle: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                if (repo.description != null && repo.description!.isNotEmpty) ...[
+                  Text(
+                    repo.description!,
+                    style: TextStyle(color: Colors.grey[600]),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  const SizedBox(height: 4),
+                ],
+                Row(
+                  children: [
+                    if (repo.language != null && repo.language!.isNotEmpty) ...[
+                      Container(
+                        width: 12,
+                        height: 12,
+                        decoration: BoxDecoration(
+                          color: _getLanguageColor(repo.language!),
+                          shape: BoxShape.circle,
+                        ),
+                      ),
+                      const SizedBox(width: 4),
+                      Text(
+                        repo.language!,
+                        style: const TextStyle(fontSize: 12),
+                      ),
+                      const SizedBox(width: 16),
+                    ],
+                    const Icon(
+                      Icons.star,
+                      size: 16,
+                      color: Colors.amber,
+                    ),
+                    const SizedBox(width: 2),
+                    Text(
+                      _formatNumber(repo.stargazersCount),
+                      style: const TextStyle(fontSize: 12),
+                    ),
+                    const SizedBox(width: 16),
+                    const Icon(
+                      Icons.fork_right,
+                      size: 16,
+                      color: Colors.grey,
+                    ),
+                    const SizedBox(width: 2),
+                    Text(
+                      _formatNumber(repo.forksCount),
+                      style: const TextStyle(fontSize: 12),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+            onTap: () {
+              context.push('/${widget.login}/${repo.name}');
+            },
+            trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildErrorCard(String error, VoidCallback onDismiss) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(12),
+      margin: const EdgeInsets.only(bottom: 12),
+      decoration: BoxDecoration(
+        color: Colors.red.shade50,
+        border: Border.all(color: Colors.red.shade200),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Row(
+        children: [
+          Icon(Icons.error_outline, color: Colors.red.shade600),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Text(
+              error,
+              style: TextStyle(color: Colors.red.shade700),
+            ),
+          ),
+          TextButton(
+            onPressed: onDismiss,
+            child: const Text('Dismiss'),
+          ),
+        ],
       ),
     );
   }
@@ -210,63 +452,19 @@ class UserDetailsScreen extends StatelessWidget {
     }
   }
 
-  // Sample repository data for placeholder
-  static const List<Map<String, String>> _sampleRepositories = [
-    {
-      'name': 'awesome-flutter-app',
-      'description': 'A beautiful Flutter application with modern UI design',
-      'language': 'Dart',
-      'stars': '142',
-      'forks': '23',
-    },
-    {
-      'name': 'react-dashboard',
-      'description': 'Modern dashboard built with React and TypeScript',
-      'language': 'TypeScript',
-      'stars': '89',
-      'forks': '12',
-    },
-    {
-      'name': 'python-data-analysis',
-      'description': 'Data analysis tools and utilities for Python',
-      'language': 'Python',
-      'stars': '67',
-      'forks': '8',
-    },
-    {
-      'name': 'mobile-game',
-      'description': 'Cross-platform mobile game built with Flutter',
-      'language': 'Dart',
-      'stars': '234',
-      'forks': '45',
-    },
-    {
-      'name': 'web-scraper',
-      'description': 'Efficient web scraping tool with async support',
-      'language': 'Python',
-      'stars': '156',
-      'forks': '31',
-    },
-    {
-      'name': 'ui-components',
-      'description': 'Reusable UI components library',
-      'language': 'JavaScript',
-      'stars': '98',
-      'forks': '19',
-    },
-    {
-      'name': 'api-server',
-      'description': 'RESTful API server with authentication',
-      'language': 'Go',
-      'stars': '203',
-      'forks': '42',
-    },
-    {
-      'name': 'machine-learning-models',
-      'description': 'Collection of ML models and experiments',
-      'language': 'Python',
-      'stars': '445',
-      'forks': '87',
-    },
-  ];
+  String _formatNumber(int number) {
+    if (number >= 1000000) {
+      return '${(number / 1000000).toStringAsFixed(1)}M';
+    } else if (number >= 1000) {
+      return '${(number / 1000).toStringAsFixed(1)}K';
+    }
+    return number.toString();
+  }
+
+  void _handleSortSelection(String value) {
+    final parts = value.split('_');
+    final sortBy = parts[0];
+    final direction = parts[1];
+    widget.viewModel.changeSorting(sortBy, direction);
+  }
 }
