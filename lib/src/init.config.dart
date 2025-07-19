@@ -12,6 +12,7 @@
 import 'package:get_it/get_it.dart' as _i174;
 import 'package:gh3/src/env/env.dart' as _i589;
 import 'package:gh3/src/services/auth_service.dart' as _i336;
+import 'package:gh3/src/services/github_api_service.dart' as _i143;
 import 'package:gh3/src/services/github_auth_client.dart' as _i1035;
 import 'package:gh3/src/services/scope_service.dart' as _i792;
 import 'package:gh3/src/services/token_storage.dart' as _i895;
@@ -33,6 +34,10 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<String>(
       () => envModule.githubClientId,
       instanceName: 'GithubClientID',
+    );
+    gh.factory<_i143.GitHubApiService>(
+      () =>
+          _i143.GitHubApiService(gh<_i519.Client>(), gh<_i895.ITokenStorage>()),
     );
     gh.factory<_i1035.GithubNonRecoverableException>(
       () => _i1035.GithubNonRecoverableException(gh<String>(), gh<String>()),
