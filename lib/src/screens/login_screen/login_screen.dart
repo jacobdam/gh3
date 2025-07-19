@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_custom_tabs/flutter_custom_tabs.dart';
 import 'package:flutter_octicons/flutter_octicons.dart';
-import '../viewmodels/login_viewmodel.dart';
+import 'login_viewmodel.dart';
 
 class LoginScreen extends StatefulWidget {
   final LoginViewModel viewModel;

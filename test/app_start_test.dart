@@ -10,15 +10,15 @@ import 'package:gh3/src/screens/home_screen/__generated__/home_viewmodel.var.gql
 import 'package:gh3/main.dart';
 import 'package:gh3/src/services/auth_service.dart';
 import 'package:gh3/src/screens/home_screen/home_screen.dart';
-import 'package:gh3/src/screens/login_screen.dart';
+import 'package:gh3/src/screens/login_screen/login_screen.dart';
 import 'package:gh3/src/services/github_auth_client.dart';
 import 'package:gh3/src/services/token_storage.dart';
 import 'package:gh3/src/services/scope_service.dart';
 import 'package:gh3/src/services/github_api_service.dart';
 import 'package:gh3/src/models/github_user.dart';
 import 'package:gh3/src/models/github_repository.dart';
-import 'package:gh3/src/viewmodels/login_viewmodel.dart';
 import 'package:gh3/src/viewmodels/auth_viewmodel.dart';
+import 'package:gh3/src/screens/login_screen/login_viewmodel.dart';
 
 @GenerateNiceMocks([MockSpec<Client>()])
 import 'app_start_test.mocks.dart';
