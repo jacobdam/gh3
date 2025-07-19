@@ -5,13 +5,9 @@ import 'package:gh3/src/screens/home_screen/home_viewmodel.dart';
 import 'package:gh3/src/screens/loading_screen/loading_screen.dart';
 import 'package:gh3/src/screens/login_screen/login_screen.dart';
 import 'package:gh3/src/screens/login_screen/login_viewmodel.dart';
-import 'package:gh3/src/screens/repository_details_screen.dart';
-import 'package:gh3/src/screens/user_details_screen.dart';
 import 'package:gh3/src/services/auth_service.dart';
 import 'package:gh3/src/services/github_api_service.dart';
 import 'package:gh3/src/services/github_auth_client.dart';
-import 'package:gh3/src/viewmodels/repository_details_viewmodel.dart';
-import 'package:gh3/src/viewmodels/user_details_viewmodel.dart';
 import 'package:go_router/go_router.dart';
 
 class Gh3App extends StatelessWidget {
@@ -58,32 +54,6 @@ class Gh3App extends StatelessWidget {
             authViewModel: authViewModel,
             homeViewModel: homeViewModel,
           ),
-        ),
-        GoRoute(
-          path: '/:login/:repo',
-          builder: (context, state) {
-            final login = state.pathParameters['login']!;
-            final repo = state.pathParameters['repo']!;
-            return RepositoryDetailsScreen(
-              login: login,
-              repo: repo,
-              viewModel: RepositoryDetailsViewModel(
-                githubApiService,
-                login,
-                repo,
-              ),
-            );
-          },
-        ),
-        GoRoute(
-          path: '/:login',
-          builder: (context, state) {
-            final login = state.pathParameters['login']!;
-            return UserDetailsScreen(
-              login: login,
-              viewModel: UserDetailsViewModel(githubApiService, login),
-            );
-          },
         ),
       ],
       redirect: (context, state) {
