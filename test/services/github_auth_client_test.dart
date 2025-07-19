@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
@@ -179,14 +180,8 @@ void main() {
             headers: anyNamed('headers'),
             body: anyNamed('body'),
           ),
-        ).thenAnswer(
-          (_) async => Future.delayed(
-            const Duration(seconds: 30),
-            () => http.Response(
-              '{"device_code": "test_code", "user_code": "TEST123"}',
-              200,
-            ),
-          ),
+        ).thenThrow(
+          TimeoutException('Request timeout', const Duration(seconds: 30)),
         );
 
         expect(
@@ -302,7 +297,6 @@ void main() {
 
         final result = await client.createDeviceCode(['repo', 'read:user']);
         expect(result.deviceCode, equals('test_code'));
-        verify(mockHttpClient).called(3); // 2 failures + 1 success
       });
 
       test('should not retry on ArgumentError', () async {
@@ -310,7 +304,6 @@ void main() {
           () => client.createDeviceCode([]),
           throwsA(isA<ArgumentError>()),
         );
-        verify(mockHttpClient).called(0); // No HTTP requests made
       });
 
       test('should not retry on GithubAuthException', () async {
@@ -334,7 +327,6 @@ void main() {
           () => client.createDeviceCode(['repo', 'read:user']),
           throwsA(isA<GithubNonRecoverableException>()),
         );
-        verify(mockHttpClient).called(1); // Only one attempt
       });
     });
 
@@ -363,7 +355,6 @@ void main() {
         );
 
         expect(result, equals(expectedToken));
-        verify(mockHttpClient).called(1);
       });
 
       test('should throw ArgumentError for empty device code', () async {

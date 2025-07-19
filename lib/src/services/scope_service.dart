@@ -40,7 +40,7 @@ class ScopeService implements IScopeService {
     try {
       final response = await _httpClient
           .get(
-            Uri.https('api.github.com', '/'),
+            Uri.https('api.github.com', '/applications/token/scopes'),
             headers: {
               'Authorization': 'token $accessToken',
               'Accept': 'application/vnd.github.v3+json',
