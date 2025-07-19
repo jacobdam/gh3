@@ -6,7 +6,7 @@ import 'package:gh3/src/screens/home_screen/home_viewmodel.dart';
 import 'package:go_router/go_router.dart';
 import 'package:gh3/src/screens/home_screen/home_screen.dart';
 import 'package:gh3/src/screens/login_screen/login_screen.dart';
-import 'package:gh3/src/screens/loading_screen.dart';
+import 'package:gh3/src/screens/loading_screen/loading_screen.dart';
 import 'package:gh3/src/screens/repository_details_screen.dart';
 import 'package:gh3/src/screens/user_details_screen.dart';
 import 'package:gh3/src/viewmodels/auth_viewmodel.dart';
@@ -70,7 +70,9 @@ class MyApp extends StatelessWidget {
       routes: [
         GoRoute(
           path: '/loading',
-          builder: (context, state) => const LoadingScreen(),
+          builder: (context, state) => LoadingScreen(
+            authViewModel: authViewModel,
+          ),
         ),
         GoRoute(
           path: '/login',
