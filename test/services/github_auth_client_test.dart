@@ -1,52 +1,49 @@
-import 'dart:async';
 import 'dart:io';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
 import 'package:gh3/src/services/github_auth_client.dart';
+import 'package:mockito/annotations.dart';
+import 'package:mockito/mockito.dart';
+import 'github_auth_client_test.mocks.dart';
 
+@GenerateMocks([http.Client])
 void main() {
   group('GithubAuthClient', () {
     late GithubAuthClient client;
-    late _MockHttpClient mockHttpClient;
+    late http.Client mockHttpClient;
 
     setUp(() {
-      mockHttpClient = _MockHttpClient();
+      mockHttpClient = MockClient();
       client = GithubAuthClient(mockHttpClient, 'test_client_id');
     });
 
     group('createDeviceCode', () {
       test('should return device code result on success', () async {
-        // Arrange
-        const expectedDeviceCode = 'device_code_123';
-        const expectedUserCode = 'USER123';
-        mockHttpClient.mockResponse = http.Response(
-          '{"device_code": "$expectedDeviceCode", "user_code": "$expectedUserCode"}',
-          200,
+        when(
+          mockHttpClient.post(
+            Uri.https('github.com', '/login/device/code', {
+              'client_id': 'test_client_id',
+              'scope': 'repo read:user',
+            }),
+            headers: {
+              'Accept': 'application/json',
+              'User-Agent': 'gh3-flutter-app',
+            },
+            body: null,
+          ),
+        ).thenAnswer(
+          (_) async => http.Response(
+            '{"device_code": "device_code_123", "user_code": "USER123"}',
+            200,
+          ),
         );
 
-        // Act
         final result = await client.createDeviceCode(['repo', 'read:user']);
-
-        // Assert
-        expect(result.deviceCode, equals(expectedDeviceCode));
-        expect(result.userCode, equals(expectedUserCode));
-        expect(mockHttpClient.lastRequest?.url.host, equals('github.com'));
-        expect(
-          mockHttpClient.lastRequest?.url.path,
-          equals('/login/device/code'),
-        );
-        expect(
-          mockHttpClient.lastRequest?.headers['Accept'],
-          equals('application/json'),
-        );
-        expect(
-          mockHttpClient.lastRequest?.headers['User-Agent'],
-          equals('gh3-flutter-app'),
-        );
+        expect(result.deviceCode, equals('device_code_123'));
+        expect(result.userCode, equals('USER123'));
       });
 
       test('should throw ArgumentError for empty scopes', () async {
-        // Act & Assert
         expect(
           () => client.createDeviceCode([]),
           throwsA(isA<ArgumentError>()),
@@ -56,15 +53,21 @@ void main() {
       test(
         'should throw GithubNonRecoverableException on HTTP 500 error',
         () async {
-          // Arrange
-          mockHttpClient.mockResponse = http.Response(
-            'Internal Server Error',
-            500,
+          when(
+            mockHttpClient.post(
+              Uri.https('github.com', '/login/device/code', {
+                'client_id': 'test_client_id',
+                'scope': 'repo read:user',
+              }),
+              headers: anyNamed('headers'),
+              body: anyNamed('body'),
+            ),
+          ).thenAnswer(
+            (_) async => http.Response('Internal Server Error', 500),
           );
 
-          // Act & Assert
           expect(
-            () => client.createDeviceCode(['repo']),
+            () => client.createDeviceCode(['repo', 'read:user']),
             throwsA(
               isA<GithubNonRecoverableException>()
                   .having((e) => e.code, 'code', equals('server_error'))
@@ -81,15 +84,19 @@ void main() {
       test(
         'should throw GithubNonRecoverableException on rate limit (429)',
         () async {
-          // Arrange
-          mockHttpClient.mockResponse = http.Response(
-            'Rate limit exceeded',
-            429,
-          );
+          when(
+            mockHttpClient.post(
+              Uri.https('github.com', '/login/device/code', {
+                'client_id': 'test_client_id',
+                'scope': 'repo read:user',
+              }),
+              headers: anyNamed('headers'),
+              body: anyNamed('body'),
+            ),
+          ).thenAnswer((_) async => http.Response('Rate limit exceeded', 429));
 
-          // Act & Assert
           expect(
-            () => client.createDeviceCode(['repo']),
+            () => client.createDeviceCode(['repo', 'read:user']),
             throwsA(
               isA<GithubNonRecoverableException>().having(
                 (e) => e.code,
@@ -104,12 +111,19 @@ void main() {
       test(
         'should throw GithubNonRecoverableException on invalid JSON',
         () async {
-          // Arrange
-          mockHttpClient.mockResponse = http.Response('invalid json', 200);
+          when(
+            mockHttpClient.post(
+              Uri.https('github.com', '/login/device/code', {
+                'client_id': 'test_client_id',
+                'scope': 'repo read:user',
+              }),
+              headers: anyNamed('headers'),
+              body: anyNamed('body'),
+            ),
+          ).thenAnswer((_) async => http.Response('invalid json', 200));
 
-          // Act & Assert
           expect(
-            () => client.createDeviceCode(['repo']),
+            () => client.createDeviceCode(['repo', 'read:user']),
             throwsA(
               isA<GithubNonRecoverableException>().having(
                 (e) => e.code,
@@ -124,15 +138,24 @@ void main() {
       test(
         'should throw GithubNonRecoverableException on OAuth error in response',
         () async {
-          // Arrange
-          mockHttpClient.mockResponse = http.Response(
-            '{"error": "invalid_client", "error_description": "Client authentication failed"}',
-            200,
+          when(
+            mockHttpClient.post(
+              Uri.https('github.com', '/login/device/code', {
+                'client_id': 'test_client_id',
+                'scope': 'repo read:user',
+              }),
+              headers: anyNamed('headers'),
+              body: anyNamed('body'),
+            ),
+          ).thenAnswer(
+            (_) async => http.Response(
+              '{"error": "invalid_client", "error_description": "Client authentication failed"}',
+              200,
+            ),
           );
 
-          // Act & Assert
           expect(
-            () => client.createDeviceCode(['repo']),
+            () => client.createDeviceCode(['repo', 'read:user']),
             throwsA(
               isA<GithubNonRecoverableException>()
                   .having((e) => e.code, 'code', equals('invalid_client'))
@@ -147,12 +170,27 @@ void main() {
       );
 
       test('should throw GithubNonRecoverableException on timeout', () async {
-        // Arrange
-        mockHttpClient.shouldTimeout = true;
+        when(
+          mockHttpClient.post(
+            Uri.https('github.com', '/login/device/code', {
+              'client_id': 'test_client_id',
+              'scope': 'repo read:user',
+            }),
+            headers: anyNamed('headers'),
+            body: anyNamed('body'),
+          ),
+        ).thenAnswer(
+          (_) async => Future.delayed(
+            const Duration(seconds: 30),
+            () => http.Response(
+              '{"device_code": "test_code", "user_code": "TEST123"}',
+              200,
+            ),
+          ),
+        );
 
-        // Act & Assert
         expect(
-          () => client.createDeviceCode(['repo']),
+          () => client.createDeviceCode(['repo', 'read:user']),
           throwsA(
             isA<GithubNonRecoverableException>().having(
               (e) => e.code,
@@ -166,12 +204,24 @@ void main() {
       test(
         'should throw GithubNonRecoverableException on socket exception',
         () async {
-          // Arrange
-          mockHttpClient.shouldThrowSocketException = true;
+          when(
+            mockHttpClient.post(
+              Uri.https('github.com', '/login/device/code', {
+                'client_id': 'test_client_id',
+                'scope': 'repo read:user',
+              }),
+              headers: anyNamed('headers'),
+              body: anyNamed('body'),
+            ),
+          ).thenAnswer(
+            (_) async => Future.delayed(
+              const Duration(seconds: 1),
+              () => throw const SocketException('Network unreachable'),
+            ),
+          );
 
-          // Act & Assert
           expect(
-            () => client.createDeviceCode(['repo']),
+            () => client.createDeviceCode(['repo', 'read:user']),
             throwsA(
               isA<GithubNonRecoverableException>().having(
                 (e) => e.code,
@@ -186,12 +236,24 @@ void main() {
       test(
         'should throw GithubNonRecoverableException on HTTP client exception',
         () async {
-          // Arrange
-          mockHttpClient.shouldThrowClientException = true;
+          when(
+            mockHttpClient.post(
+              Uri.https('github.com', '/login/device/code', {
+                'client_id': 'test_client_id',
+                'scope': 'repo read:user',
+              }),
+              headers: anyNamed('headers'),
+              body: anyNamed('body'),
+            ),
+          ).thenAnswer(
+            (_) async => Future.delayed(
+              const Duration(seconds: 1),
+              () => throw http.ClientException('Client error'),
+            ),
+          );
 
-          // Act & Assert
           expect(
-            () => client.createDeviceCode(['repo']),
+            () => client.createDeviceCode(['repo', 'read:user']),
             throwsA(
               isA<GithubNonRecoverableException>().having(
                 (e) => e.code,
@@ -204,71 +266,107 @@ void main() {
       );
 
       test('should retry on transient failures', () async {
-        // Arrange
-        mockHttpClient.failureCount = 2; // Fail twice, then succeed
-        mockHttpClient.mockResponse = http.Response(
-          '{"device_code": "test_code", "user_code": "TEST123"}',
-          200,
+        when(
+          mockHttpClient.post(
+            Uri.https('github.com', '/login/device/code', {
+              'client_id': 'test_client_id',
+              'scope': 'repo read:user',
+            }),
+            headers: anyNamed('headers'),
+            body: anyNamed('body'),
+          ),
+        ).thenAnswer(
+          (_) async => Future.delayed(
+            const Duration(seconds: 1),
+            () => throw Exception('Temporary network error'),
+          ),
+        );
+        when(
+          mockHttpClient.post(
+            Uri.https('github.com', '/login/device/code', {
+              'client_id': 'test_client_id',
+              'scope': 'repo read:user',
+            }),
+            headers: anyNamed('headers'),
+            body: anyNamed('body'),
+          ),
+        ).thenAnswer(
+          (_) async => Future.delayed(
+            const Duration(seconds: 1),
+            () => http.Response(
+              '{"device_code": "test_code", "user_code": "TEST123"}',
+              200,
+            ),
+          ),
         );
 
-        // Act
-        final result = await client.createDeviceCode(['repo']);
-
-        // Assert
+        final result = await client.createDeviceCode(['repo', 'read:user']);
         expect(result.deviceCode, equals('test_code'));
-        expect(
-          mockHttpClient.requestCount,
-          equals(3),
-        ); // 2 failures + 1 success
+        verify(mockHttpClient).called(3); // 2 failures + 1 success
       });
 
       test('should not retry on ArgumentError', () async {
-        // Act & Assert
         expect(
           () => client.createDeviceCode([]),
           throwsA(isA<ArgumentError>()),
         );
-        expect(mockHttpClient.requestCount, equals(0)); // No HTTP requests made
+        verify(mockHttpClient).called(0); // No HTTP requests made
       });
 
       test('should not retry on GithubAuthException', () async {
-        // Arrange
-        mockHttpClient.mockResponse = http.Response('Rate limit exceeded', 429);
+        when(
+          mockHttpClient.post(
+            Uri.https('github.com', '/login/device/code', {
+              'client_id': 'test_client_id',
+              'scope': 'repo read:user',
+            }),
+            headers: anyNamed('headers'),
+            body: anyNamed('body'),
+          ),
+        ).thenAnswer(
+          (_) async => Future.delayed(
+            const Duration(seconds: 1),
+            () => http.Response('Rate limit exceeded', 429),
+          ),
+        );
 
-        // Act & Assert
         expect(
-          () => client.createDeviceCode(['repo']),
+          () => client.createDeviceCode(['repo', 'read:user']),
           throwsA(isA<GithubNonRecoverableException>()),
         );
-        expect(mockHttpClient.requestCount, equals(1)); // Only one attempt
+        verify(mockHttpClient).called(1); // Only one attempt
       });
     });
 
     group('createAccessTokenFromDeviceCode', () {
       test('should return access token on success', () async {
-        // Arrange
         const expectedToken = 'access_token_123';
-        mockHttpClient.mockResponse = http.Response(
-          '{"access_token": "$expectedToken"}',
-          200,
+        when(
+          mockHttpClient.post(
+            Uri.https('github.com', '/login/oauth/access_token', {
+              'client_id': 'test_client_id',
+              'device_code': 'device_code',
+              'grant_type': 'urn:ietf:params:oauth:grant-type:device_code',
+            }),
+            headers: {
+              'Accept': 'application/json',
+              'User-Agent': 'gh3-flutter-app',
+            },
+            body: null,
+          ),
+        ).thenAnswer(
+          (_) async => http.Response('{"access_token": "$expectedToken"}', 200),
         );
 
-        // Act
         final result = await client.createAccessTokenFromDeviceCode(
           'device_code',
         );
 
-        // Assert
         expect(result, equals(expectedToken));
-        expect(mockHttpClient.lastRequest?.url.host, equals('github.com'));
-        expect(
-          mockHttpClient.lastRequest?.url.path,
-          equals('/login/oauth/access_token'),
-        );
+        verify(mockHttpClient).called(1);
       });
 
       test('should throw ArgumentError for empty device code', () async {
-        // Act & Assert
         expect(
           () => client.createAccessTokenFromDeviceCode(''),
           throwsA(isA<ArgumentError>()),
@@ -278,13 +376,24 @@ void main() {
       test(
         'should throw AuthorizationPendingException for authorization_pending',
         () async {
-          // Arrange
-          mockHttpClient.mockResponse = http.Response(
-            '{"error": "authorization_pending"}',
-            200,
+          when(
+            mockHttpClient.post(
+              Uri.https('github.com', '/login/oauth/access_token', {
+                'client_id': 'test_client_id',
+                'device_code': 'device_code',
+                'grant_type': 'urn:ietf:params:oauth:grant-type:device_code',
+              }),
+              headers: {
+                'Accept': 'application/json',
+                'User-Agent': 'gh3-flutter-app',
+              },
+              body: null,
+            ),
+          ).thenAnswer(
+            (_) async =>
+                http.Response('{"error": "authorization_pending"}', 200),
           );
 
-          // Act & Assert
           expect(
             () => client.createAccessTokenFromDeviceCode('device_code'),
             throwsA(isA<AuthorizationPendingException>()),
@@ -293,13 +402,21 @@ void main() {
       );
 
       test('should throw SlowDownException for slow_down', () async {
-        // Arrange
-        mockHttpClient.mockResponse = http.Response(
-          '{"error": "slow_down"}',
-          200,
-        );
+        when(
+          mockHttpClient.post(
+            Uri.https('github.com', '/login/oauth/access_token', {
+              'client_id': 'test_client_id',
+              'device_code': 'device_code',
+              'grant_type': 'urn:ietf:params:oauth:grant-type:device_code',
+            }),
+            headers: {
+              'Accept': 'application/json',
+              'User-Agent': 'gh3-flutter-app',
+            },
+            body: null,
+          ),
+        ).thenAnswer((_) async => http.Response('{"error": "slow_down"}', 200));
 
-        // Act & Assert
         expect(
           () => client.createAccessTokenFromDeviceCode('device_code'),
           throwsA(isA<SlowDownException>()),
@@ -307,13 +424,23 @@ void main() {
       });
 
       test('should throw AccessDeniedException for access_denied', () async {
-        // Arrange
-        mockHttpClient.mockResponse = http.Response(
-          '{"error": "access_denied"}',
-          200,
+        when(
+          mockHttpClient.post(
+            Uri.https('github.com', '/login/oauth/access_token', {
+              'client_id': 'test_client_id',
+              'device_code': 'device_code',
+              'grant_type': 'urn:ietf:params:oauth:grant-type:device_code',
+            }),
+            headers: {
+              'Accept': 'application/json',
+              'User-Agent': 'gh3-flutter-app',
+            },
+            body: null,
+          ),
+        ).thenAnswer(
+          (_) async => http.Response('{"error": "access_denied"}', 200),
         );
 
-        // Act & Assert
         expect(
           () => client.createAccessTokenFromDeviceCode('device_code'),
           throwsA(isA<AccessDeniedException>()),
@@ -323,13 +450,26 @@ void main() {
       test(
         'should throw GithubNonRecoverableException for other OAuth errors',
         () async {
-          // Arrange
-          mockHttpClient.mockResponse = http.Response(
-            '{"error": "invalid_grant", "error_description": "The device code is invalid"}',
-            200,
+          when(
+            mockHttpClient.post(
+              Uri.https('github.com', '/login/oauth/access_token', {
+                'client_id': 'test_client_id',
+                'device_code': 'device_code',
+                'grant_type': 'urn:ietf:params:oauth:grant-type:device_code',
+              }),
+              headers: {
+                'Accept': 'application/json',
+                'User-Agent': 'gh3-flutter-app',
+              },
+              body: null,
+            ),
+          ).thenAnswer(
+            (_) async => http.Response(
+              '{"error": "invalid_grant", "error_description": "The device code is invalid"}',
+              200,
+            ),
           );
 
-          // Act & Assert
           expect(
             () => client.createAccessTokenFromDeviceCode('device_code'),
             throwsA(
@@ -348,10 +488,21 @@ void main() {
       test(
         'should throw GithubNonRecoverableException when access token is missing',
         () async {
-          // Arrange
-          mockHttpClient.mockResponse = http.Response('{}', 200);
+          when(
+            mockHttpClient.post(
+              Uri.https('github.com', '/login/oauth/access_token', {
+                'client_id': 'test_client_id',
+                'device_code': 'device_code',
+                'grant_type': 'urn:ietf:params:oauth:grant-type:device_code',
+              }),
+              headers: {
+                'Accept': 'application/json',
+                'User-Agent': 'gh3-flutter-app',
+              },
+              body: null,
+            ),
+          ).thenAnswer((_) async => http.Response('{}', 200));
 
-          // Act & Assert
           expect(
             () => client.createAccessTokenFromDeviceCode('device_code'),
             throwsA(
@@ -370,13 +521,21 @@ void main() {
       test(
         'should throw GithubNonRecoverableException when access token is empty',
         () async {
-          // Arrange
-          mockHttpClient.mockResponse = http.Response(
-            '{"access_token": ""}',
-            200,
-          );
+          when(
+            mockHttpClient.post(
+              Uri.https('github.com', '/login/oauth/access_token', {
+                'client_id': 'test_client_id',
+                'device_code': 'device_code',
+                'grant_type': 'urn:ietf:params:oauth:grant-type:device_code',
+              }),
+              headers: {
+                'Accept': 'application/json',
+                'User-Agent': 'gh3-flutter-app',
+              },
+              body: null,
+            ),
+          ).thenAnswer((_) async => http.Response('{"access_token": ""}', 200));
 
-          // Act & Assert
           expect(
             () => client.createAccessTokenFromDeviceCode('device_code'),
             throwsA(
@@ -391,10 +550,26 @@ void main() {
       );
 
       test('should handle unexpected errors gracefully', () async {
-        // Arrange
-        mockHttpClient.shouldThrowGenericException = true;
+        when(
+          mockHttpClient.post(
+            Uri.https('github.com', '/login/oauth/access_token', {
+              'client_id': 'test_client_id',
+              'device_code': 'device_code',
+              'grant_type': 'urn:ietf:params:oauth:grant-type:device_code',
+            }),
+            headers: {
+              'Accept': 'application/json',
+              'User-Agent': 'gh3-flutter-app',
+            },
+            body: null,
+          ),
+        ).thenAnswer(
+          (_) async => Future.delayed(
+            const Duration(seconds: 1),
+            () => throw Exception('Unexpected error'),
+          ),
+        );
 
-        // Act & Assert
         expect(
           () => client.createAccessTokenFromDeviceCode('device_code'),
           throwsA(
@@ -420,12 +595,19 @@ void main() {
       });
 
       test('should handle malformed JSON gracefully', () async {
-        // Arrange
-        mockHttpClient.mockResponse = http.Response('{"incomplete": json', 200);
+        when(
+          mockHttpClient.post(
+            Uri.https('github.com', '/login/device/code', {
+              'client_id': 'test_client_id',
+              'scope': 'repo read:user',
+            }),
+            headers: anyNamed('headers'),
+            body: anyNamed('body'),
+          ),
+        ).thenAnswer((_) async => http.Response('{"incomplete": json', 200));
 
-        // Act & Assert
         expect(
-          () => client.createDeviceCode(['repo']),
+          () => client.createDeviceCode(['repo', 'read:user']),
           throwsA(
             isA<GithubNonRecoverableException>()
                 .having((e) => e.code, 'code', equals('invalid_response'))
@@ -492,58 +674,4 @@ void main() {
       });
     });
   });
-}
-
-/// Mock HTTP client for testing
-class _MockHttpClient extends http.BaseClient {
-  http.Response? mockResponse;
-  http.BaseRequest? lastRequest;
-  int requestCount = 0;
-  int failureCount = 0;
-  int currentFailures = 0;
-
-  bool shouldTimeout = false;
-  bool shouldThrowSocketException = false;
-  bool shouldThrowClientException = false;
-  bool shouldThrowGenericException = false;
-
-  @override
-  Future<http.StreamedResponse> send(http.BaseRequest request) async {
-    lastRequest = request;
-    requestCount++;
-
-    if (shouldTimeout) {
-      throw TimeoutException('Request timeout', const Duration(seconds: 30));
-    }
-
-    if (shouldThrowSocketException) {
-      throw const SocketException('Network unreachable');
-    }
-
-    if (shouldThrowClientException) {
-      throw http.ClientException('Client error');
-    }
-
-    if (shouldThrowGenericException) {
-      throw Exception('Generic error');
-    }
-
-    // Simulate transient failures for retry testing
-    if (currentFailures < failureCount) {
-      currentFailures++;
-      throw Exception(
-        'Temporary network error',
-      ); // Use generic exception for retry testing
-    }
-
-    if (mockResponse == null) {
-      throw Exception('No mock response configured');
-    }
-
-    return http.StreamedResponse(
-      Stream.fromIterable([mockResponse!.bodyBytes]),
-      mockResponse!.statusCode,
-      headers: mockResponse!.headers,
-    );
-  }
 }

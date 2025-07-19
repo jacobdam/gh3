@@ -5,10 +5,19 @@
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'dart:async' as _i3;
 
-import 'package:ferry/ferry.dart' as _i4;
+import 'package:ferry/ferry.dart' as _i7;
 import 'package:ferry/src/fetch_policy_typed_link.dart' as _i2;
-import 'package:gql/ast.dart' as _i5;
+import 'package:gh3/src/models/github_repository.dart' as _i6;
+import 'package:gh3/src/models/github_user.dart' as _i5;
+import 'package:gh3/src/services/auth_service.dart' as _i14;
+import 'package:gh3/src/services/github_api_service.dart' as _i13;
+import 'package:gh3/src/services/github_auth_client.dart' as _i4;
+import 'package:gh3/src/services/scope_service.dart' as _i11;
+import 'package:gh3/src/services/timer_service.dart' as _i12;
+import 'package:gh3/src/services/token_storage.dart' as _i10;
+import 'package:gql/ast.dart' as _i8;
 import 'package:mockito/mockito.dart' as _i1;
+import 'package:mockito/src/dummies.dart' as _i9;
 
 // ignore_for_file: type=lint
 // ignore_for_file: avoid_redundant_argument_values
@@ -45,10 +54,27 @@ class _FakeTypedLink_3 extends _i1.SmartFake implements _i2.TypedLink {
     : super(parent, parentInvocation);
 }
 
+class _FakeGithubDeviceCodeResult_4 extends _i1.SmartFake
+    implements _i4.GithubDeviceCodeResult {
+  _FakeGithubDeviceCodeResult_4(Object parent, Invocation parentInvocation)
+    : super(parent, parentInvocation);
+}
+
+class _FakeGitHubUser_5 extends _i1.SmartFake implements _i5.GitHubUser {
+  _FakeGitHubUser_5(Object parent, Invocation parentInvocation)
+    : super(parent, parentInvocation);
+}
+
+class _FakeGitHubRepository_6 extends _i1.SmartFake
+    implements _i6.GitHubRepository {
+  _FakeGitHubRepository_6(Object parent, Invocation parentInvocation)
+    : super(parent, parentInvocation);
+}
+
 /// A class which mocks [Client].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockClient extends _i1.Mock implements _i4.Client {
+class MockClient extends _i1.Mock implements _i7.Client {
   @override
   _i2.Link get link =>
       (super.noSuchMethod(
@@ -80,13 +106,13 @@ class MockClient extends _i1.Mock implements _i4.Client {
           as Map<String, Function>);
 
   @override
-  Map<_i5.OperationType, _i2.FetchPolicy> get defaultFetchPolicies =>
+  Map<_i8.OperationType, _i2.FetchPolicy> get defaultFetchPolicies =>
       (super.noSuchMethod(
             Invocation.getter(#defaultFetchPolicies),
-            returnValue: <_i5.OperationType, _i2.FetchPolicy>{},
-            returnValueForMissingStub: <_i5.OperationType, _i2.FetchPolicy>{},
+            returnValue: <_i8.OperationType, _i2.FetchPolicy>{},
+            returnValueForMissingStub: <_i8.OperationType, _i2.FetchPolicy>{},
           )
-          as Map<_i5.OperationType, _i2.FetchPolicy>);
+          as Map<_i8.OperationType, _i2.FetchPolicy>);
 
   @override
   bool get addTypename =>
@@ -213,4 +239,324 @@ class MockClient extends _i1.Mock implements _i4.Client {
             ),
           )
           as _i2.TypedLink);
+}
+
+/// A class which mocks [GithubAuthClient].
+///
+/// See the documentation for Mockito's code generation for more information.
+class MockGithubAuthClient extends _i1.Mock implements _i4.GithubAuthClient {
+  @override
+  _i3.Future<_i4.GithubDeviceCodeResult> createDeviceCode(
+    List<String>? scopes,
+  ) =>
+      (super.noSuchMethod(
+            Invocation.method(#createDeviceCode, [scopes]),
+            returnValue: _i3.Future<_i4.GithubDeviceCodeResult>.value(
+              _FakeGithubDeviceCodeResult_4(
+                this,
+                Invocation.method(#createDeviceCode, [scopes]),
+              ),
+            ),
+            returnValueForMissingStub:
+                _i3.Future<_i4.GithubDeviceCodeResult>.value(
+                  _FakeGithubDeviceCodeResult_4(
+                    this,
+                    Invocation.method(#createDeviceCode, [scopes]),
+                  ),
+                ),
+          )
+          as _i3.Future<_i4.GithubDeviceCodeResult>);
+
+  @override
+  _i3.Future<String> createAccessTokenFromDeviceCode(String? deviceCode) =>
+      (super.noSuchMethod(
+            Invocation.method(#createAccessTokenFromDeviceCode, [deviceCode]),
+            returnValue: _i3.Future<String>.value(
+              _i9.dummyValue<String>(
+                this,
+                Invocation.method(#createAccessTokenFromDeviceCode, [
+                  deviceCode,
+                ]),
+              ),
+            ),
+            returnValueForMissingStub: _i3.Future<String>.value(
+              _i9.dummyValue<String>(
+                this,
+                Invocation.method(#createAccessTokenFromDeviceCode, [
+                  deviceCode,
+                ]),
+              ),
+            ),
+          )
+          as _i3.Future<String>);
+}
+
+/// A class which mocks [ITokenStorage].
+///
+/// See the documentation for Mockito's code generation for more information.
+class MockITokenStorage extends _i1.Mock implements _i10.ITokenStorage {
+  @override
+  _i3.Future<String?> getToken() =>
+      (super.noSuchMethod(
+            Invocation.method(#getToken, []),
+            returnValue: _i3.Future<String?>.value(),
+            returnValueForMissingStub: _i3.Future<String?>.value(),
+          )
+          as _i3.Future<String?>);
+
+  @override
+  _i3.Future<void> saveToken(String? token) =>
+      (super.noSuchMethod(
+            Invocation.method(#saveToken, [token]),
+            returnValue: _i3.Future<void>.value(),
+            returnValueForMissingStub: _i3.Future<void>.value(),
+          )
+          as _i3.Future<void>);
+
+  @override
+  _i3.Future<void> deleteToken() =>
+      (super.noSuchMethod(
+            Invocation.method(#deleteToken, []),
+            returnValue: _i3.Future<void>.value(),
+            returnValueForMissingStub: _i3.Future<void>.value(),
+          )
+          as _i3.Future<void>);
+}
+
+/// A class which mocks [IScopeService].
+///
+/// See the documentation for Mockito's code generation for more information.
+class MockIScopeService extends _i1.Mock implements _i11.IScopeService {
+  @override
+  _i3.Future<List<String>> getScopesFromAccessToken(String? accessToken) =>
+      (super.noSuchMethod(
+            Invocation.method(#getScopesFromAccessToken, [accessToken]),
+            returnValue: _i3.Future<List<String>>.value(<String>[]),
+            returnValueForMissingStub: _i3.Future<List<String>>.value(
+              <String>[],
+            ),
+          )
+          as _i3.Future<List<String>>);
+}
+
+/// A class which mocks [TimerService].
+///
+/// See the documentation for Mockito's code generation for more information.
+class MockTimerService extends _i1.Mock implements _i12.TimerService {
+  @override
+  _i3.Future<void> delay(Duration? duration) =>
+      (super.noSuchMethod(
+            Invocation.method(#delay, [duration]),
+            returnValue: _i3.Future<void>.value(),
+            returnValueForMissingStub: _i3.Future<void>.value(),
+          )
+          as _i3.Future<void>);
+}
+
+/// A class which mocks [GitHubApiService].
+///
+/// See the documentation for Mockito's code generation for more information.
+class MockGitHubApiService extends _i1.Mock implements _i13.GitHubApiService {
+  @override
+  _i3.Future<_i5.GitHubUser> getAuthenticatedUser() =>
+      (super.noSuchMethod(
+            Invocation.method(#getAuthenticatedUser, []),
+            returnValue: _i3.Future<_i5.GitHubUser>.value(
+              _FakeGitHubUser_5(
+                this,
+                Invocation.method(#getAuthenticatedUser, []),
+              ),
+            ),
+            returnValueForMissingStub: _i3.Future<_i5.GitHubUser>.value(
+              _FakeGitHubUser_5(
+                this,
+                Invocation.method(#getAuthenticatedUser, []),
+              ),
+            ),
+          )
+          as _i3.Future<_i5.GitHubUser>);
+
+  @override
+  _i3.Future<_i5.GitHubUser> getUser(String? username) =>
+      (super.noSuchMethod(
+            Invocation.method(#getUser, [username]),
+            returnValue: _i3.Future<_i5.GitHubUser>.value(
+              _FakeGitHubUser_5(this, Invocation.method(#getUser, [username])),
+            ),
+            returnValueForMissingStub: _i3.Future<_i5.GitHubUser>.value(
+              _FakeGitHubUser_5(this, Invocation.method(#getUser, [username])),
+            ),
+          )
+          as _i3.Future<_i5.GitHubUser>);
+
+  @override
+  _i3.Future<List<_i5.GitHubUser>> getFollowing({
+    int? page = 1,
+    int? perPage = 30,
+  }) =>
+      (super.noSuchMethod(
+            Invocation.method(#getFollowing, [], {
+              #page: page,
+              #perPage: perPage,
+            }),
+            returnValue: _i3.Future<List<_i5.GitHubUser>>.value(
+              <_i5.GitHubUser>[],
+            ),
+            returnValueForMissingStub: _i3.Future<List<_i5.GitHubUser>>.value(
+              <_i5.GitHubUser>[],
+            ),
+          )
+          as _i3.Future<List<_i5.GitHubUser>>);
+
+  @override
+  _i3.Future<List<_i5.GitHubUser>> getUserFollowers(
+    String? username, {
+    int? page = 1,
+    int? perPage = 30,
+  }) =>
+      (super.noSuchMethod(
+            Invocation.method(
+              #getUserFollowers,
+              [username],
+              {#page: page, #perPage: perPage},
+            ),
+            returnValue: _i3.Future<List<_i5.GitHubUser>>.value(
+              <_i5.GitHubUser>[],
+            ),
+            returnValueForMissingStub: _i3.Future<List<_i5.GitHubUser>>.value(
+              <_i5.GitHubUser>[],
+            ),
+          )
+          as _i3.Future<List<_i5.GitHubUser>>);
+
+  @override
+  _i3.Future<List<_i6.GitHubRepository>> getUserRepositories(
+    String? username, {
+    int? page = 1,
+    int? perPage = 30,
+    String? sort = 'updated',
+    String? direction = 'desc',
+  }) =>
+      (super.noSuchMethod(
+            Invocation.method(
+              #getUserRepositories,
+              [username],
+              {
+                #page: page,
+                #perPage: perPage,
+                #sort: sort,
+                #direction: direction,
+              },
+            ),
+            returnValue: _i3.Future<List<_i6.GitHubRepository>>.value(
+              <_i6.GitHubRepository>[],
+            ),
+            returnValueForMissingStub:
+                _i3.Future<List<_i6.GitHubRepository>>.value(
+                  <_i6.GitHubRepository>[],
+                ),
+          )
+          as _i3.Future<List<_i6.GitHubRepository>>);
+
+  @override
+  _i3.Future<_i6.GitHubRepository> getRepository(String? owner, String? repo) =>
+      (super.noSuchMethod(
+            Invocation.method(#getRepository, [owner, repo]),
+            returnValue: _i3.Future<_i6.GitHubRepository>.value(
+              _FakeGitHubRepository_6(
+                this,
+                Invocation.method(#getRepository, [owner, repo]),
+              ),
+            ),
+            returnValueForMissingStub: _i3.Future<_i6.GitHubRepository>.value(
+              _FakeGitHubRepository_6(
+                this,
+                Invocation.method(#getRepository, [owner, repo]),
+              ),
+            ),
+          )
+          as _i3.Future<_i6.GitHubRepository>);
+
+  @override
+  _i3.Future<String> getRepositoryReadme(String? owner, String? repo) =>
+      (super.noSuchMethod(
+            Invocation.method(#getRepositoryReadme, [owner, repo]),
+            returnValue: _i3.Future<String>.value(
+              _i9.dummyValue<String>(
+                this,
+                Invocation.method(#getRepositoryReadme, [owner, repo]),
+              ),
+            ),
+            returnValueForMissingStub: _i3.Future<String>.value(
+              _i9.dummyValue<String>(
+                this,
+                Invocation.method(#getRepositoryReadme, [owner, repo]),
+              ),
+            ),
+          )
+          as _i3.Future<String>);
+}
+
+/// A class which mocks [AuthService].
+///
+/// See the documentation for Mockito's code generation for more information.
+class MockAuthService extends _i1.Mock implements _i14.AuthService {
+  @override
+  bool get isLoggedIn =>
+      (super.noSuchMethod(
+            Invocation.getter(#isLoggedIn),
+            returnValue: false,
+            returnValueForMissingStub: false,
+          )
+          as bool);
+
+  @override
+  _i3.Future<void> init() =>
+      (super.noSuchMethod(
+            Invocation.method(#init, []),
+            returnValue: _i3.Future<void>.value(),
+            returnValueForMissingStub: _i3.Future<void>.value(),
+          )
+          as _i3.Future<void>);
+
+  @override
+  _i3.Future<String> login() =>
+      (super.noSuchMethod(
+            Invocation.method(#login, []),
+            returnValue: _i3.Future<String>.value(
+              _i9.dummyValue<String>(this, Invocation.method(#login, [])),
+            ),
+            returnValueForMissingStub: _i3.Future<String>.value(
+              _i9.dummyValue<String>(this, Invocation.method(#login, [])),
+            ),
+          )
+          as _i3.Future<String>);
+
+  @override
+  _i3.Future<String> loginWithDeviceCode(String? deviceCode) =>
+      (super.noSuchMethod(
+            Invocation.method(#loginWithDeviceCode, [deviceCode]),
+            returnValue: _i3.Future<String>.value(
+              _i9.dummyValue<String>(
+                this,
+                Invocation.method(#loginWithDeviceCode, [deviceCode]),
+              ),
+            ),
+            returnValueForMissingStub: _i3.Future<String>.value(
+              _i9.dummyValue<String>(
+                this,
+                Invocation.method(#loginWithDeviceCode, [deviceCode]),
+              ),
+            ),
+          )
+          as _i3.Future<String>);
+
+  @override
+  _i3.Future<void> logout() =>
+      (super.noSuchMethod(
+            Invocation.method(#logout, []),
+            returnValue: _i3.Future<void>.value(),
+            returnValueForMissingStub: _i3.Future<void>.value(),
+          )
+          as _i3.Future<void>);
 }

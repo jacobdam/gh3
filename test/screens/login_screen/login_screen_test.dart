@@ -5,62 +5,23 @@ import 'package:gh3/src/screens/login_screen/login_viewmodel.dart';
 import 'package:gh3/src/services/github_auth_client.dart';
 import 'package:gh3/src/services/auth_service.dart';
 import 'package:gh3/src/screens/app/auth_viewmodel.dart';
+import 'package:mockito/annotations.dart';
+import 'package:mockito/mockito.dart';
+import 'login_screen_test.mocks.dart';
 
-class DummyGithubAuthClient implements GithubAuthClient {
-  @override
-  Future<GithubDeviceCodeResult> createDeviceCode(List<String> scopes) async =>
-      throw UnimplementedError();
-  @override
-  Future<String> createAccessTokenFromDeviceCode(String deviceCode) async =>
-      throw UnimplementedError();
-}
-
-class DummyAuthService implements AuthService {
-  @override
-  String? get accessToken => null;
-  @override
-  bool get isLoggedIn => false;
-  @override
-  Future<void> init() async {}
-  @override
-  Future<String> login() async => '';
-  @override
-  Future<String> loginWithDeviceCode(String deviceCode) async => '';
-  @override
-  Future<void> logout() async {}
-}
-
-class DummyAuthViewModel extends AuthViewModel {
-  DummyAuthViewModel() : super(DummyAuthService());
-  @override
-  bool loggedIn = false;
-  @override
-  bool loading = false;
-  @override
-  Future<void> init() async {}
-  @override
-  Future<void> logout() async {}
-  @override
-  void updateAuthState() {}
-}
-
-class FakeLoginViewModel extends LoginViewModel {
-  FakeLoginViewModel()
-    : super(DummyGithubAuthClient(), DummyAuthService(), DummyAuthViewModel());
-  @override
-  bool get isLoading => false;
-  @override
-  String? get userCode => null;
-  @override
-  String? get errorMessage => null;
-}
-
+@GenerateMocks([GithubAuthClient, AuthService, AuthViewModel, LoginViewModel])
 void main() {
   testWidgets('LoginScreen renders sign in button', (
     WidgetTester tester,
   ) async {
+    final mockLoginViewModel = MockLoginViewModel();
+    when(mockLoginViewModel.userCode).thenReturn(null);
+    when(mockLoginViewModel.isLoading).thenReturn(false);
+    when(mockLoginViewModel.errorMessage).thenReturn(null);
+    when(mockLoginViewModel.isAuthorized).thenReturn(false);
+
     await tester.pumpWidget(
-      MaterialApp(home: LoginScreen(viewModel: FakeLoginViewModel())),
+      MaterialApp(home: LoginScreen(viewModel: mockLoginViewModel)),
     );
     expect(find.text('Sign in with GitHub'), findsOneWidget);
   });

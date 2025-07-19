@@ -6,10 +6,10 @@
 import 'dart:async' as _i4;
 import 'dart:ui' as _i5;
 
+import 'package:gh3/src/screens/app/auth_viewmodel.dart' as _i6;
 import 'package:gh3/src/screens/home_screen/__generated__/home_viewmodel.data.gql.dart'
     as _i3;
 import 'package:gh3/src/screens/home_screen/home_viewmodel.dart' as _i2;
-import 'package:gh3/src/screens/app/auth_viewmodel.dart' as _i6;
 import 'package:mockito/mockito.dart' as _i1;
 
 // ignore_for_file: type=lint

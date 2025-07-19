@@ -3,14 +3,18 @@ import 'dart:io';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
 import 'package:gh3/src/services/scope_service.dart';
+import 'package:mockito/annotations.dart';
+import 'package:mockito/mockito.dart';
+import 'scope_service_test.mocks.dart';
 
+@GenerateMocks([http.Client])
 void main() {
   group('ScopeService', () {
     late ScopeService scopeService;
-    late _MockHttpClient mockHttpClient;
+    late http.Client mockHttpClient;
 
     setUp(() {
-      mockHttpClient = _MockHttpClient();
+      mockHttpClient = MockClient();
       scopeService = ScopeService(mockHttpClient);
     });
 
@@ -19,10 +23,21 @@ void main() {
         // Arrange
         const token = 'valid_token_123';
         const expectedScopes = ['repo', 'read:user'];
-        mockHttpClient.mockResponse = http.Response(
-          '{"message": "API rate limit exceeded"}',
-          200,
-          headers: {'x-oauth-scopes': 'repo, read:user'},
+        when(
+          mockHttpClient.get(
+            Uri.parse('https://api.github.com/applications/token/scopes'),
+            headers: {
+              'Authorization': 'token $token',
+              'Accept': 'application/vnd.github.v3+json',
+              'User-Agent': 'gh3-flutter-app',
+            },
+          ),
+        ).thenAnswer(
+          (_) async => http.Response(
+            '{"message": "API rate limit exceeded"}',
+            200,
+            headers: {'x-oauth-scopes': 'repo, read:user'},
+          ),
         );
 
         // Act
@@ -30,31 +45,34 @@ void main() {
 
         // Assert
         expect(result, equals(expectedScopes));
-        expect(
-          mockHttpClient.lastRequest?.url.toString(),
-          contains('api.github.com'),
-        );
-        expect(
-          mockHttpClient.lastRequest?.headers['Authorization'],
-          equals('token $token'),
-        );
-        expect(
-          mockHttpClient.lastRequest?.headers['Accept'],
-          equals('application/vnd.github.v3+json'),
-        );
-        expect(
-          mockHttpClient.lastRequest?.headers['User-Agent'],
-          equals('gh3-flutter-app'),
-        );
+        verify(mockHttpClient).called(1);
+        verify(
+          mockHttpClient.get(
+            Uri.parse('https://api.github.com/applications/token/scopes'),
+            headers: {
+              'Authorization': 'token $token',
+              'Accept': 'application/vnd.github.v3+json',
+              'User-Agent': 'gh3-flutter-app',
+            },
+          ),
+        ).called(1);
       });
 
       test('should return empty list when no scopes are present', () async {
         // Arrange
         const token = 'valid_token_123';
-        mockHttpClient.mockResponse = http.Response(
-          '{}',
-          200,
-          headers: {'x-oauth-scopes': ''},
+        when(
+          mockHttpClient.get(
+            Uri.parse('https://api.github.com/applications/token/scopes'),
+            headers: {
+              'Authorization': 'token $token',
+              'Accept': 'application/vnd.github.v3+json',
+              'User-Agent': 'gh3-flutter-app',
+            },
+          ),
+        ).thenAnswer(
+          (_) async =>
+              http.Response('{}', 200, headers: {'x-oauth-scopes': ''}),
         );
 
         // Act
@@ -68,10 +86,21 @@ void main() {
         // Arrange
         const token = 'valid_token_123';
         const expectedScopes = ['repo', 'read:user', 'write:repo_hook'];
-        mockHttpClient.mockResponse = http.Response(
-          '{}',
-          200,
-          headers: {'x-oauth-scopes': ' repo , read:user,  write:repo_hook '},
+        when(
+          mockHttpClient.get(
+            Uri.parse('https://api.github.com/applications/token/scopes'),
+            headers: {
+              'Authorization': 'token $token',
+              'Accept': 'application/vnd.github.v3+json',
+              'User-Agent': 'gh3-flutter-app',
+            },
+          ),
+        ).thenAnswer(
+          (_) async => http.Response(
+            '{}',
+            200,
+            headers: {'x-oauth-scopes': ' repo , read:user,  write:repo_hook '},
+          ),
         );
 
         // Act
@@ -94,9 +123,17 @@ void main() {
         () async {
           // Arrange
           const token = 'invalid_token';
-          mockHttpClient.mockResponse = http.Response(
-            '{"message": "Bad credentials"}',
-            401,
+          when(
+            mockHttpClient.get(
+              Uri.parse('https://api.github.com/applications/token/scopes'),
+              headers: {
+                'Authorization': 'token $token',
+                'Accept': 'application/vnd.github.v3+json',
+                'User-Agent': 'gh3-flutter-app',
+              },
+            ),
+          ).thenAnswer(
+            (_) async => http.Response('{"message": "Bad credentials"}', 401),
           );
 
           // Act & Assert
@@ -120,9 +157,18 @@ void main() {
         () async {
           // Arrange
           const token = 'rate_limited_token';
-          mockHttpClient.mockResponse = http.Response(
-            '{"message": "API rate limit exceeded"}',
-            403,
+          when(
+            mockHttpClient.get(
+              Uri.parse('https://api.github.com/applications/token/scopes'),
+              headers: {
+                'Authorization': 'token $token',
+                'Accept': 'application/vnd.github.v3+json',
+                'User-Agent': 'gh3-flutter-app',
+              },
+            ),
+          ).thenAnswer(
+            (_) async =>
+                http.Response('{"message": "API rate limit exceeded"}', 403),
           );
 
           // Act & Assert
@@ -146,9 +192,18 @@ void main() {
         () async {
           // Arrange
           const token = 'valid_token';
-          mockHttpClient.mockResponse = http.Response(
-            '{"message": "Internal Server Error"}',
-            500,
+          when(
+            mockHttpClient.get(
+              Uri.parse('https://api.github.com/applications/token/scopes'),
+              headers: {
+                'Authorization': 'token $token',
+                'Accept': 'application/vnd.github.v3+json',
+                'User-Agent': 'gh3-flutter-app',
+              },
+            ),
+          ).thenAnswer(
+            (_) async =>
+                http.Response('{"message": "Internal Server Error"}', 500),
           );
 
           // Act & Assert
@@ -172,7 +227,16 @@ void main() {
         () async {
           // Arrange
           const token = 'valid_token';
-          mockHttpClient.mockResponse = http.Response('{}', 200);
+          when(
+            mockHttpClient.get(
+              Uri.parse('https://api.github.com/applications/token/scopes'),
+              headers: {
+                'Authorization': 'token $token',
+                'Accept': 'application/vnd.github.v3+json',
+                'User-Agent': 'gh3-flutter-app',
+              },
+            ),
+          ).thenAnswer((_) async => http.Response('{}', 200));
 
           // Act & Assert
           expect(
@@ -191,7 +255,18 @@ void main() {
       test('should throw ScopeValidationException on timeout', () async {
         // Arrange
         const token = 'valid_token';
-        mockHttpClient.shouldTimeout = true;
+        when(
+          mockHttpClient.get(
+            Uri.parse('https://api.github.com/applications/token/scopes'),
+            headers: {
+              'Authorization': 'token $token',
+              'Accept': 'application/vnd.github.v3+json',
+              'User-Agent': 'gh3-flutter-app',
+            },
+          ),
+        ).thenThrow(
+          TimeoutException('Request timeout', const Duration(seconds: 10)),
+        );
 
         // Act & Assert
         expect(
@@ -211,7 +286,16 @@ void main() {
         () async {
           // Arrange
           const token = 'valid_token';
-          mockHttpClient.shouldThrowSocketException = true;
+          when(
+            mockHttpClient.get(
+              Uri.parse('https://api.github.com/applications/token/scopes'),
+              headers: {
+                'Authorization': 'token $token',
+                'Accept': 'application/vnd.github.v3+json',
+                'User-Agent': 'gh3-flutter-app',
+              },
+            ),
+          ).thenThrow(const SocketException('Network unreachable'));
 
           // Act & Assert
           expect(
@@ -234,7 +318,16 @@ void main() {
         () async {
           // Arrange
           const token = 'valid_token';
-          mockHttpClient.shouldThrowClientException = true;
+          when(
+            mockHttpClient.get(
+              Uri.parse('https://api.github.com/applications/token/scopes'),
+              headers: {
+                'Authorization': 'token $token',
+                'Accept': 'application/vnd.github.v3+json',
+                'User-Agent': 'gh3-flutter-app',
+              },
+            ),
+          ).thenThrow(http.ClientException('Client error'));
 
           // Act & Assert
           expect(
@@ -257,7 +350,16 @@ void main() {
         () async {
           // Arrange
           const token = 'valid_token';
-          mockHttpClient.shouldThrowGenericException = true;
+          when(
+            mockHttpClient.get(
+              Uri.parse('https://api.github.com/applications/token/scopes'),
+              headers: {
+                'Authorization': 'token $token',
+                'Accept': 'application/vnd.github.v3+json',
+                'User-Agent': 'gh3-flutter-app',
+              },
+            ),
+          ).thenThrow(Exception('Generic error'));
 
           // Act & Assert
           expect(
@@ -318,46 +420,4 @@ void main() {
       });
     });
   });
-}
-
-/// Mock HTTP client for testing
-class _MockHttpClient extends http.BaseClient {
-  http.Response? mockResponse;
-  http.BaseRequest? lastRequest;
-  bool shouldTimeout = false;
-  bool shouldThrowSocketException = false;
-  bool shouldThrowClientException = false;
-  bool shouldThrowGenericException = false;
-
-  @override
-  Future<http.StreamedResponse> send(http.BaseRequest request) async {
-    lastRequest = request;
-
-    if (shouldTimeout) {
-      await Future.delayed(const Duration(seconds: 11));
-      throw TimeoutException('Request timeout', const Duration(seconds: 10));
-    }
-
-    if (shouldThrowSocketException) {
-      throw const SocketException('Network unreachable');
-    }
-
-    if (shouldThrowClientException) {
-      throw http.ClientException('Client error');
-    }
-
-    if (shouldThrowGenericException) {
-      throw Exception('Generic error');
-    }
-
-    if (mockResponse == null) {
-      throw Exception('No mock response configured');
-    }
-
-    return http.StreamedResponse(
-      Stream.fromIterable([mockResponse!.bodyBytes]),
-      mockResponse!.statusCode,
-      headers: mockResponse!.headers,
-    );
-  }
 }

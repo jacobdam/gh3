@@ -15,96 +15,20 @@ import 'package:gh3/src/services/github_auth_client.dart';
 import 'package:gh3/src/services/token_storage.dart';
 import 'package:gh3/src/services/scope_service.dart';
 import 'package:gh3/src/services/github_api_service.dart';
-import 'package:gh3/src/models/github_user.dart';
-import 'package:gh3/src/models/github_repository.dart';
+import 'package:gh3/src/services/timer_service.dart';
 import 'package:gh3/src/screens/app/auth_viewmodel.dart';
 import 'package:gh3/src/screens/login_screen/login_viewmodel.dart';
 
-@GenerateNiceMocks([MockSpec<Client>()])
+@GenerateNiceMocks([
+  MockSpec<Client>(),
+  MockSpec<GithubAuthClient>(),
+  MockSpec<ITokenStorage>(),
+  MockSpec<IScopeService>(),
+  MockSpec<TimerService>(),
+  MockSpec<GitHubApiService>(),
+  MockSpec<AuthService>(),
+])
 import 'app_start_test.mocks.dart';
-
-/// Dummy implementations to satisfy AuthService constructor, not used directly.
-class DummyAuthClient implements GithubAuthClient {
-  @override
-  Future<GithubDeviceCodeResult> createDeviceCode(List<String> scopes) {
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<String> createAccessTokenFromDeviceCode(String deviceCode) {
-    throw UnimplementedError();
-  }
-}
-
-class DummyTokenStorage implements ITokenStorage {
-  @override
-  Future<String?> getToken() async => null;
-
-  @override
-  Future<void> saveToken(String token) async {}
-
-  @override
-  Future<void> deleteToken() async {}
-}
-
-class DummyScopeService implements IScopeService {
-  @override
-  Future<List<String>> getScopesFromAccessToken(String accessToken) async => [];
-}
-
-class DummyGitHubApiService implements GitHubApiService {
-  @override
-  Future<GitHubUser> getAuthenticatedUser() async => throw UnimplementedError();
-
-  @override
-  Future<GitHubUser> getUser(String username) async =>
-      throw UnimplementedError();
-
-  @override
-  Future<List<GitHubUser>> getFollowing({
-    int page = 1,
-    int perPage = 30,
-  }) async => [];
-
-  @override
-  Future<List<GitHubUser>> getUserFollowers(
-    String username, {
-    int page = 1,
-    int perPage = 30,
-  }) async => [];
-
-  @override
-  Future<List<GitHubRepository>> getUserRepositories(
-    String username, {
-    int page = 1,
-    int perPage = 30,
-    String sort = 'updated',
-    String direction = 'desc',
-  }) async => [];
-
-  @override
-  Future<GitHubRepository> getRepository(String owner, String repo) async =>
-      throw UnimplementedError();
-
-  @override
-  Future<String> getRepositoryReadme(String owner, String repo) async =>
-      throw UnimplementedError();
-}
-
-/// Fake AuthService that simulates init and login state.
-class FakeAuthService extends AuthService {
-  final bool _loggedIn;
-  FakeAuthService(this._loggedIn)
-    : super(DummyAuthClient(), DummyTokenStorage(), DummyScopeService());
-
-  @override
-  Future<void> init() async {
-    // No delay for testing
-  }
-
-  @override
-  bool get isLoggedIn => _loggedIn;
-}
 
 T anyRequest<T>() => any as T;
 
@@ -118,32 +42,35 @@ void main() {
     WidgetTester tester,
   ) async {
     // Register required dependencies
-    final fakeAuthService = FakeAuthService(true);
-    final dummyAuthClient = DummyAuthClient();
+    final mockAuthService = MockAuthService();
+    final mockAuthClient = MockGithubAuthClient();
     final mockFerryClient = MockClient();
+
+    when(mockAuthService.isLoggedIn).thenReturn(true);
+    when(mockAuthService.init()).thenAnswer((_) async {});
     when(
       mockFerryClient.request<GGetFollowingData, GGetFollowingVars>(any),
     ).thenAnswer((_) => const Stream.empty());
 
-    GetIt.I.registerSingleton<AuthService>(fakeAuthService);
-    GetIt.I.registerSingleton<GithubAuthClient>(dummyAuthClient);
+    GetIt.I.registerSingleton<AuthService>(mockAuthService);
+    GetIt.I.registerSingleton<GithubAuthClient>(mockAuthClient);
     GetIt.I.registerSingleton<Client>(mockFerryClient);
 
     // Create and initialize AuthViewModel
-    final authViewModel = AuthViewModel(fakeAuthService);
+    final authViewModel = AuthViewModel(mockAuthService);
     await authViewModel.init();
     GetIt.I.registerSingleton(authViewModel);
 
     GetIt.I.registerLazySingleton<LoginViewModel>(
-      () => LoginViewModel(dummyAuthClient, fakeAuthService, authViewModel),
+      () => LoginViewModel(mockAuthClient, mockAuthService, authViewModel),
     );
 
     await tester.pumpWidget(
       MyApp(
         authViewModel: authViewModel,
-        authService: fakeAuthService,
-        githubAuthClient: dummyAuthClient,
-        githubApiService: DummyGitHubApiService(),
+        authService: mockAuthService,
+        githubAuthClient: mockAuthClient,
+        githubApiService: MockGitHubApiService(),
         homeViewModel: HomeViewModel(mockFerryClient),
       ),
     );
@@ -160,33 +87,36 @@ void main() {
     WidgetTester tester,
   ) async {
     // Register required dependencies
-    final fakeAuthService = FakeAuthService(false);
-    final dummyAuthClient = DummyAuthClient();
+    final mockAuthService = MockAuthService();
+    final mockAuthClient = MockGithubAuthClient();
     final mockFerryClient = MockClient();
+
+    when(mockAuthService.isLoggedIn).thenReturn(false);
+    when(mockAuthService.init()).thenAnswer((_) async {});
     // ignore: argument_type_not_assignable, avoid_redundant_argument_values
     when(
       mockFerryClient.request<GGetFollowingData, GGetFollowingVars>(captureAny),
     ).thenAnswer((_) => const Stream.empty());
 
-    GetIt.I.registerSingleton<AuthService>(fakeAuthService);
-    GetIt.I.registerSingleton<GithubAuthClient>(dummyAuthClient);
+    GetIt.I.registerSingleton<AuthService>(mockAuthService);
+    GetIt.I.registerSingleton<GithubAuthClient>(mockAuthClient);
     GetIt.I.registerSingleton<Client>(mockFerryClient);
 
     // Create and initialize AuthViewModel
-    final authViewModel = AuthViewModel(fakeAuthService);
+    final authViewModel = AuthViewModel(mockAuthService);
     await authViewModel.init();
     GetIt.I.registerSingleton(authViewModel);
 
     GetIt.I.registerLazySingleton<LoginViewModel>(
-      () => LoginViewModel(dummyAuthClient, fakeAuthService, authViewModel),
+      () => LoginViewModel(mockAuthClient, mockAuthService, authViewModel),
     );
 
     await tester.pumpWidget(
       MyApp(
         authViewModel: authViewModel,
-        authService: fakeAuthService,
-        githubAuthClient: dummyAuthClient,
-        githubApiService: DummyGitHubApiService(),
+        authService: mockAuthService,
+        githubAuthClient: mockAuthClient,
+        githubApiService: MockGitHubApiService(),
         homeViewModel: HomeViewModel(mockFerryClient),
       ),
     );
