@@ -7,7 +7,7 @@ class UserDetailsScreen extends StatefulWidget {
   final UserDetailsViewModel viewModel;
 
   const UserDetailsScreen({
-    super.key, 
+    super.key,
     required this.login,
     required this.viewModel,
   });
@@ -24,7 +24,7 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
     super.initState();
     widget.viewModel.addListener(_onViewModelChanged);
     _scrollController.addListener(_onScroll);
-    
+
     // Load initial data
     WidgetsBinding.instance.addPostFrameCallback((_) {
       widget.viewModel.refresh();
@@ -46,7 +46,7 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
   }
 
   void _onScroll() {
-    if (_scrollController.position.pixels >= 
+    if (_scrollController.position.pixels >=
         _scrollController.position.maxScrollExtent - 200) {
       widget.viewModel.loadMoreRepositories();
     }
@@ -108,10 +108,11 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
                 children: [
                   Text(
                     'Repositories',
-                    style: Theme.of(context).textTheme.titleLarge
-                        ?.copyWith(fontWeight: FontWeight.bold),
+                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
-                  if (widget.viewModel.isLoadingRepositories && 
+                  if (widget.viewModel.isLoadingRepositories &&
                       widget.viewModel.repositories.isEmpty)
                     const SizedBox(
                       width: 20,
@@ -130,9 +131,7 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
                 ),
 
               // Repositories List
-              Expanded(
-                child: _buildRepositoriesList(),
-              ),
+              Expanded(child: _buildRepositoriesList()),
             ],
           ),
         ),
@@ -157,17 +156,13 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
                 children: [
                   CircleAvatar(
                     radius: 40,
-                    backgroundImage: user?.avatarUrl != null 
-                        ? NetworkImage(user!.avatarUrl) 
+                    backgroundImage: user?.avatarUrl != null
+                        ? NetworkImage(user!.avatarUrl)
                         : null,
                     backgroundColor: Colors.grey[300],
-                    onBackgroundImageError: (_, __) {},
+                    onBackgroundImageError: (_, _) {},
                     child: user?.avatarUrl == null || user!.avatarUrl.isEmpty
-                        ? Icon(
-                            Icons.person,
-                            size: 40,
-                            color: Colors.grey[600],
-                          )
+                        ? Icon(Icons.person, size: 40, color: Colors.grey[600])
                         : null,
                   ),
                   const SizedBox(width: 16),
@@ -204,12 +199,16 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
                             style: TextStyle(color: Colors.grey[700]),
                           ),
                         ],
-                        if (user?.location != null && user!.location!.isNotEmpty) ...[
+                        if (user?.location != null &&
+                            user!.location!.isNotEmpty) ...[
                           const SizedBox(height: 4),
                           Row(
                             children: [
-                              Icon(Icons.location_on, 
-                                   size: 16, color: Colors.grey[600]),
+                              Icon(
+                                Icons.location_on,
+                                size: 16,
+                                color: Colors.grey[600],
+                              ),
                               const SizedBox(width: 4),
                               Text(
                                 user.location!,
@@ -218,12 +217,16 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
                             ],
                           ),
                         ],
-                        if (user?.company != null && user!.company!.isNotEmpty) ...[
+                        if (user?.company != null &&
+                            user!.company!.isNotEmpty) ...[
                           const SizedBox(height: 4),
                           Row(
                             children: [
-                              Icon(Icons.business, 
-                                   size: 16, color: Colors.grey[600]),
+                              Icon(
+                                Icons.business,
+                                size: 16,
+                                color: Colors.grey[600],
+                              ),
                               const SizedBox(width: 4),
                               Text(
                                 user.company!,
@@ -242,16 +245,22 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   _buildStatColumn(
-                    'Repositories', 
-                    isLoading ? 'Loading...' : _formatNumber(user?.publicRepos ?? 0),
+                    'Repositories',
+                    isLoading
+                        ? 'Loading...'
+                        : _formatNumber(user?.publicRepos ?? 0),
                   ),
                   _buildStatColumn(
-                    'Followers', 
-                    isLoading ? 'Loading...' : _formatNumber(user?.followers ?? 0),
+                    'Followers',
+                    isLoading
+                        ? 'Loading...'
+                        : _formatNumber(user?.followers ?? 0),
                   ),
                   _buildStatColumn(
-                    'Following', 
-                    isLoading ? 'Loading...' : _formatNumber(user?.following ?? 0),
+                    'Following',
+                    isLoading
+                        ? 'Loading...'
+                        : _formatNumber(user?.following ?? 0),
                   ),
                 ],
               ),
@@ -263,23 +272,19 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
   }
 
   Widget _buildRepositoriesList() {
-    if (widget.viewModel.isRepositoriesEmpty && 
+    if (widget.viewModel.isRepositoriesEmpty &&
         !widget.viewModel.isLoadingRepositories) {
       return Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
-              Icons.folder_outlined,
-              size: 64,
-              color: Colors.grey[400],
-            ),
+            Icon(Icons.folder_outlined, size: 64, color: Colors.grey[400]),
             const SizedBox(height: 16),
             Text(
               'No repositories found',
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                color: Colors.grey[600],
-              ),
+              style: Theme.of(
+                context,
+              ).textTheme.titleMedium?.copyWith(color: Colors.grey[600]),
             ),
             const SizedBox(height: 8),
             Text(
@@ -294,16 +299,15 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
 
     return ListView.builder(
       controller: _scrollController,
-      itemCount: widget.viewModel.repositories.length + 
-                 (widget.viewModel.isLoadingRepositories ? 1 : 0),
+      itemCount:
+          widget.viewModel.repositories.length +
+          (widget.viewModel.isLoadingRepositories ? 1 : 0),
       itemBuilder: (context, index) {
         // Loading indicator at the end
         if (index >= widget.viewModel.repositories.length) {
           return const Padding(
             padding: EdgeInsets.all(16.0),
-            child: Center(
-              child: CircularProgressIndicator(),
-            ),
+            child: Center(child: CircularProgressIndicator()),
           );
         }
 
@@ -322,7 +326,8 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
             subtitle: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                if (repo.description != null && repo.description!.isNotEmpty) ...[
+                if (repo.description != null &&
+                    repo.description!.isNotEmpty) ...[
                   Text(
                     repo.description!,
                     style: TextStyle(color: Colors.grey[600]),
@@ -349,22 +354,14 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
                       ),
                       const SizedBox(width: 16),
                     ],
-                    const Icon(
-                      Icons.star,
-                      size: 16,
-                      color: Colors.amber,
-                    ),
+                    const Icon(Icons.star, size: 16, color: Colors.amber),
                     const SizedBox(width: 2),
                     Text(
                       _formatNumber(repo.stargazersCount),
                       style: const TextStyle(fontSize: 12),
                     ),
                     const SizedBox(width: 16),
-                    const Icon(
-                      Icons.fork_right,
-                      size: 16,
-                      color: Colors.grey,
-                    ),
+                    const Icon(Icons.fork_right, size: 16, color: Colors.grey),
                     const SizedBox(width: 2),
                     Text(
                       _formatNumber(repo.forksCount),
@@ -399,15 +396,9 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
           Icon(Icons.error_outline, color: Colors.red.shade600),
           const SizedBox(width: 8),
           Expanded(
-            child: Text(
-              error,
-              style: TextStyle(color: Colors.red.shade700),
-            ),
+            child: Text(error, style: TextStyle(color: Colors.red.shade700)),
           ),
-          TextButton(
-            onPressed: onDismiss,
-            child: const Text('Dismiss'),
-          ),
+          TextButton(onPressed: onDismiss, child: const Text('Dismiss')),
         ],
       ),
     );

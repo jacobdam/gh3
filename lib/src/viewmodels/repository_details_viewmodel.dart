@@ -51,7 +51,10 @@ class RepositoryDetailsViewModel extends ChangeNotifier {
     _clearReadmeError();
 
     try {
-      final readmeContent = await _apiService.getRepositoryReadme(owner, repositoryName);
+      final readmeContent = await _apiService.getRepositoryReadme(
+        owner,
+        repositoryName,
+      );
       _readmeContent = readmeContent;
       notifyListeners();
     } catch (e) {
@@ -69,10 +72,7 @@ class RepositoryDetailsViewModel extends ChangeNotifier {
 
   /// Refresh all data
   Future<void> refresh() async {
-    await Future.wait([
-      loadRepository(),
-      loadReadme(),
-    ]);
+    await Future.wait([loadRepository(), loadReadme()]);
   }
 
   /// Clear repository error

@@ -31,7 +31,8 @@ class UserDetailsViewModel extends ChangeNotifier {
   bool get hasMoreRepositories => _hasMoreRepositories;
   String get sortBy => _sortBy;
   String get sortDirection => _sortDirection;
-  bool get isRepositoriesEmpty => _repositories.isEmpty && !_isLoadingRepositories;
+  bool get isRepositoriesEmpty =>
+      _repositories.isEmpty && !_isLoadingRepositories;
 
   /// Load user profile information
   Future<void> loadUser() async {
@@ -70,7 +71,7 @@ class UserDetailsViewModel extends ChangeNotifier {
       _repositories = repositories;
       _currentPage = 1;
       _hasMoreRepositories = repositories.length == _perPage;
-      
+
       notifyListeners();
     } catch (e) {
       _setRepositoriesError(_getErrorMessage(e));
@@ -102,7 +103,7 @@ class UserDetailsViewModel extends ChangeNotifier {
       } else {
         _hasMoreRepositories = false;
       }
-      
+
       notifyListeners();
     } catch (e) {
       _setRepositoriesError(_getErrorMessage(e));
@@ -116,11 +117,8 @@ class UserDetailsViewModel extends ChangeNotifier {
     _repositories.clear();
     _currentPage = 1;
     _hasMoreRepositories = true;
-    
-    await Future.wait([
-      loadUser(),
-      loadRepositories(),
-    ]);
+
+    await Future.wait([loadUser(), loadRepositories()]);
   }
 
   /// Change repository sorting
@@ -132,7 +130,7 @@ class UserDetailsViewModel extends ChangeNotifier {
     _repositories.clear();
     _currentPage = 1;
     _hasMoreRepositories = true;
-    
+
     await loadRepositories();
   }
 

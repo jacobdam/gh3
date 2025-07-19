@@ -80,8 +80,8 @@ class GitHubRepository {
       disabled: json['disabled'] as bool,
       createdAt: DateTime.parse(json['created_at'] as String),
       updatedAt: DateTime.parse(json['updated_at'] as String),
-      pushedAt: json['pushed_at'] != null 
-          ? DateTime.parse(json['pushed_at'] as String) 
+      pushedAt: json['pushed_at'] != null
+          ? DateTime.parse(json['pushed_at'] as String)
           : null,
       owner: GitHubUser.fromJson(json['owner'] as Map<String, dynamic>),
     );

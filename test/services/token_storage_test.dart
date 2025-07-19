@@ -16,7 +16,9 @@ void main() {
       test('should return token when it exists', () async {
         // Arrange
         const expectedToken = 'test_token_123';
-        SharedPreferences.setMockInitialValues({'github_access_token': expectedToken});
+        SharedPreferences.setMockInitialValues({
+          'github_access_token': expectedToken,
+        });
 
         // Act
         final result = await tokenStorage.getToken();
@@ -36,18 +38,21 @@ void main() {
         expect(result, isNull);
       });
 
-      test('should throw TokenStorageException when SharedPreferences fails', () async {
-        // This test simulates a scenario where SharedPreferences.getInstance() fails
-        // In practice, this is difficult to mock directly, so we'll test the error handling
-        // by creating a custom implementation that throws
-        final failingStorage = _FailingTokenStorage();
+      test(
+        'should throw TokenStorageException when SharedPreferences fails',
+        () async {
+          // This test simulates a scenario where SharedPreferences.getInstance() fails
+          // In practice, this is difficult to mock directly, so we'll test the error handling
+          // by creating a custom implementation that throws
+          final failingStorage = _FailingTokenStorage();
 
-        // Act & Assert
-        expect(
-          () => failingStorage.getToken(),
-          throwsA(isA<TokenStorageException>()),
-        );
-      });
+          // Act & Assert
+          expect(
+            () => failingStorage.getToken(),
+            throwsA(isA<TokenStorageException>()),
+          );
+        },
+      );
     });
 
     group('saveToken', () {
@@ -66,28 +71,30 @@ void main() {
 
       test('should throw ArgumentError when token is empty', () async {
         // Act & Assert
-        expect(
-          () => tokenStorage.saveToken(''),
-          throwsA(isA<ArgumentError>()),
-        );
+        expect(() => tokenStorage.saveToken(''), throwsA(isA<ArgumentError>()));
       });
 
-      test('should throw TokenStorageException when SharedPreferences fails', () async {
-        // Arrange
-        final failingStorage = _FailingTokenStorage();
+      test(
+        'should throw TokenStorageException when SharedPreferences fails',
+        () async {
+          // Arrange
+          final failingStorage = _FailingTokenStorage();
 
-        // Act & Assert
-        expect(
-          () => failingStorage.saveToken('valid_token'),
-          throwsA(isA<TokenStorageException>()),
-        );
-      });
+          // Act & Assert
+          expect(
+            () => failingStorage.saveToken('valid_token'),
+            throwsA(isA<TokenStorageException>()),
+          );
+        },
+      );
     });
 
     group('deleteToken', () {
       test('should delete token successfully', () async {
         // Arrange
-        SharedPreferences.setMockInitialValues({'github_access_token': 'test_token'});
+        SharedPreferences.setMockInitialValues({
+          'github_access_token': 'test_token',
+        });
 
         // Act
         await tokenStorage.deleteToken();
@@ -105,16 +112,19 @@ void main() {
         expect(() => tokenStorage.deleteToken(), returnsNormally);
       });
 
-      test('should throw TokenStorageException when SharedPreferences fails', () async {
-        // Arrange
-        final failingStorage = _FailingTokenStorage();
+      test(
+        'should throw TokenStorageException when SharedPreferences fails',
+        () async {
+          // Arrange
+          final failingStorage = _FailingTokenStorage();
 
-        // Act & Assert
-        expect(
-          () => failingStorage.deleteToken(),
-          throwsA(isA<TokenStorageException>()),
-        );
-      });
+          // Act & Assert
+          expect(
+            () => failingStorage.deleteToken(),
+            throwsA(isA<TokenStorageException>()),
+          );
+        },
+      );
     });
 
     group('TokenStorageException', () {
@@ -125,7 +135,10 @@ void main() {
         // Assert
         expect(exception.message, equals('Test message'));
         expect(exception.cause, isNull);
-        expect(exception.toString(), equals('TokenStorageException: Test message'));
+        expect(
+          exception.toString(),
+          equals('TokenStorageException: Test message'),
+        );
       });
 
       test('should create exception with message and cause', () {
@@ -136,7 +149,10 @@ void main() {
         // Act & Assert
         expect(exception.message, equals('Test message'));
         expect(exception.cause, equals(cause));
-        expect(exception.toString(), equals('TokenStorageException: Test message'));
+        expect(
+          exception.toString(),
+          equals('TokenStorageException: Test message'),
+        );
       });
     });
   });

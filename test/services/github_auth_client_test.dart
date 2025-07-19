@@ -31,9 +31,18 @@ void main() {
         expect(result.deviceCode, equals(expectedDeviceCode));
         expect(result.userCode, equals(expectedUserCode));
         expect(mockHttpClient.lastRequest?.url.host, equals('github.com'));
-        expect(mockHttpClient.lastRequest?.url.path, equals('/login/device/code'));
-        expect(mockHttpClient.lastRequest?.headers['Accept'], equals('application/json'));
-        expect(mockHttpClient.lastRequest?.headers['User-Agent'], equals('gh3-flutter-app'));
+        expect(
+          mockHttpClient.lastRequest?.url.path,
+          equals('/login/device/code'),
+        );
+        expect(
+          mockHttpClient.lastRequest?.headers['Accept'],
+          equals('application/json'),
+        );
+        expect(
+          mockHttpClient.lastRequest?.headers['User-Agent'],
+          equals('gh3-flutter-app'),
+        );
       });
 
       test('should throw ArgumentError for empty scopes', () async {
@@ -44,66 +53,98 @@ void main() {
         );
       });
 
-      test('should throw GithubNonRecoverableException on HTTP 500 error', () async {
-        // Arrange
-        mockHttpClient.mockResponse = http.Response('Internal Server Error', 500);
+      test(
+        'should throw GithubNonRecoverableException on HTTP 500 error',
+        () async {
+          // Arrange
+          mockHttpClient.mockResponse = http.Response(
+            'Internal Server Error',
+            500,
+          );
 
-        // Act & Assert
-        expect(
-          () => client.createDeviceCode(['repo']),
-          throwsA(
-            isA<GithubNonRecoverableException>()
-                .having((e) => e.code, 'code', equals('server_error'))
-                .having((e) => e.description, 'description', contains('GitHub server error')),
-          ),
-        );
-      });
+          // Act & Assert
+          expect(
+            () => client.createDeviceCode(['repo']),
+            throwsA(
+              isA<GithubNonRecoverableException>()
+                  .having((e) => e.code, 'code', equals('server_error'))
+                  .having(
+                    (e) => e.description,
+                    'description',
+                    contains('GitHub server error'),
+                  ),
+            ),
+          );
+        },
+      );
 
-      test('should throw GithubNonRecoverableException on rate limit (429)', () async {
-        // Arrange
-        mockHttpClient.mockResponse = http.Response('Rate limit exceeded', 429);
+      test(
+        'should throw GithubNonRecoverableException on rate limit (429)',
+        () async {
+          // Arrange
+          mockHttpClient.mockResponse = http.Response(
+            'Rate limit exceeded',
+            429,
+          );
 
-        // Act & Assert
-        expect(
-          () => client.createDeviceCode(['repo']),
-          throwsA(
-            isA<GithubNonRecoverableException>()
-                .having((e) => e.code, 'code', equals('rate_limit_exceeded')),
-          ),
-        );
-      });
+          // Act & Assert
+          expect(
+            () => client.createDeviceCode(['repo']),
+            throwsA(
+              isA<GithubNonRecoverableException>().having(
+                (e) => e.code,
+                'code',
+                equals('rate_limit_exceeded'),
+              ),
+            ),
+          );
+        },
+      );
 
-      test('should throw GithubNonRecoverableException on invalid JSON', () async {
-        // Arrange
-        mockHttpClient.mockResponse = http.Response('invalid json', 200);
+      test(
+        'should throw GithubNonRecoverableException on invalid JSON',
+        () async {
+          // Arrange
+          mockHttpClient.mockResponse = http.Response('invalid json', 200);
 
-        // Act & Assert
-        expect(
-          () => client.createDeviceCode(['repo']),
-          throwsA(
-            isA<GithubNonRecoverableException>()
-                .having((e) => e.code, 'code', equals('invalid_response')),
-          ),
-        );
-      });
+          // Act & Assert
+          expect(
+            () => client.createDeviceCode(['repo']),
+            throwsA(
+              isA<GithubNonRecoverableException>().having(
+                (e) => e.code,
+                'code',
+                equals('invalid_response'),
+              ),
+            ),
+          );
+        },
+      );
 
-      test('should throw GithubNonRecoverableException on OAuth error in response', () async {
-        // Arrange
-        mockHttpClient.mockResponse = http.Response(
-          '{"error": "invalid_client", "error_description": "Client authentication failed"}',
-          200,
-        );
+      test(
+        'should throw GithubNonRecoverableException on OAuth error in response',
+        () async {
+          // Arrange
+          mockHttpClient.mockResponse = http.Response(
+            '{"error": "invalid_client", "error_description": "Client authentication failed"}',
+            200,
+          );
 
-        // Act & Assert
-        expect(
-          () => client.createDeviceCode(['repo']),
-          throwsA(
-            isA<GithubNonRecoverableException>()
-                .having((e) => e.code, 'code', equals('invalid_client'))
-                .having((e) => e.description, 'description', contains('Client authentication failed')),
-          ),
-        );
-      });
+          // Act & Assert
+          expect(
+            () => client.createDeviceCode(['repo']),
+            throwsA(
+              isA<GithubNonRecoverableException>()
+                  .having((e) => e.code, 'code', equals('invalid_client'))
+                  .having(
+                    (e) => e.description,
+                    'description',
+                    contains('Client authentication failed'),
+                  ),
+            ),
+          );
+        },
+      );
 
       test('should throw GithubNonRecoverableException on timeout', () async {
         // Arrange
@@ -113,39 +154,54 @@ void main() {
         expect(
           () => client.createDeviceCode(['repo']),
           throwsA(
-            isA<GithubNonRecoverableException>()
-                .having((e) => e.code, 'code', equals('timeout')),
+            isA<GithubNonRecoverableException>().having(
+              (e) => e.code,
+              'code',
+              equals('timeout'),
+            ),
           ),
         );
       });
 
-      test('should throw GithubNonRecoverableException on socket exception', () async {
-        // Arrange
-        mockHttpClient.shouldThrowSocketException = true;
+      test(
+        'should throw GithubNonRecoverableException on socket exception',
+        () async {
+          // Arrange
+          mockHttpClient.shouldThrowSocketException = true;
 
-        // Act & Assert
-        expect(
-          () => client.createDeviceCode(['repo']),
-          throwsA(
-            isA<GithubNonRecoverableException>()
-                .having((e) => e.code, 'code', equals('network_error')),
-          ),
-        );
-      });
+          // Act & Assert
+          expect(
+            () => client.createDeviceCode(['repo']),
+            throwsA(
+              isA<GithubNonRecoverableException>().having(
+                (e) => e.code,
+                'code',
+                equals('network_error'),
+              ),
+            ),
+          );
+        },
+      );
 
-      test('should throw GithubNonRecoverableException on HTTP client exception', () async {
-        // Arrange
-        mockHttpClient.shouldThrowClientException = true;
+      test(
+        'should throw GithubNonRecoverableException on HTTP client exception',
+        () async {
+          // Arrange
+          mockHttpClient.shouldThrowClientException = true;
 
-        // Act & Assert
-        expect(
-          () => client.createDeviceCode(['repo']),
-          throwsA(
-            isA<GithubNonRecoverableException>()
-                .having((e) => e.code, 'code', equals('client_error')),
-          ),
-        );
-      });
+          // Act & Assert
+          expect(
+            () => client.createDeviceCode(['repo']),
+            throwsA(
+              isA<GithubNonRecoverableException>().having(
+                (e) => e.code,
+                'code',
+                equals('client_error'),
+              ),
+            ),
+          );
+        },
+      );
 
       test('should retry on transient failures', () async {
         // Arrange
@@ -160,7 +216,10 @@ void main() {
 
         // Assert
         expect(result.deviceCode, equals('test_code'));
-        expect(mockHttpClient.requestCount, equals(3)); // 2 failures + 1 success
+        expect(
+          mockHttpClient.requestCount,
+          equals(3),
+        ); // 2 failures + 1 success
       });
 
       test('should not retry on ArgumentError', () async {
@@ -195,12 +254,17 @@ void main() {
         );
 
         // Act
-        final result = await client.createAccessTokenFromDeviceCode('device_code');
+        final result = await client.createAccessTokenFromDeviceCode(
+          'device_code',
+        );
 
         // Assert
         expect(result, equals(expectedToken));
         expect(mockHttpClient.lastRequest?.url.host, equals('github.com'));
-        expect(mockHttpClient.lastRequest?.url.path, equals('/login/oauth/access_token'));
+        expect(
+          mockHttpClient.lastRequest?.url.path,
+          equals('/login/oauth/access_token'),
+        );
       });
 
       test('should throw ArgumentError for empty device code', () async {
@@ -211,19 +275,22 @@ void main() {
         );
       });
 
-      test('should throw AuthorizationPendingException for authorization_pending', () async {
-        // Arrange
-        mockHttpClient.mockResponse = http.Response(
-          '{"error": "authorization_pending"}',
-          200,
-        );
+      test(
+        'should throw AuthorizationPendingException for authorization_pending',
+        () async {
+          // Arrange
+          mockHttpClient.mockResponse = http.Response(
+            '{"error": "authorization_pending"}',
+            200,
+          );
 
-        // Act & Assert
-        expect(
-          () => client.createAccessTokenFromDeviceCode('device_code'),
-          throwsA(isA<AuthorizationPendingException>()),
-        );
-      });
+          // Act & Assert
+          expect(
+            () => client.createAccessTokenFromDeviceCode('device_code'),
+            throwsA(isA<AuthorizationPendingException>()),
+          );
+        },
+      );
 
       test('should throw SlowDownException for slow_down', () async {
         // Arrange
@@ -253,52 +320,75 @@ void main() {
         );
       });
 
-      test('should throw GithubNonRecoverableException for other OAuth errors', () async {
-        // Arrange
-        mockHttpClient.mockResponse = http.Response(
-          '{"error": "invalid_grant", "error_description": "The device code is invalid"}',
-          200,
-        );
+      test(
+        'should throw GithubNonRecoverableException for other OAuth errors',
+        () async {
+          // Arrange
+          mockHttpClient.mockResponse = http.Response(
+            '{"error": "invalid_grant", "error_description": "The device code is invalid"}',
+            200,
+          );
 
-        // Act & Assert
-        expect(
-          () => client.createAccessTokenFromDeviceCode('device_code'),
-          throwsA(
-            isA<GithubNonRecoverableException>()
-                .having((e) => e.code, 'code', equals('invalid_grant'))
-                .having((e) => e.description, 'description', contains('The device code is invalid')),
-          ),
-        );
-      });
+          // Act & Assert
+          expect(
+            () => client.createAccessTokenFromDeviceCode('device_code'),
+            throwsA(
+              isA<GithubNonRecoverableException>()
+                  .having((e) => e.code, 'code', equals('invalid_grant'))
+                  .having(
+                    (e) => e.description,
+                    'description',
+                    contains('The device code is invalid'),
+                  ),
+            ),
+          );
+        },
+      );
 
-      test('should throw GithubNonRecoverableException when access token is missing', () async {
-        // Arrange
-        mockHttpClient.mockResponse = http.Response('{}', 200);
+      test(
+        'should throw GithubNonRecoverableException when access token is missing',
+        () async {
+          // Arrange
+          mockHttpClient.mockResponse = http.Response('{}', 200);
 
-        // Act & Assert
-        expect(
-          () => client.createAccessTokenFromDeviceCode('device_code'),
-          throwsA(
-            isA<GithubNonRecoverableException>()
-                .having((e) => e.code, 'code', equals('invalid_response'))
-                .having((e) => e.description, 'description', contains('Access token not found')),
-          ),
-        );
-      });
+          // Act & Assert
+          expect(
+            () => client.createAccessTokenFromDeviceCode('device_code'),
+            throwsA(
+              isA<GithubNonRecoverableException>()
+                  .having((e) => e.code, 'code', equals('invalid_response'))
+                  .having(
+                    (e) => e.description,
+                    'description',
+                    contains('Access token not found'),
+                  ),
+            ),
+          );
+        },
+      );
 
-      test('should throw GithubNonRecoverableException when access token is empty', () async {
-        // Arrange
-        mockHttpClient.mockResponse = http.Response('{"access_token": ""}', 200);
+      test(
+        'should throw GithubNonRecoverableException when access token is empty',
+        () async {
+          // Arrange
+          mockHttpClient.mockResponse = http.Response(
+            '{"access_token": ""}',
+            200,
+          );
 
-        // Act & Assert
-        expect(
-          () => client.createAccessTokenFromDeviceCode('device_code'),
-          throwsA(
-            isA<GithubNonRecoverableException>()
-                .having((e) => e.code, 'code', equals('invalid_response')),
-          ),
-        );
-      });
+          // Act & Assert
+          expect(
+            () => client.createAccessTokenFromDeviceCode('device_code'),
+            throwsA(
+              isA<GithubNonRecoverableException>().having(
+                (e) => e.code,
+                'code',
+                equals('invalid_response'),
+              ),
+            ),
+          );
+        },
+      );
 
       test('should handle unexpected errors gracefully', () async {
         // Arrange
@@ -308,8 +398,11 @@ void main() {
         expect(
           () => client.createAccessTokenFromDeviceCode('device_code'),
           throwsA(
-            isA<GithubNonRecoverableException>()
-                .having((e) => e.code, 'code', equals('unexpected_error')),
+            isA<GithubNonRecoverableException>().having(
+              (e) => e.code,
+              'code',
+              equals('unexpected_error'),
+            ),
           ),
         );
       });
@@ -320,7 +413,7 @@ void main() {
         // This test verifies that the _sanitizeUrl method works correctly
         // We can't directly test logging output, but we can verify the method behavior
         final client = GithubAuthClient(mockHttpClient, 'test_client_id');
-        
+
         // The sanitization happens internally, so we verify through successful execution
         // without exposing sensitive data in logs
         expect(() => client.createDeviceCode(['repo']), returnsNormally);
@@ -336,7 +429,11 @@ void main() {
           throwsA(
             isA<GithubNonRecoverableException>()
                 .having((e) => e.code, 'code', equals('invalid_response'))
-                .having((e) => e.description, 'description', contains('Failed to parse JSON')),
+                .having(
+                  (e) => e.description,
+                  'description',
+                  contains('Failed to parse JSON'),
+                ),
           ),
         );
       });
@@ -362,13 +459,19 @@ void main() {
     group('Exception hierarchy', () {
       test('should create GithubNonRecoverableException correctly', () {
         // Arrange & Act
-        final exception = GithubNonRecoverableException('test_code', 'test description');
+        final exception = GithubNonRecoverableException(
+          'test_code',
+          'test description',
+        );
 
         // Assert
         expect(exception.code, equals('test_code'));
         expect(exception.description, equals('test description'));
         expect(exception.message, equals('test_code: test description'));
-        expect(exception.toString(), equals('GithubAuthException: test_code: test description'));
+        expect(
+          exception.toString(),
+          equals('GithubAuthException: test_code: test description'),
+        );
       });
 
       test('should create recoverable exceptions correctly', () {
@@ -398,7 +501,7 @@ class _MockHttpClient extends http.BaseClient {
   int requestCount = 0;
   int failureCount = 0;
   int currentFailures = 0;
-  
+
   bool shouldTimeout = false;
   bool shouldThrowSocketException = false;
   bool shouldThrowClientException = false;
@@ -428,7 +531,9 @@ class _MockHttpClient extends http.BaseClient {
     // Simulate transient failures for retry testing
     if (currentFailures < failureCount) {
       currentFailures++;
-      throw Exception('Temporary network error'); // Use generic exception for retry testing
+      throw Exception(
+        'Temporary network error',
+      ); // Use generic exception for retry testing
     }
 
     if (mockResponse == null) {

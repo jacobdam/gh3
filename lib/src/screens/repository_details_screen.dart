@@ -17,7 +17,8 @@ class RepositoryDetailsScreen extends StatefulWidget {
   });
 
   @override
-  State<RepositoryDetailsScreen> createState() => _RepositoryDetailsScreenState();
+  State<RepositoryDetailsScreen> createState() =>
+      _RepositoryDetailsScreenState();
 }
 
 class _RepositoryDetailsScreenState extends State<RepositoryDetailsScreen> {
@@ -25,7 +26,7 @@ class _RepositoryDetailsScreenState extends State<RepositoryDetailsScreen> {
   void initState() {
     super.initState();
     widget.viewModel.addListener(_onViewModelChanged);
-    
+
     // Load initial data
     WidgetsBinding.instance.addPostFrameCallback((_) {
       widget.viewModel.refresh();
@@ -63,7 +64,8 @@ class _RepositoryDetailsScreenState extends State<RepositoryDetailsScreen> {
           if (widget.viewModel.repository?.htmlUrl != null)
             IconButton(
               icon: const Icon(Icons.open_in_browser),
-              onPressed: () => _copyToClipboard(widget.viewModel.repository!.htmlUrl),
+              onPressed: () =>
+                  _copyToClipboard(widget.viewModel.repository!.htmlUrl),
               tooltip: 'Copy repository URL',
             ),
         ],
@@ -110,12 +112,14 @@ class _RepositoryDetailsScreenState extends State<RepositoryDetailsScreen> {
               Row(
                 children: [
                   CircleAvatar(
-                    backgroundImage: repository?.owner.avatarUrl != null 
-                        ? NetworkImage(repository!.owner.avatarUrl) 
+                    backgroundImage: repository?.owner.avatarUrl != null
+                        ? NetworkImage(repository!.owner.avatarUrl)
                         : null,
                     backgroundColor: Colors.grey[300],
-                    onBackgroundImageError: (_, __) {},
-                    child: repository?.owner.avatarUrl == null || repository!.owner.avatarUrl.isEmpty
+                    onBackgroundImageError: (_, _) {},
+                    child:
+                        repository?.owner.avatarUrl == null ||
+                            repository!.owner.avatarUrl.isEmpty
                         ? const Icon(Icons.account_circle, size: 32)
                         : null,
                   ),
@@ -149,15 +153,14 @@ class _RepositoryDetailsScreenState extends State<RepositoryDetailsScreen> {
                     color: Colors.grey,
                   ),
                 )
-              else if (repository?.description != null && repository!.description!.isNotEmpty)
+              else if (repository?.description != null &&
+                  repository!.description!.isNotEmpty)
                 Text(
                   repository.description!,
-                  style: TextStyle(
-                    color: Colors.grey[700],
-                    fontSize: 16,
-                  ),
+                  style: TextStyle(color: Colors.grey[700], fontSize: 16),
                 ),
-              if (repository?.language != null && repository!.language!.isNotEmpty) ...[
+              if (repository?.language != null &&
+                  repository!.language!.isNotEmpty) ...[
                 const SizedBox(height: 12),
                 Row(
                   children: [
@@ -196,70 +199,79 @@ class _RepositoryDetailsScreenState extends State<RepositoryDetailsScreen> {
           children: [
             Text(
               'Repository Information',
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
+              style: Theme.of(
+                context,
+              ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 12),
             _buildInfoRow(
               Icons.link,
               'Repository URL',
-              repository?.htmlUrl ?? 'https://github.com/${widget.login}/${widget.repo}',
+              repository?.htmlUrl ??
+                  'https://github.com/${widget.login}/${widget.repo}',
               copyable: true,
             ),
             const SizedBox(height: 8),
             _buildInfoRow(
-              Icons.star, 
-              'Stars', 
-              isLoading ? 'Loading...' : _formatNumber(repository?.stargazersCount ?? 0),
+              Icons.star,
+              'Stars',
+              isLoading
+                  ? 'Loading...'
+                  : _formatNumber(repository?.stargazersCount ?? 0),
             ),
             const SizedBox(height: 8),
             _buildInfoRow(
-              Icons.fork_right, 
-              'Forks', 
-              isLoading ? 'Loading...' : _formatNumber(repository?.forksCount ?? 0),
+              Icons.fork_right,
+              'Forks',
+              isLoading
+                  ? 'Loading...'
+                  : _formatNumber(repository?.forksCount ?? 0),
             ),
             const SizedBox(height: 8),
             _buildInfoRow(
-              Icons.bug_report, 
-              'Issues', 
-              isLoading ? 'Loading...' : _formatNumber(repository?.openIssuesCount ?? 0),
+              Icons.bug_report,
+              'Issues',
+              isLoading
+                  ? 'Loading...'
+                  : _formatNumber(repository?.openIssuesCount ?? 0),
             ),
             const SizedBox(height: 8),
             _buildInfoRow(
-              Icons.visibility, 
-              'Watchers', 
-              isLoading ? 'Loading...' : _formatNumber(repository?.watchersCount ?? 0),
+              Icons.visibility,
+              'Watchers',
+              isLoading
+                  ? 'Loading...'
+                  : _formatNumber(repository?.watchersCount ?? 0),
             ),
             if (repository?.size != null) ...[
               const SizedBox(height: 8),
               _buildInfoRow(
-                Icons.storage, 
-                'Size', 
+                Icons.storage,
+                'Size',
                 '${_formatSize(repository!.size)} KB',
               ),
             ],
             if (repository?.defaultBranch != null) ...[
               const SizedBox(height: 8),
               _buildInfoRow(
-                Icons.account_tree, 
-                'Default Branch', 
+                Icons.account_tree,
+                'Default Branch',
                 repository!.defaultBranch,
               ),
             ],
             if (repository?.createdAt != null) ...[
               const SizedBox(height: 8),
               _buildInfoRow(
-                Icons.calendar_today, 
-                'Created', 
+                Icons.calendar_today,
+                'Created',
                 _formatDate(repository!.createdAt),
               ),
             ],
             if (repository?.updatedAt != null) ...[
               const SizedBox(height: 8),
               _buildInfoRow(
-                Icons.update, 
-                'Updated', 
+                Icons.update,
+                'Updated',
                 _formatDate(repository!.updatedAt),
               ),
             ],
@@ -282,9 +294,9 @@ class _RepositoryDetailsScreenState extends State<RepositoryDetailsScreen> {
           children: [
             Text(
               'README',
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
+              style: Theme.of(
+                context,
+              ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 12),
             if (error != null)
@@ -304,9 +316,18 @@ class _RepositoryDetailsScreenState extends State<RepositoryDetailsScreen> {
                   selectable: true,
                   styleSheet: MarkdownStyleSheet(
                     p: const TextStyle(fontSize: 14, height: 1.5),
-                    h1: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-                    h2: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                    h3: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    h1: const TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                    ),
+                    h2: const TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
+                    h3: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
                     code: TextStyle(
                       backgroundColor: Colors.grey[100],
                       fontFamily: 'monospace',
@@ -362,21 +383,20 @@ class _RepositoryDetailsScreenState extends State<RepositoryDetailsScreen> {
           Icon(Icons.error_outline, color: Colors.red.shade600),
           const SizedBox(width: 8),
           Expanded(
-            child: Text(
-              error,
-              style: TextStyle(color: Colors.red.shade700),
-            ),
+            child: Text(error, style: TextStyle(color: Colors.red.shade700)),
           ),
-          TextButton(
-            onPressed: onDismiss,
-            child: const Text('Dismiss'),
-          ),
+          TextButton(onPressed: onDismiss, child: const Text('Dismiss')),
         ],
       ),
     );
   }
 
-  Widget _buildInfoRow(IconData icon, String label, String value, {bool copyable = false}) {
+  Widget _buildInfoRow(
+    IconData icon,
+    String label,
+    String value, {
+    bool copyable = false,
+  }) {
     return Row(
       children: [
         Icon(icon, size: 16, color: Colors.grey[600]),
@@ -386,7 +406,7 @@ class _RepositoryDetailsScreenState extends State<RepositoryDetailsScreen> {
           child: GestureDetector(
             onTap: copyable ? () => _copyToClipboard(value) : null,
             child: Text(
-              value, 
+              value,
               style: TextStyle(
                 color: copyable ? Colors.blue : Colors.grey,
                 decoration: copyable ? TextDecoration.underline : null,

@@ -97,10 +97,7 @@ class ScopeService implements IScopeService {
         cause: e,
       );
     } on http.ClientException catch (e) {
-      throw ScopeValidationException(
-        'HTTP client error occurred',
-        cause: e,
-      );
+      throw ScopeValidationException('HTTP client error occurred', cause: e);
     } catch (e) {
       if (e is ArgumentError || e is ScopeValidationException) rethrow;
       throw ScopeValidationException(

@@ -30,10 +30,22 @@ void main() {
 
         // Assert
         expect(result, equals(expectedScopes));
-        expect(mockHttpClient.lastRequest?.url.toString(), contains('api.github.com'));
-        expect(mockHttpClient.lastRequest?.headers['Authorization'], equals('token $token'));
-        expect(mockHttpClient.lastRequest?.headers['Accept'], equals('application/vnd.github.v3+json'));
-        expect(mockHttpClient.lastRequest?.headers['User-Agent'], equals('gh3-flutter-app'));
+        expect(
+          mockHttpClient.lastRequest?.url.toString(),
+          contains('api.github.com'),
+        );
+        expect(
+          mockHttpClient.lastRequest?.headers['Authorization'],
+          equals('token $token'),
+        );
+        expect(
+          mockHttpClient.lastRequest?.headers['Accept'],
+          equals('application/vnd.github.v3+json'),
+        );
+        expect(
+          mockHttpClient.lastRequest?.headers['User-Agent'],
+          equals('gh3-flutter-app'),
+        );
       });
 
       test('should return empty list when no scopes are present', () async {
@@ -77,77 +89,104 @@ void main() {
         );
       });
 
-      test('should throw ScopeValidationException when token is invalid (401)', () async {
-        // Arrange
-        const token = 'invalid_token';
-        mockHttpClient.mockResponse = http.Response(
-          '{"message": "Bad credentials"}',
-          401,
-        );
+      test(
+        'should throw ScopeValidationException when token is invalid (401)',
+        () async {
+          // Arrange
+          const token = 'invalid_token';
+          mockHttpClient.mockResponse = http.Response(
+            '{"message": "Bad credentials"}',
+            401,
+          );
 
-        // Act & Assert
-        expect(
-          () => scopeService.getScopesFromAccessToken(token),
-          throwsA(
-            isA<ScopeValidationException>()
-                .having((e) => e.message, 'message', contains('Invalid or expired access token'))
-                .having((e) => e.statusCode, 'statusCode', equals(401)),
-          ),
-        );
-      });
+          // Act & Assert
+          expect(
+            () => scopeService.getScopesFromAccessToken(token),
+            throwsA(
+              isA<ScopeValidationException>()
+                  .having(
+                    (e) => e.message,
+                    'message',
+                    contains('Invalid or expired access token'),
+                  )
+                  .having((e) => e.statusCode, 'statusCode', equals(401)),
+            ),
+          );
+        },
+      );
 
-      test('should throw ScopeValidationException when access is forbidden (403)', () async {
-        // Arrange
-        const token = 'rate_limited_token';
-        mockHttpClient.mockResponse = http.Response(
-          '{"message": "API rate limit exceeded"}',
-          403,
-        );
+      test(
+        'should throw ScopeValidationException when access is forbidden (403)',
+        () async {
+          // Arrange
+          const token = 'rate_limited_token';
+          mockHttpClient.mockResponse = http.Response(
+            '{"message": "API rate limit exceeded"}',
+            403,
+          );
 
-        // Act & Assert
-        expect(
-          () => scopeService.getScopesFromAccessToken(token),
-          throwsA(
-            isA<ScopeValidationException>()
-                .having((e) => e.message, 'message', contains('Access forbidden'))
-                .having((e) => e.statusCode, 'statusCode', equals(403)),
-          ),
-        );
-      });
+          // Act & Assert
+          expect(
+            () => scopeService.getScopesFromAccessToken(token),
+            throwsA(
+              isA<ScopeValidationException>()
+                  .having(
+                    (e) => e.message,
+                    'message',
+                    contains('Access forbidden'),
+                  )
+                  .having((e) => e.statusCode, 'statusCode', equals(403)),
+            ),
+          );
+        },
+      );
 
-      test('should throw ScopeValidationException for other HTTP errors', () async {
-        // Arrange
-        const token = 'valid_token';
-        mockHttpClient.mockResponse = http.Response(
-          '{"message": "Internal Server Error"}',
-          500,
-        );
+      test(
+        'should throw ScopeValidationException for other HTTP errors',
+        () async {
+          // Arrange
+          const token = 'valid_token';
+          mockHttpClient.mockResponse = http.Response(
+            '{"message": "Internal Server Error"}',
+            500,
+          );
 
-        // Act & Assert
-        expect(
-          () => scopeService.getScopesFromAccessToken(token),
-          throwsA(
-            isA<ScopeValidationException>()
-                .having((e) => e.message, 'message', contains('GitHub API request failed with status 500'))
-                .having((e) => e.statusCode, 'statusCode', equals(500)),
-          ),
-        );
-      });
+          // Act & Assert
+          expect(
+            () => scopeService.getScopesFromAccessToken(token),
+            throwsA(
+              isA<ScopeValidationException>()
+                  .having(
+                    (e) => e.message,
+                    'message',
+                    contains('GitHub API request failed with status 500'),
+                  )
+                  .having((e) => e.statusCode, 'statusCode', equals(500)),
+            ),
+          );
+        },
+      );
 
-      test('should throw ScopeValidationException when scopes header is missing', () async {
-        // Arrange
-        const token = 'valid_token';
-        mockHttpClient.mockResponse = http.Response('{}', 200);
+      test(
+        'should throw ScopeValidationException when scopes header is missing',
+        () async {
+          // Arrange
+          const token = 'valid_token';
+          mockHttpClient.mockResponse = http.Response('{}', 200);
 
-        // Act & Assert
-        expect(
-          () => scopeService.getScopesFromAccessToken(token),
-          throwsA(
-            isA<ScopeValidationException>()
-                .having((e) => e.message, 'message', contains('No scopes found in response headers')),
-          ),
-        );
-      });
+          // Act & Assert
+          expect(
+            () => scopeService.getScopesFromAccessToken(token),
+            throwsA(
+              isA<ScopeValidationException>().having(
+                (e) => e.message,
+                'message',
+                contains('No scopes found in response headers'),
+              ),
+            ),
+          );
+        },
+      );
 
       test('should throw ScopeValidationException on timeout', () async {
         // Arrange
@@ -158,58 +197,81 @@ void main() {
         expect(
           () => scopeService.getScopesFromAccessToken(token),
           throwsA(
-            isA<ScopeValidationException>()
-                .having((e) => e.message, 'message', contains('Request timeout')),
+            isA<ScopeValidationException>().having(
+              (e) => e.message,
+              'message',
+              contains('Request timeout'),
+            ),
           ),
         );
       });
 
-      test('should throw ScopeValidationException on socket exception', () async {
-        // Arrange
-        const token = 'valid_token';
-        mockHttpClient.shouldThrowSocketException = true;
+      test(
+        'should throw ScopeValidationException on socket exception',
+        () async {
+          // Arrange
+          const token = 'valid_token';
+          mockHttpClient.shouldThrowSocketException = true;
 
-        // Act & Assert
-        expect(
-          () => scopeService.getScopesFromAccessToken(token),
-          throwsA(
-            isA<ScopeValidationException>()
-                .having((e) => e.message, 'message', contains('Network error'))
-                .having((e) => e.cause, 'cause', isA<SocketException>()),
-          ),
-        );
-      });
+          // Act & Assert
+          expect(
+            () => scopeService.getScopesFromAccessToken(token),
+            throwsA(
+              isA<ScopeValidationException>()
+                  .having(
+                    (e) => e.message,
+                    'message',
+                    contains('Network error'),
+                  )
+                  .having((e) => e.cause, 'cause', isA<SocketException>()),
+            ),
+          );
+        },
+      );
 
-      test('should throw ScopeValidationException on HTTP client exception', () async {
-        // Arrange
-        const token = 'valid_token';
-        mockHttpClient.shouldThrowClientException = true;
+      test(
+        'should throw ScopeValidationException on HTTP client exception',
+        () async {
+          // Arrange
+          const token = 'valid_token';
+          mockHttpClient.shouldThrowClientException = true;
 
-        // Act & Assert
-        expect(
-          () => scopeService.getScopesFromAccessToken(token),
-          throwsA(
-            isA<ScopeValidationException>()
-                .having((e) => e.message, 'message', contains('HTTP client error'))
-                .having((e) => e.cause, 'cause', isA<http.ClientException>()),
-          ),
-        );
-      });
+          // Act & Assert
+          expect(
+            () => scopeService.getScopesFromAccessToken(token),
+            throwsA(
+              isA<ScopeValidationException>()
+                  .having(
+                    (e) => e.message,
+                    'message',
+                    contains('HTTP client error'),
+                  )
+                  .having((e) => e.cause, 'cause', isA<http.ClientException>()),
+            ),
+          );
+        },
+      );
 
-      test('should throw ScopeValidationException on unexpected error', () async {
-        // Arrange
-        const token = 'valid_token';
-        mockHttpClient.shouldThrowGenericException = true;
+      test(
+        'should throw ScopeValidationException on unexpected error',
+        () async {
+          // Arrange
+          const token = 'valid_token';
+          mockHttpClient.shouldThrowGenericException = true;
 
-        // Act & Assert
-        expect(
-          () => scopeService.getScopesFromAccessToken(token),
-          throwsA(
-            isA<ScopeValidationException>()
-                .having((e) => e.message, 'message', contains('Unexpected error occurred')),
-          ),
-        );
-      });
+          // Act & Assert
+          expect(
+            () => scopeService.getScopesFromAccessToken(token),
+            throwsA(
+              isA<ScopeValidationException>().having(
+                (e) => e.message,
+                'message',
+                contains('Unexpected error occurred'),
+              ),
+            ),
+          );
+        },
+      );
     });
 
     group('ScopeValidationException', () {
@@ -221,12 +283,18 @@ void main() {
         expect(exception.message, equals('Test message'));
         expect(exception.statusCode, isNull);
         expect(exception.cause, isNull);
-        expect(exception.toString(), equals('ScopeValidationException: Test message'));
+        expect(
+          exception.toString(),
+          equals('ScopeValidationException: Test message'),
+        );
       });
 
       test('should create exception with message and status code', () {
         // Arrange & Act
-        const exception = ScopeValidationException('Test message', statusCode: 401);
+        const exception = ScopeValidationException(
+          'Test message',
+          statusCode: 401,
+        );
 
         // Assert
         expect(exception.message, equals('Test message'));

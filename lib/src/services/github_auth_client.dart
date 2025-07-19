@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
 
+import 'package:flutter/foundation.dart';
 import 'package:injectable/injectable.dart';
 import 'package:http/http.dart' as http;
 
@@ -61,7 +62,7 @@ abstract class GithubAuthHttpClientModule {
 class GithubAuthClient {
   final http.Client _httpClient;
   final String _githubClientID;
-  
+
   // Configuration constants
   static const Duration _requestTimeout = Duration(seconds: 30);
   static const int _maxRetryAttempts = 3;
@@ -106,13 +107,22 @@ class GithubAuthClient {
     });
 
     try {
-      final response = await _makeHttpRequest(url, 'createAccessTokenFromDeviceCode');
-      final parsedBody = _parseJsonResponse(response, 'createAccessTokenFromDeviceCode');
+      final response = await _makeHttpRequest(
+        url,
+        'createAccessTokenFromDeviceCode',
+      );
+      final parsedBody = _parseJsonResponse(
+        response,
+        'createAccessTokenFromDeviceCode',
+      );
 
       final error = parsedBody['error'] as String?;
       if (error != null) {
-        _logError('OAuth error received', {'error': error, 'description': parsedBody['error_description']});
-        
+        _logError('OAuth error received', {
+          'error': error,
+          'description': parsedBody['error_description'],
+        });
+
         switch (error) {
           case 'authorization_pending':
             throw AuthorizationPendingException();
@@ -140,7 +150,9 @@ class GithubAuthClient {
       return accessToken;
     } catch (e) {
       if (e is GithubAuthException) rethrow;
-      _logError('Unexpected error in createAccessTokenFromDeviceCode', {'error': e.toString()});
+      _logError('Unexpected error in createAccessTokenFromDeviceCode', {
+        'error': e.toString(),
+      });
       throw GithubNonRecoverableException(
         'unexpected_error',
         'Failed to obtain access token: ${e.toString()}',
@@ -156,7 +168,10 @@ class GithubAuthClient {
     // Check for OAuth errors in device code response
     final error = parsedBody['error'] as String?;
     if (error != null) {
-      _logError('Device code request failed', {'error': error, 'description': parsedBody['error_description']});
+      _logError('Device code request failed', {
+        'error': error,
+        'description': parsedBody['error_description'],
+      });
       throw GithubNonRecoverableException(
         error,
         parsedBody['error_description'] ?? 'Unknown error',
@@ -168,7 +183,9 @@ class GithubAuthClient {
       _logInfo('Device code created successfully');
       return result;
     } catch (e) {
-      _logError('Failed to parse device code response', {'error': e.toString()});
+      _logError('Failed to parse device code response', {
+        'error': e.toString(),
+      });
       throw GithubNonRecoverableException(
         'invalid_response',
         'Failed to parse device code response: ${e.toString()}',
@@ -179,8 +196,11 @@ class GithubAuthClient {
   /// Makes an HTTP request with timeout and comprehensive error handling
   Future<http.Response> _makeHttpRequest(Uri url, String operationName) async {
     try {
-      _logInfo('Making HTTP request', {'url': _sanitizeUrl(url), 'operation': operationName});
-      
+      _logInfo('Making HTTP request', {
+        'url': _sanitizeUrl(url),
+        'operation': operationName,
+      });
+
       final response = await _httpClient
           .post(
             url,
@@ -228,19 +248,28 @@ class GithubAuthClient {
 
       return response;
     } on TimeoutException {
-      _logError('Request timeout', {'operation': operationName, 'timeout': _requestTimeout.inSeconds});
+      _logError('Request timeout', {
+        'operation': operationName,
+        'timeout': _requestTimeout.inSeconds,
+      });
       throw GithubNonRecoverableException(
         'timeout',
         'Request timed out after ${_requestTimeout.inSeconds} seconds',
       );
     } on SocketException catch (e) {
-      _logError('Network error', {'operation': operationName, 'error': e.message});
+      _logError('Network error', {
+        'operation': operationName,
+        'error': e.message,
+      });
       throw GithubNonRecoverableException(
         'network_error',
         'Network connection failed: ${e.message}',
       );
     } on http.ClientException catch (e) {
-      _logError('HTTP client error', {'operation': operationName, 'error': e.message});
+      _logError('HTTP client error', {
+        'operation': operationName,
+        'error': e.message,
+      });
       throw GithubNonRecoverableException(
         'client_error',
         'HTTP client error: ${e.message}',
@@ -249,7 +278,10 @@ class GithubAuthClient {
   }
 
   /// Parses JSON response with error handling
-  Map<String, dynamic> _parseJsonResponse(http.Response response, String operationName) {
+  Map<String, dynamic> _parseJsonResponse(
+    http.Response response,
+    String operationName,
+  ) {
     try {
       return jsonDecode(response.body) as Map<String, dynamic>;
     } catch (e) {
@@ -278,7 +310,7 @@ class GithubAuthClient {
         return await operation();
       } catch (e) {
         attempt++;
-        
+
         // Don't retry for certain types of errors
         if (e is GithubAuthException || e is ArgumentError) {
           rethrow;
@@ -302,7 +334,7 @@ class GithubAuthClient {
         });
 
         await Future.delayed(delay);
-        
+
         // Exponential backoff with jitter
         delay = Duration(
           milliseconds: min(
@@ -326,20 +358,26 @@ class GithubAuthClient {
         sanitizedQuery[key] = value;
       }
     });
-    
+
     return url.replace(queryParameters: sanitizedQuery).toString();
   }
 
-  /// Logging methods (using print for now, can be replaced with proper logging)
+  /// Logging methods using debugPrint for development
   void _logInfo(String message, [Map<String, dynamic>? context]) {
-    print('[GithubAuthClient] INFO: $message${context != null ? ' - $context' : ''}');
+    debugPrint(
+      '[GithubAuthClient] INFO: $message${context != null ? ' - $context' : ''}',
+    );
   }
 
   void _logWarning(String message, [Map<String, dynamic>? context]) {
-    print('[GithubAuthClient] WARNING: $message${context != null ? ' - $context' : ''}');
+    debugPrint(
+      '[GithubAuthClient] WARNING: $message${context != null ? ' - $context' : ''}',
+    );
   }
 
   void _logError(String message, [Map<String, dynamic>? context]) {
-    print('[GithubAuthClient] ERROR: $message${context != null ? ' - $context' : ''}');
+    debugPrint(
+      '[GithubAuthClient] ERROR: $message${context != null ? ' - $context' : ''}',
+    );
   }
 }

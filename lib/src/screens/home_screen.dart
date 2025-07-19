@@ -8,7 +8,7 @@ class HomeScreen extends StatefulWidget {
   final HomeViewModel homeViewModel;
 
   const HomeScreen({
-    super.key, 
+    super.key,
     required this.authViewModel,
     required this.homeViewModel,
   });
@@ -25,7 +25,7 @@ class _HomeScreenState extends State<HomeScreen> {
     super.initState();
     widget.homeViewModel.addListener(_onHomeViewModelChanged);
     _scrollController.addListener(_onScroll);
-    
+
     // Load initial data
     WidgetsBinding.instance.addPostFrameCallback((_) {
       widget.homeViewModel.loadFollowingUsers();
@@ -47,7 +47,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void _onScroll() {
-    if (_scrollController.position.pixels >= 
+    if (_scrollController.position.pixels >=
         _scrollController.position.maxScrollExtent - 200) {
       widget.homeViewModel.loadMoreFollowingUsers();
     }
@@ -114,10 +114,11 @@ class _HomeScreenState extends State<HomeScreen> {
                 children: [
                   Text(
                     'Following',
-                    style: Theme.of(context).textTheme.titleLarge
-                        ?.copyWith(fontWeight: FontWeight.bold),
+                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
-                  if (widget.homeViewModel.isLoading && 
+                  if (widget.homeViewModel.isLoading &&
                       widget.homeViewModel.followingUsers.isEmpty)
                     const SizedBox(
                       width: 20,
@@ -158,9 +159,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
 
               // Following Users List
-              Expanded(
-                child: _buildFollowingList(),
-              ),
+              Expanded(child: _buildFollowingList()),
             ],
           ),
         ),
@@ -174,17 +173,13 @@ class _HomeScreenState extends State<HomeScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
-              Icons.people_outline,
-              size: 64,
-              color: Colors.grey[400],
-            ),
+            Icon(Icons.people_outline, size: 64, color: Colors.grey[400]),
             const SizedBox(height: 16),
             Text(
               'No following users found',
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                color: Colors.grey[600],
-              ),
+              style: Theme.of(
+                context,
+              ).textTheme.titleMedium?.copyWith(color: Colors.grey[600]),
             ),
             const SizedBox(height: 8),
             Text(
@@ -205,16 +200,15 @@ class _HomeScreenState extends State<HomeScreen> {
 
     return ListView.builder(
       controller: _scrollController,
-      itemCount: widget.homeViewModel.followingUsers.length + 
-                 (widget.homeViewModel.isLoading ? 1 : 0),
+      itemCount:
+          widget.homeViewModel.followingUsers.length +
+          (widget.homeViewModel.isLoading ? 1 : 0),
       itemBuilder: (context, index) {
         // Loading indicator at the end
         if (index >= widget.homeViewModel.followingUsers.length) {
           return const Padding(
             padding: EdgeInsets.all(16.0),
-            child: Center(
-              child: CircularProgressIndicator(),
-            ),
+            child: Center(child: CircularProgressIndicator()),
           );
         }
 
@@ -225,8 +219,8 @@ class _HomeScreenState extends State<HomeScreen> {
             leading: CircleAvatar(
               backgroundImage: NetworkImage(user.avatarUrl),
               backgroundColor: _getUserAvatarColor(user.login),
-              onBackgroundImageError: (_, __) {},
-              child: user.avatarUrl.isEmpty 
+              onBackgroundImageError: (_, _) {},
+              child: user.avatarUrl.isEmpty
                   ? Text(
                       user.login[0].toUpperCase(),
                       style: const TextStyle(
@@ -244,29 +238,18 @@ class _HomeScreenState extends State<HomeScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 if (user.name != null && user.name!.isNotEmpty)
-                  Text(
-                    user.name!,
-                    style: TextStyle(color: Colors.grey[600]),
-                  ),
+                  Text(user.name!, style: TextStyle(color: Colors.grey[600])),
                 const SizedBox(height: 4),
                 Row(
                   children: [
-                    const Icon(
-                      Icons.folder,
-                      size: 16,
-                      color: Colors.grey,
-                    ),
+                    const Icon(Icons.folder, size: 16, color: Colors.grey),
                     const SizedBox(width: 4),
                     Text(
                       '${_formatNumber(user.publicRepos)} repositories',
                       style: const TextStyle(fontSize: 12),
                     ),
                     const SizedBox(width: 16),
-                    const Icon(
-                      Icons.people,
-                      size: 16,
-                      color: Colors.grey,
-                    ),
+                    const Icon(Icons.people, size: 16, color: Colors.grey),
                     const SizedBox(width: 4),
                     Text(
                       '${_formatNumber(user.followers)} followers',
