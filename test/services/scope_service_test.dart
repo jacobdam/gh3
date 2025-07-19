@@ -45,7 +45,6 @@ void main() {
 
         // Assert
         expect(result, equals(expectedScopes));
-        verify(mockHttpClient).called(1);
         verify(
           mockHttpClient.get(
             Uri.parse('https://api.github.com/applications/token/scopes'),
