@@ -35,6 +35,7 @@ dev_dependencies:
   
   # Ferry code generation
   ferry_generator: ^0.14.0-dev.0
+  mocktail_image_network: ^1.2.0
 
 flutter:
   uses-material-design: true

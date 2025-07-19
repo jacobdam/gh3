@@ -85,7 +85,6 @@ void main() {
     test('should clear cache successfully', () async {
       // Arrange
       when(mockTokenStorage.getToken()).thenAnswer((_) async => 'token');
-      final client = await ferryClientService.getClient();
 
       // Act & Assert - should not throw
       expect(() => ferryClientService.clearCache(), returnsNormally);

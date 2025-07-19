@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
 
-import 'package:flutter/foundation.dart';
 import 'package:injectable/injectable.dart';
 import 'package:http/http.dart' as http;
 
@@ -364,20 +363,20 @@ class GithubAuthClient {
 
   /// Logging methods using debugPrint for development
   void _logInfo(String message, [Map<String, dynamic>? context]) {
-    debugPrint(
-      '[GithubAuthClient] INFO: $message${context != null ? ' - $context' : ''}',
-    );
+    // debugPrint(
+    //   '[GithubAuthClient] INFO: $message${context != null ? ' - $context' : ''}',
+    // );
   }
 
   void _logWarning(String message, [Map<String, dynamic>? context]) {
-    debugPrint(
-      '[GithubAuthClient] WARNING: $message${context != null ? ' - $context' : ''}',
-    );
+    // debugPrint(
+    //   '[GithubAuthClient] WARNING: $message${context != null ? ' - $context' : ''}',
+    // );
   }
 
   void _logError(String message, [Map<String, dynamic>? context]) {
-    debugPrint(
-      '[GithubAuthClient] ERROR: $message${context != null ? ' - $context' : ''}',
-    );
+    // debugPrint(
+    //   '[GithubAuthClient] ERROR: $message${context != null ? ' - $context' : ''}',
+    // );
   }
 }

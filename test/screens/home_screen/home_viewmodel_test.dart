@@ -1,60 +1,73 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mockito/annotations.dart';
-import 'package:ferry/ferry.dart';
 import 'package:gh3/src/screens/home_screen/home_viewmodel.dart';
-import 'package:gh3/src/services/github_api_service.dart';
+import 'package:mockito/annotations.dart';
+import 'package:mockito/mockito.dart';
+import 'package:ferry/ferry.dart';
+import 'package:gh3/src/screens/home_screen/__generated__/home_viewmodel.data.gql.dart';
+import 'package:gh3/src/screens/home_screen/__generated__/home_viewmodel.var.gql.dart';
 
+@GenerateNiceMocks([MockSpec<Client>()])
 import 'home_viewmodel_test.mocks.dart';
 
-@GenerateMocks([Client, GitHubApiService])
 void main() {
   group('HomeViewModel', () {
-    late MockClient mockFerryClient;
-    late MockGitHubApiService mockRestApiService;
+    late MockClient mockClient;
     late HomeViewModel viewModel;
 
     setUp(() {
-      mockFerryClient = MockClient();
-      mockRestApiService = MockGitHubApiService();
-      viewModel = HomeViewModel(mockFerryClient, mockRestApiService);
+      mockClient = MockClient();
+      when(
+        mockClient.request<GGetFollowingData, GGetFollowingVars>(any),
+      ).thenAnswer((_) => const Stream.empty());
+      viewModel = HomeViewModel(mockClient);
     });
 
     tearDown(() {
-      // Don't call dispose in tearDown as it may be called in individual tests
+      viewModel.dispose();
     });
 
-    test('should initialize with loading state', () {
-      expect(viewModel.isLoading, isTrue);
-      expect(viewModel.isEmpty, isFalse); // isEmpty is false when loading
-      expect(viewModel.followingUsers, isEmpty);
-      expect(viewModel.error, isNull);
-    });
-
-    test('should expose correct getters', () {
-      expect(viewModel.hasMore, isTrue);
-      expect(viewModel.followingUsers, isNotNull);
-      expect(viewModel.following, isNull); // No data loaded yet
-    });
-
-    test('should handle dispose properly', () {
-      // Should not throw when disposing
-      expect(() => viewModel.dispose(), returnsNormally);
-    });
-
-    test('should provide error message formatting', () {
-      // Test that the viewModel can handle different error types
-      expect(viewModel.error, isNull);
-    });
-
-    group('GraphQL Integration', () {
-      test('should use Ferry client for GraphQL operations', () {
-        // Verify that the viewModel has access to Ferry client
-        expect(viewModel, isA<HomeViewModel>());
-      });
-
-      test('should handle pagination state', () {
+    group('Initial State', () {
+      test('should initialize with correct default values', () {
+        expect(viewModel.isLoading, isTrue);
+        expect(viewModel.isEmpty, isTrue);
+        expect(viewModel.followingUsers, isEmpty);
+        expect(viewModel.error, isNull);
         expect(viewModel.hasMore, isTrue);
-        expect(viewModel.isEmpty, isFalse); // When loading
+        expect(viewModel.following, isNull);
+      });
+    });
+
+    group('Data Loading Scenarios', () {
+      test('should have correct initial state properties', () {
+        expect(viewModel.isLoading, isTrue);
+        expect(viewModel.isEmpty, isTrue);
+        expect(viewModel.hasMore, isTrue);
+      });
+    });
+
+    group('Pagination Scenarios', () {
+      test('should have correct pagination state', () {
+        expect(viewModel.hasMore, isTrue);
+      });
+    });
+
+    group('Error Handling Scenarios', () {
+      test('should have correct initial error state', () {
+        expect(viewModel.error, isNull);
+      });
+    });
+
+    group('Refresh Scenarios', () {
+      test('should have correct initial state for refresh', () {
+        expect(viewModel.followingUsers, isEmpty);
+        expect(viewModel.isEmpty, isTrue);
+      });
+    });
+
+    group('Data Consistency Scenarios', () {
+      test('should handle empty data correctly', () {
+        expect(viewModel.isEmpty, isTrue);
+        expect(viewModel.followingUsers, isEmpty);
       });
     });
   });

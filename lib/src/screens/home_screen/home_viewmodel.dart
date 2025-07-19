@@ -34,7 +34,7 @@ class HomeViewModel extends ChangeNotifier {
 
   bool get isLoading => _followingResult?.loading ?? true;
   bool get hasMore => _hasNextPage;
-  bool get isEmpty => followingUsers.isEmpty && !isLoading;
+  bool get isEmpty => followingUsers.isEmpty;
 
   String? get error {
     final exception =
