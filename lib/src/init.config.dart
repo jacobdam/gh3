@@ -19,6 +19,7 @@ import 'package:gh3/src/services/ferry_module.dart' as _i762;
 import 'package:gh3/src/services/github_api_service.dart' as _i143;
 import 'package:gh3/src/services/github_auth_client.dart' as _i1035;
 import 'package:gh3/src/services/scope_service.dart' as _i792;
+import 'package:gh3/src/services/timer_service.dart' as _i1066;
 import 'package:gh3/src/services/token_storage.dart' as _i895;
 import 'package:http/http.dart' as _i519;
 import 'package:injectable/injectable.dart' as _i526;
@@ -35,6 +36,12 @@ extension GetItInjectableX on _i174.GetIt {
     final ferryModule = _$FerryModule();
     gh.lazySingleton<_i589.Env>(() => envModule.env);
     gh.lazySingleton<_i519.Client>(() => githubAuthHttpClientModule.httpClient);
+    gh.lazySingleton<_i1066.DefaultTimerService>(
+      () => _i1066.DefaultTimerService(),
+    );
+    gh.lazySingleton<_i1066.TimerService>(
+      () => gh<_i1066.DefaultTimerService>(),
+    );
     gh.lazySingleton<_i895.ITokenStorage>(() => _i895.PrefsTokenStorage());
     gh.factory<String>(
       () => envModule.githubClientId,
@@ -59,15 +66,16 @@ extension GetItInjectableX on _i174.GetIt {
         gh<String>(instanceName: 'GithubClientID'),
       ),
     );
+    gh.lazySingletonAsync<_i25.Client>(
+      () => ferryModule.ferryClient(gh<_i564.FerryClientService>()),
+    );
     gh.lazySingleton<_i336.AuthService>(
       () => _i336.AuthService(
         gh<_i1035.GithubAuthClient>(),
         gh<_i895.ITokenStorage>(),
         gh<_i792.IScopeService>(),
+        gh<_i1066.TimerService>(),
       ),
-    );
-    gh.lazySingletonAsync<_i25.Client>(
-      () => ferryModule.ferryClient(gh<_i564.FerryClientService>()),
     );
     gh.factoryAsync<_i630.HomeViewModel>(
       () async => _i630.HomeViewModel(await getAsync<_i25.Client>()),

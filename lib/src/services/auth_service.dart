@@ -3,17 +3,24 @@ import 'package:injectable/injectable.dart';
 import 'github_auth_client.dart';
 import 'token_storage.dart';
 import 'scope_service.dart';
+import 'timer_service.dart';
 
 @lazySingleton
 class AuthService {
   final GithubAuthClient _authClient;
   final ITokenStorage _tokenStorage;
   final IScopeService _scopeService;
+  final TimerService _timerService;
   // Scopes required for GitHub operations
   static const List<String> requiredScopes = ['repo', 'read:user'];
   String? _accessToken;
 
-  AuthService(this._authClient, this._tokenStorage, this._scopeService);
+  AuthService(
+    this._authClient,
+    this._tokenStorage,
+    this._scopeService,
+    this._timerService,
+  );
 
   /// Initialize service: load token from storage and validate.
   Future<void> init() async {
@@ -61,9 +68,9 @@ class AuthService {
         await _tokenStorage.saveToken(token);
         return token;
       } on AuthorizationPendingException {
-        await Future.delayed(const Duration(seconds: 5));
+        await _timerService.delay(const Duration(seconds: 5));
       } on SlowDownException {
-        await Future.delayed(const Duration(seconds: 10));
+        await _timerService.delay(const Duration(seconds: 10));
       }
     }
   }
@@ -79,9 +86,9 @@ class AuthService {
         await _tokenStorage.saveToken(token);
         return token;
       } on AuthorizationPendingException {
-        await Future.delayed(const Duration(seconds: 5));
+        await _timerService.delay(const Duration(seconds: 5));
       } on SlowDownException {
-        await Future.delayed(const Duration(seconds: 10));
+        await _timerService.delay(const Duration(seconds: 10));
       }
     }
   }
