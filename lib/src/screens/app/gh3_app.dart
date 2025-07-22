@@ -5,6 +5,7 @@ import 'package:gh3/src/screens/home_screen/home_viewmodel.dart';
 import 'package:gh3/src/screens/loading_screen/loading_screen.dart';
 import 'package:gh3/src/screens/login_screen/login_screen.dart';
 import 'package:gh3/src/screens/login_screen/login_viewmodel.dart';
+import 'package:gh3/src/screens/user_details/user_details_screen.dart';
 import 'package:gh3/src/services/auth_service.dart';
 import 'package:gh3/src/services/github_auth_client.dart';
 import 'package:go_router/go_router.dart';
@@ -50,6 +51,12 @@ class Gh3App extends StatelessWidget {
           builder: (context, state) => HomeScreen(
             authViewModel: authViewModel,
             homeViewModel: homeViewModel,
+          ),
+        ),
+        GoRoute(
+          path: '/:login',
+          builder: (context, state) => UserDetailsScreen(
+            login: state.pathParameters['login']!,
           ),
         ),
       ],
