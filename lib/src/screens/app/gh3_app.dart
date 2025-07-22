@@ -6,7 +6,6 @@ import 'package:gh3/src/screens/loading_screen/loading_screen.dart';
 import 'package:gh3/src/screens/login_screen/login_screen.dart';
 import 'package:gh3/src/screens/login_screen/login_viewmodel.dart';
 import 'package:gh3/src/services/auth_service.dart';
-import 'package:gh3/src/services/github_api_service.dart';
 import 'package:gh3/src/services/github_auth_client.dart';
 import 'package:go_router/go_router.dart';
 
@@ -14,7 +13,6 @@ class Gh3App extends StatelessWidget {
   final AuthViewModel authViewModel;
   final AuthService authService;
   final GithubAuthClient githubAuthClient;
-  final GitHubApiService githubApiService;
   final HomeViewModel homeViewModel;
 
   const Gh3App({
@@ -22,7 +20,6 @@ class Gh3App extends StatelessWidget {
     required this.authViewModel,
     required this.authService,
     required this.githubAuthClient,
-    required this.githubApiService,
     required this.homeViewModel,
   });
 

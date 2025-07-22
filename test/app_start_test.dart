@@ -1,20 +1,19 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:get_it/get_it.dart';
 import 'package:ferry/ferry.dart';
+import 'package:gh3/src/screens/app/gh3_app.dart';
 import 'package:gh3/src/screens/home_screen/home_viewmodel.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'package:gh3/src/screens/home_screen/__generated__/home_viewmodel.data.gql.dart';
 import 'package:gh3/src/screens/home_screen/__generated__/home_viewmodel.var.gql.dart';
 
-import 'package:gh3/main.dart';
 import 'package:gh3/src/services/auth_service.dart';
 import 'package:gh3/src/screens/home_screen/home_screen.dart';
 import 'package:gh3/src/screens/login_screen/login_screen.dart';
 import 'package:gh3/src/services/github_auth_client.dart';
 import 'package:gh3/src/services/token_storage.dart';
 import 'package:gh3/src/services/scope_service.dart';
-import 'package:gh3/src/services/github_api_service.dart';
 import 'package:gh3/src/services/timer_service.dart';
 import 'package:gh3/src/screens/app/auth_viewmodel.dart';
 import 'package:gh3/src/screens/login_screen/login_viewmodel.dart';
@@ -25,7 +24,6 @@ import 'package:gh3/src/screens/login_screen/login_viewmodel.dart';
   MockSpec<ITokenStorage>(),
   MockSpec<IScopeService>(),
   MockSpec<TimerService>(),
-  MockSpec<GitHubApiService>(),
   MockSpec<AuthService>(),
 ])
 import 'app_start_test.mocks.dart';
@@ -66,11 +64,10 @@ void main() {
     );
 
     await tester.pumpWidget(
-      MyApp(
+      Gh3App(
         authViewModel: authViewModel,
         authService: mockAuthService,
         githubAuthClient: mockAuthClient,
-        githubApiService: MockGitHubApiService(),
         homeViewModel: HomeViewModel(mockFerryClient),
       ),
     );
@@ -112,11 +109,10 @@ void main() {
     );
 
     await tester.pumpWidget(
-      MyApp(
+      Gh3App(
         authViewModel: authViewModel,
         authService: mockAuthService,
         githubAuthClient: mockAuthClient,
-        githubApiService: MockGitHubApiService(),
         homeViewModel: HomeViewModel(mockFerryClient),
       ),
     );

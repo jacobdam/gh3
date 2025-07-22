@@ -16,7 +16,6 @@ import 'package:gh3/src/screens/home_screen/home_viewmodel.dart' as _i630;
 import 'package:gh3/src/services/auth_service.dart' as _i336;
 import 'package:gh3/src/services/ferry_client_service.dart' as _i564;
 import 'package:gh3/src/services/ferry_module.dart' as _i762;
-import 'package:gh3/src/services/github_api_service.dart' as _i143;
 import 'package:gh3/src/services/github_auth_client.dart' as _i1035;
 import 'package:gh3/src/services/scope_service.dart' as _i792;
 import 'package:gh3/src/services/timer_service.dart' as _i1066;
@@ -39,17 +38,10 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i1066.DefaultTimerService>(
       () => _i1066.DefaultTimerService(),
     );
-    gh.lazySingleton<_i1066.TimerService>(
-      () => gh<_i1066.DefaultTimerService>(),
-    );
     gh.lazySingleton<_i895.ITokenStorage>(() => _i895.PrefsTokenStorage());
     gh.factory<String>(
       () => envModule.githubClientId,
       instanceName: 'GithubClientID',
-    );
-    gh.factory<_i143.GitHubApiService>(
-      () =>
-          _i143.GitHubApiService(gh<_i519.Client>(), gh<_i895.ITokenStorage>()),
     );
     gh.factory<_i1035.GithubNonRecoverableException>(
       () => _i1035.GithubNonRecoverableException(gh<String>(), gh<String>()),
