@@ -6,23 +6,23 @@
   - Create RouteCollectionService to gather routes from all providers via DI
   - _Requirements: 2.2, 2.3, 5.3, 5.4_
 
-- [ ] 2. Create typed route classes for existing screens
-  - [ ] 2.1 Create HomeRoute class extending AppRoute
+- [x] 2. Create typed route classes for existing screens
+  - [x] 2.1 Create HomeRoute class extending AppRoute
     - Implement path property returning '/'
     - Write unit tests for HomeRoute navigation methods
     - _Requirements: 5.1, 5.2, 5.5_
   
-  - [ ] 2.2 Create LoginRoute class extending AppRoute
+  - [x] 2.2 Create LoginRoute class extending AppRoute
     - Implement path property returning '/login'
     - Write unit tests for LoginRoute navigation methods
     - _Requirements: 5.1, 5.2, 5.5_
   
-  - [ ] 2.3 Create LoadingRoute class extending AppRoute
+  - [x] 2.3 Create LoadingRoute class extending AppRoute
     - Implement path property returning '/loading'
     - Write unit tests for LoadingRoute navigation methods
     - _Requirements: 5.1, 5.2, 5.5_
   
-  - [ ] 2.4 Create UserDetailsRoute class extending AppRoute with username parameter
+  - [x] 2.4 Create UserDetailsRoute class extending AppRoute with username parameter
     - Implement constructor accepting String login parameter
     - Implement path property returning '/$login'
     - Write unit tests for UserDetailsRoute with different usernames
