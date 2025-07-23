@@ -55,9 +55,8 @@ class Gh3App extends StatelessWidget {
         ),
         GoRoute(
           path: '/:login',
-          builder: (context, state) => UserDetailsScreen(
-            login: state.pathParameters['login']!,
-          ),
+          builder: (context, state) =>
+              UserDetailsScreen(login: state.pathParameters['login']!),
         ),
       ],
       redirect: (context, state) {

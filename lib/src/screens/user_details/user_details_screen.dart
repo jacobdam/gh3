@@ -3,7 +3,7 @@ import 'package:go_router/go_router.dart';
 
 class UserDetailsScreen extends StatelessWidget {
   final String login;
-  const UserDetailsScreen({Key? key, required this.login}) : super(key: key);
+  const UserDetailsScreen({super.key, required this.login});
 
   @override
   Widget build(BuildContext context) {
@@ -28,4 +28,4 @@ class UserDetailsScreen extends StatelessWidget {
       ),
     );
   }
-} 
+}
