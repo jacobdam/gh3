@@ -12,7 +12,7 @@ abstract class TimerService {
 }
 
 /// Default implementation of TimerService using dart:async.
-@lazySingleton
+@LazySingleton(as: TimerService)
 class DefaultTimerService implements TimerService {
   @override
   Future<void> delay(Duration duration) async {
