@@ -1,7 +1,9 @@
 import 'package:flutter/foundation.dart';
+import 'package:injectable/injectable.dart';
 import 'package:gh3/src/services/auth_service.dart';
 
 /// ViewModel exposing AuthService init and login state for GoRouter refresh/redirect.
+@injectable
 class AuthViewModel extends ChangeNotifier {
   final AuthService _authService;
   bool loading = true;

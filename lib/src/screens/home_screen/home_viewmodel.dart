@@ -4,9 +4,7 @@ import 'package:ferry/ferry.dart';
 import '__generated__/home_viewmodel.req.gql.dart';
 import '__generated__/home_viewmodel.data.gql.dart';
 import '__generated__/home_viewmodel.var.gql.dart';
-import 'package:injectable/injectable.dart';
 
-@injectable
 class HomeViewModel extends ChangeNotifier {
   final Client _ferryClient;
 
