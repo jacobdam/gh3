@@ -13,7 +13,13 @@ import 'package:ferry/ferry.dart' as _i25;
 import 'package:get_it/get_it.dart' as _i174;
 import 'package:gh3/src/env/env.dart' as _i589;
 import 'package:gh3/src/routing/route_collection_service.dart' as _i482;
-import 'package:gh3/src/screens/home_screen/home_viewmodel.dart' as _i630;
+import 'package:gh3/src/screens/app/auth_viewmodel.dart' as _i850;
+import 'package:gh3/src/screens/home_screen/home_viewmodel_factory.dart'
+    as _i1013;
+import 'package:gh3/src/screens/login_screen/login_viewmodel_factory.dart'
+    as _i76;
+import 'package:gh3/src/screens/user_details/user_details_viewmodel_factory.dart'
+    as _i627;
 import 'package:gh3/src/services/auth_service.dart' as _i336;
 import 'package:gh3/src/services/ferry_client_service.dart' as _i564;
 import 'package:gh3/src/services/ferry_module.dart' as _i762;
@@ -36,6 +42,9 @@ extension GetItInjectableX on _i174.GetIt {
     final ferryModule = _$FerryModule();
     gh.factory<_i482.RouteCollectionService>(
       () => _i482.RouteCollectionService(),
+    );
+    gh.factory<_i627.UserDetailsViewModelFactory>(
+      () => _i627.UserDetailsViewModelFactory(),
     );
     gh.lazySingleton<_i589.Env>(() => envModule.env);
     gh.lazySingleton<_i519.Client>(() => githubAuthHttpClientModule.httpClient);
@@ -71,8 +80,18 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i1066.TimerService>(),
       ),
     );
-    gh.factoryAsync<_i630.HomeViewModel>(
-      () async => _i630.HomeViewModel(await getAsync<_i25.Client>()),
+    gh.factoryAsync<_i1013.HomeViewModelFactory>(
+      () async => _i1013.HomeViewModelFactory(await getAsync<_i25.Client>()),
+    );
+    gh.factory<_i850.AuthViewModel>(
+      () => _i850.AuthViewModel(gh<_i336.AuthService>()),
+    );
+    gh.factory<_i76.LoginViewModelFactory>(
+      () => _i76.LoginViewModelFactory(
+        gh<_i1035.GithubAuthClient>(),
+        gh<_i336.AuthService>(),
+        gh<_i850.AuthViewModel>(),
+      ),
     );
     return this;
   }
