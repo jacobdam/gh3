@@ -2,27 +2,54 @@ import 'package:flutter/material.dart';
 import '__generated__/repository_card.data.gql.dart';
 
 class RepositoryCard extends StatelessWidget {
-  final GRepositoryCardFragment repository;
+  final String name;
+  final String? description;
+  final String? primaryLanguageName;
+  final String? primaryLanguageColor;
+  final int stargazerCount;
+  final int forkCount;
   final VoidCallback? onTap;
 
-  const RepositoryCard({super.key, required this.repository, this.onTap});
+  const RepositoryCard({
+    super.key,
+    required this.name,
+    this.description,
+    this.primaryLanguageName,
+    this.primaryLanguageColor,
+    required this.stargazerCount,
+    required this.forkCount,
+    this.onTap,
+  });
+
+  factory RepositoryCard.fromFragment(
+    GRepositoryCardFragment fragment, {
+    Key? key,
+    VoidCallback? onTap,
+  }) {
+    return RepositoryCard(
+      key: key,
+      name: fragment.name,
+      description: fragment.description,
+      primaryLanguageName: fragment.primaryLanguage?.name,
+      primaryLanguageColor: fragment.primaryLanguage?.color,
+      stargazerCount: fragment.stargazerCount,
+      forkCount: fragment.forkCount,
+      onTap: onTap,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: ListTile(
-        title: Text(
-          repository.name,
-          style: const TextStyle(fontWeight: FontWeight.bold),
-        ),
+        title: Text(name, style: const TextStyle(fontWeight: FontWeight.bold)),
         subtitle: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            if (repository.description != null &&
-                repository.description!.isNotEmpty) ...[
+            if (description != null && description!.isNotEmpty) ...[
               Text(
-                repository.description!,
+                description!,
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(color: Colors.grey[600]),
@@ -31,18 +58,18 @@ class RepositoryCard extends StatelessWidget {
             ],
             Row(
               children: [
-                if (repository.primaryLanguage != null) ...[
+                if (primaryLanguageName != null) ...[
                   Container(
                     width: 12,
                     height: 12,
                     decoration: BoxDecoration(
-                      color: _parseColor(repository.primaryLanguage!.color),
+                      color: _parseColor(primaryLanguageColor),
                       shape: BoxShape.circle,
                     ),
                   ),
                   const SizedBox(width: 4),
                   Text(
-                    repository.primaryLanguage!.name,
+                    primaryLanguageName!,
                     style: TextStyle(color: Colors.grey[600], fontSize: 12),
                   ),
                   const SizedBox(width: 16),
@@ -50,14 +77,14 @@ class RepositoryCard extends StatelessWidget {
                 Icon(Icons.star, size: 16, color: Colors.grey[600]),
                 const SizedBox(width: 4),
                 Text(
-                  '${repository.stargazerCount}',
+                  '$stargazerCount',
                   style: TextStyle(color: Colors.grey[600], fontSize: 12),
                 ),
                 const SizedBox(width: 16),
                 Icon(Icons.call_split, size: 16, color: Colors.grey[600]),
                 const SizedBox(width: 4),
                 Text(
-                  '${repository.forkCount}',
+                  '$forkCount',
                   style: TextStyle(color: Colors.grey[600], fontSize: 12),
                 ),
               ],
@@ -83,3 +110,4 @@ class RepositoryCard extends StatelessWidget {
     }
   }
 }
+
