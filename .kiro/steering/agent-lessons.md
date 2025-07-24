@@ -6,6 +6,15 @@ inclusion: always
 
 Quick reference for common issues and their solutions when working with Kiro.
 
+## Adding New Lessons
+
+**Rule**: When you encounter a mistake or issue that could be prevented by following a specific process, add a concise lesson here with:
+- **Problem**: Brief description of what went wrong
+- **Solution**: The correct approach or commands
+- **Commands**: Essential commands (if applicable)
+
+Keep lessons short and actionable. Add new lessons at the bottom before the "Add new lessons here" line.
+
 ## Git Commands Hang in Terminal
 
 **Problem:** Git commands like `git diff` hang because they use interactive pager (less)
