@@ -103,6 +103,7 @@ Mirrors the `lib/` structure:
 5. **Screens** - Receive ViewModels through constructor parameters, focus on UI
 6. **Widgets** - Receive data through parameters, minimal business logic
 
+
 ### ViewModel Lifecycle Management
 - **Manual Creation**: ViewModels created by factories, not DI container
 - **Explicit Dependencies**: All dependencies injected through constructors
