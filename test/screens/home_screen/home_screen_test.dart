@@ -230,6 +230,26 @@ void main() {
 
         verify(mockHomeViewModel.removeListener(any)).called(1);
       });
+
+      testWidgets('should dispose ViewModel when widget is disposed', (
+        WidgetTester tester,
+      ) async {
+        await tester.pumpWidget(homeScreen);
+        await tester.pumpWidget(Container()); // Replace with empty widget
+
+        // Verify that the ViewModel's dispose method was called
+        verify(mockHomeViewModel.dispose()).called(1);
+      });
+
+      testWidgets('should call loadFollowingUsers on initState', (
+        WidgetTester tester,
+      ) async {
+        await tester.pumpWidget(homeScreen);
+        await tester.pump(); // Allow post-frame callback to execute
+
+        // Verify that loadFollowingUsers was called during initialization
+        verify(mockHomeViewModel.loadFollowingUsers()).called(1);
+      });
     });
 
     group('Theme Integration', () {
