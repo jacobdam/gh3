@@ -223,6 +223,24 @@ Serializers _$serializers =
           ..add(GGetFollowingData_viewer_following_pageInfo.serializer)
           ..add(GGetFollowingReq.serializer)
           ..add(GGetFollowingVars.serializer)
+          ..add(GGetUserDetailsData.serializer)
+          ..add(GGetUserDetailsData_user.serializer)
+          ..add(GGetUserDetailsData_user_followers.serializer)
+          ..add(GGetUserDetailsData_user_following.serializer)
+          ..add(GGetUserDetailsData_user_repositories.serializer)
+          ..add(GGetUserDetailsReq.serializer)
+          ..add(GGetUserDetailsVars.serializer)
+          ..add(GGetUserRepositoriesData.serializer)
+          ..add(GGetUserRepositoriesData_user.serializer)
+          ..add(GGetUserRepositoriesData_user_repositories.serializer)
+          ..add(GGetUserRepositoriesData_user_repositories_nodes.serializer)
+          ..add(
+            GGetUserRepositoriesData_user_repositories_nodes_primaryLanguage
+                .serializer,
+          )
+          ..add(GGetUserRepositoriesData_user_repositories_pageInfo.serializer)
+          ..add(GGetUserRepositoriesReq.serializer)
+          ..add(GGetUserRepositoriesVars.serializer)
           ..add(GGistOrder.serializer)
           ..add(GGistOrderField.serializer)
           ..add(GGistPrivacy.serializer)
@@ -1056,6 +1074,17 @@ Serializers _$serializers =
               const FullType.nullable(GGetFollowingData_viewer_following_nodes),
             ]),
             () => ListBuilder<GGetFollowingData_viewer_following_nodes?>(),
+          )
+          ..addBuilderFactory(
+            const FullType(BuiltList, const [
+              const FullType.nullable(
+                GGetUserRepositoriesData_user_repositories_nodes,
+              ),
+            ]),
+            () =>
+                ListBuilder<
+                  GGetUserRepositoriesData_user_repositories_nodes?
+                >(),
           ))
         .build();
 

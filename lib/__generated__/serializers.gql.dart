@@ -621,6 +621,23 @@ import 'package:gh3/src/screens/home_screen/__generated__/home_viewmodel.req.gql
     show GGetFollowingReq;
 import 'package:gh3/src/screens/home_screen/__generated__/home_viewmodel.var.gql.dart'
     show GGetFollowingVars;
+import 'package:gh3/src/screens/user_details/__generated__/user_details_viewmodel.data.gql.dart'
+    show
+        GGetUserDetailsData,
+        GGetUserDetailsData_user,
+        GGetUserDetailsData_user_followers,
+        GGetUserDetailsData_user_following,
+        GGetUserDetailsData_user_repositories,
+        GGetUserRepositoriesData,
+        GGetUserRepositoriesData_user,
+        GGetUserRepositoriesData_user_repositories,
+        GGetUserRepositoriesData_user_repositories_nodes,
+        GGetUserRepositoriesData_user_repositories_nodes_primaryLanguage,
+        GGetUserRepositoriesData_user_repositories_pageInfo;
+import 'package:gh3/src/screens/user_details/__generated__/user_details_viewmodel.req.gql.dart'
+    show GGetUserDetailsReq, GGetUserRepositoriesReq;
+import 'package:gh3/src/screens/user_details/__generated__/user_details_viewmodel.var.gql.dart'
+    show GGetUserDetailsVars, GGetUserRepositoriesVars;
 import 'package:gh3/src/widgets/repository_card/__generated__/repository_card.data.gql.dart'
     show
         GRepositoryCardFragmentData,
@@ -869,6 +886,21 @@ final SerializersBuilder _serializersBuilder = _$serializers.toBuilder()
   GGetFollowingData_viewer_following_pageInfo,
   GGetFollowingReq,
   GGetFollowingVars,
+  GGetUserDetailsData,
+  GGetUserDetailsData_user,
+  GGetUserDetailsData_user_followers,
+  GGetUserDetailsData_user_following,
+  GGetUserDetailsData_user_repositories,
+  GGetUserDetailsReq,
+  GGetUserDetailsVars,
+  GGetUserRepositoriesData,
+  GGetUserRepositoriesData_user,
+  GGetUserRepositoriesData_user_repositories,
+  GGetUserRepositoriesData_user_repositories_nodes,
+  GGetUserRepositoriesData_user_repositories_nodes_primaryLanguage,
+  GGetUserRepositoriesData_user_repositories_pageInfo,
+  GGetUserRepositoriesReq,
+  GGetUserRepositoriesVars,
   GGistOrder,
   GGistOrderField,
   GGistPrivacy,
