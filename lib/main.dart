@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:get_it/get_it.dart';
 import 'package:gh3/src/init.dart';
 import 'package:gh3/src/screens/app/gh3_app.dart';
 import 'package:gh3/src/screens/app/auth_viewmodel.dart';
