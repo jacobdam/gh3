@@ -16,9 +16,8 @@ class LoginRouteProvider implements RouteProvider {
   RouteBase getRoute() {
     return GoRoute(
       path: '/login',
-      builder: (context, state) => LoginScreen(
-        viewModel: _loginViewModelFactory.create(),
-      ),
+      builder: (context, state) =>
+          LoginScreen(viewModel: _loginViewModelFactory.create()),
     );
   }
 }

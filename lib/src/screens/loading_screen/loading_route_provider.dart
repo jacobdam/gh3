@@ -16,9 +16,7 @@ class LoadingRouteProvider implements RouteProvider {
   RouteBase getRoute() {
     return GoRoute(
       path: '/loading',
-      builder: (context, state) => LoadingScreen(
-        authViewModel: _authViewModel,
-      ),
+      builder: (context, state) => LoadingScreen(authViewModel: _authViewModel),
     );
   }
 }

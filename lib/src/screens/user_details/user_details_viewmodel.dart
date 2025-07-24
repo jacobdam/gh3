@@ -1,7 +1,7 @@
-import 'package:flutter/foundation.dart';
+import '../base_viewmodel.dart';
 
 /// ViewModel for handling user details screen logic.
-class UserDetailsViewModel extends ChangeNotifier {
+class UserDetailsViewModel extends DisposableViewModel {
   final String _login;
 
   UserDetailsViewModel(this._login);
@@ -25,5 +25,10 @@ class UserDetailsViewModel extends ChangeNotifier {
 
     _isLoading = false;
     notifyListeners();
+  }
+
+  @override
+  void onDispose() {
+    _isLoading = false;
   }
 }

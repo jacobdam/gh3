@@ -41,6 +41,7 @@ class _HomeScreenState extends State<HomeScreen> {
     _homeViewModel.removeListener(_onHomeViewModelChanged);
     _scrollController.removeListener(_onScroll);
     _scrollController.dispose();
+    _homeViewModel.dispose();
     super.dispose();
   }
 

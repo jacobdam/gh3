@@ -158,6 +158,11 @@ class MockAuthViewModel extends _i1.Mock implements _i6.AuthViewModel {
   );
 
   @override
+  bool get disposed =>
+      (super.noSuchMethod(Invocation.getter(#disposed), returnValue: false)
+          as bool);
+
+  @override
   bool get hasListeners =>
       (super.noSuchMethod(Invocation.getter(#hasListeners), returnValue: false)
           as bool);
@@ -187,14 +192,8 @@ class MockAuthViewModel extends _i1.Mock implements _i6.AuthViewModel {
   );
 
   @override
-  void addListener(_i7.VoidCallback? listener) => super.noSuchMethod(
-    Invocation.method(#addListener, [listener]),
-    returnValueForMissingStub: null,
-  );
-
-  @override
-  void removeListener(_i7.VoidCallback? listener) => super.noSuchMethod(
-    Invocation.method(#removeListener, [listener]),
+  void onDispose() => super.noSuchMethod(
+    Invocation.method(#onDispose, []),
     returnValueForMissingStub: null,
   );
 
@@ -207,6 +206,18 @@ class MockAuthViewModel extends _i1.Mock implements _i6.AuthViewModel {
   @override
   void notifyListeners() => super.noSuchMethod(
     Invocation.method(#notifyListeners, []),
+    returnValueForMissingStub: null,
+  );
+
+  @override
+  void addListener(_i7.VoidCallback? listener) => super.noSuchMethod(
+    Invocation.method(#addListener, [listener]),
+    returnValueForMissingStub: null,
+  );
+
+  @override
+  void removeListener(_i7.VoidCallback? listener) => super.noSuchMethod(
+    Invocation.method(#removeListener, [listener]),
     returnValueForMissingStub: null,
   );
 }
@@ -230,9 +241,20 @@ class MockLoginViewModel extends _i1.Mock implements _i8.LoginViewModel {
           as bool);
 
   @override
+  bool get disposed =>
+      (super.noSuchMethod(Invocation.getter(#disposed), returnValue: false)
+          as bool);
+
+  @override
   bool get hasListeners =>
       (super.noSuchMethod(Invocation.getter(#hasListeners), returnValue: false)
           as bool);
+
+  @override
+  void onDispose() => super.noSuchMethod(
+    Invocation.method(#onDispose, []),
+    returnValueForMissingStub: null,
+  );
 
   @override
   _i3.Future<void> login() =>
@@ -244,18 +266,6 @@ class MockLoginViewModel extends _i1.Mock implements _i8.LoginViewModel {
           as _i3.Future<void>);
 
   @override
-  void addListener(_i7.VoidCallback? listener) => super.noSuchMethod(
-    Invocation.method(#addListener, [listener]),
-    returnValueForMissingStub: null,
-  );
-
-  @override
-  void removeListener(_i7.VoidCallback? listener) => super.noSuchMethod(
-    Invocation.method(#removeListener, [listener]),
-    returnValueForMissingStub: null,
-  );
-
-  @override
   void dispose() => super.noSuchMethod(
     Invocation.method(#dispose, []),
     returnValueForMissingStub: null,
@@ -264,6 +274,18 @@ class MockLoginViewModel extends _i1.Mock implements _i8.LoginViewModel {
   @override
   void notifyListeners() => super.noSuchMethod(
     Invocation.method(#notifyListeners, []),
+    returnValueForMissingStub: null,
+  );
+
+  @override
+  void addListener(_i7.VoidCallback? listener) => super.noSuchMethod(
+    Invocation.method(#addListener, [listener]),
+    returnValueForMissingStub: null,
+  );
+
+  @override
+  void removeListener(_i7.VoidCallback? listener) => super.noSuchMethod(
+    Invocation.method(#removeListener, [listener]),
     returnValueForMissingStub: null,
   );
 }
