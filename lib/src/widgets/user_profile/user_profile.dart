@@ -2,9 +2,52 @@ import 'package:flutter/material.dart';
 import '__generated__/user_profile.data.gql.dart';
 
 class UserProfile extends StatelessWidget {
-  final GUserProfileFragment user;
+  final String login;
+  final String? name;
+  final String? bio;
+  final String? location;
+  final String? company;
+  final String avatarUrl;
+  final String? websiteUrl;
+  final int repositoryCount;
+  final int followerCount;
+  final int followingCount;
+  final DateTime createdAt;
 
-  const UserProfile({super.key, required this.user});
+  const UserProfile({
+    super.key,
+    required this.login,
+    this.name,
+    this.bio,
+    this.location,
+    this.company,
+    required this.avatarUrl,
+    this.websiteUrl,
+    required this.repositoryCount,
+    required this.followerCount,
+    required this.followingCount,
+    required this.createdAt,
+  });
+
+  factory UserProfile.fromFragment(
+    GUserProfileFragment fragment, {
+    Key? key,
+  }) {
+    return UserProfile(
+      key: key,
+      login: fragment.login,
+      name: fragment.name,
+      bio: fragment.bio,
+      location: fragment.location,
+      company: fragment.company,
+      avatarUrl: fragment.avatarUrl.value,
+      websiteUrl: fragment.websiteUrl?.value,
+      repositoryCount: fragment.repositories.totalCount,
+      followerCount: fragment.followers.totalCount,
+      followingCount: fragment.following.totalCount,
+      createdAt: DateTime.parse(fragment.createdAt.value),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -18,14 +61,12 @@ class UserProfile extends StatelessWidget {
             Row(
               children: [
                 CircleAvatar(
-                  backgroundImage: NetworkImage(user.avatarUrl.value),
-                  backgroundColor: _getAvatarColor(user.login),
+                  backgroundImage: NetworkImage(avatarUrl),
+                  backgroundColor: _getAvatarColor(login),
                   radius: 40,
-                  child: user.avatarUrl.value.isEmpty
+                  child: avatarUrl.isEmpty
                       ? Text(
-                          user.login.isNotEmpty
-                              ? user.login[0].toUpperCase()
-                              : '?',
+                          login.isNotEmpty ? login[0].toUpperCase() : '?',
                           style: const TextStyle(
                             color: Colors.white,
                             fontWeight: FontWeight.bold,
@@ -40,16 +81,15 @@ class UserProfile extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        user.name ?? user.login,
+                        name ?? login,
                         style: Theme.of(context).textTheme.headlineSmall
                             ?.copyWith(fontWeight: FontWeight.bold),
                       ),
                       Text(
-                        '@${user.login}',
+                        '@$login',
                         style: TextStyle(color: Colors.grey[600], fontSize: 16),
                       ),
-                      if (user.location != null &&
-                          user.location!.isNotEmpty) ...[
+                      if (location != null && location!.isNotEmpty) ...[
                         const SizedBox(height: 4),
                         Row(
                           children: [
@@ -60,13 +100,13 @@ class UserProfile extends StatelessWidget {
                             ),
                             const SizedBox(width: 4),
                             Text(
-                              user.location!,
+                              location!,
                               style: TextStyle(color: Colors.grey[600]),
                             ),
                           ],
                         ),
                       ],
-                      if (user.company != null && user.company!.isNotEmpty) ...[
+                      if (company != null && company!.isNotEmpty) ...[
                         const SizedBox(height: 4),
                         Row(
                           children: [
@@ -77,7 +117,7 @@ class UserProfile extends StatelessWidget {
                             ),
                             const SizedBox(width: 4),
                             Text(
-                              user.company!,
+                              company!,
                               style: TextStyle(color: Colors.grey[600]),
                             ),
                           ],
@@ -88,11 +128,11 @@ class UserProfile extends StatelessWidget {
                 ),
               ],
             ),
-            if (user.bio != null && user.bio!.isNotEmpty) ...[
+            if (bio != null && bio!.isNotEmpty) ...[
               const SizedBox(height: 16),
-              Text(user.bio!, style: const TextStyle(fontSize: 16)),
+              Text(bio!, style: const TextStyle(fontSize: 16)),
             ],
-            if (user.websiteUrl != null) ...[
+            if (websiteUrl != null) ...[
               const SizedBox(height: 12),
               Row(
                 children: [
@@ -100,7 +140,7 @@ class UserProfile extends StatelessWidget {
                   const SizedBox(width: 4),
                   Expanded(
                     child: Text(
-                      user.websiteUrl!.value,
+                      websiteUrl!,
                       style: TextStyle(
                         color: Theme.of(context).primaryColor,
                         decoration: TextDecoration.underline,
@@ -117,19 +157,14 @@ class UserProfile extends StatelessWidget {
                 _buildStat(
                   context,
                   'Repositories',
-                  user.repositories.totalCount,
+                  repositoryCount,
                   Icons.folder,
                 ),
-                _buildStat(
-                  context,
-                  'Followers',
-                  user.followers.totalCount,
-                  Icons.people,
-                ),
+                _buildStat(context, 'Followers', followerCount, Icons.people),
                 _buildStat(
                   context,
                   'Following',
-                  user.following.totalCount,
+                  followingCount,
                   Icons.person_add,
                 ),
               ],
@@ -140,7 +175,7 @@ class UserProfile extends StatelessWidget {
                 Icon(Icons.calendar_today, size: 16, color: Colors.grey[600]),
                 const SizedBox(width: 4),
                 Text(
-                  'Joined ${_formatDate(DateTime.parse(user.createdAt.value))}',
+                  'Joined ${_formatDate(createdAt)}',
                   style: TextStyle(color: Colors.grey[600], fontSize: 12),
                 ),
               ],
@@ -222,3 +257,4 @@ class UserProfile extends StatelessWidget {
     return colors[hash.abs() % colors.length];
   }
 }
+

@@ -110,6 +110,42 @@ Mirrors the `lib/` structure:
 - **Resource Disposal**: ViewModels extend `DisposableViewModel` with `onDispose()` hook
 - **State Management**: ViewModels extend `ChangeNotifier` for UI reactivity
 
+### Widget-GraphQL Separation Pattern
+**CRITICAL**: Widgets must NOT directly receive GraphQL generated classes as parameters.
+
+#### Pattern Implementation:
+1. **Explicit Fields**: Widgets should have explicit fields to hold the data they need
+2. **Factory Constructor**: Create a `fromFragment()` factory constructor that:
+   - Takes the GraphQL fragment as parameter
+   - Extracts required fields from the fragment  
+   - Passes extracted data to the widget's default constructor
+3. **Separation of Concerns**: This keeps widgets independent of GraphQL implementation details
+
+#### Example:
+```dart
+// Widget with explicit fields and factory constructor
+class UserCard extends StatelessWidget {
+  final String name;
+  final String avatarUrl;
+  final int followers;
+  
+  const UserCard({
+    required this.name,
+    required this.avatarUrl,
+    required this.followers,
+  });
+
+  // Factory constructor for GraphQL integration
+  factory UserCard.fromFragment(GUserCardFragment fragment) {
+    return UserCard(
+      name: fragment.name,
+      avatarUrl: fragment.avatarUrl,
+      followers: fragment.followers.value,
+    );
+  }
+}
+```
+
 ### File Naming Conventions
 - `*_service.dart` - Business logic services (registered with DI)
 - `*_viewmodel.dart` - UI state management (manually instantiated)
