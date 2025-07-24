@@ -50,7 +50,9 @@ void main() {
       expect(find.byType(CircularProgressIndicator), findsOneWidget);
     });
 
-    testWidgets('shows error message when present', (WidgetTester tester) async {
+    testWidgets('shows error message when present', (
+      WidgetTester tester,
+    ) async {
       when(mockLoginViewModel.errorMessage).thenReturn('Login failed');
 
       await tester.pumpWidget(

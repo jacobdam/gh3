@@ -67,7 +67,11 @@ void main() {
       GoRoute(
         path: '/login',
         builder: (context, state) => LoginScreen(
-          viewModel: LoginViewModel(mockAuthClient, mockAuthService, AuthViewModel(mockAuthService)),
+          viewModel: LoginViewModel(
+            mockAuthClient,
+            mockAuthService,
+            AuthViewModel(mockAuthService),
+          ),
         ),
       ),
       GoRoute(
@@ -132,7 +136,11 @@ void main() {
       GoRoute(
         path: '/login',
         builder: (context, state) => LoginScreen(
-          viewModel: LoginViewModel(mockAuthClient, mockAuthService, AuthViewModel(mockAuthService)),
+          viewModel: LoginViewModel(
+            mockAuthClient,
+            mockAuthService,
+            AuthViewModel(mockAuthService),
+          ),
         ),
       ),
       GoRoute(
