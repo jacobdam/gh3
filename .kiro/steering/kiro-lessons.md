@@ -14,6 +14,14 @@ Quick reference for common issues and their solutions when working with Kiro.
 
 **Command:** `git --no-pager diff`
 
+## Flutter Build Runner Deprecated Command
+
+**Problem:** `flutter packages pub run build_runner` shows deprecation warning
+
+**Solution:** Use `dart run build_runner` instead
+
+**Command:** `dart run build_runner build --delete-conflicting-outputs`
+
 ---
 
 *Add new lessons here as they are discovered*
