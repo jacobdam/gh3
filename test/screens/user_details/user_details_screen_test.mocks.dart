@@ -3,9 +3,11 @@
 // Do not manually edit this file.
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
-import 'dart:async' as _i4;
-import 'dart:ui' as _i5;
+import 'dart:async' as _i5;
+import 'dart:ui' as _i6;
 
+import 'package:gh3/src/screens/user_details/__generated__/user_details_viewmodel.data.gql.dart'
+    as _i4;
 import 'package:gh3/src/screens/user_details/user_details_viewmodel.dart'
     as _i2;
 import 'package:mockito/mockito.dart' as _i1;
@@ -46,8 +48,31 @@ class MockUserDetailsViewModel extends _i1.Mock
           as String);
 
   @override
+  List<_i4.GGetUserRepositoriesData_user_repositories_nodes>
+  get repositoryNodes =>
+      (super.noSuchMethod(
+            Invocation.getter(#repositoryNodes),
+            returnValue:
+                <_i4.GGetUserRepositoriesData_user_repositories_nodes>[],
+          )
+          as List<_i4.GGetUserRepositoriesData_user_repositories_nodes>);
+
+  @override
   bool get isLoading =>
       (super.noSuchMethod(Invocation.getter(#isLoading), returnValue: false)
+          as bool);
+
+  @override
+  bool get hasMoreRepositories =>
+      (super.noSuchMethod(
+            Invocation.getter(#hasMoreRepositories),
+            returnValue: false,
+          )
+          as bool);
+
+  @override
+  bool get isEmpty =>
+      (super.noSuchMethod(Invocation.getter(#isEmpty), returnValue: false)
           as bool);
 
   @override
@@ -61,13 +86,55 @@ class MockUserDetailsViewModel extends _i1.Mock
           as bool);
 
   @override
-  _i4.Future<void> init() =>
+  _i5.Future<void> init() =>
       (super.noSuchMethod(
             Invocation.method(#init, []),
-            returnValue: _i4.Future<void>.value(),
-            returnValueForMissingStub: _i4.Future<void>.value(),
+            returnValue: _i5.Future<void>.value(),
+            returnValueForMissingStub: _i5.Future<void>.value(),
           )
-          as _i4.Future<void>);
+          as _i5.Future<void>);
+
+  @override
+  _i5.Future<void> loadUserDetails() =>
+      (super.noSuchMethod(
+            Invocation.method(#loadUserDetails, []),
+            returnValue: _i5.Future<void>.value(),
+            returnValueForMissingStub: _i5.Future<void>.value(),
+          )
+          as _i5.Future<void>);
+
+  @override
+  _i5.Future<void> loadUserRepositories() =>
+      (super.noSuchMethod(
+            Invocation.method(#loadUserRepositories, []),
+            returnValue: _i5.Future<void>.value(),
+            returnValueForMissingStub: _i5.Future<void>.value(),
+          )
+          as _i5.Future<void>);
+
+  @override
+  _i5.Future<void> loadMoreRepositories() =>
+      (super.noSuchMethod(
+            Invocation.method(#loadMoreRepositories, []),
+            returnValue: _i5.Future<void>.value(),
+            returnValueForMissingStub: _i5.Future<void>.value(),
+          )
+          as _i5.Future<void>);
+
+  @override
+  _i5.Future<void> refresh() =>
+      (super.noSuchMethod(
+            Invocation.method(#refresh, []),
+            returnValue: _i5.Future<void>.value(),
+            returnValueForMissingStub: _i5.Future<void>.value(),
+          )
+          as _i5.Future<void>);
+
+  @override
+  void clearError() => super.noSuchMethod(
+    Invocation.method(#clearError, []),
+    returnValueForMissingStub: null,
+  );
 
   @override
   void onDispose() => super.noSuchMethod(
@@ -88,13 +155,13 @@ class MockUserDetailsViewModel extends _i1.Mock
   );
 
   @override
-  void addListener(_i5.VoidCallback? listener) => super.noSuchMethod(
+  void addListener(_i6.VoidCallback? listener) => super.noSuchMethod(
     Invocation.method(#addListener, [listener]),
     returnValueForMissingStub: null,
   );
 
   @override
-  void removeListener(_i5.VoidCallback? listener) => super.noSuchMethod(
+  void removeListener(_i6.VoidCallback? listener) => super.noSuchMethod(
     Invocation.method(#removeListener, [listener]),
     returnValueForMissingStub: null,
   );
