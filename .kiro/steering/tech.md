@@ -5,10 +5,12 @@
 - **Dart** - Primary programming language
 
 ## Architecture & Patterns
-- **Dependency Injection** pattern with Injectable + GetIt
+- **Hybrid Dependency Injection** - Services use Injectable + GetIt, ViewModels manually instantiated
 - **Screen-based modular architecture** - each screen is a self-contained module
-- **ViewModel pattern** - business logic separated from UI widgets
-- **GoRouter** for declarative routing and navigation
+- **ViewModel Factory pattern** - Factories registered with DI create ViewModels with explicit dependencies
+- **RouteProvider pattern** - Each screen module provides its own route configuration
+- **GoRouter** for declarative routing with ViewModel factory integration
+- **Explicit dependency management** - All dependencies injected through constructors, no hidden GetIt calls
 - **Avoid strict layer separation** - focus on modularity and testability
 
 ## Key Dependencies
