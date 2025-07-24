@@ -5,6 +5,7 @@ targets:
         enabled: true
         options:
           schema: gh3|lib/github_schema.graphql
+          queries_glob: lib/**/*.graphql
       ferry_generator|serializer_builder:
         enabled: true
         options:
