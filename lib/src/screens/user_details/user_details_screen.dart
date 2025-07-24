@@ -27,6 +27,7 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
   @override
   void dispose() {
     _viewModel.removeListener(_onViewModelChanged);
+    _viewModel.dispose();
     super.dispose();
   }
 

@@ -13,7 +13,13 @@ import 'package:gh3/src/screens/home_screen/home_viewmodel_factory.dart';
 
 import 'home_route_provider_test.mocks.dart';
 
-@GenerateMocks([HomeViewModelFactory, AuthViewModel, HomeViewModel, BuildContext, GoRouterState])
+@GenerateMocks([
+  HomeViewModelFactory,
+  AuthViewModel,
+  HomeViewModel,
+  BuildContext,
+  GoRouterState,
+])
 void main() {
   group('HomeRouteProvider', () {
     late MockHomeViewModelFactory mockHomeViewModelFactory;
@@ -29,7 +35,10 @@ void main() {
       mockHomeViewModel = MockHomeViewModel();
       mockBuildContext = MockBuildContext();
       mockGoRouterState = MockGoRouterState();
-      homeRouteProvider = HomeRouteProvider(mockHomeViewModelFactory, mockAuthViewModel);
+      homeRouteProvider = HomeRouteProvider(
+        mockHomeViewModelFactory,
+        mockAuthViewModel,
+      );
     });
 
     test('should implement RouteProvider interface', () {
@@ -53,7 +62,7 @@ void main() {
       // Act
       final route = homeRouteProvider.getRoute();
       final goRoute = route as GoRoute;
-      
+
       // Build the widget to trigger factory call
       final widget = goRoute.builder!(mockBuildContext, mockGoRouterState);
 
@@ -69,7 +78,8 @@ void main() {
       // Act
       final route = homeRouteProvider.getRoute();
       final goRoute = route as GoRoute;
-      final widget = goRoute.builder!(mockBuildContext, mockGoRouterState) as HomeScreen;
+      final widget =
+          goRoute.builder!(mockBuildContext, mockGoRouterState) as HomeScreen;
 
       // Assert
       expect(widget.authViewModel, equals(mockAuthViewModel));

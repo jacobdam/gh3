@@ -32,6 +32,7 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   void dispose() {
     _viewModel.removeListener(_onViewModelChanged);
+    _viewModel.dispose();
     super.dispose();
   }
 

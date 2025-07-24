@@ -46,7 +46,7 @@ void main() {
       // Act
       final route = loginRouteProvider.getRoute();
       final goRoute = route as GoRoute;
-      
+
       // Verify that the builder function exists and can be called
       expect(goRoute.builder, isNotNull);
 

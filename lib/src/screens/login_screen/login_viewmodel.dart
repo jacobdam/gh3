@@ -1,11 +1,11 @@
 import 'dart:async';
-import 'package:flutter/foundation.dart';
 import '../../services/github_auth_client.dart';
 import '../../services/auth_service.dart';
 import '../app/auth_viewmodel.dart';
+import '../base_viewmodel.dart';
 
 /// ViewModel for handling GitHub device-flow login UI.
-class LoginViewModel extends ChangeNotifier {
+class LoginViewModel extends DisposableViewModel {
   final GithubAuthClient _authClient;
   final AuthService _authService;
   final AuthViewModel _authViewModel;
@@ -58,6 +58,14 @@ class LoginViewModel extends ChangeNotifier {
       }
       notifyListeners();
     }
+  }
+
+  @override
+  void onDispose() {
+    // Clear sensitive data
+    _userCode = null;
+    _errorMessage = null;
+    _isLoading = false;
   }
 }
 

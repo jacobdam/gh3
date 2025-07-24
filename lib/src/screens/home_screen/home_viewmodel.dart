@@ -1,11 +1,11 @@
 import 'dart:async';
-import 'package:flutter/foundation.dart';
 import 'package:ferry/ferry.dart';
+import '../base_viewmodel.dart';
 import '__generated__/home_viewmodel.req.gql.dart';
 import '__generated__/home_viewmodel.data.gql.dart';
 import '__generated__/home_viewmodel.var.gql.dart';
 
-class HomeViewModel extends ChangeNotifier {
+class HomeViewModel extends DisposableViewModel {
   final Client _ferryClient;
 
   HomeViewModel(this._ferryClient);
@@ -121,8 +121,9 @@ class HomeViewModel extends ChangeNotifier {
   }
 
   @override
-  void dispose() {
+  void onDispose() {
     _followingSubscription?.cancel();
-    super.dispose();
+    _followingSubscription = null;
+    _followingResult = null;
   }
 }
