@@ -47,9 +47,6 @@ extension GetItInjectableX on _i174.GetIt {
     final envModule = _$EnvModule();
     final githubAuthHttpClientModule = _$GithubAuthHttpClientModule();
     final ferryModule = _$FerryModule();
-    gh.factory<_i627.UserDetailsViewModelFactory>(
-      () => _i627.UserDetailsViewModelFactory(),
-    );
     gh.factory<_i482.RouteCollectionService>(
       () => _i482.RouteCollectionService(),
     );
@@ -57,11 +54,6 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i519.Client>(() => githubAuthHttpClientModule.httpClient);
     gh.lazySingleton<_i1066.TimerService>(() => _i1066.DefaultTimerService());
     gh.lazySingleton<_i895.ITokenStorage>(() => _i895.PrefsTokenStorage());
-    gh.factory<_i57.UserDetailsRouteProvider>(
-      () => _i57.UserDetailsRouteProvider(
-        gh<_i627.UserDetailsViewModelFactory>(),
-      ),
-    );
     gh.factory<String>(
       () => envModule.githubClientId,
       instanceName: 'GithubClientID',
@@ -92,11 +84,20 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i1066.TimerService>(),
       ),
     );
+    gh.factoryAsync<_i627.UserDetailsViewModelFactory>(
+      () async =>
+          _i627.UserDetailsViewModelFactory(await getAsync<_i25.Client>()),
+    );
     gh.factoryAsync<_i1013.HomeViewModelFactory>(
       () async => _i1013.HomeViewModelFactory(await getAsync<_i25.Client>()),
     );
     gh.factory<_i850.AuthViewModel>(
       () => _i850.AuthViewModel(gh<_i336.AuthService>()),
+    );
+    gh.factoryAsync<_i57.UserDetailsRouteProvider>(
+      () async => _i57.UserDetailsRouteProvider(
+        await getAsync<_i627.UserDetailsViewModelFactory>(),
+      ),
     );
     gh.factory<_i76.LoginViewModelFactory>(
       () => _i76.LoginViewModelFactory(

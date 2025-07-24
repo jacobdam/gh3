@@ -62,7 +62,7 @@ void main() {
           ),
         );
         GetIt.I.registerFactory<UserDetailsViewModelFactory>(
-          () => UserDetailsViewModelFactory(),
+          () => UserDetailsViewModelFactory(mockFerryClient),
         );
 
         // Test that each screen module is self-contained
@@ -144,7 +144,7 @@ void main() {
 
       // Add more providers dynamically
       GetIt.I.registerFactory<UserDetailsViewModelFactory>(
-        () => UserDetailsViewModelFactory(),
+        () => UserDetailsViewModelFactory(mockFerryClient),
       );
       GetIt.I.registerSingleton<RouteProvider>(
         LoadingRouteProvider(authViewModel),
@@ -210,7 +210,7 @@ void main() {
         () => HomeViewModelFactory(mockFerryClient),
       );
       GetIt.I.registerFactory<UserDetailsViewModelFactory>(
-        () => UserDetailsViewModelFactory(),
+        () => UserDetailsViewModelFactory(mockFerryClient),
       );
 
       // Test that factories create independent instances

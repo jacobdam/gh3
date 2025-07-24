@@ -1,12 +1,18 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:ferry/ferry.dart';
+import 'package:mockito/mockito.dart';
 import 'package:gh3/src/screens/user_details/user_details_viewmodel.dart';
+
+class MockFerryClient extends Mock implements Client {}
 
 void main() {
   group('UserDetailsViewModel', () {
     late UserDetailsViewModel viewModel;
+    late MockFerryClient mockFerryClient;
 
     setUp(() {
-      viewModel = UserDetailsViewModel('testuser');
+      mockFerryClient = MockFerryClient();
+      viewModel = UserDetailsViewModel('testuser', mockFerryClient);
     });
 
     tearDown(() {
