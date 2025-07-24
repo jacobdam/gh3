@@ -1,14 +1,20 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:ferry/ferry.dart';
+import 'package:mockito/mockito.dart';
 
 import 'package:gh3/src/screens/user_details/user_details_viewmodel_factory.dart';
 import 'package:gh3/src/screens/user_details/user_details_viewmodel.dart';
 
+class MockFerryClient extends Mock implements Client {}
+
 void main() {
   group('UserDetailsViewModelFactory', () {
     late UserDetailsViewModelFactory factory;
+    late MockFerryClient mockFerryClient;
 
     setUp(() {
-      factory = UserDetailsViewModelFactory();
+      mockFerryClient = MockFerryClient();
+      factory = UserDetailsViewModelFactory(mockFerryClient);
     });
 
     test('should create UserDetailsViewModel with correct type', () {
