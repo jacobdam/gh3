@@ -113,6 +113,52 @@ When completing tasks, update the markdown checkboxes:
 - Each task/sub-task ends with `_Requirements: X, Y, Z_` on its own line
 - Use proper checkbox format: `- [x]` completed, `- [ ]` pending, `- [-]` not applicable
 
+### Requirements.md Formatting Rules
+**CRITICAL**: All `requirements.md` files must follow this exact format:
+
+```markdown
+# Requirements Document
+
+## Introduction
+
+This document captures the requirements for the [Feature Name] system ([project-abbreviation]). [Brief description of the feature/system and its purpose]. [Optional: Architecture approach mention].
+
+## Requirements
+
+### Requirement 1
+
+**User Story:** As a [user type], I want to [action/goal], so that I can [benefit/outcome].
+
+#### Acceptance Criteria
+
+1. WHEN [condition] THEN the system SHALL [expected behavior]
+2. WHEN [condition] THEN the system SHALL [expected behavior]
+3. WHEN [condition] THEN the system SHALL [expected behavior]
+[Continue numbering as needed]
+
+### Requirement 2
+
+**User Story:** As a [user type], I want to [action/goal], so that I can [benefit/outcome].
+
+#### Acceptance Criteria
+
+1. WHEN [condition] THEN the system SHALL [expected behavior]
+2. WHEN [condition] THEN the system SHALL [expected behavior]
+[Continue with additional criteria]
+```
+
+**Formatting Requirements:**
+- Start with `# Requirements Document` header
+- Include `## Introduction` section with feature context and purpose
+- Use `## Requirements` section for all requirements
+- Number requirements sequentially: `### Requirement 1`, `### Requirement 2`, etc.
+- Each requirement must have a **User Story** in the format: "As a [user type], I want to [action], so that [benefit]"
+- Each requirement must have **Acceptance Criteria** as numbered list
+- Use "WHEN...THEN the system SHALL..." format for acceptance criteria
+- Use "SHALL" for mandatory requirements (RFC 2119 compliance)
+- Requirements should be atomic, testable, and traceable
+- Each requirement should focus on a single user goal or system behavior
+
 ### Key Principles
 1. **Requirements-Driven**: Every implementation should trace back to a requirement
 2. **Progressive Implementation**: Follow task order, complete prerequisites first
