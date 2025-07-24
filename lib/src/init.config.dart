@@ -47,11 +47,11 @@ extension GetItInjectableX on _i174.GetIt {
     final envModule = _$EnvModule();
     final githubAuthHttpClientModule = _$GithubAuthHttpClientModule();
     final ferryModule = _$FerryModule();
-    gh.factory<_i482.RouteCollectionService>(
-      () => _i482.RouteCollectionService(),
-    );
     gh.factory<_i627.UserDetailsViewModelFactory>(
       () => _i627.UserDetailsViewModelFactory(),
+    );
+    gh.factory<_i482.RouteCollectionService>(
+      () => _i482.RouteCollectionService(),
     );
     gh.lazySingleton<_i589.Env>(() => envModule.env);
     gh.lazySingleton<_i519.Client>(() => githubAuthHttpClientModule.httpClient);

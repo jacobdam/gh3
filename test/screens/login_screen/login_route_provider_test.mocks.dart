@@ -81,12 +81,6 @@ class MockLoginViewModel extends _i1.Mock implements _i2.LoginViewModel {
           as bool);
 
   @override
-  void onDispose() => super.noSuchMethod(
-    Invocation.method(#onDispose, []),
-    returnValueForMissingStub: null,
-  );
-
-  @override
   _i4.Future<void> login() =>
       (super.noSuchMethod(
             Invocation.method(#login, []),
@@ -94,6 +88,12 @@ class MockLoginViewModel extends _i1.Mock implements _i2.LoginViewModel {
             returnValueForMissingStub: _i4.Future<void>.value(),
           )
           as _i4.Future<void>);
+
+  @override
+  void onDispose() => super.noSuchMethod(
+    Invocation.method(#onDispose, []),
+    returnValueForMissingStub: null,
+  );
 
   @override
   void dispose() => super.noSuchMethod(

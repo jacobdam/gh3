@@ -64,10 +64,17 @@ void main() {
       );
 
       // Test route providers can be created from factories
-      final homeProvider = HomeRouteProvider(GetIt.I<HomeViewModelFactory>(), authViewModel);
-      final loginProvider = LoginRouteProvider(GetIt.I<LoginViewModelFactory>());
+      final homeProvider = HomeRouteProvider(
+        GetIt.I<HomeViewModelFactory>(),
+        authViewModel,
+      );
+      final loginProvider = LoginRouteProvider(
+        GetIt.I<LoginViewModelFactory>(),
+      );
       final loadingProvider = LoadingRouteProvider(authViewModel);
-      final userDetailsProvider = UserDetailsRouteProvider(GetIt.I<UserDetailsViewModelFactory>());
+      final userDetailsProvider = UserDetailsRouteProvider(
+        GetIt.I<UserDetailsViewModelFactory>(),
+      );
 
       // Verify all providers can be created
       expect(homeProvider, isNotNull);
@@ -175,10 +182,17 @@ void main() {
       );
 
       // Create route providers manually (not registered with GetIt)
-      final homeProvider = HomeRouteProvider(GetIt.I<HomeViewModelFactory>(), authViewModel);
-      final loginProvider = LoginRouteProvider(GetIt.I<LoginViewModelFactory>());
+      final homeProvider = HomeRouteProvider(
+        GetIt.I<HomeViewModelFactory>(),
+        authViewModel,
+      );
+      final loginProvider = LoginRouteProvider(
+        GetIt.I<LoginViewModelFactory>(),
+      );
       final loadingProvider = LoadingRouteProvider(authViewModel);
-      final userDetailsProvider = UserDetailsRouteProvider(GetIt.I<UserDetailsViewModelFactory>());
+      final userDetailsProvider = UserDetailsRouteProvider(
+        GetIt.I<UserDetailsViewModelFactory>(),
+      );
 
       // Test that each provider can create routes
       final homeRoute = homeProvider.getRoute();
