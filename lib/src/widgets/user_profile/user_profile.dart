@@ -29,10 +29,7 @@ class UserProfile extends StatelessWidget {
     required this.createdAt,
   });
 
-  factory UserProfile.fromFragment(
-    GUserProfileFragment fragment, {
-    Key? key,
-  }) {
+  factory UserProfile.fromFragment(GUserProfileFragment fragment, {Key? key}) {
     return UserProfile(
       key: key,
       login: fragment.login,
@@ -257,4 +254,3 @@ class UserProfile extends StatelessWidget {
     return colors[hash.abs() % colors.length];
   }
 }
-

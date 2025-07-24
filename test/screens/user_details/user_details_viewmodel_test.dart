@@ -15,15 +15,30 @@ void main() {
   group('UserDetailsViewModel', () {
     late UserDetailsViewModel viewModel;
     late MockClient mockFerryClient;
-    late StreamController<OperationResponse<GGetUserDetailsData, GGetUserDetailsVars>> userStreamController;
-    late StreamController<OperationResponse<GGetUserRepositoriesData, GGetUserRepositoriesVars>> reposStreamController;
+    late StreamController<
+      OperationResponse<GGetUserDetailsData, GGetUserDetailsVars>
+    >
+    userStreamController;
+    late StreamController<
+      OperationResponse<GGetUserRepositoriesData, GGetUserRepositoriesVars>
+    >
+    reposStreamController;
 
     setUp(() {
       mockFerryClient = MockClient();
-      
-      userStreamController = StreamController<OperationResponse<GGetUserDetailsData, GGetUserDetailsVars>>();
-      reposStreamController = StreamController<OperationResponse<GGetUserRepositoriesData, GGetUserRepositoriesVars>>();
-      
+
+      userStreamController =
+          StreamController<
+            OperationResponse<GGetUserDetailsData, GGetUserDetailsVars>
+          >();
+      reposStreamController =
+          StreamController<
+            OperationResponse<
+              GGetUserRepositoriesData,
+              GGetUserRepositoriesVars
+            >
+          >();
+
       // Mock the request method to return appropriate streams based on request type
       when(mockFerryClient.request(any)).thenAnswer((invocation) {
         final request = invocation.positionalArguments[0];
@@ -34,7 +49,7 @@ void main() {
         }
         return Stream.empty();
       });
-      
+
       viewModel = UserDetailsViewModel('testuser', mockFerryClient);
     });
 
@@ -62,18 +77,26 @@ void main() {
         expect(viewModel.isLoading, isTrue);
 
         // Add responses to streams to simulate completion
-        userStreamController.add(OperationResponse(
-          operationRequest: GGetUserDetailsReq((b) => b..vars.login = 'testuser'),
-          data: null,
-        ));
-        
-        reposStreamController.add(OperationResponse(
-          operationRequest: GGetUserRepositoriesReq((b) => b
-            ..vars.login = 'testuser'
-            ..vars.first = 20
-            ..vars.after = null),
-          data: null,
-        ));
+        userStreamController.add(
+          OperationResponse(
+            operationRequest: GGetUserDetailsReq(
+              (b) => b..vars.login = 'testuser',
+            ),
+            data: null,
+          ),
+        );
+
+        reposStreamController.add(
+          OperationResponse(
+            operationRequest: GGetUserRepositoriesReq(
+              (b) => b
+                ..vars.login = 'testuser'
+                ..vars.first = 20
+                ..vars.after = null,
+            ),
+            data: null,
+          ),
+        );
 
         // Wait for completion
         await future;
@@ -89,23 +112,31 @@ void main() {
       test('should clear loading state on disposal', () async {
         // Arrange - initialize viewmodel
         final future = viewModel.init();
-        
+
         // Add responses to allow init to complete
-        userStreamController.add(OperationResponse(
-          operationRequest: GGetUserDetailsReq((b) => b..vars.login = 'testuser'),
-          data: null,
-        ));
-        
-        reposStreamController.add(OperationResponse(
-          operationRequest: GGetUserRepositoriesReq((b) => b
-            ..vars.login = 'testuser'
-            ..vars.first = 20
-            ..vars.after = null),
-          data: null,
-        ));
-        
+        userStreamController.add(
+          OperationResponse(
+            operationRequest: GGetUserDetailsReq(
+              (b) => b..vars.login = 'testuser',
+            ),
+            data: null,
+          ),
+        );
+
+        reposStreamController.add(
+          OperationResponse(
+            operationRequest: GGetUserRepositoriesReq(
+              (b) => b
+                ..vars.login = 'testuser'
+                ..vars.first = 20
+                ..vars.after = null,
+            ),
+            data: null,
+          ),
+        );
+
         await future;
-        
+
         // Act - dispose the view model
         viewModel.dispose();
 

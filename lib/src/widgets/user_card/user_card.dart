@@ -123,4 +123,3 @@ class UserCard extends StatelessWidget {
     return colors[hash.abs() % colors.length];
   }
 }
-
