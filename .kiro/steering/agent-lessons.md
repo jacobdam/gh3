@@ -2,18 +2,22 @@
 inclusion: always
 ---
 
-# Kiro Lessons Learned
+# Agent Lessons
 
-Quick reference for common issues and their solutions when working with Kiro.
+## Rule for Adding Lessons
 
-## Adding New Lessons
-
-**Rule**: When you encounter a mistake or issue that could be prevented by following a specific process, add a concise lesson here with:
+When you encounter a mistake or issue that could be prevented by following a specific process, add a concise lesson with:
 - **Problem**: Brief description of what went wrong
-- **Solution**: The correct approach or commands
+- **Solution**: The correct approach or commands  
 - **Commands**: Essential commands (if applicable)
 
 Keep lessons short and actionable. Add new lessons at the bottom before the "Add new lessons here" line.
+
+---
+
+# Lessons Learned
+
+Quick reference for common issues and their solutions when working with Kiro.
 
 ## Git Commands Hang in Terminal
 
