@@ -110,4 +110,3 @@ class RepositoryCard extends StatelessWidget {
     }
   }
 }
-
