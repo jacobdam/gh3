@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:ferry/ferry.dart';
 import '../base_viewmodel.dart';
+import '../../services/graphql_error_handler.dart';
 import '__generated__/user_details_viewmodel.req.gql.dart';
 import '__generated__/user_details_viewmodel.data.gql.dart';
 import '__generated__/user_details_viewmodel.var.gql.dart';
@@ -53,18 +54,23 @@ class UserDetailsViewModel extends DisposableViewModel {
 
   String? get error {
     // Check user details errors
-    final userException =
-        _userResult?.linkException ?? _userResult?.graphqlErrors;
-    if (userException != null) {
-      return _getErrorMessage(userException);
+    if (_userResult != null) {
+      final linkException = _userResult!.linkException;
+      final graphqlErrors = _userResult!.graphqlErrors;
+      
+      if (linkException != null || (graphqlErrors != null && graphqlErrors.isNotEmpty)) {
+        return GraphQLErrorHandler.getErrorMessage(_userResult!);
+      }
     }
 
     // Check repositories errors
-    final reposException =
-        _repositoriesResult?.linkException ??
-        _repositoriesResult?.graphqlErrors;
-    if (reposException != null) {
-      return _getErrorMessage(reposException);
+    if (_repositoriesResult != null) {
+      final linkException = _repositoriesResult!.linkException;
+      final graphqlErrors = _repositoriesResult!.graphqlErrors;
+      
+      if (linkException != null || (graphqlErrors != null && graphqlErrors.isNotEmpty)) {
+        return GraphQLErrorHandler.getErrorMessage(_repositoriesResult!);
+      }
     }
 
     return null;
@@ -151,20 +157,6 @@ class UserDetailsViewModel extends DisposableViewModel {
   void clearError() {
     // Force refresh to clear error
     refresh();
-  }
-
-  String _getErrorMessage(dynamic exception) {
-    if (exception is List && exception.isNotEmpty) {
-      // GraphQL errors
-      final error = exception.first;
-      if (error.toString().contains('authentication')) {
-        return 'Authentication failed. Please log in again.';
-      }
-      return error.toString();
-    }
-
-    // Network/Link errors
-    return 'Network error. Please check your connection.';
   }
 
   @override

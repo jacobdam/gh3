@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:ferry/ferry.dart';
 import '../base_viewmodel.dart';
+import '../../services/graphql_error_handler.dart';
 import '__generated__/home_viewmodel.req.gql.dart';
 import '__generated__/home_viewmodel.data.gql.dart';
 import '__generated__/home_viewmodel.var.gql.dart';
@@ -35,10 +36,13 @@ class HomeViewModel extends DisposableViewModel {
   bool get isEmpty => followingUsers.isEmpty;
 
   String? get error {
-    final exception =
-        _followingResult?.linkException ?? _followingResult?.graphqlErrors;
-    if (exception != null) {
-      return _getErrorMessage(exception);
+    if (_followingResult != null) {
+      final linkException = _followingResult!.linkException;
+      final graphqlErrors = _followingResult!.graphqlErrors;
+      
+      if (linkException != null || (graphqlErrors != null && graphqlErrors.isNotEmpty)) {
+        return GraphQLErrorHandler.getErrorMessage(_followingResult!);
+      }
     }
     return null;
   }
@@ -104,20 +108,6 @@ class HomeViewModel extends DisposableViewModel {
   void clearError() {
     // Force refresh to clear error
     loadFollowingUsers();
-  }
-
-  String _getErrorMessage(dynamic exception) {
-    if (exception is List && exception.isNotEmpty) {
-      // GraphQL errors
-      final error = exception.first;
-      if (error.toString().contains('authentication')) {
-        return 'Authentication failed. Please log in again.';
-      }
-      return error.toString();
-    }
-
-    // Network/Link errors
-    return 'Network error. Please check your connection.';
   }
 
   @override
