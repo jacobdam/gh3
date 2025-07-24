@@ -8,6 +8,7 @@ import 'dart:async' as _i3;
 import 'package:gh3/src/services/github_auth_client.dart' as _i2;
 import 'package:gh3/src/services/scope_service.dart' as _i5;
 import 'package:gh3/src/services/timer_service.dart' as _i6;
+import 'package:gh3/src/services/token_storage.dart' as _i7;
 import 'package:mockito/mockito.dart' as _i1;
 import 'package:mockito/src/dummies.dart' as _i4;
 
@@ -99,6 +100,41 @@ class MockTimerService extends _i1.Mock implements _i6.TimerService {
   _i3.Future<void> delay(Duration? duration) =>
       (super.noSuchMethod(
             Invocation.method(#delay, [duration]),
+            returnValue: _i3.Future<void>.value(),
+            returnValueForMissingStub: _i3.Future<void>.value(),
+          )
+          as _i3.Future<void>);
+}
+
+/// A class which mocks [ITokenStorage].
+///
+/// See the documentation for Mockito's code generation for more information.
+class MockITokenStorage extends _i1.Mock implements _i7.ITokenStorage {
+  MockITokenStorage() {
+    _i1.throwOnMissingStub(this);
+  }
+
+  @override
+  _i3.Future<String?> getToken() =>
+      (super.noSuchMethod(
+            Invocation.method(#getToken, []),
+            returnValue: _i3.Future<String?>.value(),
+          )
+          as _i3.Future<String?>);
+
+  @override
+  _i3.Future<void> saveToken(String? token) =>
+      (super.noSuchMethod(
+            Invocation.method(#saveToken, [token]),
+            returnValue: _i3.Future<void>.value(),
+            returnValueForMissingStub: _i3.Future<void>.value(),
+          )
+          as _i3.Future<void>);
+
+  @override
+  _i3.Future<void> deleteToken() =>
+      (super.noSuchMethod(
+            Invocation.method(#deleteToken, []),
             returnValue: _i3.Future<void>.value(),
             returnValueForMissingStub: _i3.Future<void>.value(),
           )

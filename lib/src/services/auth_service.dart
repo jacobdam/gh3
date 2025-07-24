@@ -24,15 +24,24 @@ class AuthService {
 
   /// Initialize service: load token from storage and validate.
   Future<void> init() async {
-    // Load existing token
-    final token = await _tokenStorage.getToken();
-    if (token != null) {
-      final valid = await _checkTokenValid(token);
-      if (valid) {
-        _accessToken = token;
-      } else {
-        await _tokenStorage.deleteToken();
+    try {
+      // Load existing token
+      final token = await _tokenStorage.getToken();
+      if (token != null) {
+        final valid = await _checkTokenValid(token);
+        if (valid) {
+          _accessToken = token;
+        } else {
+          try {
+            await _tokenStorage.deleteToken();
+          } catch (_) {
+            // Ignore delete errors during cleanup
+          }
+        }
       }
+    } catch (_) {
+      // If token storage fails, start with no token
+      _accessToken = null;
     }
   }
 
