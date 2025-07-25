@@ -64,9 +64,7 @@ class _HomeScreenState extends State<HomeScreen> {
     if (_homeViewModel.error != null) {
       return Card(
         child: ListTile(
-          leading: const CircleAvatar(
-            child: Icon(Icons.error),
-          ),
+          leading: const CircleAvatar(child: Icon(Icons.error)),
           title: const Text('Error loading user'),
           subtitle: Text(_homeViewModel.error!),
         ),
@@ -87,9 +85,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
     return const Card(
       child: ListTile(
-        leading: CircleAvatar(
-          child: Icon(Icons.person),
-        ),
+        leading: CircleAvatar(child: Icon(Icons.person)),
         title: Text('No user data'),
         subtitle: Text('Unable to load user information'),
       ),

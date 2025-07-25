@@ -76,6 +76,27 @@ class MockUserDetailsViewModel extends _i1.Mock
           as bool);
 
   @override
+  int get starredRepositoriesCount =>
+      (super.noSuchMethod(
+            Invocation.getter(#starredRepositoriesCount),
+            returnValue: 0,
+          )
+          as int);
+
+  @override
+  int get organizationsCount =>
+      (super.noSuchMethod(
+            Invocation.getter(#organizationsCount),
+            returnValue: 0,
+          )
+          as int);
+
+  @override
+  int get repositoriesCount =>
+      (super.noSuchMethod(Invocation.getter(#repositoriesCount), returnValue: 0)
+          as int);
+
+  @override
   bool get disposed =>
       (super.noSuchMethod(Invocation.getter(#disposed), returnValue: false)
           as bool);

@@ -22,9 +22,9 @@ abstract class GGetCurrentUserReq
         _i1.OperationRequest<_i2.GGetCurrentUserData, _i3.GGetCurrentUserVars> {
   GGetCurrentUserReq._();
 
-  factory GGetCurrentUserReq(
-          [void Function(GGetCurrentUserReqBuilder b) updates]) =
-      _$GGetCurrentUserReq;
+  factory GGetCurrentUserReq([
+    void Function(GGetCurrentUserReqBuilder b) updates,
+  ]) = _$GGetCurrentUserReq;
 
   static void _initializeBuilder(GGetCurrentUserReqBuilder b) => b
     ..operation = _i4.Operation(
@@ -39,10 +39,10 @@ abstract class GGetCurrentUserReq
   _i4.Operation get operation;
   @override
   _i4.Request get execRequest => _i4.Request(
-        operation: operation,
-        variables: vars.toJson(),
-        context: context ?? const _i4.Context(),
-      );
+    operation: operation,
+    variables: vars.toJson(),
+    context: context ?? const _i4.Context(),
+  );
 
   @override
   String? get requestId;
@@ -51,7 +51,8 @@ abstract class GGetCurrentUserReq
   _i2.GGetCurrentUserData? Function(
     _i2.GGetCurrentUserData?,
     _i2.GGetCurrentUserData?,
-  )? get updateResult;
+  )?
+  get updateResult;
   @override
   _i2.GGetCurrentUserData? get optimisticResponse;
   @override
@@ -78,20 +79,16 @@ abstract class GGetCurrentUserReq
 
   @override
   _i1.OperationRequest<_i2.GGetCurrentUserData, _i3.GGetCurrentUserVars>
-      transformOperation(_i4.Operation Function(_i4.Operation) transform) =>
-          this.rebuild((b) => b..operation = transform(operation));
+  transformOperation(_i4.Operation Function(_i4.Operation) transform) =>
+      this.rebuild((b) => b..operation = transform(operation));
 
   static Serializer<GGetCurrentUserReq> get serializer =>
       _$gGetCurrentUserReqSerializer;
 
-  Map<String, dynamic> toJson() => (_i6.serializers.serializeWith(
-        GGetCurrentUserReq.serializer,
-        this,
-      ) as Map<String, dynamic>);
+  Map<String, dynamic> toJson() =>
+      (_i6.serializers.serializeWith(GGetCurrentUserReq.serializer, this)
+          as Map<String, dynamic>);
 
   static GGetCurrentUserReq? fromJson(Map<String, dynamic> json) =>
-      _i6.serializers.deserializeWith(
-        GGetCurrentUserReq.serializer,
-        json,
-      );
+      _i6.serializers.deserializeWith(GGetCurrentUserReq.serializer, json);
 }
