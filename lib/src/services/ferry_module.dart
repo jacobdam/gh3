@@ -18,10 +18,7 @@ abstract class FerryModule {
     final link = Link.from([authLink, httpLink]);
 
     // Configure client with caching for better performance
-    return Client(
-      link: link,
-      cache: Cache(),
-    );
+    return Client(link: link, cache: Cache());
   }
 }
 

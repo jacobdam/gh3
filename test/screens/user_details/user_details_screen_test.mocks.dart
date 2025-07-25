@@ -63,6 +63,32 @@ class MockUserDetailsViewModel extends _i1.Mock
           as bool);
 
   @override
+  bool get isUserLoading =>
+      (super.noSuchMethod(Invocation.getter(#isUserLoading), returnValue: false)
+          as bool);
+
+  @override
+  bool get isRepositoriesLoading =>
+      (super.noSuchMethod(
+            Invocation.getter(#isRepositoriesLoading),
+            returnValue: false,
+          )
+          as bool);
+
+  @override
+  bool get hasUserData =>
+      (super.noSuchMethod(Invocation.getter(#hasUserData), returnValue: false)
+          as bool);
+
+  @override
+  bool get hasRepositoryData =>
+      (super.noSuchMethod(
+            Invocation.getter(#hasRepositoryData),
+            returnValue: false,
+          )
+          as bool);
+
+  @override
   bool get hasMoreRepositories =>
       (super.noSuchMethod(
             Invocation.getter(#hasMoreRepositories),
@@ -95,6 +121,27 @@ class MockUserDetailsViewModel extends _i1.Mock
   int get repositoriesCount =>
       (super.noSuchMethod(Invocation.getter(#repositoriesCount), returnValue: 0)
           as int);
+
+  @override
+  bool get isUserNotFoundError =>
+      (super.noSuchMethod(
+            Invocation.getter(#isUserNotFoundError),
+            returnValue: false,
+          )
+          as bool);
+
+  @override
+  bool get isNetworkError =>
+      (super.noSuchMethod(
+            Invocation.getter(#isNetworkError),
+            returnValue: false,
+          )
+          as bool);
+
+  @override
+  bool get isAuthError =>
+      (super.noSuchMethod(Invocation.getter(#isAuthError), returnValue: false)
+          as bool);
 
   @override
   bool get disposed =>
@@ -146,6 +193,24 @@ class MockUserDetailsViewModel extends _i1.Mock
   _i5.Future<void> refresh() =>
       (super.noSuchMethod(
             Invocation.method(#refresh, []),
+            returnValue: _i5.Future<void>.value(),
+            returnValueForMissingStub: _i5.Future<void>.value(),
+          )
+          as _i5.Future<void>);
+
+  @override
+  _i5.Future<void> retryUserDetails() =>
+      (super.noSuchMethod(
+            Invocation.method(#retryUserDetails, []),
+            returnValue: _i5.Future<void>.value(),
+            returnValueForMissingStub: _i5.Future<void>.value(),
+          )
+          as _i5.Future<void>);
+
+  @override
+  _i5.Future<void> retryRepositories() =>
+      (super.noSuchMethod(
+            Invocation.method(#retryRepositories, []),
             returnValue: _i5.Future<void>.value(),
             returnValueForMissingStub: _i5.Future<void>.value(),
           )
