@@ -4,6 +4,7 @@ import 'package:gh3/src/screens/app/auth_viewmodel.dart';
 import 'widgets/section_header.dart';
 import 'widgets/work_item_list_tile.dart';
 import '../../widgets/user_card/user_card.dart';
+import '../user_details/user_details_route.dart';
 
 class HomeScreen extends StatefulWidget {
   final AuthViewModel authViewModel;
@@ -73,7 +74,15 @@ class _HomeScreenState extends State<HomeScreen> {
     }
 
     if (_homeViewModel.currentUser != null) {
-      return UserCard.fromFragment(_homeViewModel.currentUser!);
+      return UserCard.fromFragment(
+        _homeViewModel.currentUser!,
+        onTap: () {
+          final login = _homeViewModel.currentUser?.login;
+          if (login != null) {
+            UserDetailsRoute(login).go(context);
+          }
+        },
+      );
     }
 
     return const Card(
