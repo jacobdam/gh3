@@ -8,7 +8,7 @@ import 'home_screen.dart';
 /// Route provider for the home screen module.
 /// Implements RouteProvider interface to provide modular route configuration.
 @Named("HomeRouteProvider")
-@Injectable(as: RouteProvider)
+@Singleton(as: RouteProvider)
 class HomeRouteProvider implements RouteProvider {
   final HomeViewModelFactory _homeViewModelFactory;
   final AuthViewModel _authViewModel;
