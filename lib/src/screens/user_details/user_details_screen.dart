@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'user_details_viewmodel.dart';
+import '../../widgets/user_stats_row/user_stats_row.dart';
 
 class UserDetailsScreen extends StatefulWidget {
   final UserDetailsViewModel viewModel;
@@ -201,28 +202,59 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
                       const SizedBox(height: 8),
                     ],
                     const SizedBox(height: 16),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        _buildStat(
-                          context,
-                          'Repositories',
-                          user.repositories.totalCount,
-                          Icons.folder,
-                        ),
-                        _buildStat(
-                          context,
-                          'Followers',
-                          user.followers.totalCount,
-                          Icons.people,
-                        ),
-                        _buildStat(
-                          context,
-                          'Following',
-                          user.following.totalCount,
-                          Icons.person_add,
-                        ),
-                      ],
+                    // Follower/Following stats
+                    UserStatsRow.fromFragment(
+                      user,
+                      onFollowersPressed: () {
+                        // TODO: Navigate to followers screen
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text('Followers navigation not implemented yet')),
+                        );
+                      },
+                      onFollowingPressed: () {
+                        // TODO: Navigate to following screen
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text('Following navigation not implemented yet')),
+                        );
+                      },
+                    ),
+                    const SizedBox(height: 16),
+                    // Navigation tiles
+                    _buildNavigationTile(
+                      context,
+                      title: 'Repositories',
+                      icon: Icons.folder_outlined,
+                      count: _viewModel.repositoriesCount,
+                      onTap: () {
+                        // TODO: Navigate to user repositories
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text('Repositories navigation not implemented yet')),
+                        );
+                      },
+                    ),
+                    _buildNavigationTile(
+                      context,
+                      title: 'Starred',
+                      icon: Icons.star_outline,
+                      count: _viewModel.starredRepositoriesCount,
+                      onTap: () {
+                        // TODO: Navigate to starred repositories
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text('Starred repositories navigation not implemented yet')),
+                        );
+                      },
+                    ),
+                    _buildNavigationTile(
+                      context,
+                      title: 'Organizations',
+                      icon: Icons.business_outlined,
+                      count: _viewModel.organizationsCount,
+                      onTap: () {
+                        // TODO: Navigate to user organizations
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text('Organizations navigation not implemented yet')),
+                        );
+                      },
                     ),
                   ],
                 ),
@@ -242,30 +274,58 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
     }
   }
 
-  Widget _buildStat(
-    BuildContext context,
-    String label,
-    int count,
-    IconData icon,
-  ) {
-    return Column(
-      children: [
-        Icon(icon, color: Colors.grey[600]),
-        const SizedBox(height: 4),
-        Text(
-          _formatCount(count),
-          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-        ),
-        Text(label, style: const TextStyle(fontSize: 12, color: Colors.grey)),
-      ],
+  Widget _buildNavigationTile(
+    BuildContext context, {
+    required String title,
+    required IconData icon,
+    required int count,
+    required VoidCallback onTap,
+  }) {
+    return ListTile(
+      leading: Icon(icon, color: Theme.of(context).primaryColor),
+      title: Text(
+        title,
+        style: Theme.of(context).textTheme.titleMedium,
+      ),
+      trailing: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            _formatCount(count),
+            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          const SizedBox(width: 8),
+          Icon(
+            Icons.chevron_right,
+            color: Colors.grey[400],
+          ),
+        ],
+      ),
+      onTap: onTap,
     );
   }
 
   String _formatCount(int count) {
     if (count >= 1000000) {
-      return '${(count / 1000000).toStringAsFixed(1)}M';
+      double value = count / 1000000;
+      if (value >= 1000) {
+        // Handle very large numbers (billions)
+        return '${(value / 1000).toStringAsFixed(1)}B';
+      }
+      return value == value.truncate() 
+          ? '${value.truncate()}M' 
+          : '${value.toStringAsFixed(1)}M';
     } else if (count >= 1000) {
-      return '${(count / 1000).toStringAsFixed(1)}K';
+      double value = count / 1000;
+      if (value >= 1000) {
+        // This handles the edge case where we get 1000k -> should be 1M
+        return '1M';
+      }
+      return value == value.truncate() 
+          ? '${value.truncate()}k' 
+          : '${value.toStringAsFixed(1)}k';
     }
     return count.toString();
   }

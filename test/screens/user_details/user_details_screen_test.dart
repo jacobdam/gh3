@@ -106,6 +106,9 @@ void main() {
       );
 
       when(mockUserDetailsViewModel.user).thenReturn(mockUser);
+      when(mockUserDetailsViewModel.repositoriesCount).thenReturn(42);
+      when(mockUserDetailsViewModel.starredRepositoriesCount).thenReturn(789);
+      when(mockUserDetailsViewModel.organizationsCount).thenReturn(10);
 
       await tester.pumpWidget(
         MaterialApp(
