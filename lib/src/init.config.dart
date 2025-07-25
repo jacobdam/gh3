@@ -29,7 +29,6 @@ import 'package:gh3/src/screens/user_details/user_details_route_provider.dart'
 import 'package:gh3/src/screens/user_details/user_details_viewmodel_factory.dart'
     as _i627;
 import 'package:gh3/src/services/auth_service.dart' as _i336;
-import 'package:gh3/src/services/ferry_client_service.dart' as _i564;
 import 'package:gh3/src/services/ferry_module.dart' as _i762;
 import 'package:gh3/src/services/github_auth_client.dart' as _i1035;
 import 'package:gh3/src/services/scope_service.dart' as _i792;
@@ -46,13 +45,13 @@ extension GetItInjectableX on _i174.GetIt {
   }) {
     final gh = _i526.GetItHelper(this, environment, environmentFilter);
     final envModule = _$EnvModule();
-    final githubAuthHttpClientModule = _$GithubAuthHttpClientModule();
+    final httpModule = _$HttpModule();
     final ferryModule = _$FerryModule();
     gh.factory<_i482.RouteCollectionService>(
       () => _i482.RouteCollectionService(),
     );
     gh.lazySingleton<_i589.Env>(() => envModule.env);
-    gh.lazySingleton<_i519.Client>(() => githubAuthHttpClientModule.httpClient);
+    gh.lazySingleton<_i519.Client>(() => httpModule.httpClient);
     gh.lazySingleton<_i1066.TimerService>(() => _i1066.DefaultTimerService());
     gh.lazySingleton<_i895.ITokenStorage>(() => _i895.PrefsTokenStorage());
     gh.factory<String>(
@@ -79,24 +78,22 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i1066.TimerService>(),
       ),
     );
-    gh.factory<_i564.FerryClientService>(
-      () => _i564.FerryClientService(gh<_i336.AuthService>()),
+    gh.lazySingleton<_i25.Client>(
+      () =>
+          ferryModule.ferryClient(gh<_i336.AuthService>(), gh<_i519.Client>()),
     );
     gh.lazySingleton<_i850.AuthViewModel>(
       () => _i850.AuthViewModel(gh<_i336.AuthService>()),
-    );
-    gh.factory<_i1013.HomeViewModelFactory>(
-      () => _i1013.HomeViewModelFactory(gh<_i564.FerryClientService>()),
     );
     gh.singleton<_i518.RouteProvider>(
       () => _i492.LoadingRouteProvider(gh<_i850.AuthViewModel>()),
       instanceName: 'LoadingRouteProvider',
     );
-    gh.lazySingleton<_i25.Client>(
-      () => ferryModule.ferryClient(gh<_i564.FerryClientService>()),
-    );
     gh.factory<_i627.UserDetailsViewModelFactory>(
       () => _i627.UserDetailsViewModelFactory(gh<_i25.Client>()),
+    );
+    gh.factory<_i1013.HomeViewModelFactory>(
+      () => _i1013.HomeViewModelFactory(gh<_i25.Client>()),
     );
     gh.singleton<_i518.RouteProvider>(
       () => _i176.HomeRouteProvider(
@@ -128,6 +125,6 @@ extension GetItInjectableX on _i174.GetIt {
 
 class _$EnvModule extends _i589.EnvModule {}
 
-class _$GithubAuthHttpClientModule extends _i1035.GithubAuthHttpClientModule {}
+class _$HttpModule extends _i1035.HttpModule {}
 
 class _$FerryModule extends _i762.FerryModule {}
