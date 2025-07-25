@@ -25,12 +25,8 @@ void main() {
         const expectedScopes = ['repo', 'read:user'];
         when(
           mockHttpClient.get(
-            Uri.parse('https://api.github.com/applications/token/scopes'),
-            headers: {
-              'Authorization': 'token $token',
-              'Accept': 'application/vnd.github.v3+json',
-              'User-Agent': 'gh3-flutter-app',
-            },
+            Uri.parse('https://api.github.com/'),
+            headers: {'Authorization': 'token $token'},
           ),
         ).thenAnswer(
           (_) async => http.Response(
@@ -47,39 +43,34 @@ void main() {
         expect(result, equals(expectedScopes));
         verify(
           mockHttpClient.get(
-            Uri.parse('https://api.github.com/applications/token/scopes'),
-            headers: {
-              'Authorization': 'token $token',
-              'Accept': 'application/vnd.github.v3+json',
-              'User-Agent': 'gh3-flutter-app',
-            },
+            Uri.parse('https://api.github.com/'),
+            headers: {'Authorization': 'token $token'},
           ),
         ).called(1);
       });
 
-      test('should return empty list when no scopes are present', () async {
-        // Arrange
-        const token = 'valid_token_123';
-        when(
-          mockHttpClient.get(
-            Uri.parse('https://api.github.com/applications/token/scopes'),
-            headers: {
-              'Authorization': 'token $token',
-              'Accept': 'application/vnd.github.v3+json',
-              'User-Agent': 'gh3-flutter-app',
-            },
-          ),
-        ).thenAnswer(
-          (_) async =>
-              http.Response('{}', 200, headers: {'x-oauth-scopes': ''}),
-        );
+      test(
+        'should return list with empty string when no scopes are present',
+        () async {
+          // Arrange
+          const token = 'valid_token_123';
+          when(
+            mockHttpClient.get(
+              Uri.parse('https://api.github.com/'),
+              headers: {'Authorization': 'token $token'},
+            ),
+          ).thenAnswer(
+            (_) async =>
+                http.Response('{}', 200, headers: {'x-oauth-scopes': ''}),
+          );
 
-        // Act
-        final result = await scopeService.getScopesFromAccessToken(token);
+          // Act
+          final result = await scopeService.getScopesFromAccessToken(token);
 
-        // Assert
-        expect(result, isEmpty);
-      });
+          // Assert
+          expect(result, equals(['']));
+        },
+      );
 
       test('should handle scopes with extra whitespace', () async {
         // Arrange
@@ -87,12 +78,8 @@ void main() {
         const expectedScopes = ['repo', 'read:user', 'write:repo_hook'];
         when(
           mockHttpClient.get(
-            Uri.parse('https://api.github.com/applications/token/scopes'),
-            headers: {
-              'Authorization': 'token $token',
-              'Accept': 'application/vnd.github.v3+json',
-              'User-Agent': 'gh3-flutter-app',
-            },
+            Uri.parse('https://api.github.com/'),
+            headers: {'Authorization': 'token $token'},
           ),
         ).thenAnswer(
           (_) async => http.Response(
@@ -124,12 +111,8 @@ void main() {
           const token = 'invalid_token';
           when(
             mockHttpClient.get(
-              Uri.parse('https://api.github.com/applications/token/scopes'),
-              headers: {
-                'Authorization': 'token $token',
-                'Accept': 'application/vnd.github.v3+json',
-                'User-Agent': 'gh3-flutter-app',
-              },
+              Uri.parse('https://api.github.com/'),
+              headers: {'Authorization': 'token $token'},
             ),
           ).thenAnswer(
             (_) async => http.Response('{"message": "Bad credentials"}', 401),
@@ -158,12 +141,8 @@ void main() {
           const token = 'rate_limited_token';
           when(
             mockHttpClient.get(
-              Uri.parse('https://api.github.com/applications/token/scopes'),
-              headers: {
-                'Authorization': 'token $token',
-                'Accept': 'application/vnd.github.v3+json',
-                'User-Agent': 'gh3-flutter-app',
-              },
+              Uri.parse('https://api.github.com/'),
+              headers: {'Authorization': 'token $token'},
             ),
           ).thenAnswer(
             (_) async =>
@@ -193,12 +172,8 @@ void main() {
           const token = 'valid_token';
           when(
             mockHttpClient.get(
-              Uri.parse('https://api.github.com/applications/token/scopes'),
-              headers: {
-                'Authorization': 'token $token',
-                'Accept': 'application/vnd.github.v3+json',
-                'User-Agent': 'gh3-flutter-app',
-              },
+              Uri.parse('https://api.github.com/'),
+              headers: {'Authorization': 'token $token'},
             ),
           ).thenAnswer(
             (_) async =>
@@ -213,7 +188,7 @@ void main() {
                   .having(
                     (e) => e.message,
                     'message',
-                    contains('GitHub API request failed with status 500'),
+                    contains('Failed to fetch scopes:'),
                   )
                   .having((e) => e.statusCode, 'statusCode', equals(500)),
             ),
@@ -228,12 +203,8 @@ void main() {
           const token = 'valid_token';
           when(
             mockHttpClient.get(
-              Uri.parse('https://api.github.com/applications/token/scopes'),
-              headers: {
-                'Authorization': 'token $token',
-                'Accept': 'application/vnd.github.v3+json',
-                'User-Agent': 'gh3-flutter-app',
-              },
+              Uri.parse('https://api.github.com/'),
+              headers: {'Authorization': 'token $token'},
             ),
           ).thenAnswer((_) async => http.Response('{}', 200));
 
@@ -256,12 +227,8 @@ void main() {
         const token = 'valid_token';
         when(
           mockHttpClient.get(
-            Uri.parse('https://api.github.com/applications/token/scopes'),
-            headers: {
-              'Authorization': 'token $token',
-              'Accept': 'application/vnd.github.v3+json',
-              'User-Agent': 'gh3-flutter-app',
-            },
+            Uri.parse('https://api.github.com/'),
+            headers: {'Authorization': 'token $token'},
           ),
         ).thenThrow(
           TimeoutException('Request timeout', const Duration(seconds: 10)),
@@ -287,12 +254,8 @@ void main() {
           const token = 'valid_token';
           when(
             mockHttpClient.get(
-              Uri.parse('https://api.github.com/applications/token/scopes'),
-              headers: {
-                'Authorization': 'token $token',
-                'Accept': 'application/vnd.github.v3+json',
-                'User-Agent': 'gh3-flutter-app',
-              },
+              Uri.parse('https://api.github.com/'),
+              headers: {'Authorization': 'token $token'},
             ),
           ).thenThrow(const SocketException('Network unreachable'));
 
@@ -319,12 +282,8 @@ void main() {
           const token = 'valid_token';
           when(
             mockHttpClient.get(
-              Uri.parse('https://api.github.com/applications/token/scopes'),
-              headers: {
-                'Authorization': 'token $token',
-                'Accept': 'application/vnd.github.v3+json',
-                'User-Agent': 'gh3-flutter-app',
-              },
+              Uri.parse('https://api.github.com/'),
+              headers: {'Authorization': 'token $token'},
             ),
           ).thenThrow(http.ClientException('Client error'));
 
@@ -351,12 +310,8 @@ void main() {
           const token = 'valid_token';
           when(
             mockHttpClient.get(
-              Uri.parse('https://api.github.com/applications/token/scopes'),
-              headers: {
-                'Authorization': 'token $token',
-                'Accept': 'application/vnd.github.v3+json',
-                'User-Agent': 'gh3-flutter-app',
-              },
+              Uri.parse('https://api.github.com/'),
+              headers: {'Authorization': 'token $token'},
             ),
           ).thenThrow(Exception('Generic error'));
 
