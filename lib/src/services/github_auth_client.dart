@@ -52,7 +52,7 @@ class GithubNonRecoverableException extends GithubAuthException {
 }
 
 @module
-abstract class GithubAuthHttpClientModule {
+abstract class HttpModule {
   @lazySingleton
   http.Client get httpClient => http.Client();
 }

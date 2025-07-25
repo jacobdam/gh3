@@ -1,29 +1,25 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:gh3/src/screens/home_screen/home_viewmodel_factory.dart';
 import 'package:gh3/src/screens/home_screen/home_viewmodel.dart';
-import 'package:gh3/src/services/ferry_client_service.dart';
 import 'package:ferry/ferry.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 
-@GenerateNiceMocks([MockSpec<FerryClientService>(), MockSpec<Client>()])
+@GenerateNiceMocks([MockSpec<Client>()])
 import 'home_viewmodel_factory_test.mocks.dart';
 
 void main() {
   group('HomeViewModelFactory', () {
-    late MockFerryClientService mockFerryClientService;
     late MockClient mockClient;
     late HomeViewModelFactory factory;
 
     setUp(() {
-      mockFerryClientService = MockFerryClientService();
       mockClient = MockClient();
-      when(mockFerryClientService.getClient()).thenReturn(mockClient);
-      factory = HomeViewModelFactory(mockFerryClientService);
+      factory = HomeViewModelFactory(mockClient);
     });
 
     group('Factory Creation', () {
-      test('should create factory with FerryClientService dependency', () {
+      test('should create factory with Client dependency', () {
         expect(factory, isNotNull);
         expect(factory, isA<HomeViewModelFactory>());
       });
@@ -37,7 +33,6 @@ void main() {
           // Assert
           expect(viewModel, isNotNull);
           expect(viewModel, isA<HomeViewModel>());
-          verify(mockFerryClientService.getClient()).called(1);
 
           // Clean up
           viewModel.dispose();
@@ -55,7 +50,6 @@ void main() {
         expect(viewModel1, isNot(same(viewModel2)));
         expect(viewModel1, isA<HomeViewModel>());
         expect(viewModel2, isA<HomeViewModel>());
-        verify(mockFerryClientService.getClient()).called(2);
 
         // Clean up
         viewModel1.dispose();
@@ -64,7 +58,7 @@ void main() {
     });
 
     group('Dependency Injection', () {
-      test('should inject FerryClientService correctly', () {
+      test('should inject Client correctly', () {
         // Act
         final viewModel = factory.create();
 
@@ -72,7 +66,6 @@ void main() {
         expect(viewModel.currentUser, isNull);
         expect(viewModel.isLoading, false);
         expect(viewModel.error, isNull);
-        verify(mockFerryClientService.getClient()).called(1);
 
         // Clean up
         viewModel.dispose();

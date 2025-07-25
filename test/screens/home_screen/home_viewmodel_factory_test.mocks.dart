@@ -5,8 +5,9 @@
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'dart:async' as _i3;
 
-import 'package:ferry/ferry.dart' as _i2;
-import 'package:gh3/src/services/ferry_client_service.dart' as _i4;
+import 'package:ferry/ferry.dart' as _i4;
+import 'package:ferry/src/fetch_policy_typed_link.dart' as _i2;
+import 'package:gql/ast.dart' as _i5;
 import 'package:mockito/mockito.dart' as _i1;
 
 // ignore_for_file: type=lint
@@ -23,72 +24,37 @@ import 'package:mockito/mockito.dart' as _i1;
 // ignore_for_file: camel_case_types
 // ignore_for_file: subtype_of_sealed_class
 
-class _FakeClient_0 extends _i1.SmartFake implements _i2.Client {
-  _FakeClient_0(Object parent, Invocation parentInvocation)
+class _FakeLink_0 extends _i1.SmartFake implements _i2.Link {
+  _FakeLink_0(Object parent, Invocation parentInvocation)
     : super(parent, parentInvocation);
 }
 
-class _FakeLink_1 extends _i1.SmartFake implements _i2.Link {
-  _FakeLink_1(Object parent, Invocation parentInvocation)
+class _FakeCache_1 extends _i1.SmartFake implements _i2.Cache {
+  _FakeCache_1(Object parent, Invocation parentInvocation)
     : super(parent, parentInvocation);
 }
 
-class _FakeCache_2 extends _i1.SmartFake implements _i2.Cache {
-  _FakeCache_2(Object parent, Invocation parentInvocation)
-    : super(parent, parentInvocation);
-}
-
-class _FakeStreamController_3<T> extends _i1.SmartFake
+class _FakeStreamController_2<T> extends _i1.SmartFake
     implements _i3.StreamController<T> {
-  _FakeStreamController_3(Object parent, Invocation parentInvocation)
+  _FakeStreamController_2(Object parent, Invocation parentInvocation)
     : super(parent, parentInvocation);
 }
 
-class _FakeTypedLink_4 extends _i1.SmartFake implements _i2.TypedLink {
-  _FakeTypedLink_4(Object parent, Invocation parentInvocation)
+class _FakeTypedLink_3 extends _i1.SmartFake implements _i2.TypedLink {
+  _FakeTypedLink_3(Object parent, Invocation parentInvocation)
     : super(parent, parentInvocation);
-}
-
-/// A class which mocks [FerryClientService].
-///
-/// See the documentation for Mockito's code generation for more information.
-class MockFerryClientService extends _i1.Mock
-    implements _i4.FerryClientService {
-  @override
-  _i2.Client getClient() =>
-      (super.noSuchMethod(
-            Invocation.method(#getClient, []),
-            returnValue: _FakeClient_0(this, Invocation.method(#getClient, [])),
-            returnValueForMissingStub: _FakeClient_0(
-              this,
-              Invocation.method(#getClient, []),
-            ),
-          )
-          as _i2.Client);
-
-  @override
-  void clearCache() => super.noSuchMethod(
-    Invocation.method(#clearCache, []),
-    returnValueForMissingStub: null,
-  );
-
-  @override
-  void dispose() => super.noSuchMethod(
-    Invocation.method(#dispose, []),
-    returnValueForMissingStub: null,
-  );
 }
 
 /// A class which mocks [Client].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockClient extends _i1.Mock implements _i2.Client {
+class MockClient extends _i1.Mock implements _i4.Client {
   @override
   _i2.Link get link =>
       (super.noSuchMethod(
             Invocation.getter(#link),
-            returnValue: _FakeLink_1(this, Invocation.getter(#link)),
-            returnValueForMissingStub: _FakeLink_1(
+            returnValue: _FakeLink_0(this, Invocation.getter(#link)),
+            returnValueForMissingStub: _FakeLink_0(
               this,
               Invocation.getter(#link),
             ),
@@ -114,13 +80,13 @@ class MockClient extends _i1.Mock implements _i2.Client {
           as Map<String, Function>);
 
   @override
-  Map<_i2.OperationType, _i2.FetchPolicy> get defaultFetchPolicies =>
+  Map<_i5.OperationType, _i2.FetchPolicy> get defaultFetchPolicies =>
       (super.noSuchMethod(
             Invocation.getter(#defaultFetchPolicies),
-            returnValue: <_i2.OperationType, _i2.FetchPolicy>{},
-            returnValueForMissingStub: <_i2.OperationType, _i2.FetchPolicy>{},
+            returnValue: <_i5.OperationType, _i2.FetchPolicy>{},
+            returnValueForMissingStub: <_i5.OperationType, _i2.FetchPolicy>{},
           )
-          as Map<_i2.OperationType, _i2.FetchPolicy>);
+          as Map<_i5.OperationType, _i2.FetchPolicy>);
 
   @override
   bool get addTypename =>
@@ -135,8 +101,8 @@ class MockClient extends _i1.Mock implements _i2.Client {
   _i2.Cache get cache =>
       (super.noSuchMethod(
             Invocation.getter(#cache),
-            returnValue: _FakeCache_2(this, Invocation.getter(#cache)),
-            returnValueForMissingStub: _FakeCache_2(
+            returnValue: _FakeCache_1(this, Invocation.getter(#cache)),
+            returnValueForMissingStub: _FakeCache_1(
               this,
               Invocation.getter(#cache),
             ),
@@ -149,12 +115,12 @@ class MockClient extends _i1.Mock implements _i2.Client {
       (super.noSuchMethod(
             Invocation.getter(#requestController),
             returnValue:
-                _FakeStreamController_3<_i2.OperationRequest<dynamic, dynamic>>(
+                _FakeStreamController_2<_i2.OperationRequest<dynamic, dynamic>>(
                   this,
                   Invocation.getter(#requestController),
                 ),
             returnValueForMissingStub:
-                _FakeStreamController_3<_i2.OperationRequest<dynamic, dynamic>>(
+                _FakeStreamController_2<_i2.OperationRequest<dynamic, dynamic>>(
                   this,
                   Invocation.getter(#requestController),
                 ),
@@ -203,11 +169,11 @@ class MockClient extends _i1.Mock implements _i2.Client {
   _i2.TypedLink concat(_i2.TypedLink? next) =>
       (super.noSuchMethod(
             Invocation.method(#concat, [next]),
-            returnValue: _FakeTypedLink_4(
+            returnValue: _FakeTypedLink_3(
               this,
               Invocation.method(#concat, [next]),
             ),
-            returnValueForMissingStub: _FakeTypedLink_4(
+            returnValueForMissingStub: _FakeTypedLink_3(
               this,
               Invocation.method(#concat, [next]),
             ),
@@ -218,11 +184,11 @@ class MockClient extends _i1.Mock implements _i2.Client {
   _i2.TypedLink route(_i2.TypedLinkRouter<dynamic, dynamic>? route) =>
       (super.noSuchMethod(
             Invocation.method(#route, [route]),
-            returnValue: _FakeTypedLink_4(
+            returnValue: _FakeTypedLink_3(
               this,
               Invocation.method(#route, [route]),
             ),
-            returnValueForMissingStub: _FakeTypedLink_4(
+            returnValueForMissingStub: _FakeTypedLink_3(
               this,
               Invocation.method(#route, [route]),
             ),
@@ -237,11 +203,11 @@ class MockClient extends _i1.Mock implements _i2.Client {
   ]) =>
       (super.noSuchMethod(
             Invocation.method(#split, [test, left, right]),
-            returnValue: _FakeTypedLink_4(
+            returnValue: _FakeTypedLink_3(
               this,
               Invocation.method(#split, [test, left, right]),
             ),
-            returnValueForMissingStub: _FakeTypedLink_4(
+            returnValueForMissingStub: _FakeTypedLink_3(
               this,
               Invocation.method(#split, [test, left, right]),
             ),
