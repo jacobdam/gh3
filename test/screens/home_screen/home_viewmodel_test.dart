@@ -1,29 +1,32 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
+import 'package:mockito/mockito.dart';
+import 'package:ferry/ferry.dart';
 import 'package:gh3/src/screens/home_screen/home_viewmodel.dart';
-import 'package:gh3/src/services/auth_service.dart';
+import 'package:gh3/src/screens/home_screen/__generated__/home_viewmodel.req.gql.dart';
+import 'package:gh3/src/widgets/user_card/__generated__/user_card.data.gql.dart';
 
 import 'home_viewmodel_test.mocks.dart';
 
-@GenerateMocks([AuthService])
+@GenerateMocks([Client])
 void main() {
   group('HomeViewModel', () {
-    late MockAuthService mockAuthService;
+    late MockClient mockClient;
     late HomeViewModel viewModel;
 
     setUp(() {
-      mockAuthService = MockAuthService();
-      viewModel = HomeViewModel(mockAuthService);
+      mockClient = MockClient();
+      viewModel = HomeViewModel(mockClient);
     });
 
     tearDown(() {
       viewModel.dispose();
     });
 
-    test('should provide placeholder user data', () {
-      expect(viewModel.currentUserName, equals('GitHub User'));
-      expect(viewModel.currentUserLogin, equals('githubuser'));
-      expect(viewModel.currentUserAvatar, isNull);
+    test('should initialize with default state', () {
+      expect(viewModel.currentUser, isNull);
+      expect(viewModel.isLoading, false);
+      expect(viewModel.error, isNull);
     });
 
     test('should properly dispose', () {

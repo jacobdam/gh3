@@ -25,7 +25,8 @@ This document captures the requirements for the Home Screen system (gh3). The ho
 
 1. WHEN the home screen loads THEN the system SHALL display a "My profile" section header
 2. WHEN the profile section is shown THEN the system SHALL display a card component with the current user's profile information
-3. WHEN the profile card is displayed THEN the system SHALL render it as a placeholder component with no navigation functionality
+3. WHEN the profile card is displayed THEN the system SHALL show the authenticated user's name, login, and avatar image
+4. WHEN the user taps on the profile card THEN the system SHALL navigate to the user details screen for the current user
 
 ### Requirement 3
 

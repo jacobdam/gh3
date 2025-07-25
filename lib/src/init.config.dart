@@ -79,14 +79,14 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i1066.TimerService>(),
       ),
     );
-    gh.factory<_i1013.HomeViewModelFactory>(
-      () => _i1013.HomeViewModelFactory(gh<_i336.AuthService>()),
-    );
     gh.factory<_i564.FerryClientService>(
       () => _i564.FerryClientService(gh<_i336.AuthService>()),
     );
     gh.lazySingleton<_i850.AuthViewModel>(
       () => _i850.AuthViewModel(gh<_i336.AuthService>()),
+    );
+    gh.factory<_i1013.HomeViewModelFactory>(
+      () => _i1013.HomeViewModelFactory(gh<_i564.FerryClientService>()),
     );
     gh.singleton<_i518.RouteProvider>(
       () => _i492.LoadingRouteProvider(gh<_i850.AuthViewModel>()),

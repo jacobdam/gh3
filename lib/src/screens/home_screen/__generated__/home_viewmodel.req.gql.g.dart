@@ -6,27 +6,27 @@ part of 'home_viewmodel.req.gql.dart';
 // BuiltValueGenerator
 // **************************************************************************
 
-Serializer<GGetFollowingReq> _$gGetFollowingReqSerializer =
-    _$GGetFollowingReqSerializer();
+Serializer<GGetCurrentUserReq> _$gGetCurrentUserReqSerializer =
+    _$GGetCurrentUserReqSerializer();
 
-class _$GGetFollowingReqSerializer
-    implements StructuredSerializer<GGetFollowingReq> {
+class _$GGetCurrentUserReqSerializer
+    implements StructuredSerializer<GGetCurrentUserReq> {
   @override
-  final Iterable<Type> types = const [GGetFollowingReq, _$GGetFollowingReq];
+  final Iterable<Type> types = const [GGetCurrentUserReq, _$GGetCurrentUserReq];
   @override
-  final String wireName = 'GGetFollowingReq';
+  final String wireName = 'GGetCurrentUserReq';
 
   @override
   Iterable<Object?> serialize(
     Serializers serializers,
-    GGetFollowingReq object, {
+    GGetCurrentUserReq object, {
     FullType specifiedType = FullType.unspecified,
   }) {
     final result = <Object?>[
       'vars',
       serializers.serialize(
         object.vars,
-        specifiedType: const FullType(_i3.GGetFollowingVars),
+        specifiedType: const FullType(_i3.GGetCurrentUserVars),
       ),
       'operation',
       serializers.serialize(
@@ -55,7 +55,7 @@ class _$GGetFollowingReqSerializer
         ..add(
           serializers.serialize(
             value,
-            specifiedType: const FullType(_i2.GGetFollowingData),
+            specifiedType: const FullType(_i2.GGetCurrentUserData),
           ),
         );
     }
@@ -96,12 +96,12 @@ class _$GGetFollowingReqSerializer
   }
 
   @override
-  GGetFollowingReq deserialize(
+  GGetCurrentUserReq deserialize(
     Serializers serializers,
     Iterable<Object?> serialized, {
     FullType specifiedType = FullType.unspecified,
   }) {
-    final result = GGetFollowingReqBuilder();
+    final result = GGetCurrentUserReqBuilder();
 
     final iterator = serialized.iterator;
     while (iterator.moveNext()) {
@@ -113,9 +113,9 @@ class _$GGetFollowingReqSerializer
           result.vars.replace(
             serializers.deserialize(
                   value,
-                  specifiedType: const FullType(_i3.GGetFollowingVars),
+                  specifiedType: const FullType(_i3.GGetCurrentUserVars),
                 )!
-                as _i3.GGetFollowingVars,
+                as _i3.GGetCurrentUserVars,
           );
           break;
         case 'operation':
@@ -138,9 +138,9 @@ class _$GGetFollowingReqSerializer
           result.optimisticResponse.replace(
             serializers.deserialize(
                   value,
-                  specifiedType: const FullType(_i2.GGetFollowingData),
+                  specifiedType: const FullType(_i2.GGetCurrentUserData),
                 )!
-                as _i2.GGetFollowingData,
+                as _i2.GGetCurrentUserData,
           );
           break;
         case 'updateCacheHandlerKey':
@@ -185,21 +185,21 @@ class _$GGetFollowingReqSerializer
   }
 }
 
-class _$GGetFollowingReq extends GGetFollowingReq {
+class _$GGetCurrentUserReq extends GGetCurrentUserReq {
   @override
-  final _i3.GGetFollowingVars vars;
+  final _i3.GGetCurrentUserVars vars;
   @override
   final _i4.Operation operation;
   @override
   final String? requestId;
   @override
-  final _i2.GGetFollowingData? Function(
-    _i2.GGetFollowingData?,
-    _i2.GGetFollowingData?,
+  final _i2.GGetCurrentUserData? Function(
+    _i2.GGetCurrentUserData?,
+    _i2.GGetCurrentUserData?,
   )?
   updateResult;
   @override
-  final _i2.GGetFollowingData? optimisticResponse;
+  final _i2.GGetCurrentUserData? optimisticResponse;
   @override
   final String? updateCacheHandlerKey;
   @override
@@ -211,11 +211,11 @@ class _$GGetFollowingReq extends GGetFollowingReq {
   @override
   final _i4.Context? context;
 
-  factory _$GGetFollowingReq([
-    void Function(GGetFollowingReqBuilder)? updates,
-  ]) => (GGetFollowingReqBuilder()..update(updates))._build();
+  factory _$GGetCurrentUserReq([
+    void Function(GGetCurrentUserReqBuilder)? updates,
+  ]) => (GGetCurrentUserReqBuilder()..update(updates))._build();
 
-  _$GGetFollowingReq._({
+  _$GGetCurrentUserReq._({
     required this.vars,
     required this.operation,
     this.requestId,
@@ -228,18 +228,19 @@ class _$GGetFollowingReq extends GGetFollowingReq {
     this.context,
   }) : super._();
   @override
-  GGetFollowingReq rebuild(void Function(GGetFollowingReqBuilder) updates) =>
-      (toBuilder()..update(updates)).build();
+  GGetCurrentUserReq rebuild(
+    void Function(GGetCurrentUserReqBuilder) updates,
+  ) => (toBuilder()..update(updates)).build();
 
   @override
-  GGetFollowingReqBuilder toBuilder() =>
-      GGetFollowingReqBuilder()..replace(this);
+  GGetCurrentUserReqBuilder toBuilder() =>
+      GGetCurrentUserReqBuilder()..replace(this);
 
   @override
   bool operator ==(Object other) {
     if (identical(other, this)) return true;
     final dynamic _$dynamicOther = other;
-    return other is GGetFollowingReq &&
+    return other is GGetCurrentUserReq &&
         vars == other.vars &&
         operation == other.operation &&
         requestId == other.requestId &&
@@ -271,7 +272,7 @@ class _$GGetFollowingReq extends GGetFollowingReq {
 
   @override
   String toString() {
-    return (newBuiltValueToStringHelper(r'GGetFollowingReq')
+    return (newBuiltValueToStringHelper(r'GGetCurrentUserReq')
           ..add('vars', vars)
           ..add('operation', operation)
           ..add('requestId', requestId)
@@ -286,14 +287,14 @@ class _$GGetFollowingReq extends GGetFollowingReq {
   }
 }
 
-class GGetFollowingReqBuilder
-    implements Builder<GGetFollowingReq, GGetFollowingReqBuilder> {
-  _$GGetFollowingReq? _$v;
+class GGetCurrentUserReqBuilder
+    implements Builder<GGetCurrentUserReq, GGetCurrentUserReqBuilder> {
+  _$GGetCurrentUserReq? _$v;
 
-  _i3.GGetFollowingVarsBuilder? _vars;
-  _i3.GGetFollowingVarsBuilder get vars =>
-      _$this._vars ??= _i3.GGetFollowingVarsBuilder();
-  set vars(_i3.GGetFollowingVarsBuilder? vars) => _$this._vars = vars;
+  _i3.GGetCurrentUserVarsBuilder? _vars;
+  _i3.GGetCurrentUserVarsBuilder get vars =>
+      _$this._vars ??= _i3.GGetCurrentUserVarsBuilder();
+  set vars(_i3.GGetCurrentUserVarsBuilder? vars) => _$this._vars = vars;
 
   _i4.Operation? _operation;
   _i4.Operation? get operation => _$this._operation;
@@ -303,28 +304,28 @@ class GGetFollowingReqBuilder
   String? get requestId => _$this._requestId;
   set requestId(String? requestId) => _$this._requestId = requestId;
 
-  _i2.GGetFollowingData? Function(
-    _i2.GGetFollowingData?,
-    _i2.GGetFollowingData?,
+  _i2.GGetCurrentUserData? Function(
+    _i2.GGetCurrentUserData?,
+    _i2.GGetCurrentUserData?,
   )?
   _updateResult;
-  _i2.GGetFollowingData? Function(
-    _i2.GGetFollowingData?,
-    _i2.GGetFollowingData?,
+  _i2.GGetCurrentUserData? Function(
+    _i2.GGetCurrentUserData?,
+    _i2.GGetCurrentUserData?,
   )?
   get updateResult => _$this._updateResult;
   set updateResult(
-    _i2.GGetFollowingData? Function(
-      _i2.GGetFollowingData?,
-      _i2.GGetFollowingData?,
+    _i2.GGetCurrentUserData? Function(
+      _i2.GGetCurrentUserData?,
+      _i2.GGetCurrentUserData?,
     )?
     updateResult,
   ) => _$this._updateResult = updateResult;
 
-  _i2.GGetFollowingDataBuilder? _optimisticResponse;
-  _i2.GGetFollowingDataBuilder get optimisticResponse =>
-      _$this._optimisticResponse ??= _i2.GGetFollowingDataBuilder();
-  set optimisticResponse(_i2.GGetFollowingDataBuilder? optimisticResponse) =>
+  _i2.GGetCurrentUserDataBuilder? _optimisticResponse;
+  _i2.GGetCurrentUserDataBuilder get optimisticResponse =>
+      _$this._optimisticResponse ??= _i2.GGetCurrentUserDataBuilder();
+  set optimisticResponse(_i2.GGetCurrentUserDataBuilder? optimisticResponse) =>
       _$this._optimisticResponse = optimisticResponse;
 
   String? _updateCacheHandlerKey;
@@ -353,11 +354,11 @@ class GGetFollowingReqBuilder
   _i4.Context? get context => _$this._context;
   set context(_i4.Context? context) => _$this._context = context;
 
-  GGetFollowingReqBuilder() {
-    GGetFollowingReq._initializeBuilder(this);
+  GGetCurrentUserReqBuilder() {
+    GGetCurrentUserReq._initializeBuilder(this);
   }
 
-  GGetFollowingReqBuilder get _$this {
+  GGetCurrentUserReqBuilder get _$this {
     final $v = _$v;
     if ($v != null) {
       _vars = $v.vars.toBuilder();
@@ -376,28 +377,28 @@ class GGetFollowingReqBuilder
   }
 
   @override
-  void replace(GGetFollowingReq other) {
-    _$v = other as _$GGetFollowingReq;
+  void replace(GGetCurrentUserReq other) {
+    _$v = other as _$GGetCurrentUserReq;
   }
 
   @override
-  void update(void Function(GGetFollowingReqBuilder)? updates) {
+  void update(void Function(GGetCurrentUserReqBuilder)? updates) {
     if (updates != null) updates(this);
   }
 
   @override
-  GGetFollowingReq build() => _build();
+  GGetCurrentUserReq build() => _build();
 
-  _$GGetFollowingReq _build() {
-    _$GGetFollowingReq _$result;
+  _$GGetCurrentUserReq _build() {
+    _$GGetCurrentUserReq _$result;
     try {
       _$result =
           _$v ??
-          _$GGetFollowingReq._(
+          _$GGetCurrentUserReq._(
             vars: vars.build(),
             operation: BuiltValueNullFieldError.checkNotNull(
               operation,
-              r'GGetFollowingReq',
+              r'GGetCurrentUserReq',
               'operation',
             ),
             requestId: requestId,
@@ -408,7 +409,7 @@ class GGetFollowingReqBuilder
             fetchPolicy: fetchPolicy,
             executeOnListen: BuiltValueNullFieldError.checkNotNull(
               executeOnListen,
-              r'GGetFollowingReq',
+              r'GGetCurrentUserReq',
               'executeOnListen',
             ),
             context: context,
@@ -423,7 +424,7 @@ class GGetFollowingReqBuilder
         _optimisticResponse?.build();
       } catch (e) {
         throw BuiltValueNestedFieldError(
-          r'GGetFollowingReq',
+          r'GGetCurrentUserReq',
           _$failedField,
           e.toString(),
         );

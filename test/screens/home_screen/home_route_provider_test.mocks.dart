@@ -201,6 +201,11 @@ class MockHomeViewModel extends _i1.Mock implements _i2.HomeViewModel {
   }
 
   @override
+  bool get isLoading =>
+      (super.noSuchMethod(Invocation.getter(#isLoading), returnValue: false)
+          as bool);
+
+  @override
   bool get disposed =>
       (super.noSuchMethod(Invocation.getter(#disposed), returnValue: false)
           as bool);
@@ -209,6 +214,15 @@ class MockHomeViewModel extends _i1.Mock implements _i2.HomeViewModel {
   bool get hasListeners =>
       (super.noSuchMethod(Invocation.getter(#hasListeners), returnValue: false)
           as bool);
+
+  @override
+  _i7.Future<void> loadCurrentUser() =>
+      (super.noSuchMethod(
+            Invocation.method(#loadCurrentUser, []),
+            returnValue: _i7.Future<void>.value(),
+            returnValueForMissingStub: _i7.Future<void>.value(),
+          )
+          as _i7.Future<void>);
 
   @override
   void onDispose() => super.noSuchMethod(

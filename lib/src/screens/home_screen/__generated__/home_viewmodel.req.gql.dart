@@ -16,44 +16,44 @@ import 'package:gql_exec/gql_exec.dart' as _i4;
 
 part 'home_viewmodel.req.gql.g.dart';
 
-abstract class GGetFollowingReq
+abstract class GGetCurrentUserReq
     implements
-        Built<GGetFollowingReq, GGetFollowingReqBuilder>,
-        _i1.OperationRequest<_i2.GGetFollowingData, _i3.GGetFollowingVars> {
-  GGetFollowingReq._();
+        Built<GGetCurrentUserReq, GGetCurrentUserReqBuilder>,
+        _i1.OperationRequest<_i2.GGetCurrentUserData, _i3.GGetCurrentUserVars> {
+  GGetCurrentUserReq._();
 
-  factory GGetFollowingReq([void Function(GGetFollowingReqBuilder b) updates]) =
-      _$GGetFollowingReq;
+  factory GGetCurrentUserReq(
+          [void Function(GGetCurrentUserReqBuilder b) updates]) =
+      _$GGetCurrentUserReq;
 
-  static void _initializeBuilder(GGetFollowingReqBuilder b) => b
+  static void _initializeBuilder(GGetCurrentUserReqBuilder b) => b
     ..operation = _i4.Operation(
       document: _i5.document,
-      operationName: 'GetFollowing',
+      operationName: 'GetCurrentUser',
     )
     ..executeOnListen = true;
 
   @override
-  _i3.GGetFollowingVars get vars;
+  _i3.GGetCurrentUserVars get vars;
   @override
   _i4.Operation get operation;
   @override
   _i4.Request get execRequest => _i4.Request(
-    operation: operation,
-    variables: vars.toJson(),
-    context: context ?? const _i4.Context(),
-  );
+        operation: operation,
+        variables: vars.toJson(),
+        context: context ?? const _i4.Context(),
+      );
 
   @override
   String? get requestId;
   @override
   @BuiltValueField(serialize: false)
-  _i2.GGetFollowingData? Function(
-    _i2.GGetFollowingData?,
-    _i2.GGetFollowingData?,
-  )?
-  get updateResult;
+  _i2.GGetCurrentUserData? Function(
+    _i2.GGetCurrentUserData?,
+    _i2.GGetCurrentUserData?,
+  )? get updateResult;
   @override
-  _i2.GGetFollowingData? get optimisticResponse;
+  _i2.GGetCurrentUserData? get optimisticResponse;
   @override
   String? get updateCacheHandlerKey;
   @override
@@ -66,27 +66,32 @@ abstract class GGetFollowingReq
   @BuiltValueField(serialize: false)
   _i4.Context? get context;
   @override
-  _i2.GGetFollowingData? parseData(Map<String, dynamic> json) =>
-      _i2.GGetFollowingData.fromJson(json);
+  _i2.GGetCurrentUserData? parseData(Map<String, dynamic> json) =>
+      _i2.GGetCurrentUserData.fromJson(json);
 
   @override
   Map<String, dynamic> varsToJson() => vars.toJson();
 
   @override
-  Map<String, dynamic> dataToJson(_i2.GGetFollowingData data) => data.toJson();
+  Map<String, dynamic> dataToJson(_i2.GGetCurrentUserData data) =>
+      data.toJson();
 
   @override
-  _i1.OperationRequest<_i2.GGetFollowingData, _i3.GGetFollowingVars>
-  transformOperation(_i4.Operation Function(_i4.Operation) transform) =>
-      this.rebuild((b) => b..operation = transform(operation));
+  _i1.OperationRequest<_i2.GGetCurrentUserData, _i3.GGetCurrentUserVars>
+      transformOperation(_i4.Operation Function(_i4.Operation) transform) =>
+          this.rebuild((b) => b..operation = transform(operation));
 
-  static Serializer<GGetFollowingReq> get serializer =>
-      _$gGetFollowingReqSerializer;
+  static Serializer<GGetCurrentUserReq> get serializer =>
+      _$gGetCurrentUserReqSerializer;
 
-  Map<String, dynamic> toJson() =>
-      (_i6.serializers.serializeWith(GGetFollowingReq.serializer, this)
-          as Map<String, dynamic>);
+  Map<String, dynamic> toJson() => (_i6.serializers.serializeWith(
+        GGetCurrentUserReq.serializer,
+        this,
+      ) as Map<String, dynamic>);
 
-  static GGetFollowingReq? fromJson(Map<String, dynamic> json) =>
-      _i6.serializers.deserializeWith(GGetFollowingReq.serializer, json);
+  static GGetCurrentUserReq? fromJson(Map<String, dynamic> json) =>
+      _i6.serializers.deserializeWith(
+        GGetCurrentUserReq.serializer,
+        json,
+      );
 }

@@ -610,17 +610,14 @@ import 'package:gh3/__generated__/github_schema.schema.gql.dart'
         GX509Certificate;
 import 'package:gh3/src/screens/home_screen/__generated__/home_viewmodel.data.gql.dart'
     show
-        GGetFollowingData,
-        GGetFollowingData_viewer,
-        GGetFollowingData_viewer_following,
-        GGetFollowingData_viewer_following_nodes,
-        GGetFollowingData_viewer_following_nodes_followers,
-        GGetFollowingData_viewer_following_nodes_repositories,
-        GGetFollowingData_viewer_following_pageInfo;
+        GGetCurrentUserData,
+        GGetCurrentUserData_viewer,
+        GGetCurrentUserData_viewer_followers,
+        GGetCurrentUserData_viewer_repositories;
 import 'package:gh3/src/screens/home_screen/__generated__/home_viewmodel.req.gql.dart'
-    show GGetFollowingReq;
+    show GGetCurrentUserReq;
 import 'package:gh3/src/screens/home_screen/__generated__/home_viewmodel.var.gql.dart'
-    show GGetFollowingVars;
+    show GGetCurrentUserVars;
 import 'package:gh3/src/screens/user_details/__generated__/user_details_viewmodel.data.gql.dart'
     show
         GGetUserDetailsData,
@@ -877,15 +874,12 @@ final SerializersBuilder _serializersBuilder = _$serializers.toBuilder()
   GFollowOrganizationInput,
   GFollowUserInput,
   GFundingPlatform,
-  GGetFollowingData,
-  GGetFollowingData_viewer,
-  GGetFollowingData_viewer_following,
-  GGetFollowingData_viewer_following_nodes,
-  GGetFollowingData_viewer_following_nodes_followers,
-  GGetFollowingData_viewer_following_nodes_repositories,
-  GGetFollowingData_viewer_following_pageInfo,
-  GGetFollowingReq,
-  GGetFollowingVars,
+  GGetCurrentUserData,
+  GGetCurrentUserData_viewer,
+  GGetCurrentUserData_viewer_followers,
+  GGetCurrentUserData_viewer_repositories,
+  GGetCurrentUserReq,
+  GGetCurrentUserVars,
   GGetUserDetailsData,
   GGetUserDetailsData_user,
   GGetUserDetailsData_user_followers,

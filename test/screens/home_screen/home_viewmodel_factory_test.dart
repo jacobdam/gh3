@@ -1,24 +1,29 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:gh3/src/screens/home_screen/home_viewmodel_factory.dart';
 import 'package:gh3/src/screens/home_screen/home_viewmodel.dart';
-import 'package:gh3/src/services/auth_service.dart';
+import 'package:gh3/src/services/ferry_client_service.dart';
+import 'package:ferry/ferry.dart';
 import 'package:mockito/annotations.dart';
+import 'package:mockito/mockito.dart';
 
-@GenerateNiceMocks([MockSpec<AuthService>()])
+@GenerateNiceMocks([MockSpec<FerryClientService>(), MockSpec<Client>()])
 import 'home_viewmodel_factory_test.mocks.dart';
 
 void main() {
   group('HomeViewModelFactory', () {
-    late MockAuthService mockAuthService;
+    late MockFerryClientService mockFerryClientService;
+    late MockClient mockClient;
     late HomeViewModelFactory factory;
 
     setUp(() {
-      mockAuthService = MockAuthService();
-      factory = HomeViewModelFactory(mockAuthService);
+      mockFerryClientService = MockFerryClientService();
+      mockClient = MockClient();
+      when(mockFerryClientService.getClient()).thenReturn(mockClient);
+      factory = HomeViewModelFactory(mockFerryClientService);
     });
 
     group('Factory Creation', () {
-      test('should create factory with AuthService dependency', () {
+      test('should create factory with FerryClientService dependency', () {
         expect(factory, isNotNull);
         expect(factory, isA<HomeViewModelFactory>());
       });
@@ -32,6 +37,7 @@ void main() {
           // Assert
           expect(viewModel, isNotNull);
           expect(viewModel, isA<HomeViewModel>());
+          verify(mockFerryClientService.getClient()).called(1);
 
           // Clean up
           viewModel.dispose();
@@ -49,6 +55,7 @@ void main() {
         expect(viewModel1, isNot(same(viewModel2)));
         expect(viewModel1, isA<HomeViewModel>());
         expect(viewModel2, isA<HomeViewModel>());
+        verify(mockFerryClientService.getClient()).called(2);
 
         // Clean up
         viewModel1.dispose();
@@ -57,14 +64,15 @@ void main() {
     });
 
     group('Dependency Injection', () {
-      test('should inject AuthService correctly', () {
+      test('should inject FerryClientService correctly', () {
         // Act
         final viewModel = factory.create();
 
-        // Assert - Verify the ViewModel provides expected placeholder data
-        expect(viewModel.currentUserName, equals('GitHub User'));
-        expect(viewModel.currentUserLogin, equals('githubuser'));
-        expect(viewModel.currentUserAvatar, isNull);
+        // Assert - Verify the ViewModel has correct initial state
+        expect(viewModel.currentUser, isNull);
+        expect(viewModel.isLoading, false);
+        expect(viewModel.error, isNull);
+        verify(mockFerryClientService.getClient()).called(1);
 
         // Clean up
         viewModel.dispose();
@@ -87,9 +95,9 @@ void main() {
         final viewModel = factory.create();
 
         // Assert - Check all initial state properties
-        expect(viewModel.currentUserName, equals('GitHub User'));
-        expect(viewModel.currentUserLogin, equals('githubuser'));
-        expect(viewModel.currentUserAvatar, isNull);
+        expect(viewModel.currentUser, isNull);
+        expect(viewModel.isLoading, false);
+        expect(viewModel.error, isNull);
 
         // Clean up
         viewModel.dispose();

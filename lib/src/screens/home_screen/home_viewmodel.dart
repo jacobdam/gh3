@@ -1,17 +1,45 @@
+import 'package:ferry/ferry.dart';
 import '../base_viewmodel.dart';
-import '../../services/auth_service.dart';
+import '__generated__/home_viewmodel.req.gql.dart';
+import '../../widgets/user_card/__generated__/user_card.data.gql.dart';
 
 class HomeViewModel extends DisposableViewModel {
-  // Note: _authService will be used in future implementations for real user data
-  // ignore: unused_field
-  final AuthService _authService;
+  final Client _ferryClient;
 
-  HomeViewModel(this._authService);
+  HomeViewModel(this._ferryClient);
 
-  // Current user data (placeholder - in real implementation would come from GraphQL)
-  String? get currentUserName => 'GitHub User'; // Placeholder
-  String? get currentUserLogin => 'githubuser'; // Placeholder
-  String? get currentUserAvatar => null; // Placeholder
+  // Current user data state
+  GUserCardFragment? _currentUser;
+  bool _isLoading = false;
+  String? _error;
+
+  // Getters for current user data
+  GUserCardFragment? get currentUser => _currentUser;
+  bool get isLoading => _isLoading;
+  String? get error => _error;
+
+  // Load current user data via GraphQL
+  Future<void> loadCurrentUser() async {
+    _isLoading = true;
+    _error = null;
+    notifyListeners();
+
+    try {
+      final request = GGetCurrentUserReq();
+      final response = await _ferryClient.request(request).first;
+
+      if (response.hasErrors) {
+        _error = response.graphqlErrors?.first.message ?? 'Failed to load user';
+      } else {
+        _currentUser = response.data?.viewer;
+      }
+    } catch (e) {
+      _error = e.toString();
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
 
   @override
   void onDispose() {

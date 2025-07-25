@@ -27,7 +27,7 @@ lib/src/screens/home_screen/
 - **Route Pattern**: `/` (root path)
 - **Parameter Handling**: No URL parameters needed
 - **Navigation**: Integrate with existing modular navigation architecture
-- **Route Registration**: Register with RouteCollectionService
+- **Route Collection**: Automatically collected by RouteCollectionService
 
 ## 3. UI Component Design
 
@@ -141,35 +141,23 @@ class WorkItemListTile extends StatelessWidget {
 }
 ```
 
-#### CurrentUserCard Widget
+#### UserCard Widget (Reused from Shared Widgets)
+The home screen will reuse the existing `UserCard` widget from `lib/src/widgets/user_card/` instead of creating a new component. This widget already supports:
+- User profile display with avatar, name, and login
+- Navigation callback through `onTap` parameter
+- GraphQL integration via `UserCard.fromFragment()` factory constructor
+
+Usage in home screen:
 ```dart
-class CurrentUserCard extends StatelessWidget {
-  final String? name;
-  final String? login;
-  final String? avatarUrl;
-  
-  const CurrentUserCard({
-    this.name,
-    this.login,
-    this.avatarUrl,
-  });
-  
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      child: ListTile(
-        leading: CircleAvatar(
-          backgroundImage: avatarUrl != null ? NetworkImage(avatarUrl!) : null,
-          child: avatarUrl == null ? Icon(Icons.person) : null,
-        ),
-        title: Text(name ?? 'User'),
-        subtitle: Text('@${login ?? 'username'}'),
-        trailing: Icon(Icons.arrow_forward_ios, size: 16),
-        onTap: null, // Placeholder - no navigation initially
-      ),
-    );
-  }
-}
+// In HomeScreen build method
+if (viewModel.currentUser != null)
+  UserCard.fromFragment(
+    viewModel.currentUser!,
+    onTap: () => context.go('/user/${viewModel.currentUser!.login}'),
+  )
+else
+  // Loading or error state
+  Card(child: ListTile(title: Text('Loading...')))
 ```
 
 ## 4. State Management
@@ -180,14 +168,42 @@ The ViewModel follows clean architecture principles by managing only business lo
 ### 4.2 ViewModel Responsibilities
 ```dart
 class HomeViewModel extends DisposableViewModel {
-  final AuthService _authService;
+  final FerryClient _ferryClient;
   
-  HomeViewModel(this._authService);
+  HomeViewModel(this._ferryClient);
   
-  // Current user data (from AuthService or placeholder)
-  String? get currentUserName => _authService.currentUser?.name;
-  String? get currentUserLogin => _authService.currentUser?.login;
-  String? get currentUserAvatar => _authService.currentUser?.avatarUrl;
+  // Current user data state
+  GCurrentUserFragment? _currentUser;
+  bool _isLoading = false;
+  String? _error;
+  
+  // Getters for current user data
+  GCurrentUserFragment? get currentUser => _currentUser;
+  bool get isLoading => _isLoading;
+  String? get error => _error;
+  
+  // Load current user data via GraphQL
+  Future<void> loadCurrentUser() async {
+    _isLoading = true;
+    _error = null;
+    notifyListeners();
+    
+    try {
+      final request = GCurrentUserReq();
+      final response = await _ferryClient.request(request).first;
+      
+      if (response.hasErrors) {
+        _error = response.graphqlErrors?.first.message ?? 'Failed to load user';
+      } else {
+        _currentUser = response.data?.viewer;
+      }
+    } catch (e) {
+      _error = e.toString();
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
   
   @override
   void onDispose() {
@@ -199,7 +215,7 @@ class HomeViewModel extends DisposableViewModel {
 ### 4.3 Dependency Injection
 - **HomeViewModelFactory**: Registered with `@injectable`
 - **HomeRouteProvider**: Registered with `@injectable` 
-- **Dependencies**: AuthService (for current user context)
+- **Dependencies**: FerryClient (for GraphQL queries)
 
 ## 5. Navigation Integration
 
@@ -234,12 +250,12 @@ class HomeRouteProvider {
 ```dart
 @injectable
 class HomeViewModelFactory {
-  final AuthService _authService;
+  final FerryClient _ferryClient;
   
-  HomeViewModelFactory(this._authService);
+  HomeViewModelFactory(this._ferryClient);
   
   HomeViewModel create() {
-    return HomeViewModel(_authService);
+    return HomeViewModel(_ferryClient);
   }
 }
 ```
@@ -292,16 +308,14 @@ This design document aligns with the requirements rather than the current implem
 ## 8. Implementation Dependencies
 
 ### 8.1 Required Services
-- **AuthService**: For current user context and data
-- **RouteCollectionService**: For route registration
+- **FerryClient**: For GraphQL queries to fetch current user data
 
 ### 8.2 Required Widgets (New)
 - **SectionHeader**: For consistent section title styling
 - **WorkItemListTile**: For Material 3 ListView items displaying work items
-- **CurrentUserCard**: For current user profile display
 
 ### 8.3 Existing Widget Reuse
-- May reuse **UserCard** patterns for CurrentUserCard implementation
+- **UserCard**: Reuse existing widget from `lib/src/widgets/user_card/` for current user profile display
 - Follow existing card styling patterns from the app
 
 ## 9. Performance Considerations

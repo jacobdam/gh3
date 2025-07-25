@@ -1,15 +1,7 @@
 #import "../../widgets/user_card/user_card.graphql"
 
-query GetFollowing($first: Int!, $after: String) {
+query GetCurrentUser {
   viewer {
-    following(first: $first, after: $after) {
-      nodes {
-        ...UserCardFragment
-      }
-      pageInfo {
-        hasNextPage
-        endCursor
-      }
-    }
+    ...UserCardFragment
   }
 }
