@@ -128,7 +128,7 @@ void main() {
       expect(card.child, isA<ListTile>());
     });
 
-    testWidgets('should have no onTap functionality (placeholder)', (
+    testWidgets('should have no onTap functionality when onTap is null', (
       tester,
     ) async {
       // Act
@@ -143,6 +143,38 @@ void main() {
       // Assert
       final listTile = tester.widget<ListTile>(find.byType(ListTile));
       expect(listTile.onTap, isNull);
+    });
+
+    testWidgets('should call onTap when provided and ListTile is tapped', (
+      tester,
+    ) async {
+      // Arrange
+      bool wasTapped = false;
+      void handleTap() {
+        wasTapped = true;
+      }
+
+      // Act
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: CurrentUserCard(
+              name: 'John Doe',
+              login: 'johndoe',
+              onTap: handleTap,
+            ),
+          ),
+        ),
+      );
+
+      // Tap the ListTile
+      await tester.tap(find.byType(ListTile));
+      await tester.pumpAndSettle();
+
+      // Assert
+      expect(wasTapped, isTrue);
+      final listTile = tester.widget<ListTile>(find.byType(ListTile));
+      expect(listTile.onTap, isNotNull);
     });
 
     testWidgets('should handle mixed null and non-null values', (tester) async {

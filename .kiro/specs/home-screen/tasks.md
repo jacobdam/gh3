@@ -154,21 +154,21 @@
     - Update integration tests to handle loading states
     - _Requirements: 2.1, 2.2, 2.3_
 
-- [ ] 9. Implement navigation from current user profile card to user details screen
-  - [ ] 9.1 Add onTap parameter to CurrentUserCard widget
+- [x] 9. Implement navigation from current user profile card to user details screen
+  - [x] 9.1 Add onTap parameter to CurrentUserCard widget
     - Update CurrentUserCard constructor to accept optional VoidCallback onTap parameter
     - Pass onTap to ListTile.onTap property
     - Update widget tests to verify onTap functionality
     - _Requirements: 2.4_
     
-  - [ ] 9.2 Implement navigation logic in HomeScreen for current user profile
+  - [x] 9.2 Implement navigation logic in HomeScreen for current user profile
     - Import UserDetailsRoute from user_details module
     - Add onTap handler to CurrentUserCard that creates UserDetailsRoute instance
     - Use UserDetailsRoute(login).go(context) for type-safe navigation
     - Handle null login case gracefully by checking before navigation
     - _Requirements: 2.4_
     
-  - [ ] 9.3 Update integration tests to verify profile card navigation
+  - [x] 9.3 Update integration tests to verify profile card navigation
     - Add test case for current user card tap navigation
     - Mock GoRouter navigation and verify UserDetailsRoute navigation is called
     - Test navigation with both valid login and null login scenarios
