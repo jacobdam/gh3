@@ -42,3 +42,7 @@ class GraphQLValidationError extends GraphQLError {
 class GraphQLOfflineError extends GraphQLError {
   const GraphQLOfflineError(super.message) : super(code: 'OFFLINE_ERROR');
 }
+
+class GraphQLUserNotFoundError extends GraphQLError {
+  const GraphQLUserNotFoundError(super.message) : super(code: 'USER_NOT_FOUND');
+}

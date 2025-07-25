@@ -49,6 +49,19 @@ class GraphQLErrorHandler {
     final graphqlErrors = response.graphqlErrors;
     if (graphqlErrors != null && graphqlErrors.isNotEmpty) {
       final firstError = graphqlErrors.first;
+
+      // Check for user not found specifically
+      if (firstError.message.toLowerCase().contains(
+            'could not resolve to a user',
+          ) ||
+          firstError.message.toLowerCase().contains('user not found') ||
+          firstError.path?.any((segment) => segment == 'user') == true &&
+              firstError.message.toLowerCase().contains('not found')) {
+        return const GraphQLUserNotFoundError(
+          'This user does not exist or may have been deleted',
+        );
+      }
+
       final fieldErrors = <String>[];
 
       // Extract field errors from extensions if available
