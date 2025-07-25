@@ -88,11 +88,11 @@ extension GetItInjectableX on _i174.GetIt {
       () async =>
           _i627.UserDetailsViewModelFactory(await getAsync<_i25.Client>()),
     );
-    gh.factoryAsync<_i1013.HomeViewModelFactory>(
-      () async => _i1013.HomeViewModelFactory(await getAsync<_i25.Client>()),
-    );
     gh.factory<_i850.AuthViewModel>(
       () => _i850.AuthViewModel(gh<_i336.AuthService>()),
+    );
+    gh.factory<_i1013.HomeViewModelFactory>(
+      () => _i1013.HomeViewModelFactory(gh<_i336.AuthService>()),
     );
     gh.factoryAsync<_i57.UserDetailsRouteProvider>(
       () async => _i57.UserDetailsRouteProvider(
@@ -106,9 +106,9 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i850.AuthViewModel>(),
       ),
     );
-    gh.factoryAsync<_i176.HomeRouteProvider>(
-      () async => _i176.HomeRouteProvider(
-        await getAsync<_i1013.HomeViewModelFactory>(),
+    gh.factory<_i176.HomeRouteProvider>(
+      () => _i176.HomeRouteProvider(
+        gh<_i1013.HomeViewModelFactory>(),
         gh<_i850.AuthViewModel>(),
       ),
     );

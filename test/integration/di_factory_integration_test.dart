@@ -50,7 +50,7 @@ void main() {
 
       // Register factories
       GetIt.I.registerFactory<HomeViewModelFactory>(
-        () => HomeViewModelFactory(mockFerryClient),
+        () => HomeViewModelFactory(mockAuthService),
       );
       GetIt.I.registerFactory<LoginViewModelFactory>(
         () => LoginViewModelFactory(
@@ -121,7 +121,7 @@ void main() {
 
       // Register factories
       GetIt.I.registerFactory<HomeViewModelFactory>(
-        () => HomeViewModelFactory(mockFerryClient),
+        () => HomeViewModelFactory(mockAuthService),
       );
       GetIt.I.registerFactory<LoginViewModelFactory>(
         () => LoginViewModelFactory(
@@ -168,7 +168,7 @@ void main() {
 
       // Register factories
       GetIt.I.registerFactory<HomeViewModelFactory>(
-        () => HomeViewModelFactory(mockFerryClient),
+        () => HomeViewModelFactory(mockAuthService),
       );
       GetIt.I.registerFactory<LoginViewModelFactory>(
         () => LoginViewModelFactory(
@@ -247,7 +247,7 @@ void main() {
 
         // Register factories
         GetIt.I.registerFactory<HomeViewModelFactory>(
-          () => HomeViewModelFactory(mockFerryClient),
+          () => HomeViewModelFactory(mockAuthService),
         );
 
         // Verify singletons return same instance

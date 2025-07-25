@@ -1,14 +1,14 @@
-import 'package:ferry/ferry.dart';
 import 'package:injectable/injectable.dart';
 import 'home_viewmodel.dart';
+import '../../services/auth_service.dart';
 
 @injectable
 class HomeViewModelFactory {
-  final Client _ferryClient;
+  final AuthService _authService;
 
-  HomeViewModelFactory(this._ferryClient);
+  HomeViewModelFactory(this._authService);
 
   HomeViewModel create() {
-    return HomeViewModel(_ferryClient);
+    return HomeViewModel(_authService);
   }
 }

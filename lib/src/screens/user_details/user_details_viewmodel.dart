@@ -57,8 +57,9 @@ class UserDetailsViewModel extends DisposableViewModel {
     if (_userResult != null) {
       final linkException = _userResult!.linkException;
       final graphqlErrors = _userResult!.graphqlErrors;
-      
-      if (linkException != null || (graphqlErrors != null && graphqlErrors.isNotEmpty)) {
+
+      if (linkException != null ||
+          (graphqlErrors != null && graphqlErrors.isNotEmpty)) {
         return GraphQLErrorHandler.getErrorMessage(_userResult!);
       }
     }
@@ -67,8 +68,9 @@ class UserDetailsViewModel extends DisposableViewModel {
     if (_repositoriesResult != null) {
       final linkException = _repositoriesResult!.linkException;
       final graphqlErrors = _repositoriesResult!.graphqlErrors;
-      
-      if (linkException != null || (graphqlErrors != null && graphqlErrors.isNotEmpty)) {
+
+      if (linkException != null ||
+          (graphqlErrors != null && graphqlErrors.isNotEmpty)) {
         return GraphQLErrorHandler.getErrorMessage(_repositoriesResult!);
       }
     }

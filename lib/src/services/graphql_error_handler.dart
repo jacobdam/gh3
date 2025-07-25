@@ -44,13 +44,13 @@ class GraphQLErrorHandler {
         'No internet connection - please check your network',
       );
     }
-    
+
     // GraphQL errors - treat as failures (no partial data)
     final graphqlErrors = response.graphqlErrors;
     if (graphqlErrors != null && graphqlErrors.isNotEmpty) {
       final firstError = graphqlErrors.first;
       final fieldErrors = <String>[];
-      
+
       // Extract field errors from extensions if available
       if (firstError.extensions != null &&
           firstError.extensions!['field_errors'] != null) {
@@ -59,16 +59,16 @@ class GraphQLErrorHandler {
           fieldErrors.addAll(errors.cast<String>());
         }
       }
-      
+
       return GraphQLValidationError(
         firstError.message,
         fieldErrors: fieldErrors,
       );
     }
-    
+
     return const GraphQLValidationError('Unknown error occurred');
   }
-  
+
   static String getErrorMessage(dynamic error) {
     if (error is GraphQLError) {
       return error.message;
