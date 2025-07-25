@@ -81,12 +81,8 @@ void main() {
           // Mock scope validation
           when(
             mockHttpClient.get(
-              Uri.parse('https://api.github.com/applications/token/scopes'),
-              headers: {
-                'Authorization': 'token integration_test_token',
-                'Accept': 'application/vnd.github.v3+json',
-                'User-Agent': 'gh3-flutter-app',
-              },
+              Uri.parse('https://api.github.com/'),
+              headers: {'Authorization': 'token integration_test_token'},
             ),
           ).thenAnswer(
             (_) async => http.Response(
@@ -167,12 +163,8 @@ void main() {
         // Mock scope validation
         when(
           mockHttpClient.get(
-            Uri.parse('https://api.github.com/applications/token/scopes'),
-            headers: {
-              'Authorization': 'token delayed_token',
-              'Accept': 'application/vnd.github.v3+json',
-              'User-Agent': 'gh3-flutter-app',
-            },
+            Uri.parse('https://api.github.com/'),
+            headers: {'Authorization': 'token delayed_token'},
           ),
         ).thenAnswer(
           (_) async => http.Response(
@@ -234,12 +226,8 @@ void main() {
         // Mock scope validation
         when(
           mockHttpClient.get(
-            Uri.parse('https://api.github.com/applications/token/scopes'),
-            headers: {
-              'Authorization': 'token slow_token',
-              'Accept': 'application/vnd.github.v3+json',
-              'User-Agent': 'gh3-flutter-app',
-            },
+            Uri.parse('https://api.github.com/'),
+            headers: {'Authorization': 'token slow_token'},
           ),
         ).thenAnswer(
           (_) async => http.Response(
@@ -270,12 +258,8 @@ void main() {
         // Mock scope validation for the persisted token
         when(
           mockHttpClient.get(
-            Uri.parse('https://api.github.com/applications/token/scopes'),
-            headers: {
-              'Authorization': 'token persisted_token',
-              'Accept': 'application/vnd.github.v3+json',
-              'User-Agent': 'gh3-flutter-app',
-            },
+            Uri.parse('https://api.github.com/'),
+            headers: {'Authorization': 'token persisted_token'},
           ),
         ).thenAnswer(
           (_) async => http.Response(
@@ -302,12 +286,8 @@ void main() {
         // Mock scope validation failure for the invalid token
         when(
           mockHttpClient.get(
-            Uri.parse('https://api.github.com/applications/token/scopes'),
-            headers: {
-              'Authorization': 'token invalid_token',
-              'Accept': 'application/vnd.github.v3+json',
-              'User-Agent': 'gh3-flutter-app',
-            },
+            Uri.parse('https://api.github.com/'),
+            headers: {'Authorization': 'token invalid_token'},
           ),
         ).thenAnswer(
           (_) async => http.Response('{"message": "Bad credentials"}', 401),
@@ -336,12 +316,8 @@ void main() {
           // Mock scope validation with insufficient scopes
           when(
             mockHttpClient.get(
-              Uri.parse('https://api.github.com/applications/token/scopes'),
-              headers: {
-                'Authorization': 'token insufficient_token',
-                'Accept': 'application/vnd.github.v3+json',
-                'User-Agent': 'gh3-flutter-app',
-              },
+              Uri.parse('https://api.github.com/'),
+              headers: {'Authorization': 'token insufficient_token'},
             ),
           ).thenAnswer(
             (_) async => http.Response(
@@ -375,12 +351,8 @@ void main() {
         // Mock scope validation
         when(
           mockHttpClient.get(
-            Uri.parse('https://api.github.com/applications/token/scopes'),
-            headers: {
-              'Authorization': 'token logout_token',
-              'Accept': 'application/vnd.github.v3+json',
-              'User-Agent': 'gh3-flutter-app',
-            },
+            Uri.parse('https://api.github.com/'),
+            headers: {'Authorization': 'token logout_token'},
           ),
         ).thenAnswer(
           (_) async => http.Response(
@@ -429,12 +401,8 @@ void main() {
           // Mock network error during scope validation
           when(
             mockHttpClient.get(
-              Uri.parse('https://api.github.com/applications/token/scopes'),
-              headers: {
-                'Authorization': 'token network_error_token',
-                'Accept': 'application/vnd.github.v3+json',
-                'User-Agent': 'gh3-flutter-app',
-              },
+              Uri.parse('https://api.github.com/'),
+              headers: {'Authorization': 'token network_error_token'},
             ),
           ).thenThrow(Exception('Network unreachable'));
 

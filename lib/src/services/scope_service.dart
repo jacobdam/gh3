@@ -40,12 +40,8 @@ class ScopeService implements IScopeService {
     try {
       final response = await _httpClient
           .get(
-            Uri.https('api.github.com', '/applications/token/scopes'),
-            headers: {
-              'Authorization': 'token $accessToken',
-              'Accept': 'application/vnd.github.v3+json',
-              'User-Agent': 'gh3-flutter-app',
-            },
+            Uri.https('api.github.com', '/'),
+            headers: {'Authorization': 'token $accessToken'},
           )
           .timeout(_requestTimeout);
 
@@ -65,28 +61,17 @@ class ScopeService implements IScopeService {
 
       if (response.statusCode != 200) {
         throw ScopeValidationException(
-          'GitHub API request failed with status ${response.statusCode}',
+          'Failed to fetch scopes: ${response.body}',
           statusCode: response.statusCode,
         );
       }
 
       final scopesHeader = response.headers['x-oauth-scopes'];
       if (scopesHeader == null) {
-        throw ScopeValidationException(
-          'No scopes found in response headers - invalid token format',
-        );
+        throw ScopeValidationException('No scopes found in response headers');
       }
 
-      // Handle empty scopes header
-      if (scopesHeader.trim().isEmpty) {
-        return <String>[];
-      }
-
-      return scopesHeader
-          .split(',')
-          .map((s) => s.trim())
-          .where((s) => s.isNotEmpty)
-          .toList();
+      return scopesHeader.split(',').map((scope) => scope.trim()).toList();
     } on TimeoutException {
       throw ScopeValidationException(
         'Request timeout - GitHub API did not respond within ${_requestTimeout.inSeconds} seconds',
