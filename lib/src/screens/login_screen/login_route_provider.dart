@@ -7,7 +7,7 @@ import 'login_screen.dart';
 /// Route provider for the login screen module.
 /// Implements RouteProvider interface to provide modular route configuration.
 @Named("LoginRouteProvider")
-@Injectable(as: RouteProvider)
+@Singleton(as: RouteProvider)
 class LoginRouteProvider implements RouteProvider {
   final LoginViewModelFactory _loginViewModelFactory;
 

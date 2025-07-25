@@ -8,7 +8,7 @@ import 'user_details_screen.dart';
 /// Implements RouteProvider interface to provide modular route configuration
 /// with parameterized routes.
 @Named("UserDetailsRouteProvider")
-@Injectable(as: RouteProvider)
+@Singleton(as: RouteProvider)
 class UserDetailsRouteProvider implements RouteProvider {
   final UserDetailsViewModelFactory _userDetailsViewModelFactory;
 

@@ -3,7 +3,7 @@ import 'package:gh3/src/services/auth_service.dart';
 import '../base_viewmodel.dart';
 
 /// ViewModel exposing AuthService init and login state for GoRouter refresh/redirect.
-@injectable
+@lazySingleton
 class AuthViewModel extends DisposableViewModel {
   final AuthService _authService;
   bool loading = true;
