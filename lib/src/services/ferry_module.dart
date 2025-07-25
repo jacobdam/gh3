@@ -10,7 +10,10 @@ abstract class FerryModule {
   @lazySingleton
   Client ferryClient(AuthService authService, http.Client httpClient) {
     final authLink = _AuthLink(authService);
-    final httpLink = HttpLink("https://api.github.com/graphql", httpClient: httpClient);
+    final httpLink = HttpLink(
+      "https://api.github.com/graphql",
+      httpClient: httpClient,
+    );
 
     final link = Link.from([authLink, httpLink]);
     return Client(link: link);
