@@ -19,7 +19,7 @@
   - Write unit tests for component with various status scenarios
   - _Requirements: 1.5_
 
-- [ ] 4. Implement CustomScrollView with SliverAppBar structure
+- [x] 4. Implement CustomScrollView with SliverAppBar structure
   - Replace existing Scaffold body with CustomScrollView
   - Create SliverAppBar with flexible header containing avatar, name, and username
   - Implement sticky title behavior showing only username when scrolled
@@ -37,7 +37,6 @@
 - [ ] 6. Implement navigation ListTiles for repositories, starred, and organizations
   - Create three ListTile widgets with appropriate icons and titles
   - Display counts from ViewModel in trailing position
-  - Add GoRouter navigation to placeholder routes (e.g., `/user/:login/repos`)
   - Ensure proper count formatting using existing helper methods
   - _Requirements: 2.1, 2.2, 2.3, 2.4, 2.5, 2.6_
 
