@@ -21,23 +21,23 @@ void main() {
       ferryClientService.dispose();
     });
 
-    test('should create Ferry client with authentication', () async {
+    test('should create Ferry client with authentication', () {
       when(mockAuthService.accessToken).thenReturn('test-token');
       
-      final client = await ferryClientService.getClient();
+      final client = ferryClientService.getClient();
       expect(client, isNotNull);
     });
 
-    test('should create Ferry client without token', () async {
+    test('should create Ferry client without token', () {
       when(mockAuthService.accessToken).thenReturn(null);
       
-      final client = await ferryClientService.getClient();
+      final client = ferryClientService.getClient();
       expect(client, isNotNull);
     });
 
-    test('should reuse existing client', () async {
-      final client1 = await ferryClientService.getClient();
-      final client2 = await ferryClientService.getClient();
+    test('should reuse existing client', () {
+      final client1 = ferryClientService.getClient();
+      final client2 = ferryClientService.getClient();
       expect(client1, same(client2));
     });
 

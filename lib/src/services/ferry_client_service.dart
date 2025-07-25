@@ -14,7 +14,7 @@ class FerryClientService {
   FerryClientService(this._authService);
 
   /// Get or create Ferry client instance with authentication integration
-  Future<Client> getClient() async {
+  Client getClient() {
     _client ??= _createClient();
     return _client!;
   }

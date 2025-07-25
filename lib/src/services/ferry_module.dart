@@ -5,7 +5,7 @@ import 'ferry_client_service.dart';
 @module
 abstract class FerryModule {
   @lazySingleton
-  Future<Client> ferryClient(FerryClientService ferryClientService) async {
-    return await ferryClientService.getClient();
+  Client ferryClient(FerryClientService ferryClientService) {
+    return ferryClientService.getClient();
   }
 }
