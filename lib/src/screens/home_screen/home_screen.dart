@@ -3,7 +3,7 @@ import 'home_viewmodel.dart';
 import 'package:gh3/src/screens/app/auth_viewmodel.dart';
 import 'widgets/section_header.dart';
 import 'widgets/work_item_list_tile.dart';
-import 'widgets/current_user_card.dart';
+import '../../widgets/user_card/user_card.dart';
 
 class HomeScreen extends StatefulWidget {
   final AuthViewModel authViewModel;
@@ -27,6 +27,7 @@ class _HomeScreenState extends State<HomeScreen> {
     super.initState();
     _homeViewModel = widget.homeViewModel;
     _homeViewModel.addListener(_onHomeViewModelChanged);
+    _homeViewModel.loadCurrentUser();
   }
 
   @override
@@ -40,6 +41,50 @@ class _HomeScreenState extends State<HomeScreen> {
     if (mounted) {
       setState(() {});
     }
+  }
+
+  Widget _buildCurrentUserCard() {
+    if (_homeViewModel.isLoading) {
+      return const Card(
+        child: ListTile(
+          leading: CircleAvatar(
+            child: SizedBox(
+              width: 20,
+              height: 20,
+              child: CircularProgressIndicator(strokeWidth: 2),
+            ),
+          ),
+          title: Text('Loading...'),
+          subtitle: Text('Fetching user data'),
+        ),
+      );
+    }
+
+    if (_homeViewModel.error != null) {
+      return Card(
+        child: ListTile(
+          leading: const CircleAvatar(
+            child: Icon(Icons.error),
+          ),
+          title: const Text('Error loading user'),
+          subtitle: Text(_homeViewModel.error!),
+        ),
+      );
+    }
+
+    if (_homeViewModel.currentUser != null) {
+      return UserCard.fromFragment(_homeViewModel.currentUser!);
+    }
+
+    return const Card(
+      child: ListTile(
+        leading: CircleAvatar(
+          child: Icon(Icons.person),
+        ),
+        title: Text('No user data'),
+        subtitle: Text('Unable to load user information'),
+      ),
+    );
   }
 
   @override
@@ -71,11 +116,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 // My Profile Section
                 const SectionHeader(title: 'My profile'),
                 const SizedBox(height: 8),
-                CurrentUserCard(
-                  name: _homeViewModel.currentUserName,
-                  login: _homeViewModel.currentUserLogin,
-                  avatarUrl: _homeViewModel.currentUserAvatar,
-                ),
+                _buildCurrentUserCard(),
                 const SizedBox(height: 24),
 
                 // My Work Section

@@ -114,14 +114,14 @@
     - Tests verify logout functionality and navigation structure
     - _Requirements: 1.1, 1.2, 1.3, 1.4, 2.1, 2.2, 2.3, 3.1-3.10_
 
-- [ ] 8. Implement real current user data loading via GraphQL
-  - [ ] 8.1 Update GraphQL query to fetch current user data
+- [x] 8. Implement real current user data loading via GraphQL
+  - [x] 8.1 Update GraphQL query to fetch current user data
     - Replace existing GetFollowing query with GetCurrentUser query
     - Query viewer fields: login, name, avatarUrl for current user display
     - Import UserCardFragment to reuse existing user card GraphQL structure
     - _Requirements: 2.1, 2.2, 2.3_
     
-  - [ ] 8.2 Update HomeViewModel to use FerryClient and load real user data
+  - [x] 8.2 Update HomeViewModel to use FerryClient and load real user data
     - Replace AuthService dependency with FerryClient dependency
     - Add state properties: currentUser, isLoading, error
     - Implement loadCurrentUser() method using GraphQL query
@@ -129,25 +129,25 @@
     - Add proper error handling and loading states
     - _Requirements: 2.1, 2.2, 2.3_
     
-  - [ ] 8.3 Update HomeViewModelFactory to inject FerryClient
+  - [x] 8.3 Update HomeViewModelFactory to inject FerryClient
     - Replace AuthService injection with FerryClient injection
     - Update create() method to pass FerryClient to HomeViewModel
     - Maintain @injectable annotation for dependency injection
     - _Requirements: 2.1, 2.2, 2.3_
     
-  - [ ] 8.4 Update HomeScreen to handle loading states and real user data
+  - [x] 8.4 Update HomeScreen to handle loading states and real user data
     - Call viewModel.loadCurrentUser() in initState
     - Handle loading state with loading indicator in CurrentUserCard
     - Handle error state with error message display
     - Pass real user data to CurrentUserCard when available
     - _Requirements: 2.1, 2.2, 2.3_
     
-  - [ ] 8.5 Update HomeRouteProvider to use correct dependencies
+  - [x] 8.5 Update HomeRouteProvider to use correct dependencies
     - Update constructor to inject HomeViewModelFactory with FerryClient
     - Ensure proper dependency chain: FerryClient -> HomeViewModelFactory -> HomeViewModel
     - _Requirements: 2.1, 2.2, 2.3_
     
-  - [ ] 8.6 Update tests to work with real GraphQL data loading
+  - [x] 8.6 Update tests to work with real GraphQL data loading
     - Update HomeViewModel tests to mock FerryClient instead of AuthService
     - Add tests for loadCurrentUser() method with success and error scenarios
     - Update HomeViewModelFactory tests for FerryClient dependency

@@ -5,9 +5,9 @@
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'dart:async' as _i3;
 
-import 'package:gh3/src/services/auth_service.dart' as _i2;
+import 'package:ferry/ferry.dart' as _i2;
+import 'package:gh3/src/services/ferry_client_service.dart' as _i4;
 import 'package:mockito/mockito.dart' as _i1;
-import 'package:mockito/src/dummies.dart' as _i4;
 
 // ignore_for_file: type=lint
 // ignore_for_file: avoid_redundant_argument_values
@@ -23,66 +23,228 @@ import 'package:mockito/src/dummies.dart' as _i4;
 // ignore_for_file: camel_case_types
 // ignore_for_file: subtype_of_sealed_class
 
-/// A class which mocks [AuthService].
+class _FakeClient_0 extends _i1.SmartFake implements _i2.Client {
+  _FakeClient_0(Object parent, Invocation parentInvocation)
+    : super(parent, parentInvocation);
+}
+
+class _FakeLink_1 extends _i1.SmartFake implements _i2.Link {
+  _FakeLink_1(Object parent, Invocation parentInvocation)
+    : super(parent, parentInvocation);
+}
+
+class _FakeCache_2 extends _i1.SmartFake implements _i2.Cache {
+  _FakeCache_2(Object parent, Invocation parentInvocation)
+    : super(parent, parentInvocation);
+}
+
+class _FakeStreamController_3<T> extends _i1.SmartFake
+    implements _i3.StreamController<T> {
+  _FakeStreamController_3(Object parent, Invocation parentInvocation)
+    : super(parent, parentInvocation);
+}
+
+class _FakeTypedLink_4 extends _i1.SmartFake implements _i2.TypedLink {
+  _FakeTypedLink_4(Object parent, Invocation parentInvocation)
+    : super(parent, parentInvocation);
+}
+
+/// A class which mocks [FerryClientService].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockAuthService extends _i1.Mock implements _i2.AuthService {
+class MockFerryClientService extends _i1.Mock
+    implements _i4.FerryClientService {
   @override
-  bool get isLoggedIn =>
+  _i2.Client getClient() =>
       (super.noSuchMethod(
-            Invocation.getter(#isLoggedIn),
+            Invocation.method(#getClient, []),
+            returnValue: _FakeClient_0(this, Invocation.method(#getClient, [])),
+            returnValueForMissingStub: _FakeClient_0(
+              this,
+              Invocation.method(#getClient, []),
+            ),
+          )
+          as _i2.Client);
+
+  @override
+  void clearCache() => super.noSuchMethod(
+    Invocation.method(#clearCache, []),
+    returnValueForMissingStub: null,
+  );
+
+  @override
+  void dispose() => super.noSuchMethod(
+    Invocation.method(#dispose, []),
+    returnValueForMissingStub: null,
+  );
+}
+
+/// A class which mocks [Client].
+///
+/// See the documentation for Mockito's code generation for more information.
+class MockClient extends _i1.Mock implements _i2.Client {
+  @override
+  _i2.Link get link =>
+      (super.noSuchMethod(
+            Invocation.getter(#link),
+            returnValue: _FakeLink_1(this, Invocation.getter(#link)),
+            returnValueForMissingStub: _FakeLink_1(
+              this,
+              Invocation.getter(#link),
+            ),
+          )
+          as _i2.Link);
+
+  @override
+  Map<String, _i2.TypePolicy> get typePolicies =>
+      (super.noSuchMethod(
+            Invocation.getter(#typePolicies),
+            returnValue: <String, _i2.TypePolicy>{},
+            returnValueForMissingStub: <String, _i2.TypePolicy>{},
+          )
+          as Map<String, _i2.TypePolicy>);
+
+  @override
+  Map<String, Function> get updateCacheHandlers =>
+      (super.noSuchMethod(
+            Invocation.getter(#updateCacheHandlers),
+            returnValue: <String, Function>{},
+            returnValueForMissingStub: <String, Function>{},
+          )
+          as Map<String, Function>);
+
+  @override
+  Map<_i2.OperationType, _i2.FetchPolicy> get defaultFetchPolicies =>
+      (super.noSuchMethod(
+            Invocation.getter(#defaultFetchPolicies),
+            returnValue: <_i2.OperationType, _i2.FetchPolicy>{},
+            returnValueForMissingStub: <_i2.OperationType, _i2.FetchPolicy>{},
+          )
+          as Map<_i2.OperationType, _i2.FetchPolicy>);
+
+  @override
+  bool get addTypename =>
+      (super.noSuchMethod(
+            Invocation.getter(#addTypename),
             returnValue: false,
             returnValueForMissingStub: false,
           )
           as bool);
 
   @override
-  _i3.Future<void> init() =>
+  _i2.Cache get cache =>
       (super.noSuchMethod(
-            Invocation.method(#init, []),
+            Invocation.getter(#cache),
+            returnValue: _FakeCache_2(this, Invocation.getter(#cache)),
+            returnValueForMissingStub: _FakeCache_2(
+              this,
+              Invocation.getter(#cache),
+            ),
+          )
+          as _i2.Cache);
+
+  @override
+  _i3.StreamController<_i2.OperationRequest<dynamic, dynamic>>
+  get requestController =>
+      (super.noSuchMethod(
+            Invocation.getter(#requestController),
+            returnValue:
+                _FakeStreamController_3<_i2.OperationRequest<dynamic, dynamic>>(
+                  this,
+                  Invocation.getter(#requestController),
+                ),
+            returnValueForMissingStub:
+                _FakeStreamController_3<_i2.OperationRequest<dynamic, dynamic>>(
+                  this,
+                  Invocation.getter(#requestController),
+                ),
+          )
+          as _i3.StreamController<_i2.OperationRequest<dynamic, dynamic>>);
+
+  @override
+  set cache(_i2.Cache? _cache) => super.noSuchMethod(
+    Invocation.setter(#cache, _cache),
+    returnValueForMissingStub: null,
+  );
+
+  @override
+  set requestController(
+    _i3.StreamController<_i2.OperationRequest<dynamic, dynamic>>?
+    _requestController,
+  ) => super.noSuchMethod(
+    Invocation.setter(#requestController, _requestController),
+    returnValueForMissingStub: null,
+  );
+
+  @override
+  _i3.Future<void> dispose() =>
+      (super.noSuchMethod(
+            Invocation.method(#dispose, []),
             returnValue: _i3.Future<void>.value(),
             returnValueForMissingStub: _i3.Future<void>.value(),
           )
           as _i3.Future<void>);
 
   @override
-  _i3.Future<String> login() =>
+  _i3.Stream<_i2.OperationResponse<TData, TVars>> request<TData, TVars>(
+    _i2.OperationRequest<TData, TVars>? request, [
+    _i2.NextTypedLink<TData, TVars>? forward,
+  ]) =>
       (super.noSuchMethod(
-            Invocation.method(#login, []),
-            returnValue: _i3.Future<String>.value(
-              _i4.dummyValue<String>(this, Invocation.method(#login, [])),
-            ),
-            returnValueForMissingStub: _i3.Future<String>.value(
-              _i4.dummyValue<String>(this, Invocation.method(#login, [])),
-            ),
+            Invocation.method(#request, [request, forward]),
+            returnValue:
+                _i3.Stream<_i2.OperationResponse<TData, TVars>>.empty(),
+            returnValueForMissingStub:
+                _i3.Stream<_i2.OperationResponse<TData, TVars>>.empty(),
           )
-          as _i3.Future<String>);
+          as _i3.Stream<_i2.OperationResponse<TData, TVars>>);
 
   @override
-  _i3.Future<String> loginWithDeviceCode(String? deviceCode) =>
+  _i2.TypedLink concat(_i2.TypedLink? next) =>
       (super.noSuchMethod(
-            Invocation.method(#loginWithDeviceCode, [deviceCode]),
-            returnValue: _i3.Future<String>.value(
-              _i4.dummyValue<String>(
-                this,
-                Invocation.method(#loginWithDeviceCode, [deviceCode]),
-              ),
+            Invocation.method(#concat, [next]),
+            returnValue: _FakeTypedLink_4(
+              this,
+              Invocation.method(#concat, [next]),
             ),
-            returnValueForMissingStub: _i3.Future<String>.value(
-              _i4.dummyValue<String>(
-                this,
-                Invocation.method(#loginWithDeviceCode, [deviceCode]),
-              ),
+            returnValueForMissingStub: _FakeTypedLink_4(
+              this,
+              Invocation.method(#concat, [next]),
             ),
           )
-          as _i3.Future<String>);
+          as _i2.TypedLink);
 
   @override
-  _i3.Future<void> logout() =>
+  _i2.TypedLink route(_i2.TypedLinkRouter<dynamic, dynamic>? route) =>
       (super.noSuchMethod(
-            Invocation.method(#logout, []),
-            returnValue: _i3.Future<void>.value(),
-            returnValueForMissingStub: _i3.Future<void>.value(),
+            Invocation.method(#route, [route]),
+            returnValue: _FakeTypedLink_4(
+              this,
+              Invocation.method(#route, [route]),
+            ),
+            returnValueForMissingStub: _FakeTypedLink_4(
+              this,
+              Invocation.method(#route, [route]),
+            ),
           )
-          as _i3.Future<void>);
+          as _i2.TypedLink);
+
+  @override
+  _i2.TypedLink split(
+    bool Function<TData, TVars>(_i2.OperationRequest<TData, TVars>)? test,
+    _i2.TypedLink? left, [
+    _i2.TypedLink? right = const _i2.PassthroughTypedLink(),
+  ]) =>
+      (super.noSuchMethod(
+            Invocation.method(#split, [test, left, right]),
+            returnValue: _FakeTypedLink_4(
+              this,
+              Invocation.method(#split, [test, left, right]),
+            ),
+            returnValueForMissingStub: _FakeTypedLink_4(
+              this,
+              Invocation.method(#split, [test, left, right]),
+            ),
+          )
+          as _i2.TypedLink);
 }

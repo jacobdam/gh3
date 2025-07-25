@@ -8,23 +8,25 @@ import 'package:gh3/__generated__/serializers.gql.dart' as _i1;
 
 part 'home_viewmodel.var.gql.g.dart';
 
-abstract class GGetFollowingVars
-    implements Built<GGetFollowingVars, GGetFollowingVarsBuilder> {
-  GGetFollowingVars._();
+abstract class GGetCurrentUserVars
+    implements Built<GGetCurrentUserVars, GGetCurrentUserVarsBuilder> {
+  GGetCurrentUserVars._();
 
-  factory GGetFollowingVars([
-    void Function(GGetFollowingVarsBuilder b) updates,
-  ]) = _$GGetFollowingVars;
+  factory GGetCurrentUserVars(
+          [void Function(GGetCurrentUserVarsBuilder b) updates]) =
+      _$GGetCurrentUserVars;
 
-  int get first;
-  String? get after;
-  static Serializer<GGetFollowingVars> get serializer =>
-      _$gGetFollowingVarsSerializer;
+  static Serializer<GGetCurrentUserVars> get serializer =>
+      _$gGetCurrentUserVarsSerializer;
 
-  Map<String, dynamic> toJson() =>
-      (_i1.serializers.serializeWith(GGetFollowingVars.serializer, this)
-          as Map<String, dynamic>);
+  Map<String, dynamic> toJson() => (_i1.serializers.serializeWith(
+        GGetCurrentUserVars.serializer,
+        this,
+      ) as Map<String, dynamic>);
 
-  static GGetFollowingVars? fromJson(Map<String, dynamic> json) =>
-      _i1.serializers.deserializeWith(GGetFollowingVars.serializer, json);
+  static GGetCurrentUserVars? fromJson(Map<String, dynamic> json) =>
+      _i1.serializers.deserializeWith(
+        GGetCurrentUserVars.serializer,
+        json,
+      );
 }

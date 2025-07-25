@@ -212,17 +212,12 @@ Serializers _$serializers =
           ..add(GFollowOrganizationInput.serializer)
           ..add(GFollowUserInput.serializer)
           ..add(GFundingPlatform.serializer)
-          ..add(GGetFollowingData.serializer)
-          ..add(GGetFollowingData_viewer.serializer)
-          ..add(GGetFollowingData_viewer_following.serializer)
-          ..add(GGetFollowingData_viewer_following_nodes.serializer)
-          ..add(GGetFollowingData_viewer_following_nodes_followers.serializer)
-          ..add(
-            GGetFollowingData_viewer_following_nodes_repositories.serializer,
-          )
-          ..add(GGetFollowingData_viewer_following_pageInfo.serializer)
-          ..add(GGetFollowingReq.serializer)
-          ..add(GGetFollowingVars.serializer)
+          ..add(GGetCurrentUserData.serializer)
+          ..add(GGetCurrentUserData_viewer.serializer)
+          ..add(GGetCurrentUserData_viewer_followers.serializer)
+          ..add(GGetCurrentUserData_viewer_repositories.serializer)
+          ..add(GGetCurrentUserReq.serializer)
+          ..add(GGetCurrentUserVars.serializer)
           ..add(GGetUserDetailsData.serializer)
           ..add(GGetUserDetailsData_user.serializer)
           ..add(GGetUserDetailsData_user_followers.serializer)
@@ -1068,12 +1063,6 @@ Serializers _$serializers =
               const FullType.nullable(GDraftPullRequestReviewThread),
             ]),
             () => ListBuilder<GDraftPullRequestReviewThread?>(),
-          )
-          ..addBuilderFactory(
-            const FullType(BuiltList, const [
-              const FullType.nullable(GGetFollowingData_viewer_following_nodes),
-            ]),
-            () => ListBuilder<GGetFollowingData_viewer_following_nodes?>(),
           )
           ..addBuilderFactory(
             const FullType(BuiltList, const [

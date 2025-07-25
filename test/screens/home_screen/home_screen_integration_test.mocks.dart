@@ -3,10 +3,10 @@
 // Do not manually edit this file.
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
-import 'dart:async' as _i5;
-import 'dart:ui' as _i3;
+import 'dart:async' as _i3;
+import 'dart:ui' as _i4;
 
-import 'package:gh3/src/screens/app/auth_viewmodel.dart' as _i4;
+import 'package:gh3/src/screens/app/auth_viewmodel.dart' as _i5;
 import 'package:gh3/src/screens/home_screen/home_viewmodel.dart' as _i2;
 import 'package:mockito/mockito.dart' as _i1;
 
@@ -33,6 +33,11 @@ class MockHomeViewModel extends _i1.Mock implements _i2.HomeViewModel {
   }
 
   @override
+  bool get isLoading =>
+      (super.noSuchMethod(Invocation.getter(#isLoading), returnValue: false)
+          as bool);
+
+  @override
   bool get disposed =>
       (super.noSuchMethod(Invocation.getter(#disposed), returnValue: false)
           as bool);
@@ -41,6 +46,15 @@ class MockHomeViewModel extends _i1.Mock implements _i2.HomeViewModel {
   bool get hasListeners =>
       (super.noSuchMethod(Invocation.getter(#hasListeners), returnValue: false)
           as bool);
+
+  @override
+  _i3.Future<void> loadCurrentUser() =>
+      (super.noSuchMethod(
+            Invocation.method(#loadCurrentUser, []),
+            returnValue: _i3.Future<void>.value(),
+            returnValueForMissingStub: _i3.Future<void>.value(),
+          )
+          as _i3.Future<void>);
 
   @override
   void onDispose() => super.noSuchMethod(
@@ -61,13 +75,13 @@ class MockHomeViewModel extends _i1.Mock implements _i2.HomeViewModel {
   );
 
   @override
-  void addListener(_i3.VoidCallback? listener) => super.noSuchMethod(
+  void addListener(_i4.VoidCallback? listener) => super.noSuchMethod(
     Invocation.method(#addListener, [listener]),
     returnValueForMissingStub: null,
   );
 
   @override
-  void removeListener(_i3.VoidCallback? listener) => super.noSuchMethod(
+  void removeListener(_i4.VoidCallback? listener) => super.noSuchMethod(
     Invocation.method(#removeListener, [listener]),
     returnValueForMissingStub: null,
   );
@@ -76,7 +90,7 @@ class MockHomeViewModel extends _i1.Mock implements _i2.HomeViewModel {
 /// A class which mocks [AuthViewModel].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockAuthViewModel extends _i1.Mock implements _i4.AuthViewModel {
+class MockAuthViewModel extends _i1.Mock implements _i5.AuthViewModel {
   MockAuthViewModel() {
     _i1.throwOnMissingStub(this);
   }
@@ -114,22 +128,22 @@ class MockAuthViewModel extends _i1.Mock implements _i4.AuthViewModel {
           as bool);
 
   @override
-  _i5.Future<void> init() =>
+  _i3.Future<void> init() =>
       (super.noSuchMethod(
             Invocation.method(#init, []),
-            returnValue: _i5.Future<void>.value(),
-            returnValueForMissingStub: _i5.Future<void>.value(),
+            returnValue: _i3.Future<void>.value(),
+            returnValueForMissingStub: _i3.Future<void>.value(),
           )
-          as _i5.Future<void>);
+          as _i3.Future<void>);
 
   @override
-  _i5.Future<void> logout() =>
+  _i3.Future<void> logout() =>
       (super.noSuchMethod(
             Invocation.method(#logout, []),
-            returnValue: _i5.Future<void>.value(),
-            returnValueForMissingStub: _i5.Future<void>.value(),
+            returnValue: _i3.Future<void>.value(),
+            returnValueForMissingStub: _i3.Future<void>.value(),
           )
-          as _i5.Future<void>);
+          as _i3.Future<void>);
 
   @override
   void updateAuthState() => super.noSuchMethod(
@@ -156,13 +170,13 @@ class MockAuthViewModel extends _i1.Mock implements _i4.AuthViewModel {
   );
 
   @override
-  void addListener(_i3.VoidCallback? listener) => super.noSuchMethod(
+  void addListener(_i4.VoidCallback? listener) => super.noSuchMethod(
     Invocation.method(#addListener, [listener]),
     returnValueForMissingStub: null,
   );
 
   @override
-  void removeListener(_i3.VoidCallback? listener) => super.noSuchMethod(
+  void removeListener(_i4.VoidCallback? listener) => super.noSuchMethod(
     Invocation.method(#removeListener, [listener]),
     returnValueForMissingStub: null,
   );

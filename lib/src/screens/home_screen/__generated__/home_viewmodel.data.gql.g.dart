@@ -6,37 +6,31 @@ part of 'home_viewmodel.data.gql.dart';
 // BuiltValueGenerator
 // **************************************************************************
 
-Serializer<GGetFollowingData> _$gGetFollowingDataSerializer =
-    _$GGetFollowingDataSerializer();
-Serializer<GGetFollowingData_viewer> _$gGetFollowingDataViewerSerializer =
-    _$GGetFollowingData_viewerSerializer();
-Serializer<GGetFollowingData_viewer_following>
-_$gGetFollowingDataViewerFollowingSerializer =
-    _$GGetFollowingData_viewer_followingSerializer();
-Serializer<GGetFollowingData_viewer_following_nodes>
-_$gGetFollowingDataViewerFollowingNodesSerializer =
-    _$GGetFollowingData_viewer_following_nodesSerializer();
-Serializer<GGetFollowingData_viewer_following_nodes_repositories>
-_$gGetFollowingDataViewerFollowingNodesRepositoriesSerializer =
-    _$GGetFollowingData_viewer_following_nodes_repositoriesSerializer();
-Serializer<GGetFollowingData_viewer_following_nodes_followers>
-_$gGetFollowingDataViewerFollowingNodesFollowersSerializer =
-    _$GGetFollowingData_viewer_following_nodes_followersSerializer();
-Serializer<GGetFollowingData_viewer_following_pageInfo>
-_$gGetFollowingDataViewerFollowingPageInfoSerializer =
-    _$GGetFollowingData_viewer_following_pageInfoSerializer();
+Serializer<GGetCurrentUserData> _$gGetCurrentUserDataSerializer =
+    _$GGetCurrentUserDataSerializer();
+Serializer<GGetCurrentUserData_viewer> _$gGetCurrentUserDataViewerSerializer =
+    _$GGetCurrentUserData_viewerSerializer();
+Serializer<GGetCurrentUserData_viewer_repositories>
+_$gGetCurrentUserDataViewerRepositoriesSerializer =
+    _$GGetCurrentUserData_viewer_repositoriesSerializer();
+Serializer<GGetCurrentUserData_viewer_followers>
+_$gGetCurrentUserDataViewerFollowersSerializer =
+    _$GGetCurrentUserData_viewer_followersSerializer();
 
-class _$GGetFollowingDataSerializer
-    implements StructuredSerializer<GGetFollowingData> {
+class _$GGetCurrentUserDataSerializer
+    implements StructuredSerializer<GGetCurrentUserData> {
   @override
-  final Iterable<Type> types = const [GGetFollowingData, _$GGetFollowingData];
+  final Iterable<Type> types = const [
+    GGetCurrentUserData,
+    _$GGetCurrentUserData,
+  ];
   @override
-  final String wireName = 'GGetFollowingData';
+  final String wireName = 'GGetCurrentUserData';
 
   @override
   Iterable<Object?> serialize(
     Serializers serializers,
-    GGetFollowingData object, {
+    GGetCurrentUserData object, {
     FullType specifiedType = FullType.unspecified,
   }) {
     final result = <Object?>[
@@ -48,7 +42,7 @@ class _$GGetFollowingDataSerializer
       'viewer',
       serializers.serialize(
         object.viewer,
-        specifiedType: const FullType(GGetFollowingData_viewer),
+        specifiedType: const FullType(GGetCurrentUserData_viewer),
       ),
     ];
 
@@ -56,12 +50,12 @@ class _$GGetFollowingDataSerializer
   }
 
   @override
-  GGetFollowingData deserialize(
+  GGetCurrentUserData deserialize(
     Serializers serializers,
     Iterable<Object?> serialized, {
     FullType specifiedType = FullType.unspecified,
   }) {
-    final result = GGetFollowingDataBuilder();
+    final result = GGetCurrentUserDataBuilder();
 
     final iterator = serialized.iterator;
     while (iterator.moveNext()) {
@@ -81,9 +75,9 @@ class _$GGetFollowingDataSerializer
           result.viewer.replace(
             serializers.deserialize(
                   value,
-                  specifiedType: const FullType(GGetFollowingData_viewer),
+                  specifiedType: const FullType(GGetCurrentUserData_viewer),
                 )!
-                as GGetFollowingData_viewer,
+                as GGetCurrentUserData_viewer,
           );
           break;
       }
@@ -93,192 +87,20 @@ class _$GGetFollowingDataSerializer
   }
 }
 
-class _$GGetFollowingData_viewerSerializer
-    implements StructuredSerializer<GGetFollowingData_viewer> {
+class _$GGetCurrentUserData_viewerSerializer
+    implements StructuredSerializer<GGetCurrentUserData_viewer> {
   @override
   final Iterable<Type> types = const [
-    GGetFollowingData_viewer,
-    _$GGetFollowingData_viewer,
+    GGetCurrentUserData_viewer,
+    _$GGetCurrentUserData_viewer,
   ];
   @override
-  final String wireName = 'GGetFollowingData_viewer';
+  final String wireName = 'GGetCurrentUserData_viewer';
 
   @override
   Iterable<Object?> serialize(
     Serializers serializers,
-    GGetFollowingData_viewer object, {
-    FullType specifiedType = FullType.unspecified,
-  }) {
-    final result = <Object?>[
-      '__typename',
-      serializers.serialize(
-        object.G__typename,
-        specifiedType: const FullType(String),
-      ),
-      'following',
-      serializers.serialize(
-        object.following,
-        specifiedType: const FullType(GGetFollowingData_viewer_following),
-      ),
-    ];
-
-    return result;
-  }
-
-  @override
-  GGetFollowingData_viewer deserialize(
-    Serializers serializers,
-    Iterable<Object?> serialized, {
-    FullType specifiedType = FullType.unspecified,
-  }) {
-    final result = GGetFollowingData_viewerBuilder();
-
-    final iterator = serialized.iterator;
-    while (iterator.moveNext()) {
-      final key = iterator.current! as String;
-      iterator.moveNext();
-      final Object? value = iterator.current;
-      switch (key) {
-        case '__typename':
-          result.G__typename =
-              serializers.deserialize(
-                    value,
-                    specifiedType: const FullType(String),
-                  )!
-                  as String;
-          break;
-        case 'following':
-          result.following.replace(
-            serializers.deserialize(
-                  value,
-                  specifiedType: const FullType(
-                    GGetFollowingData_viewer_following,
-                  ),
-                )!
-                as GGetFollowingData_viewer_following,
-          );
-          break;
-      }
-    }
-
-    return result.build();
-  }
-}
-
-class _$GGetFollowingData_viewer_followingSerializer
-    implements StructuredSerializer<GGetFollowingData_viewer_following> {
-  @override
-  final Iterable<Type> types = const [
-    GGetFollowingData_viewer_following,
-    _$GGetFollowingData_viewer_following,
-  ];
-  @override
-  final String wireName = 'GGetFollowingData_viewer_following';
-
-  @override
-  Iterable<Object?> serialize(
-    Serializers serializers,
-    GGetFollowingData_viewer_following object, {
-    FullType specifiedType = FullType.unspecified,
-  }) {
-    final result = <Object?>[
-      '__typename',
-      serializers.serialize(
-        object.G__typename,
-        specifiedType: const FullType(String),
-      ),
-      'pageInfo',
-      serializers.serialize(
-        object.pageInfo,
-        specifiedType: const FullType(
-          GGetFollowingData_viewer_following_pageInfo,
-        ),
-      ),
-    ];
-    Object? value;
-    value = object.nodes;
-    if (value != null) {
-      result
-        ..add('nodes')
-        ..add(
-          serializers.serialize(
-            value,
-            specifiedType: const FullType(BuiltList, const [
-              const FullType.nullable(GGetFollowingData_viewer_following_nodes),
-            ]),
-          ),
-        );
-    }
-    return result;
-  }
-
-  @override
-  GGetFollowingData_viewer_following deserialize(
-    Serializers serializers,
-    Iterable<Object?> serialized, {
-    FullType specifiedType = FullType.unspecified,
-  }) {
-    final result = GGetFollowingData_viewer_followingBuilder();
-
-    final iterator = serialized.iterator;
-    while (iterator.moveNext()) {
-      final key = iterator.current! as String;
-      iterator.moveNext();
-      final Object? value = iterator.current;
-      switch (key) {
-        case '__typename':
-          result.G__typename =
-              serializers.deserialize(
-                    value,
-                    specifiedType: const FullType(String),
-                  )!
-                  as String;
-          break;
-        case 'nodes':
-          result.nodes.replace(
-            serializers.deserialize(
-                  value,
-                  specifiedType: const FullType(BuiltList, const [
-                    const FullType.nullable(
-                      GGetFollowingData_viewer_following_nodes,
-                    ),
-                  ]),
-                )!
-                as BuiltList<Object?>,
-          );
-          break;
-        case 'pageInfo':
-          result.pageInfo.replace(
-            serializers.deserialize(
-                  value,
-                  specifiedType: const FullType(
-                    GGetFollowingData_viewer_following_pageInfo,
-                  ),
-                )!
-                as GGetFollowingData_viewer_following_pageInfo,
-          );
-          break;
-      }
-    }
-
-    return result.build();
-  }
-}
-
-class _$GGetFollowingData_viewer_following_nodesSerializer
-    implements StructuredSerializer<GGetFollowingData_viewer_following_nodes> {
-  @override
-  final Iterable<Type> types = const [
-    GGetFollowingData_viewer_following_nodes,
-    _$GGetFollowingData_viewer_following_nodes,
-  ];
-  @override
-  final String wireName = 'GGetFollowingData_viewer_following_nodes';
-
-  @override
-  Iterable<Object?> serialize(
-    Serializers serializers,
-    GGetFollowingData_viewer_following_nodes object, {
+    GGetCurrentUserData_viewer object, {
     FullType specifiedType = FullType.unspecified,
   }) {
     final result = <Object?>[
@@ -302,16 +124,12 @@ class _$GGetFollowingData_viewer_following_nodesSerializer
       'repositories',
       serializers.serialize(
         object.repositories,
-        specifiedType: const FullType(
-          GGetFollowingData_viewer_following_nodes_repositories,
-        ),
+        specifiedType: const FullType(GGetCurrentUserData_viewer_repositories),
       ),
       'followers',
       serializers.serialize(
         object.followers,
-        specifiedType: const FullType(
-          GGetFollowingData_viewer_following_nodes_followers,
-        ),
+        specifiedType: const FullType(GGetCurrentUserData_viewer_followers),
       ),
     ];
     Object? value;
@@ -335,12 +153,12 @@ class _$GGetFollowingData_viewer_following_nodesSerializer
   }
 
   @override
-  GGetFollowingData_viewer_following_nodes deserialize(
+  GGetCurrentUserData_viewer deserialize(
     Serializers serializers,
     Iterable<Object?> serialized, {
     FullType specifiedType = FullType.unspecified,
   }) {
-    final result = GGetFollowingData_viewer_following_nodesBuilder();
+    final result = GGetCurrentUserData_viewerBuilder();
 
     final iterator = serialized.iterator;
     while (iterator.moveNext()) {
@@ -402,10 +220,10 @@ class _$GGetFollowingData_viewer_following_nodesSerializer
             serializers.deserialize(
                   value,
                   specifiedType: const FullType(
-                    GGetFollowingData_viewer_following_nodes_repositories,
+                    GGetCurrentUserData_viewer_repositories,
                   ),
                 )!
-                as GGetFollowingData_viewer_following_nodes_repositories,
+                as GGetCurrentUserData_viewer_repositories,
           );
           break;
         case 'followers':
@@ -413,10 +231,10 @@ class _$GGetFollowingData_viewer_following_nodesSerializer
             serializers.deserialize(
                   value,
                   specifiedType: const FullType(
-                    GGetFollowingData_viewer_following_nodes_followers,
+                    GGetCurrentUserData_viewer_followers,
                   ),
                 )!
-                as GGetFollowingData_viewer_following_nodes_followers,
+                as GGetCurrentUserData_viewer_followers,
           );
           break;
       }
@@ -426,24 +244,20 @@ class _$GGetFollowingData_viewer_following_nodesSerializer
   }
 }
 
-class _$GGetFollowingData_viewer_following_nodes_repositoriesSerializer
-    implements
-        StructuredSerializer<
-          GGetFollowingData_viewer_following_nodes_repositories
-        > {
+class _$GGetCurrentUserData_viewer_repositoriesSerializer
+    implements StructuredSerializer<GGetCurrentUserData_viewer_repositories> {
   @override
   final Iterable<Type> types = const [
-    GGetFollowingData_viewer_following_nodes_repositories,
-    _$GGetFollowingData_viewer_following_nodes_repositories,
+    GGetCurrentUserData_viewer_repositories,
+    _$GGetCurrentUserData_viewer_repositories,
   ];
   @override
-  final String wireName =
-      'GGetFollowingData_viewer_following_nodes_repositories';
+  final String wireName = 'GGetCurrentUserData_viewer_repositories';
 
   @override
   Iterable<Object?> serialize(
     Serializers serializers,
-    GGetFollowingData_viewer_following_nodes_repositories object, {
+    GGetCurrentUserData_viewer_repositories object, {
     FullType specifiedType = FullType.unspecified,
   }) {
     final result = <Object?>[
@@ -463,13 +277,12 @@ class _$GGetFollowingData_viewer_following_nodes_repositoriesSerializer
   }
 
   @override
-  GGetFollowingData_viewer_following_nodes_repositories deserialize(
+  GGetCurrentUserData_viewer_repositories deserialize(
     Serializers serializers,
     Iterable<Object?> serialized, {
     FullType specifiedType = FullType.unspecified,
   }) {
-    final result =
-        GGetFollowingData_viewer_following_nodes_repositoriesBuilder();
+    final result = GGetCurrentUserData_viewer_repositoriesBuilder();
 
     final iterator = serialized.iterator;
     while (iterator.moveNext()) {
@@ -500,23 +313,20 @@ class _$GGetFollowingData_viewer_following_nodes_repositoriesSerializer
   }
 }
 
-class _$GGetFollowingData_viewer_following_nodes_followersSerializer
-    implements
-        StructuredSerializer<
-          GGetFollowingData_viewer_following_nodes_followers
-        > {
+class _$GGetCurrentUserData_viewer_followersSerializer
+    implements StructuredSerializer<GGetCurrentUserData_viewer_followers> {
   @override
   final Iterable<Type> types = const [
-    GGetFollowingData_viewer_following_nodes_followers,
-    _$GGetFollowingData_viewer_following_nodes_followers,
+    GGetCurrentUserData_viewer_followers,
+    _$GGetCurrentUserData_viewer_followers,
   ];
   @override
-  final String wireName = 'GGetFollowingData_viewer_following_nodes_followers';
+  final String wireName = 'GGetCurrentUserData_viewer_followers';
 
   @override
   Iterable<Object?> serialize(
     Serializers serializers,
-    GGetFollowingData_viewer_following_nodes_followers object, {
+    GGetCurrentUserData_viewer_followers object, {
     FullType specifiedType = FullType.unspecified,
   }) {
     final result = <Object?>[
@@ -536,12 +346,12 @@ class _$GGetFollowingData_viewer_following_nodes_followersSerializer
   }
 
   @override
-  GGetFollowingData_viewer_following_nodes_followers deserialize(
+  GGetCurrentUserData_viewer_followers deserialize(
     Serializers serializers,
     Iterable<Object?> serialized, {
     FullType specifiedType = FullType.unspecified,
   }) {
-    final result = GGetFollowingData_viewer_following_nodes_followersBuilder();
+    final result = GGetCurrentUserData_viewer_followersBuilder();
 
     final iterator = serialized.iterator;
     while (iterator.moveNext()) {
@@ -572,116 +382,31 @@ class _$GGetFollowingData_viewer_following_nodes_followersSerializer
   }
 }
 
-class _$GGetFollowingData_viewer_following_pageInfoSerializer
-    implements
-        StructuredSerializer<GGetFollowingData_viewer_following_pageInfo> {
-  @override
-  final Iterable<Type> types = const [
-    GGetFollowingData_viewer_following_pageInfo,
-    _$GGetFollowingData_viewer_following_pageInfo,
-  ];
-  @override
-  final String wireName = 'GGetFollowingData_viewer_following_pageInfo';
-
-  @override
-  Iterable<Object?> serialize(
-    Serializers serializers,
-    GGetFollowingData_viewer_following_pageInfo object, {
-    FullType specifiedType = FullType.unspecified,
-  }) {
-    final result = <Object?>[
-      '__typename',
-      serializers.serialize(
-        object.G__typename,
-        specifiedType: const FullType(String),
-      ),
-      'hasNextPage',
-      serializers.serialize(
-        object.hasNextPage,
-        specifiedType: const FullType(bool),
-      ),
-    ];
-    Object? value;
-    value = object.endCursor;
-    if (value != null) {
-      result
-        ..add('endCursor')
-        ..add(
-          serializers.serialize(value, specifiedType: const FullType(String)),
-        );
-    }
-    return result;
-  }
-
-  @override
-  GGetFollowingData_viewer_following_pageInfo deserialize(
-    Serializers serializers,
-    Iterable<Object?> serialized, {
-    FullType specifiedType = FullType.unspecified,
-  }) {
-    final result = GGetFollowingData_viewer_following_pageInfoBuilder();
-
-    final iterator = serialized.iterator;
-    while (iterator.moveNext()) {
-      final key = iterator.current! as String;
-      iterator.moveNext();
-      final Object? value = iterator.current;
-      switch (key) {
-        case '__typename':
-          result.G__typename =
-              serializers.deserialize(
-                    value,
-                    specifiedType: const FullType(String),
-                  )!
-                  as String;
-          break;
-        case 'hasNextPage':
-          result.hasNextPage =
-              serializers.deserialize(
-                    value,
-                    specifiedType: const FullType(bool),
-                  )!
-                  as bool;
-          break;
-        case 'endCursor':
-          result.endCursor =
-              serializers.deserialize(
-                    value,
-                    specifiedType: const FullType(String),
-                  )
-                  as String?;
-          break;
-      }
-    }
-
-    return result.build();
-  }
-}
-
-class _$GGetFollowingData extends GGetFollowingData {
+class _$GGetCurrentUserData extends GGetCurrentUserData {
   @override
   final String G__typename;
   @override
-  final GGetFollowingData_viewer viewer;
+  final GGetCurrentUserData_viewer viewer;
 
-  factory _$GGetFollowingData([
-    void Function(GGetFollowingDataBuilder)? updates,
-  ]) => (GGetFollowingDataBuilder()..update(updates))._build();
+  factory _$GGetCurrentUserData([
+    void Function(GGetCurrentUserDataBuilder)? updates,
+  ]) => (GGetCurrentUserDataBuilder()..update(updates))._build();
 
-  _$GGetFollowingData._({required this.G__typename, required this.viewer})
+  _$GGetCurrentUserData._({required this.G__typename, required this.viewer})
     : super._();
   @override
-  GGetFollowingData rebuild(void Function(GGetFollowingDataBuilder) updates) =>
-      (toBuilder()..update(updates)).build();
+  GGetCurrentUserData rebuild(
+    void Function(GGetCurrentUserDataBuilder) updates,
+  ) => (toBuilder()..update(updates)).build();
 
   @override
-  GGetFollowingDataBuilder toBuilder() =>
-      GGetFollowingDataBuilder()..replace(this);
+  GGetCurrentUserDataBuilder toBuilder() =>
+      GGetCurrentUserDataBuilder()..replace(this);
 
   @override
   bool operator ==(Object other) {
     if (identical(other, this)) return true;
-    return other is GGetFollowingData &&
+    return other is GGetCurrentUserData &&
         G__typename == other.G__typename &&
         viewer == other.viewer;
   }
@@ -697,32 +422,32 @@ class _$GGetFollowingData extends GGetFollowingData {
 
   @override
   String toString() {
-    return (newBuiltValueToStringHelper(r'GGetFollowingData')
+    return (newBuiltValueToStringHelper(r'GGetCurrentUserData')
           ..add('G__typename', G__typename)
           ..add('viewer', viewer))
         .toString();
   }
 }
 
-class GGetFollowingDataBuilder
-    implements Builder<GGetFollowingData, GGetFollowingDataBuilder> {
-  _$GGetFollowingData? _$v;
+class GGetCurrentUserDataBuilder
+    implements Builder<GGetCurrentUserData, GGetCurrentUserDataBuilder> {
+  _$GGetCurrentUserData? _$v;
 
   String? _G__typename;
   String? get G__typename => _$this._G__typename;
   set G__typename(String? G__typename) => _$this._G__typename = G__typename;
 
-  GGetFollowingData_viewerBuilder? _viewer;
-  GGetFollowingData_viewerBuilder get viewer =>
-      _$this._viewer ??= GGetFollowingData_viewerBuilder();
-  set viewer(GGetFollowingData_viewerBuilder? viewer) =>
+  GGetCurrentUserData_viewerBuilder? _viewer;
+  GGetCurrentUserData_viewerBuilder get viewer =>
+      _$this._viewer ??= GGetCurrentUserData_viewerBuilder();
+  set viewer(GGetCurrentUserData_viewerBuilder? viewer) =>
       _$this._viewer = viewer;
 
-  GGetFollowingDataBuilder() {
-    GGetFollowingData._initializeBuilder(this);
+  GGetCurrentUserDataBuilder() {
+    GGetCurrentUserData._initializeBuilder(this);
   }
 
-  GGetFollowingDataBuilder get _$this {
+  GGetCurrentUserDataBuilder get _$this {
     final $v = _$v;
     if ($v != null) {
       _G__typename = $v.G__typename;
@@ -733,27 +458,27 @@ class GGetFollowingDataBuilder
   }
 
   @override
-  void replace(GGetFollowingData other) {
-    _$v = other as _$GGetFollowingData;
+  void replace(GGetCurrentUserData other) {
+    _$v = other as _$GGetCurrentUserData;
   }
 
   @override
-  void update(void Function(GGetFollowingDataBuilder)? updates) {
+  void update(void Function(GGetCurrentUserDataBuilder)? updates) {
     if (updates != null) updates(this);
   }
 
   @override
-  GGetFollowingData build() => _build();
+  GGetCurrentUserData build() => _build();
 
-  _$GGetFollowingData _build() {
-    _$GGetFollowingData _$result;
+  _$GGetCurrentUserData _build() {
+    _$GGetCurrentUserData _$result;
     try {
       _$result =
           _$v ??
-          _$GGetFollowingData._(
+          _$GGetCurrentUserData._(
             G__typename: BuiltValueNullFieldError.checkNotNull(
               G__typename,
-              r'GGetFollowingData',
+              r'GGetCurrentUserData',
               'G__typename',
             ),
             viewer: viewer.build(),
@@ -765,7 +490,7 @@ class GGetFollowingDataBuilder
         viewer.build();
       } catch (e) {
         throw BuiltValueNestedFieldError(
-          r'GGetFollowingData',
+          r'GGetCurrentUserData',
           _$failedField,
           e.toString(),
         );
@@ -777,277 +502,7 @@ class GGetFollowingDataBuilder
   }
 }
 
-class _$GGetFollowingData_viewer extends GGetFollowingData_viewer {
-  @override
-  final String G__typename;
-  @override
-  final GGetFollowingData_viewer_following following;
-
-  factory _$GGetFollowingData_viewer([
-    void Function(GGetFollowingData_viewerBuilder)? updates,
-  ]) => (GGetFollowingData_viewerBuilder()..update(updates))._build();
-
-  _$GGetFollowingData_viewer._({
-    required this.G__typename,
-    required this.following,
-  }) : super._();
-  @override
-  GGetFollowingData_viewer rebuild(
-    void Function(GGetFollowingData_viewerBuilder) updates,
-  ) => (toBuilder()..update(updates)).build();
-
-  @override
-  GGetFollowingData_viewerBuilder toBuilder() =>
-      GGetFollowingData_viewerBuilder()..replace(this);
-
-  @override
-  bool operator ==(Object other) {
-    if (identical(other, this)) return true;
-    return other is GGetFollowingData_viewer &&
-        G__typename == other.G__typename &&
-        following == other.following;
-  }
-
-  @override
-  int get hashCode {
-    var _$hash = 0;
-    _$hash = $jc(_$hash, G__typename.hashCode);
-    _$hash = $jc(_$hash, following.hashCode);
-    _$hash = $jf(_$hash);
-    return _$hash;
-  }
-
-  @override
-  String toString() {
-    return (newBuiltValueToStringHelper(r'GGetFollowingData_viewer')
-          ..add('G__typename', G__typename)
-          ..add('following', following))
-        .toString();
-  }
-}
-
-class GGetFollowingData_viewerBuilder
-    implements
-        Builder<GGetFollowingData_viewer, GGetFollowingData_viewerBuilder> {
-  _$GGetFollowingData_viewer? _$v;
-
-  String? _G__typename;
-  String? get G__typename => _$this._G__typename;
-  set G__typename(String? G__typename) => _$this._G__typename = G__typename;
-
-  GGetFollowingData_viewer_followingBuilder? _following;
-  GGetFollowingData_viewer_followingBuilder get following =>
-      _$this._following ??= GGetFollowingData_viewer_followingBuilder();
-  set following(GGetFollowingData_viewer_followingBuilder? following) =>
-      _$this._following = following;
-
-  GGetFollowingData_viewerBuilder() {
-    GGetFollowingData_viewer._initializeBuilder(this);
-  }
-
-  GGetFollowingData_viewerBuilder get _$this {
-    final $v = _$v;
-    if ($v != null) {
-      _G__typename = $v.G__typename;
-      _following = $v.following.toBuilder();
-      _$v = null;
-    }
-    return this;
-  }
-
-  @override
-  void replace(GGetFollowingData_viewer other) {
-    _$v = other as _$GGetFollowingData_viewer;
-  }
-
-  @override
-  void update(void Function(GGetFollowingData_viewerBuilder)? updates) {
-    if (updates != null) updates(this);
-  }
-
-  @override
-  GGetFollowingData_viewer build() => _build();
-
-  _$GGetFollowingData_viewer _build() {
-    _$GGetFollowingData_viewer _$result;
-    try {
-      _$result =
-          _$v ??
-          _$GGetFollowingData_viewer._(
-            G__typename: BuiltValueNullFieldError.checkNotNull(
-              G__typename,
-              r'GGetFollowingData_viewer',
-              'G__typename',
-            ),
-            following: following.build(),
-          );
-    } catch (_) {
-      late String _$failedField;
-      try {
-        _$failedField = 'following';
-        following.build();
-      } catch (e) {
-        throw BuiltValueNestedFieldError(
-          r'GGetFollowingData_viewer',
-          _$failedField,
-          e.toString(),
-        );
-      }
-      rethrow;
-    }
-    replace(_$result);
-    return _$result;
-  }
-}
-
-class _$GGetFollowingData_viewer_following
-    extends GGetFollowingData_viewer_following {
-  @override
-  final String G__typename;
-  @override
-  final BuiltList<GGetFollowingData_viewer_following_nodes?>? nodes;
-  @override
-  final GGetFollowingData_viewer_following_pageInfo pageInfo;
-
-  factory _$GGetFollowingData_viewer_following([
-    void Function(GGetFollowingData_viewer_followingBuilder)? updates,
-  ]) => (GGetFollowingData_viewer_followingBuilder()..update(updates))._build();
-
-  _$GGetFollowingData_viewer_following._({
-    required this.G__typename,
-    this.nodes,
-    required this.pageInfo,
-  }) : super._();
-  @override
-  GGetFollowingData_viewer_following rebuild(
-    void Function(GGetFollowingData_viewer_followingBuilder) updates,
-  ) => (toBuilder()..update(updates)).build();
-
-  @override
-  GGetFollowingData_viewer_followingBuilder toBuilder() =>
-      GGetFollowingData_viewer_followingBuilder()..replace(this);
-
-  @override
-  bool operator ==(Object other) {
-    if (identical(other, this)) return true;
-    return other is GGetFollowingData_viewer_following &&
-        G__typename == other.G__typename &&
-        nodes == other.nodes &&
-        pageInfo == other.pageInfo;
-  }
-
-  @override
-  int get hashCode {
-    var _$hash = 0;
-    _$hash = $jc(_$hash, G__typename.hashCode);
-    _$hash = $jc(_$hash, nodes.hashCode);
-    _$hash = $jc(_$hash, pageInfo.hashCode);
-    _$hash = $jf(_$hash);
-    return _$hash;
-  }
-
-  @override
-  String toString() {
-    return (newBuiltValueToStringHelper(r'GGetFollowingData_viewer_following')
-          ..add('G__typename', G__typename)
-          ..add('nodes', nodes)
-          ..add('pageInfo', pageInfo))
-        .toString();
-  }
-}
-
-class GGetFollowingData_viewer_followingBuilder
-    implements
-        Builder<
-          GGetFollowingData_viewer_following,
-          GGetFollowingData_viewer_followingBuilder
-        > {
-  _$GGetFollowingData_viewer_following? _$v;
-
-  String? _G__typename;
-  String? get G__typename => _$this._G__typename;
-  set G__typename(String? G__typename) => _$this._G__typename = G__typename;
-
-  ListBuilder<GGetFollowingData_viewer_following_nodes?>? _nodes;
-  ListBuilder<GGetFollowingData_viewer_following_nodes?> get nodes =>
-      _$this._nodes ??=
-          ListBuilder<GGetFollowingData_viewer_following_nodes?>();
-  set nodes(ListBuilder<GGetFollowingData_viewer_following_nodes?>? nodes) =>
-      _$this._nodes = nodes;
-
-  GGetFollowingData_viewer_following_pageInfoBuilder? _pageInfo;
-  GGetFollowingData_viewer_following_pageInfoBuilder get pageInfo =>
-      _$this._pageInfo ??= GGetFollowingData_viewer_following_pageInfoBuilder();
-  set pageInfo(GGetFollowingData_viewer_following_pageInfoBuilder? pageInfo) =>
-      _$this._pageInfo = pageInfo;
-
-  GGetFollowingData_viewer_followingBuilder() {
-    GGetFollowingData_viewer_following._initializeBuilder(this);
-  }
-
-  GGetFollowingData_viewer_followingBuilder get _$this {
-    final $v = _$v;
-    if ($v != null) {
-      _G__typename = $v.G__typename;
-      _nodes = $v.nodes?.toBuilder();
-      _pageInfo = $v.pageInfo.toBuilder();
-      _$v = null;
-    }
-    return this;
-  }
-
-  @override
-  void replace(GGetFollowingData_viewer_following other) {
-    _$v = other as _$GGetFollowingData_viewer_following;
-  }
-
-  @override
-  void update(
-    void Function(GGetFollowingData_viewer_followingBuilder)? updates,
-  ) {
-    if (updates != null) updates(this);
-  }
-
-  @override
-  GGetFollowingData_viewer_following build() => _build();
-
-  _$GGetFollowingData_viewer_following _build() {
-    _$GGetFollowingData_viewer_following _$result;
-    try {
-      _$result =
-          _$v ??
-          _$GGetFollowingData_viewer_following._(
-            G__typename: BuiltValueNullFieldError.checkNotNull(
-              G__typename,
-              r'GGetFollowingData_viewer_following',
-              'G__typename',
-            ),
-            nodes: _nodes?.build(),
-            pageInfo: pageInfo.build(),
-          );
-    } catch (_) {
-      late String _$failedField;
-      try {
-        _$failedField = 'nodes';
-        _nodes?.build();
-        _$failedField = 'pageInfo';
-        pageInfo.build();
-      } catch (e) {
-        throw BuiltValueNestedFieldError(
-          r'GGetFollowingData_viewer_following',
-          _$failedField,
-          e.toString(),
-        );
-      }
-      rethrow;
-    }
-    replace(_$result);
-    return _$result;
-  }
-}
-
-class _$GGetFollowingData_viewer_following_nodes
-    extends GGetFollowingData_viewer_following_nodes {
+class _$GGetCurrentUserData_viewer extends GGetCurrentUserData_viewer {
   @override
   final String G__typename;
   @override
@@ -1061,16 +516,15 @@ class _$GGetFollowingData_viewer_following_nodes
   @override
   final String? bio;
   @override
-  final GGetFollowingData_viewer_following_nodes_repositories repositories;
+  final GGetCurrentUserData_viewer_repositories repositories;
   @override
-  final GGetFollowingData_viewer_following_nodes_followers followers;
+  final GGetCurrentUserData_viewer_followers followers;
 
-  factory _$GGetFollowingData_viewer_following_nodes([
-    void Function(GGetFollowingData_viewer_following_nodesBuilder)? updates,
-  ]) => (GGetFollowingData_viewer_following_nodesBuilder()..update(updates))
-      ._build();
+  factory _$GGetCurrentUserData_viewer([
+    void Function(GGetCurrentUserData_viewerBuilder)? updates,
+  ]) => (GGetCurrentUserData_viewerBuilder()..update(updates))._build();
 
-  _$GGetFollowingData_viewer_following_nodes._({
+  _$GGetCurrentUserData_viewer._({
     required this.G__typename,
     required this.id,
     required this.login,
@@ -1081,18 +535,18 @@ class _$GGetFollowingData_viewer_following_nodes
     required this.followers,
   }) : super._();
   @override
-  GGetFollowingData_viewer_following_nodes rebuild(
-    void Function(GGetFollowingData_viewer_following_nodesBuilder) updates,
+  GGetCurrentUserData_viewer rebuild(
+    void Function(GGetCurrentUserData_viewerBuilder) updates,
   ) => (toBuilder()..update(updates)).build();
 
   @override
-  GGetFollowingData_viewer_following_nodesBuilder toBuilder() =>
-      GGetFollowingData_viewer_following_nodesBuilder()..replace(this);
+  GGetCurrentUserData_viewerBuilder toBuilder() =>
+      GGetCurrentUserData_viewerBuilder()..replace(this);
 
   @override
   bool operator ==(Object other) {
     if (identical(other, this)) return true;
-    return other is GGetFollowingData_viewer_following_nodes &&
+    return other is GGetCurrentUserData_viewer &&
         G__typename == other.G__typename &&
         id == other.id &&
         login == other.login &&
@@ -1120,9 +574,7 @@ class _$GGetFollowingData_viewer_following_nodes
 
   @override
   String toString() {
-    return (newBuiltValueToStringHelper(
-            r'GGetFollowingData_viewer_following_nodes',
-          )
+    return (newBuiltValueToStringHelper(r'GGetCurrentUserData_viewer')
           ..add('G__typename', G__typename)
           ..add('id', id)
           ..add('login', login)
@@ -1135,13 +587,10 @@ class _$GGetFollowingData_viewer_following_nodes
   }
 }
 
-class GGetFollowingData_viewer_following_nodesBuilder
+class GGetCurrentUserData_viewerBuilder
     implements
-        Builder<
-          GGetFollowingData_viewer_following_nodes,
-          GGetFollowingData_viewer_following_nodesBuilder
-        > {
-  _$GGetFollowingData_viewer_following_nodes? _$v;
+        Builder<GGetCurrentUserData_viewer, GGetCurrentUserData_viewerBuilder> {
+  _$GGetCurrentUserData_viewer? _$v;
 
   String? _G__typename;
   String? get G__typename => _$this._G__typename;
@@ -1167,27 +616,24 @@ class GGetFollowingData_viewer_following_nodesBuilder
   String? get bio => _$this._bio;
   set bio(String? bio) => _$this._bio = bio;
 
-  GGetFollowingData_viewer_following_nodes_repositoriesBuilder? _repositories;
-  GGetFollowingData_viewer_following_nodes_repositoriesBuilder
-  get repositories => _$this._repositories ??=
-      GGetFollowingData_viewer_following_nodes_repositoriesBuilder();
+  GGetCurrentUserData_viewer_repositoriesBuilder? _repositories;
+  GGetCurrentUserData_viewer_repositoriesBuilder get repositories =>
+      _$this._repositories ??= GGetCurrentUserData_viewer_repositoriesBuilder();
   set repositories(
-    GGetFollowingData_viewer_following_nodes_repositoriesBuilder? repositories,
+    GGetCurrentUserData_viewer_repositoriesBuilder? repositories,
   ) => _$this._repositories = repositories;
 
-  GGetFollowingData_viewer_following_nodes_followersBuilder? _followers;
-  GGetFollowingData_viewer_following_nodes_followersBuilder get followers =>
-      _$this._followers ??=
-          GGetFollowingData_viewer_following_nodes_followersBuilder();
-  set followers(
-    GGetFollowingData_viewer_following_nodes_followersBuilder? followers,
-  ) => _$this._followers = followers;
+  GGetCurrentUserData_viewer_followersBuilder? _followers;
+  GGetCurrentUserData_viewer_followersBuilder get followers =>
+      _$this._followers ??= GGetCurrentUserData_viewer_followersBuilder();
+  set followers(GGetCurrentUserData_viewer_followersBuilder? followers) =>
+      _$this._followers = followers;
 
-  GGetFollowingData_viewer_following_nodesBuilder() {
-    GGetFollowingData_viewer_following_nodes._initializeBuilder(this);
+  GGetCurrentUserData_viewerBuilder() {
+    GGetCurrentUserData_viewer._initializeBuilder(this);
   }
 
-  GGetFollowingData_viewer_following_nodesBuilder get _$this {
+  GGetCurrentUserData_viewerBuilder get _$this {
     final $v = _$v;
     if ($v != null) {
       _G__typename = $v.G__typename;
@@ -1204,39 +650,37 @@ class GGetFollowingData_viewer_following_nodesBuilder
   }
 
   @override
-  void replace(GGetFollowingData_viewer_following_nodes other) {
-    _$v = other as _$GGetFollowingData_viewer_following_nodes;
+  void replace(GGetCurrentUserData_viewer other) {
+    _$v = other as _$GGetCurrentUserData_viewer;
   }
 
   @override
-  void update(
-    void Function(GGetFollowingData_viewer_following_nodesBuilder)? updates,
-  ) {
+  void update(void Function(GGetCurrentUserData_viewerBuilder)? updates) {
     if (updates != null) updates(this);
   }
 
   @override
-  GGetFollowingData_viewer_following_nodes build() => _build();
+  GGetCurrentUserData_viewer build() => _build();
 
-  _$GGetFollowingData_viewer_following_nodes _build() {
-    _$GGetFollowingData_viewer_following_nodes _$result;
+  _$GGetCurrentUserData_viewer _build() {
+    _$GGetCurrentUserData_viewer _$result;
     try {
       _$result =
           _$v ??
-          _$GGetFollowingData_viewer_following_nodes._(
+          _$GGetCurrentUserData_viewer._(
             G__typename: BuiltValueNullFieldError.checkNotNull(
               G__typename,
-              r'GGetFollowingData_viewer_following_nodes',
+              r'GGetCurrentUserData_viewer',
               'G__typename',
             ),
             id: BuiltValueNullFieldError.checkNotNull(
               id,
-              r'GGetFollowingData_viewer_following_nodes',
+              r'GGetCurrentUserData_viewer',
               'id',
             ),
             login: BuiltValueNullFieldError.checkNotNull(
               login,
-              r'GGetFollowingData_viewer_following_nodes',
+              r'GGetCurrentUserData_viewer',
               'login',
             ),
             name: name,
@@ -1257,7 +701,7 @@ class GGetFollowingData_viewer_following_nodesBuilder
         followers.build();
       } catch (e) {
         throw BuiltValueNestedFieldError(
-          r'GGetFollowingData_viewer_following_nodes',
+          r'GGetCurrentUserData_viewer',
           _$failedField,
           e.toString(),
         );
@@ -1269,299 +713,44 @@ class GGetFollowingData_viewer_following_nodesBuilder
   }
 }
 
-class _$GGetFollowingData_viewer_following_nodes_repositories
-    extends GGetFollowingData_viewer_following_nodes_repositories {
+class _$GGetCurrentUserData_viewer_repositories
+    extends GGetCurrentUserData_viewer_repositories {
   @override
   final String G__typename;
   @override
   final int totalCount;
 
-  factory _$GGetFollowingData_viewer_following_nodes_repositories([
-    void Function(GGetFollowingData_viewer_following_nodes_repositoriesBuilder)?
-    updates,
-  ]) =>
-      (GGetFollowingData_viewer_following_nodes_repositoriesBuilder()
-            ..update(updates))
-          ._build();
-
-  _$GGetFollowingData_viewer_following_nodes_repositories._({
-    required this.G__typename,
-    required this.totalCount,
-  }) : super._();
-  @override
-  GGetFollowingData_viewer_following_nodes_repositories rebuild(
-    void Function(GGetFollowingData_viewer_following_nodes_repositoriesBuilder)
-    updates,
-  ) => (toBuilder()..update(updates)).build();
-
-  @override
-  GGetFollowingData_viewer_following_nodes_repositoriesBuilder toBuilder() =>
-      GGetFollowingData_viewer_following_nodes_repositoriesBuilder()
-        ..replace(this);
-
-  @override
-  bool operator ==(Object other) {
-    if (identical(other, this)) return true;
-    return other is GGetFollowingData_viewer_following_nodes_repositories &&
-        G__typename == other.G__typename &&
-        totalCount == other.totalCount;
-  }
-
-  @override
-  int get hashCode {
-    var _$hash = 0;
-    _$hash = $jc(_$hash, G__typename.hashCode);
-    _$hash = $jc(_$hash, totalCount.hashCode);
-    _$hash = $jf(_$hash);
-    return _$hash;
-  }
-
-  @override
-  String toString() {
-    return (newBuiltValueToStringHelper(
-            r'GGetFollowingData_viewer_following_nodes_repositories',
-          )
-          ..add('G__typename', G__typename)
-          ..add('totalCount', totalCount))
-        .toString();
-  }
-}
-
-class GGetFollowingData_viewer_following_nodes_repositoriesBuilder
-    implements
-        Builder<
-          GGetFollowingData_viewer_following_nodes_repositories,
-          GGetFollowingData_viewer_following_nodes_repositoriesBuilder
-        > {
-  _$GGetFollowingData_viewer_following_nodes_repositories? _$v;
-
-  String? _G__typename;
-  String? get G__typename => _$this._G__typename;
-  set G__typename(String? G__typename) => _$this._G__typename = G__typename;
-
-  int? _totalCount;
-  int? get totalCount => _$this._totalCount;
-  set totalCount(int? totalCount) => _$this._totalCount = totalCount;
-
-  GGetFollowingData_viewer_following_nodes_repositoriesBuilder() {
-    GGetFollowingData_viewer_following_nodes_repositories._initializeBuilder(
-      this,
-    );
-  }
-
-  GGetFollowingData_viewer_following_nodes_repositoriesBuilder get _$this {
-    final $v = _$v;
-    if ($v != null) {
-      _G__typename = $v.G__typename;
-      _totalCount = $v.totalCount;
-      _$v = null;
-    }
-    return this;
-  }
-
-  @override
-  void replace(GGetFollowingData_viewer_following_nodes_repositories other) {
-    _$v = other as _$GGetFollowingData_viewer_following_nodes_repositories;
-  }
-
-  @override
-  void update(
-    void Function(GGetFollowingData_viewer_following_nodes_repositoriesBuilder)?
-    updates,
-  ) {
-    if (updates != null) updates(this);
-  }
-
-  @override
-  GGetFollowingData_viewer_following_nodes_repositories build() => _build();
-
-  _$GGetFollowingData_viewer_following_nodes_repositories _build() {
-    final _$result =
-        _$v ??
-        _$GGetFollowingData_viewer_following_nodes_repositories._(
-          G__typename: BuiltValueNullFieldError.checkNotNull(
-            G__typename,
-            r'GGetFollowingData_viewer_following_nodes_repositories',
-            'G__typename',
-          ),
-          totalCount: BuiltValueNullFieldError.checkNotNull(
-            totalCount,
-            r'GGetFollowingData_viewer_following_nodes_repositories',
-            'totalCount',
-          ),
-        );
-    replace(_$result);
-    return _$result;
-  }
-}
-
-class _$GGetFollowingData_viewer_following_nodes_followers
-    extends GGetFollowingData_viewer_following_nodes_followers {
-  @override
-  final String G__typename;
-  @override
-  final int totalCount;
-
-  factory _$GGetFollowingData_viewer_following_nodes_followers([
-    void Function(GGetFollowingData_viewer_following_nodes_followersBuilder)?
-    updates,
-  ]) =>
-      (GGetFollowingData_viewer_following_nodes_followersBuilder()
-            ..update(updates))
-          ._build();
-
-  _$GGetFollowingData_viewer_following_nodes_followers._({
-    required this.G__typename,
-    required this.totalCount,
-  }) : super._();
-  @override
-  GGetFollowingData_viewer_following_nodes_followers rebuild(
-    void Function(GGetFollowingData_viewer_following_nodes_followersBuilder)
-    updates,
-  ) => (toBuilder()..update(updates)).build();
-
-  @override
-  GGetFollowingData_viewer_following_nodes_followersBuilder toBuilder() =>
-      GGetFollowingData_viewer_following_nodes_followersBuilder()
-        ..replace(this);
-
-  @override
-  bool operator ==(Object other) {
-    if (identical(other, this)) return true;
-    return other is GGetFollowingData_viewer_following_nodes_followers &&
-        G__typename == other.G__typename &&
-        totalCount == other.totalCount;
-  }
-
-  @override
-  int get hashCode {
-    var _$hash = 0;
-    _$hash = $jc(_$hash, G__typename.hashCode);
-    _$hash = $jc(_$hash, totalCount.hashCode);
-    _$hash = $jf(_$hash);
-    return _$hash;
-  }
-
-  @override
-  String toString() {
-    return (newBuiltValueToStringHelper(
-            r'GGetFollowingData_viewer_following_nodes_followers',
-          )
-          ..add('G__typename', G__typename)
-          ..add('totalCount', totalCount))
-        .toString();
-  }
-}
-
-class GGetFollowingData_viewer_following_nodes_followersBuilder
-    implements
-        Builder<
-          GGetFollowingData_viewer_following_nodes_followers,
-          GGetFollowingData_viewer_following_nodes_followersBuilder
-        > {
-  _$GGetFollowingData_viewer_following_nodes_followers? _$v;
-
-  String? _G__typename;
-  String? get G__typename => _$this._G__typename;
-  set G__typename(String? G__typename) => _$this._G__typename = G__typename;
-
-  int? _totalCount;
-  int? get totalCount => _$this._totalCount;
-  set totalCount(int? totalCount) => _$this._totalCount = totalCount;
-
-  GGetFollowingData_viewer_following_nodes_followersBuilder() {
-    GGetFollowingData_viewer_following_nodes_followers._initializeBuilder(this);
-  }
-
-  GGetFollowingData_viewer_following_nodes_followersBuilder get _$this {
-    final $v = _$v;
-    if ($v != null) {
-      _G__typename = $v.G__typename;
-      _totalCount = $v.totalCount;
-      _$v = null;
-    }
-    return this;
-  }
-
-  @override
-  void replace(GGetFollowingData_viewer_following_nodes_followers other) {
-    _$v = other as _$GGetFollowingData_viewer_following_nodes_followers;
-  }
-
-  @override
-  void update(
-    void Function(GGetFollowingData_viewer_following_nodes_followersBuilder)?
-    updates,
-  ) {
-    if (updates != null) updates(this);
-  }
-
-  @override
-  GGetFollowingData_viewer_following_nodes_followers build() => _build();
-
-  _$GGetFollowingData_viewer_following_nodes_followers _build() {
-    final _$result =
-        _$v ??
-        _$GGetFollowingData_viewer_following_nodes_followers._(
-          G__typename: BuiltValueNullFieldError.checkNotNull(
-            G__typename,
-            r'GGetFollowingData_viewer_following_nodes_followers',
-            'G__typename',
-          ),
-          totalCount: BuiltValueNullFieldError.checkNotNull(
-            totalCount,
-            r'GGetFollowingData_viewer_following_nodes_followers',
-            'totalCount',
-          ),
-        );
-    replace(_$result);
-    return _$result;
-  }
-}
-
-class _$GGetFollowingData_viewer_following_pageInfo
-    extends GGetFollowingData_viewer_following_pageInfo {
-  @override
-  final String G__typename;
-  @override
-  final bool hasNextPage;
-  @override
-  final String? endCursor;
-
-  factory _$GGetFollowingData_viewer_following_pageInfo([
-    void Function(GGetFollowingData_viewer_following_pageInfoBuilder)? updates,
-  ]) => (GGetFollowingData_viewer_following_pageInfoBuilder()..update(updates))
+  factory _$GGetCurrentUserData_viewer_repositories([
+    void Function(GGetCurrentUserData_viewer_repositoriesBuilder)? updates,
+  ]) => (GGetCurrentUserData_viewer_repositoriesBuilder()..update(updates))
       ._build();
 
-  _$GGetFollowingData_viewer_following_pageInfo._({
+  _$GGetCurrentUserData_viewer_repositories._({
     required this.G__typename,
-    required this.hasNextPage,
-    this.endCursor,
+    required this.totalCount,
   }) : super._();
   @override
-  GGetFollowingData_viewer_following_pageInfo rebuild(
-    void Function(GGetFollowingData_viewer_following_pageInfoBuilder) updates,
+  GGetCurrentUserData_viewer_repositories rebuild(
+    void Function(GGetCurrentUserData_viewer_repositoriesBuilder) updates,
   ) => (toBuilder()..update(updates)).build();
 
   @override
-  GGetFollowingData_viewer_following_pageInfoBuilder toBuilder() =>
-      GGetFollowingData_viewer_following_pageInfoBuilder()..replace(this);
+  GGetCurrentUserData_viewer_repositoriesBuilder toBuilder() =>
+      GGetCurrentUserData_viewer_repositoriesBuilder()..replace(this);
 
   @override
   bool operator ==(Object other) {
     if (identical(other, this)) return true;
-    return other is GGetFollowingData_viewer_following_pageInfo &&
+    return other is GGetCurrentUserData_viewer_repositories &&
         G__typename == other.G__typename &&
-        hasNextPage == other.hasNextPage &&
-        endCursor == other.endCursor;
+        totalCount == other.totalCount;
   }
 
   @override
   int get hashCode {
     var _$hash = 0;
     _$hash = $jc(_$hash, G__typename.hashCode);
-    _$hash = $jc(_$hash, hasNextPage.hashCode);
-    _$hash = $jc(_$hash, endCursor.hashCode);
+    _$hash = $jc(_$hash, totalCount.hashCode);
     _$hash = $jf(_$hash);
     return _$hash;
   }
@@ -1569,80 +758,189 @@ class _$GGetFollowingData_viewer_following_pageInfo
   @override
   String toString() {
     return (newBuiltValueToStringHelper(
-            r'GGetFollowingData_viewer_following_pageInfo',
+            r'GGetCurrentUserData_viewer_repositories',
           )
           ..add('G__typename', G__typename)
-          ..add('hasNextPage', hasNextPage)
-          ..add('endCursor', endCursor))
+          ..add('totalCount', totalCount))
         .toString();
   }
 }
 
-class GGetFollowingData_viewer_following_pageInfoBuilder
+class GGetCurrentUserData_viewer_repositoriesBuilder
     implements
         Builder<
-          GGetFollowingData_viewer_following_pageInfo,
-          GGetFollowingData_viewer_following_pageInfoBuilder
+          GGetCurrentUserData_viewer_repositories,
+          GGetCurrentUserData_viewer_repositoriesBuilder
         > {
-  _$GGetFollowingData_viewer_following_pageInfo? _$v;
+  _$GGetCurrentUserData_viewer_repositories? _$v;
 
   String? _G__typename;
   String? get G__typename => _$this._G__typename;
   set G__typename(String? G__typename) => _$this._G__typename = G__typename;
 
-  bool? _hasNextPage;
-  bool? get hasNextPage => _$this._hasNextPage;
-  set hasNextPage(bool? hasNextPage) => _$this._hasNextPage = hasNextPage;
+  int? _totalCount;
+  int? get totalCount => _$this._totalCount;
+  set totalCount(int? totalCount) => _$this._totalCount = totalCount;
 
-  String? _endCursor;
-  String? get endCursor => _$this._endCursor;
-  set endCursor(String? endCursor) => _$this._endCursor = endCursor;
-
-  GGetFollowingData_viewer_following_pageInfoBuilder() {
-    GGetFollowingData_viewer_following_pageInfo._initializeBuilder(this);
+  GGetCurrentUserData_viewer_repositoriesBuilder() {
+    GGetCurrentUserData_viewer_repositories._initializeBuilder(this);
   }
 
-  GGetFollowingData_viewer_following_pageInfoBuilder get _$this {
+  GGetCurrentUserData_viewer_repositoriesBuilder get _$this {
     final $v = _$v;
     if ($v != null) {
       _G__typename = $v.G__typename;
-      _hasNextPage = $v.hasNextPage;
-      _endCursor = $v.endCursor;
+      _totalCount = $v.totalCount;
       _$v = null;
     }
     return this;
   }
 
   @override
-  void replace(GGetFollowingData_viewer_following_pageInfo other) {
-    _$v = other as _$GGetFollowingData_viewer_following_pageInfo;
+  void replace(GGetCurrentUserData_viewer_repositories other) {
+    _$v = other as _$GGetCurrentUserData_viewer_repositories;
   }
 
   @override
   void update(
-    void Function(GGetFollowingData_viewer_following_pageInfoBuilder)? updates,
+    void Function(GGetCurrentUserData_viewer_repositoriesBuilder)? updates,
   ) {
     if (updates != null) updates(this);
   }
 
   @override
-  GGetFollowingData_viewer_following_pageInfo build() => _build();
+  GGetCurrentUserData_viewer_repositories build() => _build();
 
-  _$GGetFollowingData_viewer_following_pageInfo _build() {
+  _$GGetCurrentUserData_viewer_repositories _build() {
     final _$result =
         _$v ??
-        _$GGetFollowingData_viewer_following_pageInfo._(
+        _$GGetCurrentUserData_viewer_repositories._(
           G__typename: BuiltValueNullFieldError.checkNotNull(
             G__typename,
-            r'GGetFollowingData_viewer_following_pageInfo',
+            r'GGetCurrentUserData_viewer_repositories',
             'G__typename',
           ),
-          hasNextPage: BuiltValueNullFieldError.checkNotNull(
-            hasNextPage,
-            r'GGetFollowingData_viewer_following_pageInfo',
-            'hasNextPage',
+          totalCount: BuiltValueNullFieldError.checkNotNull(
+            totalCount,
+            r'GGetCurrentUserData_viewer_repositories',
+            'totalCount',
           ),
-          endCursor: endCursor,
+        );
+    replace(_$result);
+    return _$result;
+  }
+}
+
+class _$GGetCurrentUserData_viewer_followers
+    extends GGetCurrentUserData_viewer_followers {
+  @override
+  final String G__typename;
+  @override
+  final int totalCount;
+
+  factory _$GGetCurrentUserData_viewer_followers([
+    void Function(GGetCurrentUserData_viewer_followersBuilder)? updates,
+  ]) =>
+      (GGetCurrentUserData_viewer_followersBuilder()..update(updates))._build();
+
+  _$GGetCurrentUserData_viewer_followers._({
+    required this.G__typename,
+    required this.totalCount,
+  }) : super._();
+  @override
+  GGetCurrentUserData_viewer_followers rebuild(
+    void Function(GGetCurrentUserData_viewer_followersBuilder) updates,
+  ) => (toBuilder()..update(updates)).build();
+
+  @override
+  GGetCurrentUserData_viewer_followersBuilder toBuilder() =>
+      GGetCurrentUserData_viewer_followersBuilder()..replace(this);
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(other, this)) return true;
+    return other is GGetCurrentUserData_viewer_followers &&
+        G__typename == other.G__typename &&
+        totalCount == other.totalCount;
+  }
+
+  @override
+  int get hashCode {
+    var _$hash = 0;
+    _$hash = $jc(_$hash, G__typename.hashCode);
+    _$hash = $jc(_$hash, totalCount.hashCode);
+    _$hash = $jf(_$hash);
+    return _$hash;
+  }
+
+  @override
+  String toString() {
+    return (newBuiltValueToStringHelper(r'GGetCurrentUserData_viewer_followers')
+          ..add('G__typename', G__typename)
+          ..add('totalCount', totalCount))
+        .toString();
+  }
+}
+
+class GGetCurrentUserData_viewer_followersBuilder
+    implements
+        Builder<
+          GGetCurrentUserData_viewer_followers,
+          GGetCurrentUserData_viewer_followersBuilder
+        > {
+  _$GGetCurrentUserData_viewer_followers? _$v;
+
+  String? _G__typename;
+  String? get G__typename => _$this._G__typename;
+  set G__typename(String? G__typename) => _$this._G__typename = G__typename;
+
+  int? _totalCount;
+  int? get totalCount => _$this._totalCount;
+  set totalCount(int? totalCount) => _$this._totalCount = totalCount;
+
+  GGetCurrentUserData_viewer_followersBuilder() {
+    GGetCurrentUserData_viewer_followers._initializeBuilder(this);
+  }
+
+  GGetCurrentUserData_viewer_followersBuilder get _$this {
+    final $v = _$v;
+    if ($v != null) {
+      _G__typename = $v.G__typename;
+      _totalCount = $v.totalCount;
+      _$v = null;
+    }
+    return this;
+  }
+
+  @override
+  void replace(GGetCurrentUserData_viewer_followers other) {
+    _$v = other as _$GGetCurrentUserData_viewer_followers;
+  }
+
+  @override
+  void update(
+    void Function(GGetCurrentUserData_viewer_followersBuilder)? updates,
+  ) {
+    if (updates != null) updates(this);
+  }
+
+  @override
+  GGetCurrentUserData_viewer_followers build() => _build();
+
+  _$GGetCurrentUserData_viewer_followers _build() {
+    final _$result =
+        _$v ??
+        _$GGetCurrentUserData_viewer_followers._(
+          G__typename: BuiltValueNullFieldError.checkNotNull(
+            G__typename,
+            r'GGetCurrentUserData_viewer_followers',
+            'G__typename',
+          ),
+          totalCount: BuiltValueNullFieldError.checkNotNull(
+            totalCount,
+            r'GGetCurrentUserData_viewer_followers',
+            'totalCount',
+          ),
         );
     replace(_$result);
     return _$result;
