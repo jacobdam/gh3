@@ -26,7 +26,7 @@
   - Ensure proper back navigation handling
   - _Requirements: 1.1, 1.2, 1.3_
 
-- [ ] 5. Create UserStatsRow component for follower/following display
+- [x] 5. Create UserStatsRow component for follower/following display
   - Implement widget with explicit fields for follower and following counts
   - Add factory constructor for GraphQL integration
   - Format large numbers appropriately (1.2k, 1.5M format)
@@ -34,7 +34,7 @@
   - Write unit tests for count formatting and display
   - _Requirements: 1.7, 4.2_
 
-- [ ] 6. Implement navigation ListTiles for repositories, starred, and organizations
+- [x] 6. Implement navigation ListTiles for repositories, starred, and organizations
   - Create three ListTile widgets with appropriate icons and titles
   - Display counts from ViewModel in trailing position
   - Ensure proper count formatting using existing helper methods
