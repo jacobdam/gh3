@@ -108,6 +108,37 @@ void main() {
       });
     });
 
+    group('Enhanced Data Access', () {
+      test('should return null for status fields when user data is null', () {
+        expect(viewModel.statusMessage, isNull);
+        expect(viewModel.statusEmoji, isNull);
+      });
+
+      test('should return 0 for count fields when user data is null', () {
+        expect(viewModel.starredRepositoriesCount, equals(0));
+        expect(viewModel.organizationsCount, equals(0));
+        expect(viewModel.repositoriesCount, equals(0));
+      });
+
+      test('should have correct getter implementations', () {
+        // Test that the getters exist and return expected types
+        expect(viewModel.statusMessage, isA<String?>());
+        expect(viewModel.statusEmoji, isA<String?>());
+        expect(viewModel.starredRepositoriesCount, isA<int>());
+        expect(viewModel.organizationsCount, isA<int>());
+        expect(viewModel.repositoriesCount, isA<int>());
+      });
+
+      test('should handle null user gracefully in all getters', () {
+        // Verify that all getters handle null user data properly
+        expect(viewModel.statusMessage, isNull);
+        expect(viewModel.statusEmoji, isNull);
+        expect(viewModel.starredRepositoriesCount, equals(0));
+        expect(viewModel.organizationsCount, equals(0));
+        expect(viewModel.repositoriesCount, equals(0));
+      });
+    });
+
     group('Disposal', () {
       test('should clear loading state on disposal', () async {
         // Arrange - initialize viewmodel
