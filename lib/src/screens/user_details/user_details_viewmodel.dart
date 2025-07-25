@@ -52,6 +52,23 @@ class UserDetailsViewModel extends DisposableViewModel {
   bool get hasMoreRepositories => _hasNextPage;
   bool get isEmpty => repositoryNodes.isEmpty;
 
+  // Enhanced data access for new GraphQL fields
+  
+  /// User's status message, null if no status is set
+  String? get statusMessage => user?.status?.message;
+  
+  /// User's status emoji, null if no status is set
+  String? get statusEmoji => user?.status?.emoji;
+  
+  /// Total count of repositories starred by the user
+  int get starredRepositoriesCount => user?.starredRepositories.totalCount ?? 0;
+  
+  /// Total count of organizations the user belongs to
+  int get organizationsCount => user?.organizations.totalCount ?? 0;
+  
+  /// Total count of repositories owned by the user
+  int get repositoriesCount => user?.repositories.totalCount ?? 0;
+
   String? get error {
     // Check user details errors
     if (_userResult != null) {
