@@ -13,12 +13,12 @@ import 'package:go_router/go_router.dart';
 import 'home_screen_integration_test.mocks.dart';
 
 @GenerateMocks([
-  HomeViewModel, 
-  AuthViewModel, 
-  GUserCardFragment, 
+  HomeViewModel,
+  AuthViewModel,
+  GUserCardFragment,
   GUserCardFragment_repositories,
   GUserCardFragment_followers,
-  GoRouter
+  GoRouter,
 ])
 void main() {
   group('HomeScreen Integration', () {
@@ -35,13 +35,15 @@ void main() {
       when(mockHomeViewModel.isLoading).thenReturn(false);
       when(mockHomeViewModel.error).thenReturn(null);
       when(mockHomeViewModel.currentUser).thenReturn(mockUserFragment);
-      
+
       // Setup mock user fragment
       when(mockUserFragment.name).thenReturn('Test User');
       when(mockUserFragment.login).thenReturn('testuser');
-      when(mockUserFragment.avatarUrl).thenReturn(GURI('https://example.com/avatar.jpg'));
+      when(
+        mockUserFragment.avatarUrl,
+      ).thenReturn(GURI('https://example.com/avatar.jpg'));
       when(mockUserFragment.bio).thenReturn('Test bio');
-      
+
       // Setup mock repositories and followers
       final mockRepositories = MockGUserCardFragment_repositories();
       final mockFollowers = MockGUserCardFragment_followers();
@@ -194,7 +196,7 @@ void main() {
     ) async {
       // Create a mock GoRouter
       final mockGoRouter = MockGoRouter();
-      
+
       await mockNetworkImages(() async {
         await tester.pumpWidget(
           MaterialApp.router(
@@ -209,9 +211,8 @@ void main() {
                 ),
                 GoRoute(
                   path: '/:login',
-                  builder: (context, state) => const Scaffold(
-                    body: Text('User Details'),
-                  ),
+                  builder: (context, state) =>
+                      const Scaffold(body: Text('User Details')),
                 ),
               ],
             ),
@@ -228,26 +229,27 @@ void main() {
       });
     });
 
-    testWidgets('should handle null currentUser gracefully when profile card area is tapped', (
-      tester,
-    ) async {
-      // Setup mock with null currentUser
-      when(mockHomeViewModel.currentUser).thenReturn(null);
-      
-      await mockNetworkImages(() async {
-        await tester.pumpWidget(
-          MaterialApp(
-            home: HomeScreen(
-              authViewModel: mockAuthViewModel,
-              homeViewModel: mockHomeViewModel,
-            ),
-          ),
-        );
+    testWidgets(
+      'should handle null currentUser gracefully when profile card area is tapped',
+      (tester) async {
+        // Setup mock with null currentUser
+        when(mockHomeViewModel.currentUser).thenReturn(null);
 
-        // Should display "No user data" card
-        expect(find.text('No user data'), findsOneWidget);
-        expect(find.text('Unable to load user information'), findsOneWidget);
-      });
-    });
+        await mockNetworkImages(() async {
+          await tester.pumpWidget(
+            MaterialApp(
+              home: HomeScreen(
+                authViewModel: mockAuthViewModel,
+                homeViewModel: mockHomeViewModel,
+              ),
+            ),
+          );
+
+          // Should display "No user data" card
+          expect(find.text('No user data'), findsOneWidget);
+          expect(find.text('Unable to load user information'), findsOneWidget);
+        });
+      },
+    );
   });
 }

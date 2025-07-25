@@ -5,17 +5,10 @@ class UserStatusCard extends StatelessWidget {
   final String? message;
   final String? emoji;
 
-  const UserStatusCard({
-    super.key,
-    this.message,
-    this.emoji,
-  });
+  const UserStatusCard({super.key, this.message, this.emoji});
 
   factory UserStatusCard.fromFragment(GUserStatusFragment_status fragment) {
-    return UserStatusCard(
-      message: fragment.message,
-      emoji: fragment.emoji,
-    );
+    return UserStatusCard(message: fragment.message, emoji: fragment.emoji);
   }
 
   @override
@@ -32,18 +25,15 @@ class UserStatusCard extends StatelessWidget {
         child: Row(
           children: [
             if (emoji != null && emoji!.isNotEmpty) ...[
-              Text(
-                emoji!,
-                style: const TextStyle(fontSize: 20),
-              ),
+              Text(emoji!, style: const TextStyle(fontSize: 20)),
               const SizedBox(width: 12),
             ],
             Expanded(
               child: Text(
                 message!,
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: Colors.grey[700],
-                ),
+                style: Theme.of(
+                  context,
+                ).textTheme.bodyMedium?.copyWith(color: Colors.grey[700]),
               ),
             ),
           ],
