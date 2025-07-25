@@ -72,8 +72,8 @@ class UserStatsRow extends StatelessWidget {
             children: [
               Icon(
                 icon,
-                color: onPressed != null 
-                    ? Theme.of(context).primaryColor 
+                color: onPressed != null
+                    ? Theme.of(context).primaryColor
                     : Colors.grey[600],
                 size: 24,
               ),
@@ -83,17 +83,14 @@ class UserStatsRow extends StatelessWidget {
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 18,
-                  color: onPressed != null 
-                      ? Theme.of(context).primaryColor 
+                  color: onPressed != null
+                      ? Theme.of(context).primaryColor
                       : Colors.black87,
                 ),
               ),
               Text(
                 label,
-                style: TextStyle(
-                  fontSize: 12,
-                  color: Colors.grey[600],
-                ),
+                style: TextStyle(fontSize: 12, color: Colors.grey[600]),
               ),
             ],
           ),
@@ -109,8 +106,8 @@ class UserStatsRow extends StatelessWidget {
         // Handle very large numbers (billions)
         return '${(value / 1000).toStringAsFixed(1)}B';
       }
-      return value == value.truncate() 
-          ? '${value.truncate()}M' 
+      return value == value.truncate()
+          ? '${value.truncate()}M'
           : '${value.toStringAsFixed(1)}M';
     } else if (count >= 1000) {
       double value = count / 1000;
@@ -118,8 +115,8 @@ class UserStatsRow extends StatelessWidget {
         // This handles the edge case where we get 1000k -> should be 1M
         return '1M';
       }
-      return value == value.truncate() 
-          ? '${value.truncate()}k' 
+      return value == value.truncate()
+          ? '${value.truncate()}k'
           : '${value.toStringAsFixed(1)}k';
     }
     return count.toString();

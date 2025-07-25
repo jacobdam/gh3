@@ -8,10 +8,7 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
-            body: UserStatsRow(
-              followerCount: 123,
-              followingCount: 456,
-            ),
+            body: UserStatsRow(followerCount: 123, followingCount: 456),
           ),
         ),
       );
@@ -26,10 +23,7 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
-            body: UserStatsRow(
-              followerCount: 1234,
-              followingCount: 1500000,
-            ),
+            body: UserStatsRow(followerCount: 1234, followingCount: 1500000),
           ),
         ),
       );
@@ -38,14 +32,13 @@ void main() {
       expect(find.text('1.5M'), findsOneWidget);
     });
 
-    testWidgets('should format exact thousands and millions without decimals', (tester) async {
+    testWidgets('should format exact thousands and millions without decimals', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
-            body: UserStatsRow(
-              followerCount: 1000,
-              followingCount: 2000000,
-            ),
+            body: UserStatsRow(followerCount: 1000, followingCount: 2000000),
           ),
         ),
       );
@@ -58,10 +51,7 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
-            body: UserStatsRow(
-              followerCount: 0,
-              followingCount: 0,
-            ),
+            body: UserStatsRow(followerCount: 0, followingCount: 0),
           ),
         ),
       );
@@ -71,14 +61,13 @@ void main() {
       expect(find.text('Following'), findsOneWidget);
     });
 
-    testWidgets('should handle small numbers without formatting', (tester) async {
+    testWidgets('should handle small numbers without formatting', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
-            body: UserStatsRow(
-              followerCount: 999,
-              followingCount: 42,
-            ),
+            body: UserStatsRow(followerCount: 999, followingCount: 42),
           ),
         ),
       );
@@ -87,59 +76,69 @@ void main() {
       expect(find.text('42'), findsOneWidget);
     });
 
-    testWidgets('should call onFollowersPressed when followers section is tapped', (tester) async {
-      bool followersTapped = false;
-      
-      await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
-            body: UserStatsRow(
-              followerCount: 123,
-              followingCount: 456,
-              onFollowersPressed: () => followersTapped = true,
+    testWidgets(
+      'should call onFollowersPressed when followers section is tapped',
+      (tester) async {
+        bool followersTapped = false;
+
+        await tester.pumpWidget(
+          MaterialApp(
+            home: Scaffold(
+              body: UserStatsRow(
+                followerCount: 123,
+                followingCount: 456,
+                onFollowersPressed: () => followersTapped = true,
+              ),
             ),
           ),
-        ),
-      );
+        );
 
-      // Find the followers section and tap it
-      final followersSection = find.ancestor(
-        of: find.text('Followers'),
-        matching: find.byType(InkWell),
-      ).first;
-      
-      await tester.tap(followersSection);
-      await tester.pumpAndSettle();
+        // Find the followers section and tap it
+        final followersSection = find
+            .ancestor(
+              of: find.text('Followers'),
+              matching: find.byType(InkWell),
+            )
+            .first;
 
-      expect(followersTapped, isTrue);
-    });
+        await tester.tap(followersSection);
+        await tester.pumpAndSettle();
 
-    testWidgets('should call onFollowingPressed when following section is tapped', (tester) async {
-      bool followingTapped = false;
-      
-      await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
-            body: UserStatsRow(
-              followerCount: 123,
-              followingCount: 456,
-              onFollowingPressed: () => followingTapped = true,
+        expect(followersTapped, isTrue);
+      },
+    );
+
+    testWidgets(
+      'should call onFollowingPressed when following section is tapped',
+      (tester) async {
+        bool followingTapped = false;
+
+        await tester.pumpWidget(
+          MaterialApp(
+            home: Scaffold(
+              body: UserStatsRow(
+                followerCount: 123,
+                followingCount: 456,
+                onFollowingPressed: () => followingTapped = true,
+              ),
             ),
           ),
-        ),
-      );
+        );
 
-      // Find the following section and tap it
-      final followingSection = find.ancestor(
-        of: find.text('Following'),
-        matching: find.byType(InkWell),
-      ).last;
-      
-      await tester.tap(followingSection);
-      await tester.pumpAndSettle();
+        // Find the following section and tap it
+        final followingSection = find
+            .ancestor(
+              of: find.text('Following'),
+              matching: find.byType(InkWell),
+            )
+            .last;
 
-      expect(followingTapped, isTrue);
-    });
+        await tester.tap(followingSection);
+        await tester.pumpAndSettle();
+
+        expect(followingTapped, isTrue);
+      },
+    );
 
     testWidgets('should not call callbacks when they are null', (tester) async {
       await tester.pumpWidget(
@@ -155,16 +154,14 @@ void main() {
       );
 
       // Find the sections and tap them - should not throw
-      final followersSection = find.ancestor(
-        of: find.text('Followers'),
-        matching: find.byType(InkWell),
-      ).first;
-      
-      final followingSection = find.ancestor(
-        of: find.text('Following'),
-        matching: find.byType(InkWell),
-      ).last;
-      
+      final followersSection = find
+          .ancestor(of: find.text('Followers'), matching: find.byType(InkWell))
+          .first;
+
+      final followingSection = find
+          .ancestor(of: find.text('Following'), matching: find.byType(InkWell))
+          .last;
+
       await tester.tap(followersSection);
       await tester.tap(followingSection);
       await tester.pumpAndSettle();
@@ -176,10 +173,7 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
-            body: UserStatsRow(
-              followerCount: 123,
-              followingCount: 456,
-            ),
+            body: UserStatsRow(followerCount: 123, followingCount: 456),
           ),
         ),
       );
@@ -188,7 +182,9 @@ void main() {
       expect(find.byIcon(Icons.person_add), findsOneWidget);
     });
 
-    testWidgets('should use primary color for interactive elements', (tester) async {
+    testWidgets('should use primary color for interactive elements', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         MaterialApp(
           theme: ThemeData(primaryColor: Colors.blue),
@@ -210,7 +206,9 @@ void main() {
       }
     });
 
-    testWidgets('should use grey color for non-interactive elements', (tester) async {
+    testWidgets('should use grey color for non-interactive elements', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -235,10 +233,7 @@ void main() {
         await tester.pumpWidget(
           MaterialApp(
             home: Scaffold(
-              body: UserStatsRow(
-                followerCount: 999,
-                followingCount: 42,
-              ),
+              body: UserStatsRow(followerCount: 999, followingCount: 42),
             ),
           ),
         );
@@ -251,10 +246,7 @@ void main() {
         await tester.pumpWidget(
           MaterialApp(
             home: Scaffold(
-              body: UserStatsRow(
-                followerCount: 1000,
-                followingCount: 1200,
-              ),
+              body: UserStatsRow(followerCount: 1000, followingCount: 1200),
             ),
           ),
         );
@@ -283,10 +275,7 @@ void main() {
         await tester.pumpWidget(
           MaterialApp(
             home: Scaffold(
-              body: UserStatsRow(
-                followerCount: 15000,
-                followingCount: 999999,
-              ),
+              body: UserStatsRow(followerCount: 15000, followingCount: 999999),
             ),
           ),
         );
@@ -315,10 +304,7 @@ void main() {
         await tester.pumpWidget(
           MaterialApp(
             home: Scaffold(
-              body: UserStatsRow(
-                followerCount: 0,
-                followingCount: 1,
-              ),
+              body: UserStatsRow(followerCount: 0, followingCount: 1),
             ),
           ),
         );

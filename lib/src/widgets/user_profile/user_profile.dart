@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '__generated__/user_profile.data.gql.dart';
+import '../cached_avatar/cached_avatar.dart';
 
 class UserProfile extends StatelessWidget {
   final String login;
@@ -33,7 +34,12 @@ class UserProfile extends StatelessWidget {
     this.showStats = true,
   });
 
-  factory UserProfile.fromFragment(GUserProfileFragment fragment, {Key? key, bool showCard = true, bool showStats = true}) {
+  factory UserProfile.fromFragment(
+    GUserProfileFragment fragment, {
+    Key? key,
+    bool showCard = true,
+    bool showStats = true,
+  }) {
     return UserProfile(
       key: key,
       login: fragment.login,
@@ -57,140 +63,127 @@ class UserProfile extends StatelessWidget {
     final content = Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-            Row(
-              children: [
-                CircleAvatar(
-                  backgroundImage: NetworkImage(avatarUrl),
-                  backgroundColor: _getAvatarColor(login),
-                  radius: 40,
-                  child: avatarUrl.isEmpty
-                      ? Text(
-                          login.isNotEmpty ? login[0].toUpperCase() : '?',
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 24,
-                          ),
-                        )
-                      : null,
-                ),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        name ?? login,
-                        style: Theme.of(context).textTheme.headlineSmall
-                            ?.copyWith(fontWeight: FontWeight.bold),
-                      ),
-                      Text(
-                        '@$login',
-                        style: TextStyle(color: Colors.grey[600], fontSize: 16),
-                      ),
-                      if (location != null && location!.isNotEmpty) ...[
-                        const SizedBox(height: 4),
-                        Row(
-                          children: [
-                            Icon(
-                              Icons.location_on,
-                              size: 16,
-                              color: Colors.grey[600],
-                            ),
-                            const SizedBox(width: 4),
-                            Text(
-                              location!,
-                              style: TextStyle(color: Colors.grey[600]),
-                            ),
-                          ],
-                        ),
-                      ],
-                      if (company != null && company!.isNotEmpty) ...[
-                        const SizedBox(height: 4),
-                        Row(
-                          children: [
-                            Icon(
-                              Icons.business,
-                              size: 16,
-                              color: Colors.grey[600],
-                            ),
-                            const SizedBox(width: 4),
-                            Text(
-                              company!,
-                              style: TextStyle(color: Colors.grey[600]),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ],
-                  ),
-                ),
-              ],
+        Row(
+          children: [
+            CachedAvatarFactory.fromUserData(
+              avatarUrl: avatarUrl.isNotEmpty ? avatarUrl : null,
+              login: login,
+              name: name,
+              radius: 40,
+              backgroundColor: _getAvatarColor(login),
+              showLoadingIndicator: true,
             ),
-            if (bio != null && bio!.isNotEmpty) ...[
-              const SizedBox(height: 16),
-              Text(bio!, style: const TextStyle(fontSize: 16)),
-            ],
-            if (websiteUrl != null) ...[
-              const SizedBox(height: 12),
-              Row(
+            const SizedBox(width: 16),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Icon(Icons.link, size: 16, color: Colors.grey[600]),
-                  const SizedBox(width: 4),
-                  Expanded(
-                    child: Text(
-                      websiteUrl!,
-                      style: TextStyle(
-                        color: Theme.of(context).primaryColor,
-                        decoration: TextDecoration.underline,
-                      ),
+                  Text(
+                    name ?? login,
+                    style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
+                  Text(
+                    '@$login',
+                    style: TextStyle(color: Colors.grey[600], fontSize: 16),
+                  ),
+                  if (location != null && location!.isNotEmpty) ...[
+                    const SizedBox(height: 4),
+                    Row(
+                      children: [
+                        Icon(
+                          Icons.location_on,
+                          size: 16,
+                          color: Colors.grey[600],
+                        ),
+                        const SizedBox(width: 4),
+                        Text(
+                          location!,
+                          style: TextStyle(color: Colors.grey[600]),
+                        ),
+                      ],
+                    ),
+                  ],
+                  if (company != null && company!.isNotEmpty) ...[
+                    const SizedBox(height: 4),
+                    Row(
+                      children: [
+                        Icon(Icons.business, size: 16, color: Colors.grey[600]),
+                        const SizedBox(width: 4),
+                        Text(
+                          company!,
+                          style: TextStyle(color: Colors.grey[600]),
+                        ),
+                      ],
+                    ),
+                  ],
                 ],
               ),
-            ],
-            if (showStats) ...[
-              const SizedBox(height: 20),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  _buildStat(
-                    context,
-                    'Repositories',
-                    repositoryCount,
-                    Icons.folder,
-                  ),
-                  _buildStat(context, 'Followers', followerCount, Icons.people),
-                  _buildStat(
-                    context,
-                    'Following',
-                    followingCount,
-                    Icons.person_add,
-                  ),
-                ],
-              ),
-              const SizedBox(height: 16),
-            ],
-            Row(
-              children: [
-                Icon(Icons.calendar_today, size: 16, color: Colors.grey[600]),
-                const SizedBox(width: 4),
-                Text(
-                  'Joined ${_formatDate(createdAt)}',
-                  style: TextStyle(color: Colors.grey[600], fontSize: 12),
-                ),
-              ],
             ),
           ],
-        );
+        ),
+        if (bio != null && bio!.isNotEmpty) ...[
+          const SizedBox(height: 16),
+          Text(bio!, style: const TextStyle(fontSize: 16)),
+        ],
+        if (websiteUrl != null) ...[
+          const SizedBox(height: 12),
+          Row(
+            children: [
+              Icon(Icons.link, size: 16, color: Colors.grey[600]),
+              const SizedBox(width: 4),
+              Expanded(
+                child: Text(
+                  websiteUrl!,
+                  style: TextStyle(
+                    color: Theme.of(context).primaryColor,
+                    decoration: TextDecoration.underline,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ],
+        if (showStats) ...[
+          const SizedBox(height: 20),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              _buildStat(
+                context,
+                'Repositories',
+                repositoryCount,
+                Icons.folder,
+              ),
+              _buildStat(context, 'Followers', followerCount, Icons.people),
+              _buildStat(
+                context,
+                'Following',
+                followingCount,
+                Icons.person_add,
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+        ],
+        Row(
+          children: [
+            Icon(Icons.calendar_today, size: 16, color: Colors.grey[600]),
+            const SizedBox(width: 4),
+            Text(
+              'Joined ${_formatDate(createdAt)}',
+              style: TextStyle(color: Colors.grey[600], fontSize: 12),
+            ),
+          ],
+        ),
+      ],
+    );
 
     if (showCard) {
       return Card(
         margin: const EdgeInsets.all(16),
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: content,
-        ),
+        child: Padding(padding: const EdgeInsets.all(16), child: content),
       );
     }
 

@@ -4,6 +4,8 @@ import 'user_details_viewmodel.dart';
 import '../../widgets/user_stats_row/user_stats_row.dart';
 import '../../widgets/user_profile/user_profile.dart';
 import '../../widgets/user_status_card/user_status_card.dart';
+import '../../widgets/skeleton_loading/skeleton_loading.dart';
+import '../../widgets/cached_avatar/cached_avatar.dart';
 
 class UserDetailsScreen extends StatefulWidget {
   final UserDetailsViewModel viewModel;
@@ -38,11 +40,53 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
   Widget build(BuildContext context) {
     if (_viewModel.isLoading) {
       return Scaffold(
-        appBar: AppBar(
-          leading: BackButton(onPressed: () => _handleBackNavigation(context)),
-          title: const Text('Loading...'),
+        body: CustomScrollView(
+          slivers: [
+            SliverAppBar(
+              expandedHeight: 200.0,
+              floating: false,
+              pinned: true,
+              leading: BackButton(
+                onPressed: () => _handleBackNavigation(context),
+              ),
+              title: const SkeletonLoading(height: 16, width: 100),
+              flexibleSpace: const FlexibleSpaceBar(
+                background: UserHeaderSkeleton(),
+              ),
+            ),
+            SliverList(
+              delegate: SliverChildListDelegate([
+                const Padding(
+                  padding: EdgeInsets.all(16.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // User Profile skeleton
+                      UserProfileSkeleton(),
+                      SizedBox(height: 16),
+                      // User Stats skeleton
+                      UserStatsRowSkeleton(),
+                      SizedBox(height: 16),
+                      // Navigation tiles skeleton
+                      NavigationTileSkeleton(
+                        icon: Icons.folder_outlined,
+                        title: 'Repositories',
+                      ),
+                      NavigationTileSkeleton(
+                        icon: Icons.star_outline,
+                        title: 'Starred',
+                      ),
+                      NavigationTileSkeleton(
+                        icon: Icons.business_outlined,
+                        title: 'Organizations',
+                      ),
+                    ],
+                  ),
+                ),
+              ]),
+            ),
+          ],
         ),
-        body: const Center(child: CircularProgressIndicator()),
       );
     }
 
@@ -132,24 +176,15 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   mainAxisSize: MainAxisSize.min, // Use minimum space needed
                   children: [
-                    CircleAvatar(
-                      backgroundImage: user.avatarUrl.value.isNotEmpty
-                          ? NetworkImage(user.avatarUrl.value)
+                    CachedAvatarFactory.fromUserData(
+                      avatarUrl: user.avatarUrl.value.isNotEmpty
+                          ? user.avatarUrl.value
                           : null,
+                      login: _viewModel.login,
+                      name: user.name,
+                      radius: 32,
                       backgroundColor: _getAvatarColor(_viewModel.login),
-                      radius: 32, // Reduced radius to fit better
-                      child: user.avatarUrl.value.isEmpty
-                          ? Text(
-                              _viewModel.login.isNotEmpty
-                                  ? _viewModel.login[0].toUpperCase()
-                                  : '?',
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 20, // Reduced font size
-                              ),
-                            )
-                          : null,
+                      showLoadingIndicator: true,
                     ),
                     const SizedBox(height: 8), // Reduced spacing
                     Flexible(
@@ -207,12 +242,7 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
                       ),
                     // Follower/Following stats with interactive navigation
                     if (_viewModel.isUserLoading)
-                      const Center(
-                        child: Padding(
-                          padding: EdgeInsets.all(16.0),
-                          child: CircularProgressIndicator(),
-                        ),
-                      )
+                      const UserStatsRowSkeleton()
                     else
                       UserStatsRow.fromFragment(
                         user,

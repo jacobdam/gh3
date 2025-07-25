@@ -211,7 +211,36 @@ class UserDetailsViewModel extends DisposableViewModel {
   /// Refresh both user details and repositories
   Future<void> refresh() async {
     notifyListeners(); // Notify to show loading state
-    await Future.wait([loadUserDetails(), loadUserRepositories()]);
+
+    // For refresh, get fresh data
+    final userRequest = GGetUserDetailsReq((b) => b..vars.login = _login);
+
+    final reposRequest = GGetUserRepositoriesReq(
+      (b) => b
+        ..vars.login = _login
+        ..vars.first = _pageSize
+        ..vars.after = null,
+    );
+
+    _userSubscription?.cancel();
+    _reposSubscription?.cancel();
+
+    _userSubscription = _ferryClient.request(userRequest).listen((result) {
+      _userResult = result;
+      notifyListeners();
+    });
+
+    _reposSubscription = _ferryClient.request(reposRequest).listen((result) {
+      _repositoriesResult = result;
+
+      if (result.data?.user?.repositories != null) {
+        final pageInfo = result.data!.user!.repositories.pageInfo;
+        _hasNextPage = pageInfo.hasNextPage;
+        _endCursor = pageInfo.endCursor;
+      }
+
+      notifyListeners();
+    });
   }
 
   /// Retry only user details loading
@@ -232,11 +261,22 @@ class UserDetailsViewModel extends DisposableViewModel {
 
   @override
   void onDispose() {
+    // Cancel all active subscriptions to prevent memory leaks
     _userSubscription?.cancel();
     _reposSubscription?.cancel();
+
+    // Clear subscription references
     _userSubscription = null;
     _reposSubscription = null;
+
+    // Clear cached results to free memory
     _userResult = null;
     _repositoriesResult = null;
+
+    // Reset pagination state
+    _endCursor = null;
+    _hasNextPage = true;
+
+    // Note: super.dispose() is called by DisposableViewModel.dispose()
   }
 }
