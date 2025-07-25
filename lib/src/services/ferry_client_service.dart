@@ -23,11 +23,10 @@ class FerryClientService {
   Client _createClient() {
     final authLink = _AuthLink(_authService);
     final httpLink = HttpLink("https://api.github.com/graphql");
-    
+
     final link = Link.from([authLink, httpLink]);
     return Client(link: link);
   }
-
 
   /// Clear cache (useful for logout scenarios)
   void clearCache() {
@@ -51,7 +50,7 @@ class _AuthLink extends Link {
   @override
   Stream<Response> request(Request request, [NextLink? forward]) async* {
     final token = _authService.accessToken;
-    
+
     final updatedRequest = request.updateContextEntry<HttpLinkHeaders>(
       (headers) => HttpLinkHeaders(
         headers: {

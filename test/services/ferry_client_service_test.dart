@@ -23,14 +23,14 @@ void main() {
 
     test('should create Ferry client with authentication', () {
       when(mockAuthService.accessToken).thenReturn('test-token');
-      
+
       final client = ferryClientService.getClient();
       expect(client, isNotNull);
     });
 
     test('should create Ferry client without token', () {
       when(mockAuthService.accessToken).thenReturn(null);
-      
+
       final client = ferryClientService.getClient();
       expect(client, isNotNull);
     });

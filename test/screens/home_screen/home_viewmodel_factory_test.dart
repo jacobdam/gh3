@@ -23,17 +23,20 @@ void main() {
         expect(factory, isA<HomeViewModelFactory>());
       });
 
-      test('should create HomeViewModel instance with injected dependencies', () {
-        // Act
-        final viewModel = factory.create();
+      test(
+        'should create HomeViewModel instance with injected dependencies',
+        () {
+          // Act
+          final viewModel = factory.create();
 
-        // Assert
-        expect(viewModel, isNotNull);
-        expect(viewModel, isA<HomeViewModel>());
-        
-        // Clean up
-        viewModel.dispose();
-      });
+          // Assert
+          expect(viewModel, isNotNull);
+          expect(viewModel, isA<HomeViewModel>());
+
+          // Clean up
+          viewModel.dispose();
+        },
+      );
 
       test('should create multiple independent HomeViewModel instances', () {
         // Act
@@ -46,7 +49,7 @@ void main() {
         expect(viewModel1, isNot(same(viewModel2)));
         expect(viewModel1, isA<HomeViewModel>());
         expect(viewModel2, isA<HomeViewModel>());
-        
+
         // Clean up
         viewModel1.dispose();
         viewModel2.dispose();

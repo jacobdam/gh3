@@ -11,15 +11,13 @@ void main() {
       // Act
       await tester.pumpWidget(
         MaterialApp(
-          home: Scaffold(
-            body: SectionHeader(title: title),
-          ),
+          home: Scaffold(body: SectionHeader(title: title)),
         ),
       );
 
       // Assert
       expect(find.text(title), findsOneWidget);
-      
+
       final textWidget = tester.widget<Text>(find.text(title));
       expect(textWidget.style?.fontWeight, FontWeight.bold);
     });
@@ -32,15 +30,13 @@ void main() {
         // Act
         await tester.pumpWidget(
           MaterialApp(
-            home: Scaffold(
-              body: SectionHeader(title: title),
-            ),
+            home: Scaffold(body: SectionHeader(title: title)),
           ),
         );
 
         // Assert
         expect(find.text(title), findsOneWidget);
-        
+
         // Clear the widget tree for the next test
         await tester.pumpWidget(Container());
       }
@@ -49,7 +45,7 @@ void main() {
     testWidgets('should use theme titleLarge text style', (tester) async {
       // Arrange
       const title = 'Test Title';
-      
+
       await tester.pumpWidget(
         MaterialApp(
           theme: ThemeData(
@@ -57,9 +53,7 @@ void main() {
               titleLarge: TextStyle(fontSize: 24, color: Colors.red),
             ),
           ),
-          home: Scaffold(
-            body: SectionHeader(title: title),
-          ),
+          home: Scaffold(body: SectionHeader(title: title)),
         ),
       );
 

@@ -24,7 +24,9 @@ void main() {
       expect(find.byIcon(Icons.arrow_forward_ios), findsOneWidget);
     });
 
-    testWidgets('should display different work items correctly', (tester) async {
+    testWidgets('should display different work items correctly', (
+      tester,
+    ) async {
       // Test data for different work items
       final workItems = [
         {'title': 'Issues', 'icon': Icons.bug_report},
@@ -62,7 +64,7 @@ void main() {
     testWidgets('should handle tap when onTap is provided', (tester) async {
       // Arrange
       bool tapped = false;
-      
+
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -99,7 +101,7 @@ void main() {
       // Assert - should not crash when tapping
       await tester.tap(find.byType(ListTile));
       await tester.pump();
-      
+
       // Should still render properly
       expect(find.text('Issues'), findsOneWidget);
       expect(find.byIcon(Icons.bug_report), findsOneWidget);
@@ -110,23 +112,24 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
-            body: WorkItemListTile(
-              title: 'Issues',
-              icon: Icons.bug_report,
-            ),
+            body: WorkItemListTile(title: 'Issues', icon: Icons.bug_report),
           ),
         ),
       );
 
       // Assert
       final listTile = tester.widget<ListTile>(find.byType(ListTile));
-      expect(listTile.contentPadding, 
-        const EdgeInsets.symmetric(horizontal: 16, vertical: 8));
-      
+      expect(
+        listTile.contentPadding,
+        const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      );
+
       // Check that icons are present
       final leadingIcon = tester.widget<Icon>(find.byIcon(Icons.bug_report));
-      final trailingIcon = tester.widget<Icon>(find.byIcon(Icons.arrow_forward_ios));
-      
+      final trailingIcon = tester.widget<Icon>(
+        find.byIcon(Icons.arrow_forward_ios),
+      );
+
       expect(leadingIcon, isNotNull);
       expect(trailingIcon, isNotNull);
       expect(trailingIcon.size, 16);
