@@ -624,17 +624,22 @@ import 'package:gh3/src/screens/user_details/__generated__/user_details_viewmode
         GGetUserDetailsData_user,
         GGetUserDetailsData_user_followers,
         GGetUserDetailsData_user_following,
+        GGetUserDetailsData_user_organizations,
         GGetUserDetailsData_user_repositories,
+        GGetUserDetailsData_user_starredRepositories,
+        GGetUserDetailsData_user_status,
         GGetUserRepositoriesData,
         GGetUserRepositoriesData_user,
         GGetUserRepositoriesData_user_repositories,
         GGetUserRepositoriesData_user_repositories_nodes,
         GGetUserRepositoriesData_user_repositories_nodes_primaryLanguage,
-        GGetUserRepositoriesData_user_repositories_pageInfo;
+        GGetUserRepositoriesData_user_repositories_pageInfo,
+        GUserStatusFragmentData,
+        GUserStatusFragmentData_status;
 import 'package:gh3/src/screens/user_details/__generated__/user_details_viewmodel.req.gql.dart'
-    show GGetUserDetailsReq, GGetUserRepositoriesReq;
+    show GGetUserDetailsReq, GGetUserRepositoriesReq, GUserStatusFragmentReq;
 import 'package:gh3/src/screens/user_details/__generated__/user_details_viewmodel.var.gql.dart'
-    show GGetUserDetailsVars, GGetUserRepositoriesVars;
+    show GGetUserDetailsVars, GGetUserRepositoriesVars, GUserStatusFragmentVars;
 import 'package:gh3/src/widgets/repository_card/__generated__/repository_card.data.gql.dart'
     show
         GRepositoryCardFragmentData,
@@ -884,7 +889,10 @@ final SerializersBuilder _serializersBuilder = _$serializers.toBuilder()
   GGetUserDetailsData_user,
   GGetUserDetailsData_user_followers,
   GGetUserDetailsData_user_following,
+  GGetUserDetailsData_user_organizations,
   GGetUserDetailsData_user_repositories,
+  GGetUserDetailsData_user_starredRepositories,
+  GGetUserDetailsData_user_status,
   GGetUserDetailsReq,
   GGetUserDetailsVars,
   GGetUserRepositoriesData,
@@ -1297,6 +1305,10 @@ final SerializersBuilder _serializersBuilder = _$serializers.toBuilder()
   GUserProfileFragmentData_repositories,
   GUserProfileFragmentReq,
   GUserProfileFragmentVars,
+  GUserStatusFragmentData,
+  GUserStatusFragmentData_status,
+  GUserStatusFragmentReq,
+  GUserStatusFragmentVars,
   GUserStatusOrder,
   GUserStatusOrderField,
   GVerifiableDomainOrder,

@@ -19,6 +19,15 @@ _$gGetUserDetailsDataUserFollowersSerializer =
 Serializer<GGetUserDetailsData_user_following>
 _$gGetUserDetailsDataUserFollowingSerializer =
     _$GGetUserDetailsData_user_followingSerializer();
+Serializer<GGetUserDetailsData_user_status>
+_$gGetUserDetailsDataUserStatusSerializer =
+    _$GGetUserDetailsData_user_statusSerializer();
+Serializer<GGetUserDetailsData_user_starredRepositories>
+_$gGetUserDetailsDataUserStarredRepositoriesSerializer =
+    _$GGetUserDetailsData_user_starredRepositoriesSerializer();
+Serializer<GGetUserDetailsData_user_organizations>
+_$gGetUserDetailsDataUserOrganizationsSerializer =
+    _$GGetUserDetailsData_user_organizationsSerializer();
 Serializer<GGetUserRepositoriesData> _$gGetUserRepositoriesDataSerializer =
     _$GGetUserRepositoriesDataSerializer();
 Serializer<GGetUserRepositoriesData_user>
@@ -36,6 +45,11 @@ _$gGetUserRepositoriesDataUserRepositoriesNodesPrimaryLanguageSerializer =
 Serializer<GGetUserRepositoriesData_user_repositories_pageInfo>
 _$gGetUserRepositoriesDataUserRepositoriesPageInfoSerializer =
     _$GGetUserRepositoriesData_user_repositories_pageInfoSerializer();
+Serializer<GUserStatusFragmentData> _$gUserStatusFragmentDataSerializer =
+    _$GUserStatusFragmentDataSerializer();
+Serializer<GUserStatusFragmentData_status>
+_$gUserStatusFragmentDataStatusSerializer =
+    _$GUserStatusFragmentData_statusSerializer();
 
 class _$GGetUserDetailsDataSerializer
     implements StructuredSerializer<GGetUserDetailsData> {
@@ -182,6 +196,18 @@ class _$GGetUserDetailsData_userSerializer
         object.updatedAt,
         specifiedType: const FullType(_i3.GDateTime),
       ),
+      'starredRepositories',
+      serializers.serialize(
+        object.starredRepositories,
+        specifiedType: const FullType(
+          GGetUserDetailsData_user_starredRepositories,
+        ),
+      ),
+      'organizations',
+      serializers.serialize(
+        object.organizations,
+        specifiedType: const FullType(GGetUserDetailsData_user_organizations),
+      ),
     ];
     Object? value;
     value = object.name;
@@ -222,6 +248,17 @@ class _$GGetUserDetailsData_userSerializer
         ..add('websiteUrl')
         ..add(
           serializers.serialize(value, specifiedType: const FullType(_i3.GURI)),
+        );
+    }
+    value = object.status;
+    if (value != null) {
+      result
+        ..add('status')
+        ..add(
+          serializers.serialize(
+            value,
+            specifiedType: const FullType(GGetUserDetailsData_user_status),
+          ),
         );
     }
     return result;
@@ -381,6 +418,39 @@ class _$GGetUserDetailsData_userSerializer
                   specifiedType: const FullType(_i3.GDateTime),
                 )!
                 as _i3.GDateTime,
+          );
+          break;
+        case 'status':
+          result.status.replace(
+            serializers.deserialize(
+                  value,
+                  specifiedType: const FullType(
+                    GGetUserDetailsData_user_status,
+                  ),
+                )!
+                as GGetUserDetailsData_user_status,
+          );
+          break;
+        case 'starredRepositories':
+          result.starredRepositories.replace(
+            serializers.deserialize(
+                  value,
+                  specifiedType: const FullType(
+                    GGetUserDetailsData_user_starredRepositories,
+                  ),
+                )!
+                as GGetUserDetailsData_user_starredRepositories,
+          );
+          break;
+        case 'organizations':
+          result.organizations.replace(
+            serializers.deserialize(
+                  value,
+                  specifiedType: const FullType(
+                    GGetUserDetailsData_user_organizations,
+                  ),
+                )!
+                as GGetUserDetailsData_user_organizations,
           );
           break;
       }
@@ -567,6 +637,247 @@ class _$GGetUserDetailsData_user_followingSerializer
     FullType specifiedType = FullType.unspecified,
   }) {
     final result = GGetUserDetailsData_user_followingBuilder();
+
+    final iterator = serialized.iterator;
+    while (iterator.moveNext()) {
+      final key = iterator.current! as String;
+      iterator.moveNext();
+      final Object? value = iterator.current;
+      switch (key) {
+        case '__typename':
+          result.G__typename =
+              serializers.deserialize(
+                    value,
+                    specifiedType: const FullType(String),
+                  )!
+                  as String;
+          break;
+        case 'totalCount':
+          result.totalCount =
+              serializers.deserialize(
+                    value,
+                    specifiedType: const FullType(int),
+                  )!
+                  as int;
+          break;
+      }
+    }
+
+    return result.build();
+  }
+}
+
+class _$GGetUserDetailsData_user_statusSerializer
+    implements StructuredSerializer<GGetUserDetailsData_user_status> {
+  @override
+  final Iterable<Type> types = const [
+    GGetUserDetailsData_user_status,
+    _$GGetUserDetailsData_user_status,
+  ];
+  @override
+  final String wireName = 'GGetUserDetailsData_user_status';
+
+  @override
+  Iterable<Object?> serialize(
+    Serializers serializers,
+    GGetUserDetailsData_user_status object, {
+    FullType specifiedType = FullType.unspecified,
+  }) {
+    final result = <Object?>[
+      '__typename',
+      serializers.serialize(
+        object.G__typename,
+        specifiedType: const FullType(String),
+      ),
+      'createdAt',
+      serializers.serialize(
+        object.createdAt,
+        specifiedType: const FullType(_i3.GDateTime),
+      ),
+    ];
+    Object? value;
+    value = object.message;
+    if (value != null) {
+      result
+        ..add('message')
+        ..add(
+          serializers.serialize(value, specifiedType: const FullType(String)),
+        );
+    }
+    value = object.emoji;
+    if (value != null) {
+      result
+        ..add('emoji')
+        ..add(
+          serializers.serialize(value, specifiedType: const FullType(String)),
+        );
+    }
+    return result;
+  }
+
+  @override
+  GGetUserDetailsData_user_status deserialize(
+    Serializers serializers,
+    Iterable<Object?> serialized, {
+    FullType specifiedType = FullType.unspecified,
+  }) {
+    final result = GGetUserDetailsData_user_statusBuilder();
+
+    final iterator = serialized.iterator;
+    while (iterator.moveNext()) {
+      final key = iterator.current! as String;
+      iterator.moveNext();
+      final Object? value = iterator.current;
+      switch (key) {
+        case '__typename':
+          result.G__typename =
+              serializers.deserialize(
+                    value,
+                    specifiedType: const FullType(String),
+                  )!
+                  as String;
+          break;
+        case 'message':
+          result.message =
+              serializers.deserialize(
+                    value,
+                    specifiedType: const FullType(String),
+                  )
+                  as String?;
+          break;
+        case 'emoji':
+          result.emoji =
+              serializers.deserialize(
+                    value,
+                    specifiedType: const FullType(String),
+                  )
+                  as String?;
+          break;
+        case 'createdAt':
+          result.createdAt.replace(
+            serializers.deserialize(
+                  value,
+                  specifiedType: const FullType(_i3.GDateTime),
+                )!
+                as _i3.GDateTime,
+          );
+          break;
+      }
+    }
+
+    return result.build();
+  }
+}
+
+class _$GGetUserDetailsData_user_starredRepositoriesSerializer
+    implements
+        StructuredSerializer<GGetUserDetailsData_user_starredRepositories> {
+  @override
+  final Iterable<Type> types = const [
+    GGetUserDetailsData_user_starredRepositories,
+    _$GGetUserDetailsData_user_starredRepositories,
+  ];
+  @override
+  final String wireName = 'GGetUserDetailsData_user_starredRepositories';
+
+  @override
+  Iterable<Object?> serialize(
+    Serializers serializers,
+    GGetUserDetailsData_user_starredRepositories object, {
+    FullType specifiedType = FullType.unspecified,
+  }) {
+    final result = <Object?>[
+      '__typename',
+      serializers.serialize(
+        object.G__typename,
+        specifiedType: const FullType(String),
+      ),
+      'totalCount',
+      serializers.serialize(
+        object.totalCount,
+        specifiedType: const FullType(int),
+      ),
+    ];
+
+    return result;
+  }
+
+  @override
+  GGetUserDetailsData_user_starredRepositories deserialize(
+    Serializers serializers,
+    Iterable<Object?> serialized, {
+    FullType specifiedType = FullType.unspecified,
+  }) {
+    final result = GGetUserDetailsData_user_starredRepositoriesBuilder();
+
+    final iterator = serialized.iterator;
+    while (iterator.moveNext()) {
+      final key = iterator.current! as String;
+      iterator.moveNext();
+      final Object? value = iterator.current;
+      switch (key) {
+        case '__typename':
+          result.G__typename =
+              serializers.deserialize(
+                    value,
+                    specifiedType: const FullType(String),
+                  )!
+                  as String;
+          break;
+        case 'totalCount':
+          result.totalCount =
+              serializers.deserialize(
+                    value,
+                    specifiedType: const FullType(int),
+                  )!
+                  as int;
+          break;
+      }
+    }
+
+    return result.build();
+  }
+}
+
+class _$GGetUserDetailsData_user_organizationsSerializer
+    implements StructuredSerializer<GGetUserDetailsData_user_organizations> {
+  @override
+  final Iterable<Type> types = const [
+    GGetUserDetailsData_user_organizations,
+    _$GGetUserDetailsData_user_organizations,
+  ];
+  @override
+  final String wireName = 'GGetUserDetailsData_user_organizations';
+
+  @override
+  Iterable<Object?> serialize(
+    Serializers serializers,
+    GGetUserDetailsData_user_organizations object, {
+    FullType specifiedType = FullType.unspecified,
+  }) {
+    final result = <Object?>[
+      '__typename',
+      serializers.serialize(
+        object.G__typename,
+        specifiedType: const FullType(String),
+      ),
+      'totalCount',
+      serializers.serialize(
+        object.totalCount,
+        specifiedType: const FullType(int),
+      ),
+    ];
+
+    return result;
+  }
+
+  @override
+  GGetUserDetailsData_user_organizations deserialize(
+    Serializers serializers,
+    Iterable<Object?> serialized, {
+    FullType specifiedType = FullType.unspecified,
+  }) {
+    final result = GGetUserDetailsData_user_organizationsBuilder();
 
     final iterator = serialized.iterator;
     while (iterator.moveNext()) {
@@ -1195,6 +1506,184 @@ class _$GGetUserRepositoriesData_user_repositories_pageInfoSerializer
   }
 }
 
+class _$GUserStatusFragmentDataSerializer
+    implements StructuredSerializer<GUserStatusFragmentData> {
+  @override
+  final Iterable<Type> types = const [
+    GUserStatusFragmentData,
+    _$GUserStatusFragmentData,
+  ];
+  @override
+  final String wireName = 'GUserStatusFragmentData';
+
+  @override
+  Iterable<Object?> serialize(
+    Serializers serializers,
+    GUserStatusFragmentData object, {
+    FullType specifiedType = FullType.unspecified,
+  }) {
+    final result = <Object?>[
+      '__typename',
+      serializers.serialize(
+        object.G__typename,
+        specifiedType: const FullType(String),
+      ),
+    ];
+    Object? value;
+    value = object.status;
+    if (value != null) {
+      result
+        ..add('status')
+        ..add(
+          serializers.serialize(
+            value,
+            specifiedType: const FullType(GUserStatusFragmentData_status),
+          ),
+        );
+    }
+    return result;
+  }
+
+  @override
+  GUserStatusFragmentData deserialize(
+    Serializers serializers,
+    Iterable<Object?> serialized, {
+    FullType specifiedType = FullType.unspecified,
+  }) {
+    final result = GUserStatusFragmentDataBuilder();
+
+    final iterator = serialized.iterator;
+    while (iterator.moveNext()) {
+      final key = iterator.current! as String;
+      iterator.moveNext();
+      final Object? value = iterator.current;
+      switch (key) {
+        case '__typename':
+          result.G__typename =
+              serializers.deserialize(
+                    value,
+                    specifiedType: const FullType(String),
+                  )!
+                  as String;
+          break;
+        case 'status':
+          result.status.replace(
+            serializers.deserialize(
+                  value,
+                  specifiedType: const FullType(GUserStatusFragmentData_status),
+                )!
+                as GUserStatusFragmentData_status,
+          );
+          break;
+      }
+    }
+
+    return result.build();
+  }
+}
+
+class _$GUserStatusFragmentData_statusSerializer
+    implements StructuredSerializer<GUserStatusFragmentData_status> {
+  @override
+  final Iterable<Type> types = const [
+    GUserStatusFragmentData_status,
+    _$GUserStatusFragmentData_status,
+  ];
+  @override
+  final String wireName = 'GUserStatusFragmentData_status';
+
+  @override
+  Iterable<Object?> serialize(
+    Serializers serializers,
+    GUserStatusFragmentData_status object, {
+    FullType specifiedType = FullType.unspecified,
+  }) {
+    final result = <Object?>[
+      '__typename',
+      serializers.serialize(
+        object.G__typename,
+        specifiedType: const FullType(String),
+      ),
+      'createdAt',
+      serializers.serialize(
+        object.createdAt,
+        specifiedType: const FullType(_i3.GDateTime),
+      ),
+    ];
+    Object? value;
+    value = object.message;
+    if (value != null) {
+      result
+        ..add('message')
+        ..add(
+          serializers.serialize(value, specifiedType: const FullType(String)),
+        );
+    }
+    value = object.emoji;
+    if (value != null) {
+      result
+        ..add('emoji')
+        ..add(
+          serializers.serialize(value, specifiedType: const FullType(String)),
+        );
+    }
+    return result;
+  }
+
+  @override
+  GUserStatusFragmentData_status deserialize(
+    Serializers serializers,
+    Iterable<Object?> serialized, {
+    FullType specifiedType = FullType.unspecified,
+  }) {
+    final result = GUserStatusFragmentData_statusBuilder();
+
+    final iterator = serialized.iterator;
+    while (iterator.moveNext()) {
+      final key = iterator.current! as String;
+      iterator.moveNext();
+      final Object? value = iterator.current;
+      switch (key) {
+        case '__typename':
+          result.G__typename =
+              serializers.deserialize(
+                    value,
+                    specifiedType: const FullType(String),
+                  )!
+                  as String;
+          break;
+        case 'message':
+          result.message =
+              serializers.deserialize(
+                    value,
+                    specifiedType: const FullType(String),
+                  )
+                  as String?;
+          break;
+        case 'emoji':
+          result.emoji =
+              serializers.deserialize(
+                    value,
+                    specifiedType: const FullType(String),
+                  )
+                  as String?;
+          break;
+        case 'createdAt':
+          result.createdAt.replace(
+            serializers.deserialize(
+                  value,
+                  specifiedType: const FullType(_i3.GDateTime),
+                )!
+                as _i3.GDateTime,
+          );
+          break;
+      }
+    }
+
+    return result.build();
+  }
+}
+
 class _$GGetUserDetailsData extends GGetUserDetailsData {
   @override
   final String G__typename;
@@ -1346,6 +1835,12 @@ class _$GGetUserDetailsData_user extends GGetUserDetailsData_user {
   final _i3.GDateTime createdAt;
   @override
   final _i3.GDateTime updatedAt;
+  @override
+  final GGetUserDetailsData_user_status? status;
+  @override
+  final GGetUserDetailsData_user_starredRepositories starredRepositories;
+  @override
+  final GGetUserDetailsData_user_organizations organizations;
 
   factory _$GGetUserDetailsData_user([
     void Function(GGetUserDetailsData_userBuilder)? updates,
@@ -1368,6 +1863,9 @@ class _$GGetUserDetailsData_user extends GGetUserDetailsData_user {
     required this.following,
     required this.createdAt,
     required this.updatedAt,
+    this.status,
+    required this.starredRepositories,
+    required this.organizations,
   }) : super._();
   @override
   GGetUserDetailsData_user rebuild(
@@ -1397,7 +1895,10 @@ class _$GGetUserDetailsData_user extends GGetUserDetailsData_user {
         followers == other.followers &&
         following == other.following &&
         createdAt == other.createdAt &&
-        updatedAt == other.updatedAt;
+        updatedAt == other.updatedAt &&
+        status == other.status &&
+        starredRepositories == other.starredRepositories &&
+        organizations == other.organizations;
   }
 
   @override
@@ -1419,6 +1920,9 @@ class _$GGetUserDetailsData_user extends GGetUserDetailsData_user {
     _$hash = $jc(_$hash, following.hashCode);
     _$hash = $jc(_$hash, createdAt.hashCode);
     _$hash = $jc(_$hash, updatedAt.hashCode);
+    _$hash = $jc(_$hash, status.hashCode);
+    _$hash = $jc(_$hash, starredRepositories.hashCode);
+    _$hash = $jc(_$hash, organizations.hashCode);
     _$hash = $jf(_$hash);
     return _$hash;
   }
@@ -1441,7 +1945,10 @@ class _$GGetUserDetailsData_user extends GGetUserDetailsData_user {
           ..add('followers', followers)
           ..add('following', following)
           ..add('createdAt', createdAt)
-          ..add('updatedAt', updatedAt))
+          ..add('updatedAt', updatedAt)
+          ..add('status', status)
+          ..add('starredRepositories', starredRepositories)
+          ..add('organizations', organizations))
         .toString();
   }
 }
@@ -1527,6 +2034,27 @@ class GGetUserDetailsData_userBuilder
   set updatedAt(_i3.GDateTimeBuilder? updatedAt) =>
       _$this._updatedAt = updatedAt;
 
+  GGetUserDetailsData_user_statusBuilder? _status;
+  GGetUserDetailsData_user_statusBuilder get status =>
+      _$this._status ??= GGetUserDetailsData_user_statusBuilder();
+  set status(GGetUserDetailsData_user_statusBuilder? status) =>
+      _$this._status = status;
+
+  GGetUserDetailsData_user_starredRepositoriesBuilder? _starredRepositories;
+  GGetUserDetailsData_user_starredRepositoriesBuilder get starredRepositories =>
+      _$this._starredRepositories ??=
+          GGetUserDetailsData_user_starredRepositoriesBuilder();
+  set starredRepositories(
+    GGetUserDetailsData_user_starredRepositoriesBuilder? starredRepositories,
+  ) => _$this._starredRepositories = starredRepositories;
+
+  GGetUserDetailsData_user_organizationsBuilder? _organizations;
+  GGetUserDetailsData_user_organizationsBuilder get organizations =>
+      _$this._organizations ??= GGetUserDetailsData_user_organizationsBuilder();
+  set organizations(
+    GGetUserDetailsData_user_organizationsBuilder? organizations,
+  ) => _$this._organizations = organizations;
+
   GGetUserDetailsData_userBuilder() {
     GGetUserDetailsData_user._initializeBuilder(this);
   }
@@ -1550,6 +2078,9 @@ class GGetUserDetailsData_userBuilder
       _following = $v.following.toBuilder();
       _createdAt = $v.createdAt.toBuilder();
       _updatedAt = $v.updatedAt.toBuilder();
+      _status = $v.status?.toBuilder();
+      _starredRepositories = $v.starredRepositories.toBuilder();
+      _organizations = $v.organizations.toBuilder();
       _$v = null;
     }
     return this;
@@ -1606,6 +2137,9 @@ class GGetUserDetailsData_userBuilder
             following: following.build(),
             createdAt: createdAt.build(),
             updatedAt: updatedAt.build(),
+            status: _status?.build(),
+            starredRepositories: starredRepositories.build(),
+            organizations: organizations.build(),
           );
     } catch (_) {
       late String _$failedField;
@@ -1626,6 +2160,12 @@ class GGetUserDetailsData_userBuilder
         createdAt.build();
         _$failedField = 'updatedAt';
         updatedAt.build();
+        _$failedField = 'status';
+        _status?.build();
+        _$failedField = 'starredRepositories';
+        starredRepositories.build();
+        _$failedField = 'organizations';
+        organizations.build();
       } catch (e) {
         throw BuiltValueNestedFieldError(
           r'GGetUserDetailsData_user',
@@ -1980,6 +2520,393 @@ class GGetUserDetailsData_user_followingBuilder
           totalCount: BuiltValueNullFieldError.checkNotNull(
             totalCount,
             r'GGetUserDetailsData_user_following',
+            'totalCount',
+          ),
+        );
+    replace(_$result);
+    return _$result;
+  }
+}
+
+class _$GGetUserDetailsData_user_status
+    extends GGetUserDetailsData_user_status {
+  @override
+  final String G__typename;
+  @override
+  final String? message;
+  @override
+  final String? emoji;
+  @override
+  final _i3.GDateTime createdAt;
+
+  factory _$GGetUserDetailsData_user_status([
+    void Function(GGetUserDetailsData_user_statusBuilder)? updates,
+  ]) => (GGetUserDetailsData_user_statusBuilder()..update(updates))._build();
+
+  _$GGetUserDetailsData_user_status._({
+    required this.G__typename,
+    this.message,
+    this.emoji,
+    required this.createdAt,
+  }) : super._();
+  @override
+  GGetUserDetailsData_user_status rebuild(
+    void Function(GGetUserDetailsData_user_statusBuilder) updates,
+  ) => (toBuilder()..update(updates)).build();
+
+  @override
+  GGetUserDetailsData_user_statusBuilder toBuilder() =>
+      GGetUserDetailsData_user_statusBuilder()..replace(this);
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(other, this)) return true;
+    return other is GGetUserDetailsData_user_status &&
+        G__typename == other.G__typename &&
+        message == other.message &&
+        emoji == other.emoji &&
+        createdAt == other.createdAt;
+  }
+
+  @override
+  int get hashCode {
+    var _$hash = 0;
+    _$hash = $jc(_$hash, G__typename.hashCode);
+    _$hash = $jc(_$hash, message.hashCode);
+    _$hash = $jc(_$hash, emoji.hashCode);
+    _$hash = $jc(_$hash, createdAt.hashCode);
+    _$hash = $jf(_$hash);
+    return _$hash;
+  }
+
+  @override
+  String toString() {
+    return (newBuiltValueToStringHelper(r'GGetUserDetailsData_user_status')
+          ..add('G__typename', G__typename)
+          ..add('message', message)
+          ..add('emoji', emoji)
+          ..add('createdAt', createdAt))
+        .toString();
+  }
+}
+
+class GGetUserDetailsData_user_statusBuilder
+    implements
+        Builder<
+          GGetUserDetailsData_user_status,
+          GGetUserDetailsData_user_statusBuilder
+        > {
+  _$GGetUserDetailsData_user_status? _$v;
+
+  String? _G__typename;
+  String? get G__typename => _$this._G__typename;
+  set G__typename(String? G__typename) => _$this._G__typename = G__typename;
+
+  String? _message;
+  String? get message => _$this._message;
+  set message(String? message) => _$this._message = message;
+
+  String? _emoji;
+  String? get emoji => _$this._emoji;
+  set emoji(String? emoji) => _$this._emoji = emoji;
+
+  _i3.GDateTimeBuilder? _createdAt;
+  _i3.GDateTimeBuilder get createdAt =>
+      _$this._createdAt ??= _i3.GDateTimeBuilder();
+  set createdAt(_i3.GDateTimeBuilder? createdAt) =>
+      _$this._createdAt = createdAt;
+
+  GGetUserDetailsData_user_statusBuilder() {
+    GGetUserDetailsData_user_status._initializeBuilder(this);
+  }
+
+  GGetUserDetailsData_user_statusBuilder get _$this {
+    final $v = _$v;
+    if ($v != null) {
+      _G__typename = $v.G__typename;
+      _message = $v.message;
+      _emoji = $v.emoji;
+      _createdAt = $v.createdAt.toBuilder();
+      _$v = null;
+    }
+    return this;
+  }
+
+  @override
+  void replace(GGetUserDetailsData_user_status other) {
+    _$v = other as _$GGetUserDetailsData_user_status;
+  }
+
+  @override
+  void update(void Function(GGetUserDetailsData_user_statusBuilder)? updates) {
+    if (updates != null) updates(this);
+  }
+
+  @override
+  GGetUserDetailsData_user_status build() => _build();
+
+  _$GGetUserDetailsData_user_status _build() {
+    _$GGetUserDetailsData_user_status _$result;
+    try {
+      _$result =
+          _$v ??
+          _$GGetUserDetailsData_user_status._(
+            G__typename: BuiltValueNullFieldError.checkNotNull(
+              G__typename,
+              r'GGetUserDetailsData_user_status',
+              'G__typename',
+            ),
+            message: message,
+            emoji: emoji,
+            createdAt: createdAt.build(),
+          );
+    } catch (_) {
+      late String _$failedField;
+      try {
+        _$failedField = 'createdAt';
+        createdAt.build();
+      } catch (e) {
+        throw BuiltValueNestedFieldError(
+          r'GGetUserDetailsData_user_status',
+          _$failedField,
+          e.toString(),
+        );
+      }
+      rethrow;
+    }
+    replace(_$result);
+    return _$result;
+  }
+}
+
+class _$GGetUserDetailsData_user_starredRepositories
+    extends GGetUserDetailsData_user_starredRepositories {
+  @override
+  final String G__typename;
+  @override
+  final int totalCount;
+
+  factory _$GGetUserDetailsData_user_starredRepositories([
+    void Function(GGetUserDetailsData_user_starredRepositoriesBuilder)? updates,
+  ]) => (GGetUserDetailsData_user_starredRepositoriesBuilder()..update(updates))
+      ._build();
+
+  _$GGetUserDetailsData_user_starredRepositories._({
+    required this.G__typename,
+    required this.totalCount,
+  }) : super._();
+  @override
+  GGetUserDetailsData_user_starredRepositories rebuild(
+    void Function(GGetUserDetailsData_user_starredRepositoriesBuilder) updates,
+  ) => (toBuilder()..update(updates)).build();
+
+  @override
+  GGetUserDetailsData_user_starredRepositoriesBuilder toBuilder() =>
+      GGetUserDetailsData_user_starredRepositoriesBuilder()..replace(this);
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(other, this)) return true;
+    return other is GGetUserDetailsData_user_starredRepositories &&
+        G__typename == other.G__typename &&
+        totalCount == other.totalCount;
+  }
+
+  @override
+  int get hashCode {
+    var _$hash = 0;
+    _$hash = $jc(_$hash, G__typename.hashCode);
+    _$hash = $jc(_$hash, totalCount.hashCode);
+    _$hash = $jf(_$hash);
+    return _$hash;
+  }
+
+  @override
+  String toString() {
+    return (newBuiltValueToStringHelper(
+            r'GGetUserDetailsData_user_starredRepositories',
+          )
+          ..add('G__typename', G__typename)
+          ..add('totalCount', totalCount))
+        .toString();
+  }
+}
+
+class GGetUserDetailsData_user_starredRepositoriesBuilder
+    implements
+        Builder<
+          GGetUserDetailsData_user_starredRepositories,
+          GGetUserDetailsData_user_starredRepositoriesBuilder
+        > {
+  _$GGetUserDetailsData_user_starredRepositories? _$v;
+
+  String? _G__typename;
+  String? get G__typename => _$this._G__typename;
+  set G__typename(String? G__typename) => _$this._G__typename = G__typename;
+
+  int? _totalCount;
+  int? get totalCount => _$this._totalCount;
+  set totalCount(int? totalCount) => _$this._totalCount = totalCount;
+
+  GGetUserDetailsData_user_starredRepositoriesBuilder() {
+    GGetUserDetailsData_user_starredRepositories._initializeBuilder(this);
+  }
+
+  GGetUserDetailsData_user_starredRepositoriesBuilder get _$this {
+    final $v = _$v;
+    if ($v != null) {
+      _G__typename = $v.G__typename;
+      _totalCount = $v.totalCount;
+      _$v = null;
+    }
+    return this;
+  }
+
+  @override
+  void replace(GGetUserDetailsData_user_starredRepositories other) {
+    _$v = other as _$GGetUserDetailsData_user_starredRepositories;
+  }
+
+  @override
+  void update(
+    void Function(GGetUserDetailsData_user_starredRepositoriesBuilder)? updates,
+  ) {
+    if (updates != null) updates(this);
+  }
+
+  @override
+  GGetUserDetailsData_user_starredRepositories build() => _build();
+
+  _$GGetUserDetailsData_user_starredRepositories _build() {
+    final _$result =
+        _$v ??
+        _$GGetUserDetailsData_user_starredRepositories._(
+          G__typename: BuiltValueNullFieldError.checkNotNull(
+            G__typename,
+            r'GGetUserDetailsData_user_starredRepositories',
+            'G__typename',
+          ),
+          totalCount: BuiltValueNullFieldError.checkNotNull(
+            totalCount,
+            r'GGetUserDetailsData_user_starredRepositories',
+            'totalCount',
+          ),
+        );
+    replace(_$result);
+    return _$result;
+  }
+}
+
+class _$GGetUserDetailsData_user_organizations
+    extends GGetUserDetailsData_user_organizations {
+  @override
+  final String G__typename;
+  @override
+  final int totalCount;
+
+  factory _$GGetUserDetailsData_user_organizations([
+    void Function(GGetUserDetailsData_user_organizationsBuilder)? updates,
+  ]) => (GGetUserDetailsData_user_organizationsBuilder()..update(updates))
+      ._build();
+
+  _$GGetUserDetailsData_user_organizations._({
+    required this.G__typename,
+    required this.totalCount,
+  }) : super._();
+  @override
+  GGetUserDetailsData_user_organizations rebuild(
+    void Function(GGetUserDetailsData_user_organizationsBuilder) updates,
+  ) => (toBuilder()..update(updates)).build();
+
+  @override
+  GGetUserDetailsData_user_organizationsBuilder toBuilder() =>
+      GGetUserDetailsData_user_organizationsBuilder()..replace(this);
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(other, this)) return true;
+    return other is GGetUserDetailsData_user_organizations &&
+        G__typename == other.G__typename &&
+        totalCount == other.totalCount;
+  }
+
+  @override
+  int get hashCode {
+    var _$hash = 0;
+    _$hash = $jc(_$hash, G__typename.hashCode);
+    _$hash = $jc(_$hash, totalCount.hashCode);
+    _$hash = $jf(_$hash);
+    return _$hash;
+  }
+
+  @override
+  String toString() {
+    return (newBuiltValueToStringHelper(
+            r'GGetUserDetailsData_user_organizations',
+          )
+          ..add('G__typename', G__typename)
+          ..add('totalCount', totalCount))
+        .toString();
+  }
+}
+
+class GGetUserDetailsData_user_organizationsBuilder
+    implements
+        Builder<
+          GGetUserDetailsData_user_organizations,
+          GGetUserDetailsData_user_organizationsBuilder
+        > {
+  _$GGetUserDetailsData_user_organizations? _$v;
+
+  String? _G__typename;
+  String? get G__typename => _$this._G__typename;
+  set G__typename(String? G__typename) => _$this._G__typename = G__typename;
+
+  int? _totalCount;
+  int? get totalCount => _$this._totalCount;
+  set totalCount(int? totalCount) => _$this._totalCount = totalCount;
+
+  GGetUserDetailsData_user_organizationsBuilder() {
+    GGetUserDetailsData_user_organizations._initializeBuilder(this);
+  }
+
+  GGetUserDetailsData_user_organizationsBuilder get _$this {
+    final $v = _$v;
+    if ($v != null) {
+      _G__typename = $v.G__typename;
+      _totalCount = $v.totalCount;
+      _$v = null;
+    }
+    return this;
+  }
+
+  @override
+  void replace(GGetUserDetailsData_user_organizations other) {
+    _$v = other as _$GGetUserDetailsData_user_organizations;
+  }
+
+  @override
+  void update(
+    void Function(GGetUserDetailsData_user_organizationsBuilder)? updates,
+  ) {
+    if (updates != null) updates(this);
+  }
+
+  @override
+  GGetUserDetailsData_user_organizations build() => _build();
+
+  _$GGetUserDetailsData_user_organizations _build() {
+    final _$result =
+        _$v ??
+        _$GGetUserDetailsData_user_organizations._(
+          G__typename: BuiltValueNullFieldError.checkNotNull(
+            G__typename,
+            r'GGetUserDetailsData_user_organizations',
+            'G__typename',
+          ),
+          totalCount: BuiltValueNullFieldError.checkNotNull(
+            totalCount,
+            r'GGetUserDetailsData_user_organizations',
             'totalCount',
           ),
         );
@@ -2925,6 +3852,277 @@ class GGetUserRepositoriesData_user_repositories_pageInfoBuilder
           ),
           endCursor: endCursor,
         );
+    replace(_$result);
+    return _$result;
+  }
+}
+
+class _$GUserStatusFragmentData extends GUserStatusFragmentData {
+  @override
+  final String G__typename;
+  @override
+  final GUserStatusFragmentData_status? status;
+
+  factory _$GUserStatusFragmentData([
+    void Function(GUserStatusFragmentDataBuilder)? updates,
+  ]) => (GUserStatusFragmentDataBuilder()..update(updates))._build();
+
+  _$GUserStatusFragmentData._({required this.G__typename, this.status})
+    : super._();
+  @override
+  GUserStatusFragmentData rebuild(
+    void Function(GUserStatusFragmentDataBuilder) updates,
+  ) => (toBuilder()..update(updates)).build();
+
+  @override
+  GUserStatusFragmentDataBuilder toBuilder() =>
+      GUserStatusFragmentDataBuilder()..replace(this);
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(other, this)) return true;
+    return other is GUserStatusFragmentData &&
+        G__typename == other.G__typename &&
+        status == other.status;
+  }
+
+  @override
+  int get hashCode {
+    var _$hash = 0;
+    _$hash = $jc(_$hash, G__typename.hashCode);
+    _$hash = $jc(_$hash, status.hashCode);
+    _$hash = $jf(_$hash);
+    return _$hash;
+  }
+
+  @override
+  String toString() {
+    return (newBuiltValueToStringHelper(r'GUserStatusFragmentData')
+          ..add('G__typename', G__typename)
+          ..add('status', status))
+        .toString();
+  }
+}
+
+class GUserStatusFragmentDataBuilder
+    implements
+        Builder<GUserStatusFragmentData, GUserStatusFragmentDataBuilder> {
+  _$GUserStatusFragmentData? _$v;
+
+  String? _G__typename;
+  String? get G__typename => _$this._G__typename;
+  set G__typename(String? G__typename) => _$this._G__typename = G__typename;
+
+  GUserStatusFragmentData_statusBuilder? _status;
+  GUserStatusFragmentData_statusBuilder get status =>
+      _$this._status ??= GUserStatusFragmentData_statusBuilder();
+  set status(GUserStatusFragmentData_statusBuilder? status) =>
+      _$this._status = status;
+
+  GUserStatusFragmentDataBuilder() {
+    GUserStatusFragmentData._initializeBuilder(this);
+  }
+
+  GUserStatusFragmentDataBuilder get _$this {
+    final $v = _$v;
+    if ($v != null) {
+      _G__typename = $v.G__typename;
+      _status = $v.status?.toBuilder();
+      _$v = null;
+    }
+    return this;
+  }
+
+  @override
+  void replace(GUserStatusFragmentData other) {
+    _$v = other as _$GUserStatusFragmentData;
+  }
+
+  @override
+  void update(void Function(GUserStatusFragmentDataBuilder)? updates) {
+    if (updates != null) updates(this);
+  }
+
+  @override
+  GUserStatusFragmentData build() => _build();
+
+  _$GUserStatusFragmentData _build() {
+    _$GUserStatusFragmentData _$result;
+    try {
+      _$result =
+          _$v ??
+          _$GUserStatusFragmentData._(
+            G__typename: BuiltValueNullFieldError.checkNotNull(
+              G__typename,
+              r'GUserStatusFragmentData',
+              'G__typename',
+            ),
+            status: _status?.build(),
+          );
+    } catch (_) {
+      late String _$failedField;
+      try {
+        _$failedField = 'status';
+        _status?.build();
+      } catch (e) {
+        throw BuiltValueNestedFieldError(
+          r'GUserStatusFragmentData',
+          _$failedField,
+          e.toString(),
+        );
+      }
+      rethrow;
+    }
+    replace(_$result);
+    return _$result;
+  }
+}
+
+class _$GUserStatusFragmentData_status extends GUserStatusFragmentData_status {
+  @override
+  final String G__typename;
+  @override
+  final String? message;
+  @override
+  final String? emoji;
+  @override
+  final _i3.GDateTime createdAt;
+
+  factory _$GUserStatusFragmentData_status([
+    void Function(GUserStatusFragmentData_statusBuilder)? updates,
+  ]) => (GUserStatusFragmentData_statusBuilder()..update(updates))._build();
+
+  _$GUserStatusFragmentData_status._({
+    required this.G__typename,
+    this.message,
+    this.emoji,
+    required this.createdAt,
+  }) : super._();
+  @override
+  GUserStatusFragmentData_status rebuild(
+    void Function(GUserStatusFragmentData_statusBuilder) updates,
+  ) => (toBuilder()..update(updates)).build();
+
+  @override
+  GUserStatusFragmentData_statusBuilder toBuilder() =>
+      GUserStatusFragmentData_statusBuilder()..replace(this);
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(other, this)) return true;
+    return other is GUserStatusFragmentData_status &&
+        G__typename == other.G__typename &&
+        message == other.message &&
+        emoji == other.emoji &&
+        createdAt == other.createdAt;
+  }
+
+  @override
+  int get hashCode {
+    var _$hash = 0;
+    _$hash = $jc(_$hash, G__typename.hashCode);
+    _$hash = $jc(_$hash, message.hashCode);
+    _$hash = $jc(_$hash, emoji.hashCode);
+    _$hash = $jc(_$hash, createdAt.hashCode);
+    _$hash = $jf(_$hash);
+    return _$hash;
+  }
+
+  @override
+  String toString() {
+    return (newBuiltValueToStringHelper(r'GUserStatusFragmentData_status')
+          ..add('G__typename', G__typename)
+          ..add('message', message)
+          ..add('emoji', emoji)
+          ..add('createdAt', createdAt))
+        .toString();
+  }
+}
+
+class GUserStatusFragmentData_statusBuilder
+    implements
+        Builder<
+          GUserStatusFragmentData_status,
+          GUserStatusFragmentData_statusBuilder
+        > {
+  _$GUserStatusFragmentData_status? _$v;
+
+  String? _G__typename;
+  String? get G__typename => _$this._G__typename;
+  set G__typename(String? G__typename) => _$this._G__typename = G__typename;
+
+  String? _message;
+  String? get message => _$this._message;
+  set message(String? message) => _$this._message = message;
+
+  String? _emoji;
+  String? get emoji => _$this._emoji;
+  set emoji(String? emoji) => _$this._emoji = emoji;
+
+  _i3.GDateTimeBuilder? _createdAt;
+  _i3.GDateTimeBuilder get createdAt =>
+      _$this._createdAt ??= _i3.GDateTimeBuilder();
+  set createdAt(_i3.GDateTimeBuilder? createdAt) =>
+      _$this._createdAt = createdAt;
+
+  GUserStatusFragmentData_statusBuilder() {
+    GUserStatusFragmentData_status._initializeBuilder(this);
+  }
+
+  GUserStatusFragmentData_statusBuilder get _$this {
+    final $v = _$v;
+    if ($v != null) {
+      _G__typename = $v.G__typename;
+      _message = $v.message;
+      _emoji = $v.emoji;
+      _createdAt = $v.createdAt.toBuilder();
+      _$v = null;
+    }
+    return this;
+  }
+
+  @override
+  void replace(GUserStatusFragmentData_status other) {
+    _$v = other as _$GUserStatusFragmentData_status;
+  }
+
+  @override
+  void update(void Function(GUserStatusFragmentData_statusBuilder)? updates) {
+    if (updates != null) updates(this);
+  }
+
+  @override
+  GUserStatusFragmentData_status build() => _build();
+
+  _$GUserStatusFragmentData_status _build() {
+    _$GUserStatusFragmentData_status _$result;
+    try {
+      _$result =
+          _$v ??
+          _$GUserStatusFragmentData_status._(
+            G__typename: BuiltValueNullFieldError.checkNotNull(
+              G__typename,
+              r'GUserStatusFragmentData_status',
+              'G__typename',
+            ),
+            message: message,
+            emoji: emoji,
+            createdAt: createdAt.build(),
+          );
+    } catch (_) {
+      late String _$failedField;
+      try {
+        _$failedField = 'createdAt';
+        createdAt.build();
+      } catch (e) {
+        throw BuiltValueNestedFieldError(
+          r'GUserStatusFragmentData_status',
+          _$failedField,
+          e.toString(),
+        );
+      }
+      rethrow;
+    }
     replace(_$result);
     return _$result;
   }

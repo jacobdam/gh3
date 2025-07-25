@@ -10,6 +10,8 @@ Serializer<GGetUserDetailsVars> _$gGetUserDetailsVarsSerializer =
     _$GGetUserDetailsVarsSerializer();
 Serializer<GGetUserRepositoriesVars> _$gGetUserRepositoriesVarsSerializer =
     _$GGetUserRepositoriesVarsSerializer();
+Serializer<GUserStatusFragmentVars> _$gUserStatusFragmentVarsSerializer =
+    _$GUserStatusFragmentVarsSerializer();
 
 class _$GGetUserDetailsVarsSerializer
     implements StructuredSerializer<GGetUserDetailsVars> {
@@ -146,6 +148,35 @@ class _$GGetUserRepositoriesVarsSerializer
     }
 
     return result.build();
+  }
+}
+
+class _$GUserStatusFragmentVarsSerializer
+    implements StructuredSerializer<GUserStatusFragmentVars> {
+  @override
+  final Iterable<Type> types = const [
+    GUserStatusFragmentVars,
+    _$GUserStatusFragmentVars,
+  ];
+  @override
+  final String wireName = 'GUserStatusFragmentVars';
+
+  @override
+  Iterable<Object?> serialize(
+    Serializers serializers,
+    GUserStatusFragmentVars object, {
+    FullType specifiedType = FullType.unspecified,
+  }) {
+    return <Object?>[];
+  }
+
+  @override
+  GUserStatusFragmentVars deserialize(
+    Serializers serializers,
+    Iterable<Object?> serialized, {
+    FullType specifiedType = FullType.unspecified,
+  }) {
+    return GUserStatusFragmentVarsBuilder().build();
   }
 }
 
@@ -350,6 +381,65 @@ class GGetUserRepositoriesVarsBuilder
           ),
           after: after,
         );
+    replace(_$result);
+    return _$result;
+  }
+}
+
+class _$GUserStatusFragmentVars extends GUserStatusFragmentVars {
+  factory _$GUserStatusFragmentVars([
+    void Function(GUserStatusFragmentVarsBuilder)? updates,
+  ]) => (GUserStatusFragmentVarsBuilder()..update(updates))._build();
+
+  _$GUserStatusFragmentVars._() : super._();
+  @override
+  GUserStatusFragmentVars rebuild(
+    void Function(GUserStatusFragmentVarsBuilder) updates,
+  ) => (toBuilder()..update(updates)).build();
+
+  @override
+  GUserStatusFragmentVarsBuilder toBuilder() =>
+      GUserStatusFragmentVarsBuilder()..replace(this);
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(other, this)) return true;
+    return other is GUserStatusFragmentVars;
+  }
+
+  @override
+  int get hashCode {
+    return 1014329839;
+  }
+
+  @override
+  String toString() {
+    return newBuiltValueToStringHelper(r'GUserStatusFragmentVars').toString();
+  }
+}
+
+class GUserStatusFragmentVarsBuilder
+    implements
+        Builder<GUserStatusFragmentVars, GUserStatusFragmentVarsBuilder> {
+  _$GUserStatusFragmentVars? _$v;
+
+  GUserStatusFragmentVarsBuilder();
+
+  @override
+  void replace(GUserStatusFragmentVars other) {
+    _$v = other as _$GUserStatusFragmentVars;
+  }
+
+  @override
+  void update(void Function(GUserStatusFragmentVarsBuilder)? updates) {
+    if (updates != null) updates(this);
+  }
+
+  @override
+  GUserStatusFragmentVars build() => _build();
+
+  _$GUserStatusFragmentVars _build() {
+    final _$result = _$v ?? _$GUserStatusFragmentVars._();
     replace(_$result);
     return _$result;
   }
