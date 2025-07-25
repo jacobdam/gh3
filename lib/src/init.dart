@@ -11,7 +11,7 @@ final getIt = GetIt.instance;
 void configureDependencies() {
   // Enable multiple registrations for the same interface type
   getIt.enableRegisteringMultipleInstancesOfOneType();
-  
+
   // Initialize generated dependency graph (includes AuthViewModel)
   getIt.init();
 }
