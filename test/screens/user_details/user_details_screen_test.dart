@@ -4,6 +4,7 @@ import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'package:gh3/src/screens/user_details/user_details_screen.dart';
 import 'package:gh3/src/screens/user_details/user_details_viewmodel.dart';
+import 'package:gh3/src/screens/user_details/__generated__/user_details_viewmodel.data.gql.dart';
 
 import 'user_details_screen_test.mocks.dart';
 
@@ -16,23 +17,11 @@ void main() {
       mockUserDetailsViewModel = MockUserDetailsViewModel();
       when(mockUserDetailsViewModel.login).thenReturn('testuser');
       when(mockUserDetailsViewModel.isLoading).thenReturn(false);
+      when(mockUserDetailsViewModel.error).thenReturn(null);
+      when(mockUserDetailsViewModel.user).thenReturn(null);
     });
 
-    testWidgets('renders user details screen with app bar', (
-      WidgetTester tester,
-    ) async {
-      await tester.pumpWidget(
-        MaterialApp(
-          home: UserDetailsScreen(viewModel: mockUserDetailsViewModel),
-        ),
-      );
-
-      expect(find.text('User Details'), findsOneWidget);
-      expect(find.byType(AppBar), findsOneWidget);
-      expect(find.byType(BackButton), findsOneWidget);
-    });
-
-    testWidgets('shows loading indicator when loading', (
+    testWidgets('shows loading screen when loading', (
       WidgetTester tester,
     ) async {
       when(mockUserDetailsViewModel.isLoading).thenReturn(true);
@@ -44,13 +33,16 @@ void main() {
       );
 
       expect(find.byType(CircularProgressIndicator), findsOneWidget);
+      expect(find.text('Loading...'), findsOneWidget);
+      expect(find.byType(AppBar), findsOneWidget);
+      expect(find.byType(BackButton), findsOneWidget);
     });
 
-    testWidgets('shows user login when not loading', (
+    testWidgets('shows error screen when there is an error', (
       WidgetTester tester,
     ) async {
       when(mockUserDetailsViewModel.isLoading).thenReturn(false);
-      when(mockUserDetailsViewModel.login).thenReturn('testuser');
+      when(mockUserDetailsViewModel.error).thenReturn('Network error');
 
       await tester.pumpWidget(
         MaterialApp(
@@ -58,7 +50,83 @@ void main() {
         ),
       );
 
-      expect(find.text('User: testuser'), findsOneWidget);
+      expect(find.text('Network error'), findsOneWidget);
+      expect(find.text('Retry'), findsOneWidget);
+      expect(find.text('Error'), findsOneWidget);
+    });
+
+    testWidgets('shows user not found when user is null', (
+      WidgetTester tester,
+    ) async {
+      when(mockUserDetailsViewModel.isLoading).thenReturn(false);
+      when(mockUserDetailsViewModel.error).thenReturn(null);
+      when(mockUserDetailsViewModel.user).thenReturn(null);
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: UserDetailsScreen(viewModel: mockUserDetailsViewModel),
+        ),
+      );
+
+      expect(find.text('User not found'), findsAtLeast(1));
+    });
+
+    testWidgets('renders CustomScrollView with SliverAppBar structure', (
+      WidgetTester tester,
+    ) async {
+      when(mockUserDetailsViewModel.isLoading).thenReturn(false);
+      when(mockUserDetailsViewModel.error).thenReturn(null);
+      when(mockUserDetailsViewModel.login).thenReturn('testuser');
+
+      // Create user object using builder pattern
+      final mockUser = GGetUserDetailsData_user(
+        (b) => b
+          ..G__typename = 'User'
+          ..id = 'test-id'
+          ..login = 'testuser'
+          ..name = 'Test User'
+          ..email = 'test@example.com'
+          ..bio = 'Test bio'
+          ..location = 'Test Location'
+          ..company = 'Test Company'
+          ..avatarUrl.value = ''
+          ..url.value = 'https://github.com/testuser'
+          ..repositories.G__typename = 'RepositoryConnection'
+          ..repositories.totalCount = 42
+          ..followers.G__typename = 'FollowerConnection'
+          ..followers.totalCount = 123
+          ..following.G__typename = 'FollowingConnection'
+          ..following.totalCount = 456
+          ..createdAt.value = '2020-01-01T00:00:00Z'
+          ..updatedAt.value = '2024-01-01T00:00:00Z'
+          ..starredRepositories.G__typename = 'StarredRepositoryConnection'
+          ..starredRepositories.totalCount = 789
+          ..organizations.G__typename = 'OrganizationConnection'
+          ..organizations.totalCount = 10,
+      );
+
+      when(mockUserDetailsViewModel.user).thenReturn(mockUser);
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: UserDetailsScreen(viewModel: mockUserDetailsViewModel),
+        ),
+      );
+
+      // Verify CustomScrollView and SliverAppBar are present
+      expect(find.byType(CustomScrollView), findsOneWidget);
+      expect(find.byType(SliverAppBar), findsOneWidget);
+      expect(find.byType(SliverList), findsOneWidget);
+
+      // Verify sticky title shows username (should find at least one)
+      expect(find.text('@testuser'), findsAtLeast(1));
+
+      // Verify flexible space content
+      expect(find.text('Test User'), findsOneWidget);
+      expect(find.byType(CircleAvatar), findsOneWidget);
+
+      // Verify back button is present
+      expect(find.byType(BackButton), findsOneWidget);
     });
 
     testWidgets('calls init on ViewModel during initState', (
