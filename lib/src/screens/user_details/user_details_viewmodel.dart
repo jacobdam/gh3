@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:ferry/ferry.dart';
 import '../base_viewmodel.dart';
 import '../../services/graphql_error_handler.dart';
+import '../../services/graphql_errors.dart';
 import '__generated__/user_details_viewmodel.req.gql.dart';
 import '__generated__/user_details_viewmodel.data.gql.dart';
 import '__generated__/user_details_viewmodel.var.gql.dart';
@@ -49,6 +50,18 @@ class UserDetailsViewModel extends DisposableViewModel {
   bool get isLoading =>
       (_userResult?.loading ?? true) || (_repositoriesResult?.loading ?? true);
 
+  /// Check if user details are still loading
+  bool get isUserLoading => _userResult?.loading ?? true;
+
+  /// Check if repositories are still loading
+  bool get isRepositoriesLoading => _repositoriesResult?.loading ?? true;
+
+  /// Check if user data has been loaded successfully
+  bool get hasUserData => user != null && !isUserLoading;
+
+  /// Check if repository data has been loaded successfully
+  bool get hasRepositoryData => repositories != null && !isRepositoriesLoading;
+
   bool get hasMoreRepositories => _hasNextPage;
   bool get isEmpty => repositoryNodes.isEmpty;
 
@@ -70,7 +83,7 @@ class UserDetailsViewModel extends DisposableViewModel {
   int get repositoriesCount => user?.repositories.totalCount ?? 0;
 
   String? get error {
-    // Check user details errors
+    // Prioritize user details errors since they're more critical
     if (_userResult != null) {
       final linkException = _userResult!.linkException;
       final graphqlErrors = _userResult!.graphqlErrors;
@@ -81,18 +94,47 @@ class UserDetailsViewModel extends DisposableViewModel {
       }
     }
 
-    // Check repositories errors
+    // Check repositories errors only if user details are successful
     if (_repositoriesResult != null) {
       final linkException = _repositoriesResult!.linkException;
       final graphqlErrors = _repositoriesResult!.graphqlErrors;
 
       if (linkException != null ||
           (graphqlErrors != null && graphqlErrors.isNotEmpty)) {
-        return GraphQLErrorHandler.getErrorMessage(_repositoriesResult!);
+        // For repository errors, provide a different message than user errors
+        return 'Unable to load repositories. ${GraphQLErrorHandler.getErrorMessage(_repositoriesResult!)}';
       }
     }
 
     return null;
+  }
+
+  /// Check if the current error is specifically a user not found error
+  bool get isUserNotFoundError {
+    if (_userResult != null) {
+      final processedError = GraphQLErrorHandler.processResponse(_userResult!);
+      return processedError is GraphQLUserNotFoundError;
+    }
+    return false;
+  }
+
+  /// Check if the current error is a network connectivity issue
+  bool get isNetworkError {
+    if (_userResult != null) {
+      final processedError = GraphQLErrorHandler.processResponse(_userResult!);
+      return processedError is GraphQLNetworkError ||
+          processedError is GraphQLOfflineError;
+    }
+    return false;
+  }
+
+  /// Check if the current error is an authentication issue
+  bool get isAuthError {
+    if (_userResult != null) {
+      final processedError = GraphQLErrorHandler.processResponse(_userResult!);
+      return processedError is GraphQLAuthenticationError;
+    }
+    return false;
   }
 
   /// Initialize the view model and load user data.
@@ -168,7 +210,17 @@ class UserDetailsViewModel extends DisposableViewModel {
 
   /// Refresh both user details and repositories
   Future<void> refresh() async {
+    notifyListeners(); // Notify to show loading state
+    await Future.wait([loadUserDetails(), loadUserRepositories()]);
+  }
+
+  /// Retry only user details loading
+  Future<void> retryUserDetails() async {
     await loadUserDetails();
+  }
+
+  /// Retry only repositories loading
+  Future<void> retryRepositories() async {
     await loadUserRepositories();
   }
 

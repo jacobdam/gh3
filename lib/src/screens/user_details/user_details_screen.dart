@@ -50,23 +50,49 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
       return Scaffold(
         appBar: AppBar(
           leading: BackButton(onPressed: () => _handleBackNavigation(context)),
-          title: const Text('Error'),
+          title: Text(_getErrorTitle()),
         ),
         body: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(
-                _viewModel.error!,
-                style: Theme.of(context).textTheme.bodyLarge,
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 16),
-              ElevatedButton(
-                onPressed: () => _viewModel.refresh(),
-                child: const Text('Retry'),
-              ),
-            ],
+          child: Padding(
+            padding: const EdgeInsets.all(24.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(
+                  _getErrorIcon(),
+                  size: 64,
+                  color: Theme.of(context).colorScheme.error,
+                ),
+                const SizedBox(height: 24),
+                Text(
+                  _getErrorTitle(),
+                  style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                    color: Theme.of(context).colorScheme.error,
+                    fontWeight: FontWeight.bold,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 16),
+                Text(
+                  _getErrorMessage(),
+                  style: Theme.of(context).textTheme.bodyLarge,
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 24),
+                if (!_viewModel.isUserNotFoundError) ...[
+                  ElevatedButton.icon(
+                    onPressed: () => _viewModel.refresh(),
+                    icon: const Icon(Icons.refresh),
+                    label: const Text('Try Again'),
+                  ),
+                  const SizedBox(height: 16),
+                ],
+                TextButton(
+                  onPressed: () => _handleBackNavigation(context),
+                  child: const Text('Go Back'),
+                ),
+              ],
+            ),
           ),
         ),
       );
@@ -180,36 +206,45 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
                         ],
                       ),
                     // Follower/Following stats with interactive navigation
-                    UserStatsRow.fromFragment(
-                      user,
-                      onFollowersPressed: () {
-                        // TODO: Navigate to followers screen
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text(
-                              'Followers navigation not implemented yet',
+                    if (_viewModel.isUserLoading)
+                      const Center(
+                        child: Padding(
+                          padding: EdgeInsets.all(16.0),
+                          child: CircularProgressIndicator(),
+                        ),
+                      )
+                    else
+                      UserStatsRow.fromFragment(
+                        user,
+                        onFollowersPressed: () {
+                          // TODO: Navigate to followers screen
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text(
+                                'Followers navigation not implemented yet',
+                              ),
                             ),
-                          ),
-                        );
-                      },
-                      onFollowingPressed: () {
-                        // TODO: Navigate to following screen
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text(
-                              'Following navigation not implemented yet',
+                          );
+                        },
+                        onFollowingPressed: () {
+                          // TODO: Navigate to following screen
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text(
+                                'Following navigation not implemented yet',
+                              ),
                             ),
-                          ),
-                        );
-                      },
-                    ),
+                          );
+                        },
+                      ),
                     const SizedBox(height: 16),
-                    // Navigation tiles
+                    // Navigation tiles with loading states
                     _buildNavigationTile(
                       context,
                       title: 'Repositories',
                       icon: Icons.folder_outlined,
                       count: _viewModel.repositoriesCount,
+                      isLoading: _viewModel.isUserLoading,
                       onTap: () {
                         // TODO: Navigate to user repositories
                         ScaffoldMessenger.of(context).showSnackBar(
@@ -226,6 +261,7 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
                       title: 'Starred',
                       icon: Icons.star_outline,
                       count: _viewModel.starredRepositoriesCount,
+                      isLoading: _viewModel.isUserLoading,
                       onTap: () {
                         // TODO: Navigate to starred repositories
                         ScaffoldMessenger.of(context).showSnackBar(
@@ -242,6 +278,7 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
                       title: 'Organizations',
                       icon: Icons.business_outlined,
                       count: _viewModel.organizationsCount,
+                      isLoading: _viewModel.isUserLoading,
                       onTap: () {
                         // TODO: Navigate to user organizations
                         ScaffoldMessenger.of(context).showSnackBar(
@@ -277,6 +314,7 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
     required IconData icon,
     required int count,
     required VoidCallback onTap,
+    bool isLoading = false,
   }) {
     return ListTile(
       leading: Icon(icon, color: Theme.of(context).primaryColor),
@@ -284,12 +322,19 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
       trailing: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Text(
-            _formatCount(count),
-            style: Theme.of(
-              context,
-            ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
-          ),
+          if (isLoading)
+            const SizedBox(
+              width: 16,
+              height: 16,
+              child: CircularProgressIndicator(strokeWidth: 2),
+            )
+          else
+            Text(
+              _formatCount(count),
+              style: Theme.of(
+                context,
+              ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+            ),
           const SizedBox(width: 8),
           Icon(Icons.chevron_right, color: Colors.grey[400]),
         ],
@@ -319,6 +364,46 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
           : '${value.toStringAsFixed(1)}k';
     }
     return count.toString();
+  }
+
+  String _getErrorTitle() {
+    if (_viewModel.isUserNotFoundError) {
+      return 'User Not Found';
+    }
+    if (_viewModel.isNetworkError) {
+      return 'Connection Problem';
+    }
+    if (_viewModel.isAuthError) {
+      return 'Access Denied';
+    }
+    return 'Something Went Wrong';
+  }
+
+  String _getErrorMessage() {
+    if (_viewModel.isUserNotFoundError) {
+      return 'The user "@${_viewModel.login}" does not exist or may have been deleted.';
+    }
+    if (_viewModel.isNetworkError) {
+      return 'Please check your internet connection and try again.';
+    }
+    if (_viewModel.isAuthError) {
+      return 'You don\'t have permission to view this user\'s profile.';
+    }
+    return _viewModel.error ??
+        'An unexpected error occurred. Please try again.';
+  }
+
+  IconData _getErrorIcon() {
+    if (_viewModel.isUserNotFoundError) {
+      return Icons.person_off;
+    }
+    if (_viewModel.isNetworkError) {
+      return Icons.wifi_off;
+    }
+    if (_viewModel.isAuthError) {
+      return Icons.lock;
+    }
+    return Icons.error_outline;
   }
 
   Color _getAvatarColor(String login) {
