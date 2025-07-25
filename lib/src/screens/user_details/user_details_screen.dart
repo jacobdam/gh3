@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'user_details_viewmodel.dart';
 import '../../widgets/user_stats_row/user_stats_row.dart';
 import '../../widgets/user_profile/user_profile.dart';
+import '../../widgets/user_status_card/user_status_card.dart';
 
 class UserDetailsScreen extends StatefulWidget {
   final UserDetailsViewModel viewModel;
@@ -38,23 +39,17 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
     if (_viewModel.isLoading) {
       return Scaffold(
         appBar: AppBar(
-          leading: BackButton(
-            onPressed: () => _handleBackNavigation(context),
-          ),
+          leading: BackButton(onPressed: () => _handleBackNavigation(context)),
           title: const Text('Loading...'),
         ),
-        body: const Center(
-          child: CircularProgressIndicator(),
-        ),
+        body: const Center(child: CircularProgressIndicator()),
       );
     }
 
     if (_viewModel.error != null) {
       return Scaffold(
         appBar: AppBar(
-          leading: BackButton(
-            onPressed: () => _handleBackNavigation(context),
-          ),
+          leading: BackButton(onPressed: () => _handleBackNavigation(context)),
           title: const Text('Error'),
         ),
         body: Center(
@@ -81,14 +76,10 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
     if (user == null) {
       return Scaffold(
         appBar: AppBar(
-          leading: BackButton(
-            onPressed: () => _handleBackNavigation(context),
-          ),
+          leading: BackButton(onPressed: () => _handleBackNavigation(context)),
           title: const Text('User not found'),
         ),
-        body: const Center(
-          child: Text('User not found'),
-        ),
+        body: const Center(child: Text('User not found')),
       );
     }
 
@@ -116,15 +107,15 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
                   mainAxisSize: MainAxisSize.min, // Use minimum space needed
                   children: [
                     CircleAvatar(
-                      backgroundImage: user.avatarUrl.value.isNotEmpty 
+                      backgroundImage: user.avatarUrl.value.isNotEmpty
                           ? NetworkImage(user.avatarUrl.value)
                           : null,
                       backgroundColor: _getAvatarColor(_viewModel.login),
                       radius: 32, // Reduced radius to fit better
                       child: user.avatarUrl.value.isEmpty
                           ? Text(
-                              _viewModel.login.isNotEmpty 
-                                  ? _viewModel.login[0].toUpperCase() 
+                              _viewModel.login.isNotEmpty
+                                  ? _viewModel.login[0].toUpperCase()
                                   : '?',
                               style: const TextStyle(
                                 color: Colors.white,
@@ -170,21 +161,45 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     // User Profile information (bio, company, location)
-                    UserProfile.fromFragment(user, showCard: false, showStats: false),
+                    UserProfile.fromFragment(
+                      user,
+                      showCard: false,
+                      showStats: false,
+                    ),
                     const SizedBox(height: 16),
+                    // User Status Card (only shown if user has a status)
+                    if (_viewModel.statusMessage != null &&
+                        _viewModel.statusMessage!.isNotEmpty)
+                      Column(
+                        children: [
+                          UserStatusCard(
+                            message: _viewModel.statusMessage,
+                            emoji: _viewModel.statusEmoji,
+                          ),
+                          const SizedBox(height: 16),
+                        ],
+                      ),
                     // Follower/Following stats with interactive navigation
                     UserStatsRow.fromFragment(
                       user,
                       onFollowersPressed: () {
                         // TODO: Navigate to followers screen
                         ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('Followers navigation not implemented yet')),
+                          const SnackBar(
+                            content: Text(
+                              'Followers navigation not implemented yet',
+                            ),
+                          ),
                         );
                       },
                       onFollowingPressed: () {
                         // TODO: Navigate to following screen
                         ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('Following navigation not implemented yet')),
+                          const SnackBar(
+                            content: Text(
+                              'Following navigation not implemented yet',
+                            ),
+                          ),
                         );
                       },
                     ),
@@ -198,7 +213,11 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
                       onTap: () {
                         // TODO: Navigate to user repositories
                         ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('Repositories navigation not implemented yet')),
+                          const SnackBar(
+                            content: Text(
+                              'Repositories navigation not implemented yet',
+                            ),
+                          ),
                         );
                       },
                     ),
@@ -210,7 +229,11 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
                       onTap: () {
                         // TODO: Navigate to starred repositories
                         ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('Starred repositories navigation not implemented yet')),
+                          const SnackBar(
+                            content: Text(
+                              'Starred repositories navigation not implemented yet',
+                            ),
+                          ),
                         );
                       },
                     ),
@@ -222,7 +245,11 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
                       onTap: () {
                         // TODO: Navigate to user organizations
                         ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('Organizations navigation not implemented yet')),
+                          const SnackBar(
+                            content: Text(
+                              'Organizations navigation not implemented yet',
+                            ),
+                          ),
                         );
                       },
                     ),
@@ -253,24 +280,18 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
   }) {
     return ListTile(
       leading: Icon(icon, color: Theme.of(context).primaryColor),
-      title: Text(
-        title,
-        style: Theme.of(context).textTheme.titleMedium,
-      ),
+      title: Text(title, style: Theme.of(context).textTheme.titleMedium),
       trailing: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
           Text(
             _formatCount(count),
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(
-              fontWeight: FontWeight.bold,
-            ),
+            style: Theme.of(
+              context,
+            ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
           ),
           const SizedBox(width: 8),
-          Icon(
-            Icons.chevron_right,
-            color: Colors.grey[400],
-          ),
+          Icon(Icons.chevron_right, color: Colors.grey[400]),
         ],
       ),
       onTap: onTap,
@@ -284,8 +305,8 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
         // Handle very large numbers (billions)
         return '${(value / 1000).toStringAsFixed(1)}B';
       }
-      return value == value.truncate() 
-          ? '${value.truncate()}M' 
+      return value == value.truncate()
+          ? '${value.truncate()}M'
           : '${value.toStringAsFixed(1)}M';
     } else if (count >= 1000) {
       double value = count / 1000;
@@ -293,8 +314,8 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
         // This handles the edge case where we get 1000k -> should be 1M
         return '1M';
       }
-      return value == value.truncate() 
-          ? '${value.truncate()}k' 
+      return value == value.truncate()
+          ? '${value.truncate()}k'
           : '${value.toStringAsFixed(1)}k';
     }
     return count.toString();

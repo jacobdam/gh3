@@ -46,7 +46,7 @@
   - Handle cases where user data is missing or null
   - _Requirements: 1.4, 1.6, 3.5_
 
-- [ ] 8. Add UserStatusCard to screen layout
+- [x] 8. Add UserStatusCard to screen layout
   - Integrate UserStatusCard component into SliverList
   - Show status card only when user has a status message
   - Position status card appropriately in the content flow
