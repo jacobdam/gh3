@@ -7,6 +7,8 @@ import 'loading_screen.dart';
 /// Route provider for the loading screen module.
 /// Implements RouteProvider interface to provide modular route configuration.
 @injectable
+@Named("LoadingRouteProvider")
+@Injectable(as: RouteProvider)
 class LoadingRouteProvider implements RouteProvider {
   final AuthViewModel _authViewModel;
 
