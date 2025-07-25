@@ -13,6 +13,8 @@ class UserProfile extends StatelessWidget {
   final int followerCount;
   final int followingCount;
   final DateTime createdAt;
+  final bool showCard;
+  final bool showStats;
 
   const UserProfile({
     super.key,
@@ -27,9 +29,11 @@ class UserProfile extends StatelessWidget {
     required this.followerCount,
     required this.followingCount,
     required this.createdAt,
+    this.showCard = true,
+    this.showStats = true,
   });
 
-  factory UserProfile.fromFragment(GUserProfileFragment fragment, {Key? key}) {
+  factory UserProfile.fromFragment(GUserProfileFragment fragment, {Key? key, bool showCard = true, bool showStats = true}) {
     return UserProfile(
       key: key,
       login: fragment.login,
@@ -43,18 +47,16 @@ class UserProfile extends StatelessWidget {
       followerCount: fragment.followers.totalCount,
       followingCount: fragment.following.totalCount,
       createdAt: DateTime.parse(fragment.createdAt.value),
+      showCard: showCard,
+      showStats: showStats,
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      margin: const EdgeInsets.all(16),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
+    final content = Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
             Row(
               children: [
                 CircleAvatar(
@@ -147,26 +149,28 @@ class UserProfile extends StatelessWidget {
                 ],
               ),
             ],
-            const SizedBox(height: 20),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                _buildStat(
-                  context,
-                  'Repositories',
-                  repositoryCount,
-                  Icons.folder,
-                ),
-                _buildStat(context, 'Followers', followerCount, Icons.people),
-                _buildStat(
-                  context,
-                  'Following',
-                  followingCount,
-                  Icons.person_add,
-                ),
-              ],
-            ),
-            const SizedBox(height: 16),
+            if (showStats) ...[
+              const SizedBox(height: 20),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  _buildStat(
+                    context,
+                    'Repositories',
+                    repositoryCount,
+                    Icons.folder,
+                  ),
+                  _buildStat(context, 'Followers', followerCount, Icons.people),
+                  _buildStat(
+                    context,
+                    'Following',
+                    followingCount,
+                    Icons.person_add,
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
+            ],
             Row(
               children: [
                 Icon(Icons.calendar_today, size: 16, color: Colors.grey[600]),
@@ -178,9 +182,19 @@ class UserProfile extends StatelessWidget {
               ],
             ),
           ],
+        );
+
+    if (showCard) {
+      return Card(
+        margin: const EdgeInsets.all(16),
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: content,
         ),
-      ),
-    );
+      );
+    }
+
+    return content;
   }
 
   Widget _buildStat(

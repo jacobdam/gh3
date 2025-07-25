@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'user_details_viewmodel.dart';
 import '../../widgets/user_stats_row/user_stats_row.dart';
+import '../../widgets/user_profile/user_profile.dart';
 
 class UserDetailsScreen extends StatefulWidget {
   final UserDetailsViewModel viewModel;
@@ -163,46 +164,15 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
           ),
           SliverList(
             delegate: SliverChildListDelegate([
-              // Placeholder content - will be replaced in future tasks
               Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      'User Details',
-                      style: Theme.of(context).textTheme.headlineSmall,
-                    ),
+                    // User Profile information (bio, company, location)
+                    UserProfile.fromFragment(user, showCard: false, showStats: false),
                     const SizedBox(height: 16),
-                    if (user.bio != null && user.bio!.isNotEmpty) ...[
-                      Text(
-                        user.bio!,
-                        style: Theme.of(context).textTheme.bodyLarge,
-                      ),
-                      const SizedBox(height: 16),
-                    ],
-                    if (user.location != null && user.location!.isNotEmpty) ...[
-                      Row(
-                        children: [
-                          const Icon(Icons.location_on, size: 16),
-                          const SizedBox(width: 8),
-                          Text(user.location!),
-                        ],
-                      ),
-                      const SizedBox(height: 8),
-                    ],
-                    if (user.company != null && user.company!.isNotEmpty) ...[
-                      Row(
-                        children: [
-                          const Icon(Icons.business, size: 16),
-                          const SizedBox(width: 8),
-                          Text(user.company!),
-                        ],
-                      ),
-                      const SizedBox(height: 8),
-                    ],
-                    const SizedBox(height: 16),
-                    // Follower/Following stats
+                    // Follower/Following stats with interactive navigation
                     UserStatsRow.fromFragment(
                       user,
                       onFollowersPressed: () {
