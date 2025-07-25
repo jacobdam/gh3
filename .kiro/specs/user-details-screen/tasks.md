@@ -1,6 +1,6 @@
 # Implementation Plan
 
-- [ ] 1. Extend GraphQL queries for additional user data
+- [x] 1. Extend GraphQL queries for additional user data
   - Update `user_details_viewmodel.graphql` to include status, starred repositories, and organizations counts
   - Add status fragment to support user status messages and emoji
   - Regenerate GraphQL code using build_runner

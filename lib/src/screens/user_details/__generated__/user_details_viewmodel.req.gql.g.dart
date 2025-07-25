@@ -10,6 +10,8 @@ Serializer<GGetUserDetailsReq> _$gGetUserDetailsReqSerializer =
     _$GGetUserDetailsReqSerializer();
 Serializer<GGetUserRepositoriesReq> _$gGetUserRepositoriesReqSerializer =
     _$GGetUserRepositoriesReqSerializer();
+Serializer<GUserStatusFragmentReq> _$gUserStatusFragmentReqSerializer =
+    _$GUserStatusFragmentReqSerializer();
 
 class _$GGetUserDetailsReqSerializer
     implements StructuredSerializer<GGetUserDetailsReq> {
@@ -358,6 +360,111 @@ class _$GGetUserRepositoriesReqSerializer
                     specifiedType: const FullType(bool),
                   )!
                   as bool;
+          break;
+      }
+    }
+
+    return result.build();
+  }
+}
+
+class _$GUserStatusFragmentReqSerializer
+    implements StructuredSerializer<GUserStatusFragmentReq> {
+  @override
+  final Iterable<Type> types = const [
+    GUserStatusFragmentReq,
+    _$GUserStatusFragmentReq,
+  ];
+  @override
+  final String wireName = 'GUserStatusFragmentReq';
+
+  @override
+  Iterable<Object?> serialize(
+    Serializers serializers,
+    GUserStatusFragmentReq object, {
+    FullType specifiedType = FullType.unspecified,
+  }) {
+    final result = <Object?>[
+      'vars',
+      serializers.serialize(
+        object.vars,
+        specifiedType: const FullType(_i3.GUserStatusFragmentVars),
+      ),
+      'document',
+      serializers.serialize(
+        object.document,
+        specifiedType: const FullType(_i7.DocumentNode),
+      ),
+      'idFields',
+      serializers.serialize(
+        object.idFields,
+        specifiedType: const FullType(Map, const [
+          const FullType(String),
+          const FullType(dynamic),
+        ]),
+      ),
+    ];
+    Object? value;
+    value = object.fragmentName;
+    if (value != null) {
+      result
+        ..add('fragmentName')
+        ..add(
+          serializers.serialize(value, specifiedType: const FullType(String)),
+        );
+    }
+    return result;
+  }
+
+  @override
+  GUserStatusFragmentReq deserialize(
+    Serializers serializers,
+    Iterable<Object?> serialized, {
+    FullType specifiedType = FullType.unspecified,
+  }) {
+    final result = GUserStatusFragmentReqBuilder();
+
+    final iterator = serialized.iterator;
+    while (iterator.moveNext()) {
+      final key = iterator.current! as String;
+      iterator.moveNext();
+      final Object? value = iterator.current;
+      switch (key) {
+        case 'vars':
+          result.vars.replace(
+            serializers.deserialize(
+                  value,
+                  specifiedType: const FullType(_i3.GUserStatusFragmentVars),
+                )!
+                as _i3.GUserStatusFragmentVars,
+          );
+          break;
+        case 'document':
+          result.document =
+              serializers.deserialize(
+                    value,
+                    specifiedType: const FullType(_i7.DocumentNode),
+                  )!
+                  as _i7.DocumentNode;
+          break;
+        case 'fragmentName':
+          result.fragmentName =
+              serializers.deserialize(
+                    value,
+                    specifiedType: const FullType(String),
+                  )
+                  as String?;
+          break;
+        case 'idFields':
+          result.idFields =
+              serializers.deserialize(
+                    value,
+                    specifiedType: const FullType(Map, const [
+                      const FullType(String),
+                      const FullType(dynamic),
+                    ]),
+                  )!
+                  as Map<String, dynamic>;
           break;
       }
     }
@@ -859,6 +966,155 @@ class GGetUserRepositoriesReqBuilder
       } catch (e) {
         throw BuiltValueNestedFieldError(
           r'GGetUserRepositoriesReq',
+          _$failedField,
+          e.toString(),
+        );
+      }
+      rethrow;
+    }
+    replace(_$result);
+    return _$result;
+  }
+}
+
+class _$GUserStatusFragmentReq extends GUserStatusFragmentReq {
+  @override
+  final _i3.GUserStatusFragmentVars vars;
+  @override
+  final _i7.DocumentNode document;
+  @override
+  final String? fragmentName;
+  @override
+  final Map<String, dynamic> idFields;
+
+  factory _$GUserStatusFragmentReq([
+    void Function(GUserStatusFragmentReqBuilder)? updates,
+  ]) => (GUserStatusFragmentReqBuilder()..update(updates))._build();
+
+  _$GUserStatusFragmentReq._({
+    required this.vars,
+    required this.document,
+    this.fragmentName,
+    required this.idFields,
+  }) : super._();
+  @override
+  GUserStatusFragmentReq rebuild(
+    void Function(GUserStatusFragmentReqBuilder) updates,
+  ) => (toBuilder()..update(updates)).build();
+
+  @override
+  GUserStatusFragmentReqBuilder toBuilder() =>
+      GUserStatusFragmentReqBuilder()..replace(this);
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(other, this)) return true;
+    return other is GUserStatusFragmentReq &&
+        vars == other.vars &&
+        document == other.document &&
+        fragmentName == other.fragmentName &&
+        idFields == other.idFields;
+  }
+
+  @override
+  int get hashCode {
+    var _$hash = 0;
+    _$hash = $jc(_$hash, vars.hashCode);
+    _$hash = $jc(_$hash, document.hashCode);
+    _$hash = $jc(_$hash, fragmentName.hashCode);
+    _$hash = $jc(_$hash, idFields.hashCode);
+    _$hash = $jf(_$hash);
+    return _$hash;
+  }
+
+  @override
+  String toString() {
+    return (newBuiltValueToStringHelper(r'GUserStatusFragmentReq')
+          ..add('vars', vars)
+          ..add('document', document)
+          ..add('fragmentName', fragmentName)
+          ..add('idFields', idFields))
+        .toString();
+  }
+}
+
+class GUserStatusFragmentReqBuilder
+    implements Builder<GUserStatusFragmentReq, GUserStatusFragmentReqBuilder> {
+  _$GUserStatusFragmentReq? _$v;
+
+  _i3.GUserStatusFragmentVarsBuilder? _vars;
+  _i3.GUserStatusFragmentVarsBuilder get vars =>
+      _$this._vars ??= _i3.GUserStatusFragmentVarsBuilder();
+  set vars(_i3.GUserStatusFragmentVarsBuilder? vars) => _$this._vars = vars;
+
+  _i7.DocumentNode? _document;
+  _i7.DocumentNode? get document => _$this._document;
+  set document(_i7.DocumentNode? document) => _$this._document = document;
+
+  String? _fragmentName;
+  String? get fragmentName => _$this._fragmentName;
+  set fragmentName(String? fragmentName) => _$this._fragmentName = fragmentName;
+
+  Map<String, dynamic>? _idFields;
+  Map<String, dynamic>? get idFields => _$this._idFields;
+  set idFields(Map<String, dynamic>? idFields) => _$this._idFields = idFields;
+
+  GUserStatusFragmentReqBuilder() {
+    GUserStatusFragmentReq._initializeBuilder(this);
+  }
+
+  GUserStatusFragmentReqBuilder get _$this {
+    final $v = _$v;
+    if ($v != null) {
+      _vars = $v.vars.toBuilder();
+      _document = $v.document;
+      _fragmentName = $v.fragmentName;
+      _idFields = $v.idFields;
+      _$v = null;
+    }
+    return this;
+  }
+
+  @override
+  void replace(GUserStatusFragmentReq other) {
+    _$v = other as _$GUserStatusFragmentReq;
+  }
+
+  @override
+  void update(void Function(GUserStatusFragmentReqBuilder)? updates) {
+    if (updates != null) updates(this);
+  }
+
+  @override
+  GUserStatusFragmentReq build() => _build();
+
+  _$GUserStatusFragmentReq _build() {
+    _$GUserStatusFragmentReq _$result;
+    try {
+      _$result =
+          _$v ??
+          _$GUserStatusFragmentReq._(
+            vars: vars.build(),
+            document: BuiltValueNullFieldError.checkNotNull(
+              document,
+              r'GUserStatusFragmentReq',
+              'document',
+            ),
+            fragmentName: fragmentName,
+            idFields: BuiltValueNullFieldError.checkNotNull(
+              idFields,
+              r'GUserStatusFragmentReq',
+              'idFields',
+            ),
+          );
+    } catch (_) {
+      late String _$failedField;
+      try {
+        _$failedField = 'vars';
+        vars.build();
+      } catch (e) {
+        throw BuiltValueNestedFieldError(
+          r'GUserStatusFragmentReq',
           _$failedField,
           e.toString(),
         );

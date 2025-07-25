@@ -12,20 +12,24 @@ abstract class GGetUserDetailsVars
     implements Built<GGetUserDetailsVars, GGetUserDetailsVarsBuilder> {
   GGetUserDetailsVars._();
 
-  factory GGetUserDetailsVars([
-    void Function(GGetUserDetailsVarsBuilder b) updates,
-  ]) = _$GGetUserDetailsVars;
+  factory GGetUserDetailsVars(
+          [void Function(GGetUserDetailsVarsBuilder b) updates]) =
+      _$GGetUserDetailsVars;
 
   String get login;
   static Serializer<GGetUserDetailsVars> get serializer =>
       _$gGetUserDetailsVarsSerializer;
 
-  Map<String, dynamic> toJson() =>
-      (_i1.serializers.serializeWith(GGetUserDetailsVars.serializer, this)
-          as Map<String, dynamic>);
+  Map<String, dynamic> toJson() => (_i1.serializers.serializeWith(
+        GGetUserDetailsVars.serializer,
+        this,
+      ) as Map<String, dynamic>);
 
   static GGetUserDetailsVars? fromJson(Map<String, dynamic> json) =>
-      _i1.serializers.deserializeWith(GGetUserDetailsVars.serializer, json);
+      _i1.serializers.deserializeWith(
+        GGetUserDetailsVars.serializer,
+        json,
+      );
 }
 
 abstract class GGetUserRepositoriesVars
@@ -33,9 +37,9 @@ abstract class GGetUserRepositoriesVars
         Built<GGetUserRepositoriesVars, GGetUserRepositoriesVarsBuilder> {
   GGetUserRepositoriesVars._();
 
-  factory GGetUserRepositoriesVars([
-    void Function(GGetUserRepositoriesVarsBuilder b) updates,
-  ]) = _$GGetUserRepositoriesVars;
+  factory GGetUserRepositoriesVars(
+          [void Function(GGetUserRepositoriesVarsBuilder b) updates]) =
+      _$GGetUserRepositoriesVars;
 
   String get login;
   int get first;
@@ -43,11 +47,37 @@ abstract class GGetUserRepositoriesVars
   static Serializer<GGetUserRepositoriesVars> get serializer =>
       _$gGetUserRepositoriesVarsSerializer;
 
-  Map<String, dynamic> toJson() =>
-      (_i1.serializers.serializeWith(GGetUserRepositoriesVars.serializer, this)
-          as Map<String, dynamic>);
+  Map<String, dynamic> toJson() => (_i1.serializers.serializeWith(
+        GGetUserRepositoriesVars.serializer,
+        this,
+      ) as Map<String, dynamic>);
 
-  static GGetUserRepositoriesVars? fromJson(Map<String, dynamic> json) => _i1
-      .serializers
-      .deserializeWith(GGetUserRepositoriesVars.serializer, json);
+  static GGetUserRepositoriesVars? fromJson(Map<String, dynamic> json) =>
+      _i1.serializers.deserializeWith(
+        GGetUserRepositoriesVars.serializer,
+        json,
+      );
+}
+
+abstract class GUserStatusFragmentVars
+    implements Built<GUserStatusFragmentVars, GUserStatusFragmentVarsBuilder> {
+  GUserStatusFragmentVars._();
+
+  factory GUserStatusFragmentVars(
+          [void Function(GUserStatusFragmentVarsBuilder b) updates]) =
+      _$GUserStatusFragmentVars;
+
+  static Serializer<GUserStatusFragmentVars> get serializer =>
+      _$gUserStatusFragmentVarsSerializer;
+
+  Map<String, dynamic> toJson() => (_i1.serializers.serializeWith(
+        GUserStatusFragmentVars.serializer,
+        this,
+      ) as Map<String, dynamic>);
+
+  static GUserStatusFragmentVars? fromJson(Map<String, dynamic> json) =>
+      _i1.serializers.deserializeWith(
+        GUserStatusFragmentVars.serializer,
+        json,
+      );
 }

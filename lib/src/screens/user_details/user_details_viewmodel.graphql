@@ -1,9 +1,24 @@
 #import "../../widgets/user_profile/user_profile.graphql"
 #import "../../widgets/repository_card/repository_card.graphql"
 
+fragment UserStatusFragment on User {
+  status {
+    message
+    emoji
+    createdAt
+  }
+}
+
 query GetUserDetails($login: String!) {
   user(login: $login) {
     ...UserProfileFragment
+    ...UserStatusFragment
+    starredRepositories {
+      totalCount
+    }
+    organizations {
+      totalCount
+    }
   }
 }
 
