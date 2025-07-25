@@ -113,6 +113,17 @@ When completing tasks, update the markdown checkboxes:
 - Each task/sub-task ends with `_Requirements: X, Y, Z_` on its own line
 - Use proper checkbox format: `- [x]` completed, `- [ ]` pending, `- [-]` not applicable
 
+**Task Status Management:**
+- **Mark completed immediately**: Update `- [ ]` to `- [x]` as soon as task is finished and tested
+- **Real-time updates**: Don't batch status changes - update during development
+- **Completion criteria**: Only mark `[x]` when ALL sub-requirements are satisfied:
+  - Code implementation complete
+  - Tests written and passing
+  - Static analysis passes
+  - Requirements fully addressed
+- **Version control**: Commit `tasks.md` changes to track development progress
+- **Sub-task tracking**: Mark individual sub-tasks complete as they're finished, not just main tasks
+
 ### Requirements.md Formatting Rules
 **CRITICAL**: All `requirements.md` files must follow this exact format:
 
