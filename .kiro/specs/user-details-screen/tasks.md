@@ -6,13 +6,13 @@
   - Regenerate GraphQL code using build_runner
   - _Requirements: 1.5, 1.6, 2.1, 2.3, 2.5_
 
-- [ ] 2. Update UserDetailsViewModel with enhanced data access
+- [x] 2. Update UserDetailsViewModel with enhanced data access
   - Add getters for status message, emoji, starred count, and organizations count
   - Extend existing user data exposure to include new GraphQL fields
   - Ensure proper null handling for optional status data
   - _Requirements: 1.5, 1.6, 2.1, 2.3, 2.5_
 
-- [ ] 3. Create UserStatusCard component
+- [x] 3. Create UserStatusCard component
   - Implement widget with explicit fields for status message and emoji
   - Add factory constructor `fromFragment()` for GraphQL integration
   - Handle empty/null status states gracefully
