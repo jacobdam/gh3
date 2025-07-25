@@ -40,6 +40,5 @@ class GraphQLValidationError extends GraphQLError {
 }
 
 class GraphQLOfflineError extends GraphQLError {
-  const GraphQLOfflineError(super.message)
-    : super(code: 'OFFLINE_ERROR');
+  const GraphQLOfflineError(super.message) : super(code: 'OFFLINE_ERROR');
 }
