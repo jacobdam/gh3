@@ -6,6 +6,7 @@ import 'package:built_collection/built_collection.dart';
 import 'package:gh3/src/screens/user_repositories/user_repositories_viewmodel.dart';
 import 'package:gh3/src/screens/user_repositories/__generated__/user_repositories_viewmodel.data.gql.dart';
 import 'package:gh3/src/screens/user_repositories/__generated__/user_repositories_viewmodel.req.gql.dart';
+import 'package:gh3/src/screens/user_repositories/__generated__/user_repositories_viewmodel.var.gql.dart';
 import 'package:gql_exec/gql_exec.dart';
 
 import 'user_repositories_viewmodel_test.mocks.dart';
@@ -56,14 +57,23 @@ void main() {
       test('should handle loading state correctly', () async {
         // Arrange
         final mockResponse = _createSuccessResponse([], false, null, 0);
-        when(
-          mockClient.request(any),
-        ).thenAnswer((_) => Stream.value(mockResponse).cast());
+        when(mockClient.request(any)).thenAnswer(
+          (_) =>
+              Stream<
+                OperationResponse<
+                  GGetUserRepositoriesData,
+                  GGetUserRepositoriesVars
+                >
+              >.value(mockResponse),
+        );
 
-        // Act
+        // Act & Assert initial state
+        expect(viewModel.isLoading, false);
+
+        // Start loading
         final loadingFuture = viewModel.loadRepositories();
 
-        // Assert loading state - Note: loading state is set synchronously
+        // Assert loading state is set immediately
         expect(viewModel.isLoading, true);
         expect(viewModel.error, isNull);
 
@@ -76,9 +86,15 @@ void main() {
       test('should handle GraphQL errors', () async {
         // Arrange
         final errorResponse = _createErrorResponse('User not found');
-        when(
-          mockClient.request(any),
-        ).thenAnswer((_) => Stream.value(errorResponse).cast());
+        when(mockClient.request(any)).thenAnswer(
+          (_) =>
+              Stream<
+                OperationResponse<
+                  GGetUserRepositoriesData,
+                  GGetUserRepositoriesVars
+                >
+              >.value(errorResponse),
+        );
 
         // Act
         await viewModel.loadRepositories();
@@ -91,9 +107,15 @@ void main() {
 
       test('should handle network exceptions', () async {
         // Arrange
-        when(
-          mockClient.request(any),
-        ).thenAnswer((_) => Stream.error(Exception('Network error')));
+        when(mockClient.request(any)).thenAnswer(
+          (_) =>
+              Stream<
+                OperationResponse<
+                  GGetUserRepositoriesData,
+                  GGetUserRepositoriesVars
+                >
+              >.error(Exception('Network error')),
+        );
 
         // Act
         await viewModel.loadRepositories();
@@ -107,9 +129,15 @@ void main() {
       test('should handle user not found', () async {
         // Arrange
         final mockResponse = _createUserNotFoundResponse();
-        when(
-          mockClient.request(any),
-        ).thenAnswer((_) => Stream.value(mockResponse).cast());
+        when(mockClient.request(any)).thenAnswer(
+          (_) =>
+              Stream<
+                OperationResponse<
+                  GGetUserRepositoriesData,
+                  GGetUserRepositoriesVars
+                >
+              >.value(mockResponse),
+        );
 
         // Act
         await viewModel.loadRepositories();
@@ -125,16 +153,28 @@ void main() {
       test('should handle load more state correctly', () async {
         // Arrange - Initial load
         final initialResponse = _createSuccessResponse([], true, 'cursor1', 1);
-        when(
-          mockClient.request(any),
-        ).thenAnswer((_) => Stream.value(initialResponse).cast());
+        when(mockClient.request(any)).thenAnswer(
+          (_) =>
+              Stream<
+                OperationResponse<
+                  GGetUserRepositoriesData,
+                  GGetUserRepositoriesVars
+                >
+              >.value(initialResponse),
+        );
         await viewModel.loadRepositories();
 
         // Arrange - Load more
         final moreResponse = _createSuccessResponse([], false, null, 2);
-        when(
-          mockClient.request(any),
-        ).thenAnswer((_) => Stream.value(moreResponse).cast());
+        when(mockClient.request(any)).thenAnswer(
+          (_) =>
+              Stream<
+                OperationResponse<
+                  GGetUserRepositoriesData,
+                  GGetUserRepositoriesVars
+                >
+              >.value(moreResponse),
+        );
 
         // Act
         final loadMoreFuture = viewModel.loadMoreRepositories();
@@ -151,17 +191,29 @@ void main() {
       test('should prevent race conditions in load more', () async {
         // Arrange - Initial load
         final initialResponse = _createSuccessResponse([], true, 'cursor1', 1);
-        when(
-          mockClient.request(any),
-        ).thenAnswer((_) => Stream.value(initialResponse).cast());
+        when(mockClient.request(any)).thenAnswer(
+          (_) =>
+              Stream<
+                OperationResponse<
+                  GGetUserRepositoriesData,
+                  GGetUserRepositoriesVars
+                >
+              >.value(initialResponse),
+        );
         await viewModel.loadRepositories();
 
         // Arrange - Load more with delay
         final moreResponse = _createSuccessResponse([], false, null, 2);
         when(mockClient.request(any)).thenAnswer(
-          (_) => Stream.fromFuture(
-            Future.delayed(Duration(milliseconds: 100), () => moreResponse),
-          ).cast(),
+          (_) =>
+              Stream<
+                OperationResponse<
+                  GGetUserRepositoriesData,
+                  GGetUserRepositoriesVars
+                >
+              >.fromFuture(
+                Future.delayed(Duration(milliseconds: 100), () => moreResponse),
+              ),
         );
 
         // Act - Call load more multiple times simultaneously
@@ -185,15 +237,24 @@ void main() {
           null,
           1,
         ); // hasNextPage = false
-        when(
-          mockClient.request(any),
-        ).thenAnswer((_) => Stream.value(response).cast());
+        when(mockClient.request(any)).thenAnswer(
+          (_) =>
+              Stream<
+                OperationResponse<
+                  GGetUserRepositoriesData,
+                  GGetUserRepositoriesVars
+                >
+              >.value(response),
+        );
         await viewModel.loadRepositories();
+
+        // Verify canLoadMore is false after loading
+        expect(viewModel.canLoadMore, false);
 
         // Reset mock to track additional calls
         reset(mockClient);
 
-        // Act
+        // Act - try to load more when canLoadMore is false
         await viewModel.loadMoreRepositories();
 
         // Assert - No additional calls should have been made
@@ -204,15 +265,27 @@ void main() {
       test('should handle load more errors', () async {
         // Arrange - Initial load
         final initialResponse = _createSuccessResponse([], true, 'cursor1', 1);
-        when(
-          mockClient.request(any),
-        ).thenAnswer((_) => Stream.value(initialResponse).cast());
+        when(mockClient.request(any)).thenAnswer(
+          (_) =>
+              Stream<
+                OperationResponse<
+                  GGetUserRepositoriesData,
+                  GGetUserRepositoriesVars
+                >
+              >.value(initialResponse),
+        );
         await viewModel.loadRepositories();
 
         // Arrange - Load more error
-        when(
-          mockClient.request(any),
-        ).thenAnswer((_) => Stream.error(Exception('Network error')));
+        when(mockClient.request(any)).thenAnswer(
+          (_) =>
+              Stream<
+                OperationResponse<
+                  GGetUserRepositoriesData,
+                  GGetUserRepositoriesVars
+                >
+              >.error(Exception('Network error')),
+        );
 
         // Act
         await viewModel.loadMoreRepositories();
@@ -225,16 +298,28 @@ void main() {
       test('should handle scroll near end', () async {
         // Arrange - Initial load
         final response = _createSuccessResponse([], true, 'cursor1', 1);
-        when(
-          mockClient.request(any),
-        ).thenAnswer((_) => Stream.value(response).cast());
+        when(mockClient.request(any)).thenAnswer(
+          (_) =>
+              Stream<
+                OperationResponse<
+                  GGetUserRepositoriesData,
+                  GGetUserRepositoriesVars
+                >
+              >.value(response),
+        );
         await viewModel.loadRepositories();
 
         // Arrange - Load more
         final moreResponse = _createSuccessResponse([], false, null, 2);
-        when(
-          mockClient.request(any),
-        ).thenAnswer((_) => Stream.value(moreResponse).cast());
+        when(mockClient.request(any)).thenAnswer(
+          (_) =>
+              Stream<
+                OperationResponse<
+                  GGetUserRepositoriesData,
+                  GGetUserRepositoriesVars
+                >
+              >.value(moreResponse),
+        );
 
         // Act
         viewModel.onScrollNearEnd();
@@ -273,9 +358,15 @@ void main() {
       test('should update type filter and trigger reload', () async {
         // Arrange
         final response = _createSuccessResponse([], false, null, 0);
-        when(
-          mockClient.request(any),
-        ).thenAnswer((_) => Stream.value(response).cast());
+        when(mockClient.request(any)).thenAnswer(
+          (_) =>
+              Stream<
+                OperationResponse<
+                  GGetUserRepositoriesData,
+                  GGetUserRepositoriesVars
+                >
+              >.value(response),
+        );
 
         // Act
         viewModel.updateTypeFilter(RepositoryType.private);
@@ -322,9 +413,15 @@ void main() {
       test('should update sort option and trigger reload', () async {
         // Arrange
         final response = _createSuccessResponse([], false, null, 0);
-        when(
-          mockClient.request(any),
-        ).thenAnswer((_) => Stream.value(response).cast());
+        when(mockClient.request(any)).thenAnswer(
+          (_) =>
+              Stream<
+                OperationResponse<
+                  GGetUserRepositoriesData,
+                  GGetUserRepositoriesVars
+                >
+              >.value(response),
+        );
 
         // Act
         viewModel.updateSortOption(RepositorySortOption.nameAscending);
@@ -349,9 +446,15 @@ void main() {
       test('should clear all filters', () async {
         // Arrange
         final response = _createSuccessResponse([], false, null, 0);
-        when(
-          mockClient.request(any),
-        ).thenAnswer((_) => Stream.value(response).cast());
+        when(mockClient.request(any)).thenAnswer(
+          (_) =>
+              Stream<
+                OperationResponse<
+                  GGetUserRepositoriesData,
+                  GGetUserRepositoriesVars
+                >
+              >.value(response),
+        );
 
         // Apply filters
         viewModel.updateSearchQuery('flutter');
@@ -378,24 +481,40 @@ void main() {
       test('should refresh repositories', () async {
         // Arrange - Initial load
         final initialResponse = _createSuccessResponse([], false, null, 1);
-        when(
-          mockClient.request(any),
-        ).thenAnswer((_) => Stream.value(initialResponse).cast());
+        when(mockClient.request(any)).thenAnswer(
+          (_) =>
+              Stream<
+                OperationResponse<
+                  GGetUserRepositoriesData,
+                  GGetUserRepositoriesVars
+                >
+              >.value(initialResponse),
+        );
         await viewModel.loadRepositories();
 
         // Arrange - Refresh with new data
         final refreshResponse = _createSuccessResponse([], false, null, 2);
-        when(
-          mockClient.request(any),
-        ).thenAnswer((_) => Stream.value(refreshResponse).cast());
+        when(mockClient.request(any)).thenAnswer(
+          (_) =>
+              Stream<
+                OperationResponse<
+                  GGetUserRepositoriesData,
+                  GGetUserRepositoriesVars
+                >
+              >.value(refreshResponse),
+        );
 
         // Act
         await viewModel.refreshRepositories();
 
-        // Assert
+        // Assert - After refresh, should have updated count and reset pagination state
         expect(viewModel.totalCount, 2);
         expect(viewModel.hasNextPage, false);
         expect(viewModel.nextCursor, isNull);
+        expect(
+          viewModel.repositories,
+          isEmpty,
+        ); // Both responses have empty repos
         verify(mockClient.request(any)).called(2); // Initial load + refresh
       });
     });
@@ -404,16 +523,28 @@ void main() {
       test('should handle GraphQL errors in load more', () async {
         // Arrange - Initial load
         final response = _createSuccessResponse([], true, 'cursor1', 1);
-        when(
-          mockClient.request(any),
-        ).thenAnswer((_) => Stream.value(response).cast());
+        when(mockClient.request(any)).thenAnswer(
+          (_) =>
+              Stream<
+                OperationResponse<
+                  GGetUserRepositoriesData,
+                  GGetUserRepositoriesVars
+                >
+              >.value(response),
+        );
         await viewModel.loadRepositories();
 
         // Arrange - Load more with GraphQL error
         final errorResponse = _createErrorResponse('Rate limit exceeded');
-        when(
-          mockClient.request(any),
-        ).thenAnswer((_) => Stream.value(errorResponse).cast());
+        when(mockClient.request(any)).thenAnswer(
+          (_) =>
+              Stream<
+                OperationResponse<
+                  GGetUserRepositoriesData,
+                  GGetUserRepositoriesVars
+                >
+              >.value(errorResponse),
+        );
 
         // Act
         await viewModel.loadMoreRepositories();
@@ -426,9 +557,15 @@ void main() {
       test('should handle null data in response', () async {
         // Arrange
         final nullResponse = _createNullDataResponse();
-        when(
-          mockClient.request(any),
-        ).thenAnswer((_) => Stream.value(nullResponse).cast());
+        when(mockClient.request(any)).thenAnswer(
+          (_) =>
+              Stream<
+                OperationResponse<
+                  GGetUserRepositoriesData,
+                  GGetUserRepositoriesVars
+                >
+              >.value(nullResponse),
+        );
 
         // Act
         await viewModel.loadRepositories();
@@ -443,8 +580,7 @@ void main() {
       test('should cancel ongoing operations on dispose', () {
         // Arrange
         when(mockClient.request(any)).thenAnswer(
-          (_) =>
-              Stream.value(_createSuccessResponse([], false, null, 0)).cast(),
+          (_) => Stream.value(_createSuccessResponse([], false, null, 0)),
         );
 
         // Act
@@ -466,9 +602,18 @@ void main() {
 
         // Set up mock response
         final response = _createSuccessResponse([], false, null, 0);
-        when(
-          mockClient.request(any),
-        ).thenAnswer((_) => Stream.value(response).cast());
+        when(mockClient.request(any)).thenAnswer(
+          (_) =>
+              Stream<
+                OperationResponse<
+                  GGetUserRepositoriesData,
+                  GGetUserRepositoriesVars
+                >
+              >.value(response),
+        );
+
+        // Before loading, canLoadMore should be true
+        expect(viewModel.canLoadMore, true);
 
         // Simulate loading state
         final loadingFuture = viewModel.loadRepositories();
@@ -489,13 +634,14 @@ void main() {
 }
 
 // Helper functions for creating mock responses
-OperationResponse<GGetUserRepositoriesData, Object> _createSuccessResponse(
+OperationResponse<GGetUserRepositoriesData, GGetUserRepositoriesVars>
+_createSuccessResponse(
   List<dynamic> repositories,
   bool hasNextPage,
   String? endCursor,
   int totalCount,
 ) {
-  return OperationResponse<GGetUserRepositoriesData, Object>(
+  return OperationResponse<GGetUserRepositoriesData, GGetUserRepositoriesVars>(
     operationRequest: GGetUserRepositoriesReq(
       (b) => b
         ..vars.login = 'testuser'
@@ -524,10 +670,9 @@ OperationResponse<GGetUserRepositoriesData, Object> _createSuccessResponse(
   );
 }
 
-OperationResponse<GGetUserRepositoriesData, Object> _createErrorResponse(
-  String message,
-) {
-  return OperationResponse<GGetUserRepositoriesData, Object>(
+OperationResponse<GGetUserRepositoriesData, GGetUserRepositoriesVars>
+_createErrorResponse(String message) {
+  return OperationResponse<GGetUserRepositoriesData, GGetUserRepositoriesVars>(
     operationRequest: GGetUserRepositoriesReq(
       (b) => b
         ..vars.login = 'testuser'
@@ -538,9 +683,9 @@ OperationResponse<GGetUserRepositoriesData, Object> _createErrorResponse(
   );
 }
 
-OperationResponse<GGetUserRepositoriesData, Object>
+OperationResponse<GGetUserRepositoriesData, GGetUserRepositoriesVars>
 _createUserNotFoundResponse() {
-  return OperationResponse<GGetUserRepositoriesData, Object>(
+  return OperationResponse<GGetUserRepositoriesData, GGetUserRepositoriesVars>(
     operationRequest: GGetUserRepositoriesReq(
       (b) => b
         ..vars.login = 'testuser'
@@ -554,8 +699,9 @@ _createUserNotFoundResponse() {
   );
 }
 
-OperationResponse<GGetUserRepositoriesData, Object> _createNullDataResponse() {
-  return OperationResponse<GGetUserRepositoriesData, Object>(
+OperationResponse<GGetUserRepositoriesData, GGetUserRepositoriesVars>
+_createNullDataResponse() {
+  return OperationResponse<GGetUserRepositoriesData, GGetUserRepositoriesVars>(
     operationRequest: GGetUserRepositoriesReq(
       (b) => b
         ..vars.login = 'testuser'
