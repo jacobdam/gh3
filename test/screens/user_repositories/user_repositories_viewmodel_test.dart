@@ -6,9 +6,7 @@ import 'package:built_collection/built_collection.dart';
 import 'package:gh3/src/screens/user_repositories/user_repositories_viewmodel.dart';
 import 'package:gh3/src/screens/user_repositories/__generated__/user_repositories_viewmodel.data.gql.dart';
 import 'package:gh3/src/screens/user_repositories/__generated__/user_repositories_viewmodel.req.gql.dart';
-import 'package:gh3/__generated__/github_schema.schema.gql.dart';
 import 'package:gql_exec/gql_exec.dart';
-import 'package:ferry_exec/ferry_exec.dart';
 
 import 'user_repositories_viewmodel_test.mocks.dart';
 

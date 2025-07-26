@@ -26,6 +26,7 @@ dependencies:
   gql_exec: ^1.0.0
   gql: ^1.0.0
   gql_code_builder_serializers: ^0.1.0
+  built_collection: ^5.1.1
   
 dev_dependencies:
   flutter_test:
