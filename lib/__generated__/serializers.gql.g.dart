@@ -233,12 +233,32 @@ Serializers _$serializers =
           ..add(GGetUserRepositoriesData_user_repositories.serializer)
           ..add(GGetUserRepositoriesData_user_repositories_nodes.serializer)
           ..add(
+            GGetUserRepositoriesData_user_repositories_nodes_owner.serializer,
+          )
+          ..add(
             GGetUserRepositoriesData_user_repositories_nodes_primaryLanguage
                 .serializer,
           )
           ..add(GGetUserRepositoriesData_user_repositories_pageInfo.serializer)
           ..add(GGetUserRepositoriesReq.serializer)
           ..add(GGetUserRepositoriesVars.serializer)
+          ..add(GGetViewerRepositoriesData.serializer)
+          ..add(GGetViewerRepositoriesData_viewer.serializer)
+          ..add(GGetViewerRepositoriesData_viewer_repositories.serializer)
+          ..add(GGetViewerRepositoriesData_viewer_repositories_nodes.serializer)
+          ..add(
+            GGetViewerRepositoriesData_viewer_repositories_nodes_owner
+                .serializer,
+          )
+          ..add(
+            GGetViewerRepositoriesData_viewer_repositories_nodes_primaryLanguage
+                .serializer,
+          )
+          ..add(
+            GGetViewerRepositoriesData_viewer_repositories_pageInfo.serializer,
+          )
+          ..add(GGetViewerRepositoriesReq.serializer)
+          ..add(GGetViewerRepositoriesVars.serializer)
           ..add(GGistOrder.serializer)
           ..add(GGistOrderField.serializer)
           ..add(GGistPrivacy.serializer)
@@ -684,6 +704,11 @@ Serializers _$serializers =
           ..add(GUserProfileFragmentData_repositories.serializer)
           ..add(GUserProfileFragmentReq.serializer)
           ..add(GUserProfileFragmentVars.serializer)
+          ..add(GUserRepositoriesFragmentData.serializer)
+          ..add(GUserRepositoriesFragmentData_owner.serializer)
+          ..add(GUserRepositoriesFragmentData_primaryLanguage.serializer)
+          ..add(GUserRepositoriesFragmentReq.serializer)
+          ..add(GUserRepositoriesFragmentVars.serializer)
           ..add(GUserStatusFragmentData.serializer)
           ..add(GUserStatusFragmentData_status.serializer)
           ..add(GUserStatusFragmentReq.serializer)
@@ -794,6 +819,12 @@ Serializers _$serializers =
           ..addBuilderFactory(
             const FullType(BuiltList, const [const FullType(GRefUpdate)]),
             () => ListBuilder<GRefUpdate>(),
+          )
+          ..addBuilderFactory(
+            const FullType(BuiltList, const [
+              const FullType(GRepositoryAffiliation),
+            ]),
+            () => ListBuilder<GRepositoryAffiliation>(),
           )
           ..addBuilderFactory(
             const FullType(BuiltList, const [
@@ -1080,6 +1111,17 @@ Serializers _$serializers =
             () =>
                 ListBuilder<
                   GGetUserRepositoriesData_user_repositories_nodes?
+                >(),
+          )
+          ..addBuilderFactory(
+            const FullType(BuiltList, const [
+              const FullType.nullable(
+                GGetViewerRepositoriesData_viewer_repositories_nodes,
+              ),
+            ]),
+            () =>
+                ListBuilder<
+                  GGetViewerRepositoriesData_viewer_repositories_nodes?
                 >(),
           ))
         .build();

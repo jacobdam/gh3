@@ -32,6 +32,8 @@ import 'package:gh3/src/screens/user_organizations/user_organizations_route_prov
     as _i590;
 import 'package:gh3/src/screens/user_repositories/user_repositories_route_provider.dart'
     as _i208;
+import 'package:gh3/src/screens/user_repositories/user_repositories_viewmodel_factory.dart'
+    as _i676;
 import 'package:gh3/src/screens/user_starred/user_starred_route_provider.dart'
     as _i384;
 import 'package:gh3/src/services/auth_service.dart' as _i336;
@@ -72,10 +74,6 @@ extension GetItInjectableX on _i174.GetIt {
       () => _i590.UserOrganizationsRouteProvider(),
       instanceName: 'UserOrganizationsRouteProvider',
     );
-    gh.singleton<_i518.RouteProvider>(
-      () => _i208.UserRepositoriesRouteProvider(),
-      instanceName: 'UserRepositoriesRouteProvider',
-    );
     gh.factory<_i1035.GithubNonRecoverableException>(
       () => _i1035.GithubNonRecoverableException(gh<String>(), gh<String>()),
     );
@@ -110,6 +108,9 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i627.UserDetailsViewModelFactory>(
       () => _i627.UserDetailsViewModelFactory(gh<_i25.Client>()),
     );
+    gh.factory<_i676.UserRepositoriesViewModelFactory>(
+      () => _i676.UserRepositoriesViewModelFactory(gh<_i25.Client>()),
+    );
     gh.factory<_i1013.HomeViewModelFactory>(
       () => _i1013.HomeViewModelFactory(gh<_i25.Client>()),
     );
@@ -132,6 +133,12 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i627.UserDetailsViewModelFactory>(),
       ),
       instanceName: 'UserDetailsRouteProvider',
+    );
+    gh.singleton<_i518.RouteProvider>(
+      () => _i208.UserRepositoriesRouteProvider(
+        gh<_i676.UserRepositoriesViewModelFactory>(),
+      ),
+      instanceName: 'UserRepositoriesRouteProvider',
     );
     gh.singleton<_i518.RouteProvider>(
       () => _i468.LoginRouteProvider(gh<_i76.LoginViewModelFactory>()),

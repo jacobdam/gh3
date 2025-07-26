@@ -640,6 +640,23 @@ import 'package:gh3/src/screens/user_details/__generated__/user_details_viewmode
     show GGetUserDetailsReq, GGetUserRepositoriesReq, GUserStatusFragmentReq;
 import 'package:gh3/src/screens/user_details/__generated__/user_details_viewmodel.var.gql.dart'
     show GGetUserDetailsVars, GGetUserRepositoriesVars, GUserStatusFragmentVars;
+import 'package:gh3/src/screens/user_repositories/__generated__/user_repositories_viewmodel.data.gql.dart'
+    show
+        GGetUserRepositoriesData_user_repositories_nodes_owner,
+        GGetViewerRepositoriesData,
+        GGetViewerRepositoriesData_viewer,
+        GGetViewerRepositoriesData_viewer_repositories,
+        GGetViewerRepositoriesData_viewer_repositories_nodes,
+        GGetViewerRepositoriesData_viewer_repositories_nodes_owner,
+        GGetViewerRepositoriesData_viewer_repositories_nodes_primaryLanguage,
+        GGetViewerRepositoriesData_viewer_repositories_pageInfo,
+        GUserRepositoriesFragmentData,
+        GUserRepositoriesFragmentData_owner,
+        GUserRepositoriesFragmentData_primaryLanguage;
+import 'package:gh3/src/screens/user_repositories/__generated__/user_repositories_viewmodel.req.gql.dart'
+    show GGetViewerRepositoriesReq, GUserRepositoriesFragmentReq;
+import 'package:gh3/src/screens/user_repositories/__generated__/user_repositories_viewmodel.var.gql.dart'
+    show GGetViewerRepositoriesVars, GUserRepositoriesFragmentVars;
 import 'package:gh3/src/widgets/repository_card/__generated__/repository_card.data.gql.dart'
     show
         GRepositoryCardFragmentData,
@@ -899,10 +916,20 @@ final SerializersBuilder _serializersBuilder = _$serializers.toBuilder()
   GGetUserRepositoriesData_user,
   GGetUserRepositoriesData_user_repositories,
   GGetUserRepositoriesData_user_repositories_nodes,
+  GGetUserRepositoriesData_user_repositories_nodes_owner,
   GGetUserRepositoriesData_user_repositories_nodes_primaryLanguage,
   GGetUserRepositoriesData_user_repositories_pageInfo,
   GGetUserRepositoriesReq,
   GGetUserRepositoriesVars,
+  GGetViewerRepositoriesData,
+  GGetViewerRepositoriesData_viewer,
+  GGetViewerRepositoriesData_viewer_repositories,
+  GGetViewerRepositoriesData_viewer_repositories_nodes,
+  GGetViewerRepositoriesData_viewer_repositories_nodes_owner,
+  GGetViewerRepositoriesData_viewer_repositories_nodes_primaryLanguage,
+  GGetViewerRepositoriesData_viewer_repositories_pageInfo,
+  GGetViewerRepositoriesReq,
+  GGetViewerRepositoriesVars,
   GGistOrder,
   GGistOrderField,
   GGistPrivacy,
@@ -1305,6 +1332,11 @@ final SerializersBuilder _serializersBuilder = _$serializers.toBuilder()
   GUserProfileFragmentData_repositories,
   GUserProfileFragmentReq,
   GUserProfileFragmentVars,
+  GUserRepositoriesFragmentData,
+  GUserRepositoriesFragmentData_owner,
+  GUserRepositoriesFragmentData_primaryLanguage,
+  GUserRepositoriesFragmentReq,
+  GUserRepositoriesFragmentVars,
   GUserStatusFragmentData,
   GUserStatusFragmentData_status,
   GUserStatusFragmentReq,
