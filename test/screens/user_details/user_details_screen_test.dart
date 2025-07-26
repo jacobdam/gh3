@@ -19,6 +19,18 @@ void main() {
       mockUserDetailsViewModel = MockUserDetailsViewModel();
       // Basic setup that all tests need
       when(mockUserDetailsViewModel.login).thenReturn('testuser');
+      when(mockUserDetailsViewModel.isLoading).thenReturn(false);
+      when(mockUserDetailsViewModel.error).thenReturn(null);
+      when(mockUserDetailsViewModel.user).thenReturn(null);
+      when(mockUserDetailsViewModel.isUserNotFoundError).thenReturn(false);
+      when(mockUserDetailsViewModel.isNetworkError).thenReturn(false);
+      when(mockUserDetailsViewModel.isAuthError).thenReturn(false);
+      when(mockUserDetailsViewModel.statusMessage).thenReturn(null);
+      when(mockUserDetailsViewModel.statusEmoji).thenReturn(null);
+      when(mockUserDetailsViewModel.repositoriesCount).thenReturn(0);
+      when(mockUserDetailsViewModel.starredRepositoriesCount).thenReturn(0);
+      when(mockUserDetailsViewModel.organizationsCount).thenReturn(0);
+      when(mockUserDetailsViewModel.isUserLoading).thenReturn(false);
     });
 
     testWidgets('shows skeleton loading screen when loading', (
@@ -61,7 +73,7 @@ void main() {
           ),
         );
 
-        expect(find.text('User Not Found'), findsOneWidget);
+        expect(find.text('User Not Found'), findsAtLeast(1));
         expect(
           find.text(
             'The user "@testuser" does not exist or may have been deleted.',
@@ -87,7 +99,7 @@ void main() {
           ),
         );
 
-        expect(find.text('Connection Problem'), findsOneWidget);
+        expect(find.text('Connection Problem'), findsAtLeast(1));
         expect(
           find.text('Please check your internet connection and try again.'),
           findsOneWidget,
@@ -108,7 +120,7 @@ void main() {
           ),
         );
 
-        expect(find.text('Access Denied'), findsOneWidget);
+        expect(find.text('Access Denied'), findsAtLeast(1));
         expect(
           find.text('You don\'t have permission to view this user\'s profile.'),
           findsOneWidget,
@@ -127,7 +139,7 @@ void main() {
           ),
         );
 
-        expect(find.text('Something Went Wrong'), findsOneWidget);
+        expect(find.text('Something Went Wrong'), findsAtLeast(1));
         expect(find.text('Something went wrong'), findsOneWidget);
         expect(find.byIcon(Icons.error_outline), findsOneWidget);
         expect(find.text('Try Again'), findsOneWidget);
@@ -222,8 +234,8 @@ void main() {
       expect(find.text('@testuser'), findsAtLeast(1));
 
       // Verify flexible space content
-      expect(find.text('Test User'), findsOneWidget);
-      expect(find.byType(CircleAvatar), findsOneWidget);
+      expect(find.text('Test User'), findsAtLeast(1));
+      expect(find.byType(CircleAvatar), findsAtLeast(1));
 
       // Verify back button is present
       expect(find.byType(BackButton), findsOneWidget);

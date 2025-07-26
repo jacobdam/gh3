@@ -3,7 +3,6 @@ import 'package:gh3/src/screens/home_screen/home_viewmodel_factory.dart';
 import 'package:gh3/src/screens/home_screen/home_viewmodel.dart';
 import 'package:ferry/ferry.dart';
 import 'package:mockito/annotations.dart';
-import 'package:mockito/mockito.dart';
 
 @GenerateNiceMocks([MockSpec<Client>()])
 import 'home_viewmodel_factory_test.mocks.dart';

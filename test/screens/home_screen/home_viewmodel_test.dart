@@ -1,10 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
-import 'package:mockito/mockito.dart';
 import 'package:ferry/ferry.dart';
 import 'package:gh3/src/screens/home_screen/home_viewmodel.dart';
-import 'package:gh3/src/screens/home_screen/__generated__/home_viewmodel.req.gql.dart';
-import 'package:gh3/src/widgets/user_card/__generated__/user_card.data.gql.dart';
 
 import 'home_viewmodel_test.mocks.dart';
 
