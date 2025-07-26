@@ -11,16 +11,22 @@ The User Repositories Screen is a comprehensive repository browsing interface th
 UserRepositoriesScreen (StatefulWidget)
 ├── UserRepositoriesViewModel (ChangeNotifier)
 ├── UserRepositoriesViewModelFactory (@injectable)
-├── UserRepositoriesRoute (AppRoute)
+├── UserRepositoriesRoute (AppRoute) - Route: /:login/@repositories
 ├── UserRepositoriesRouteProvider (@injectable)
 └── GraphQL Integration
     ├── user_repositories_viewmodel.graphql
     └── __generated__/ (Ferry generated files)
 ```
 
+### Routing Pattern
+The screen uses the URL pattern `/:login/@repositories` which follows GitHub's URL structure:
+- `:login` - The username parameter extracted from the URL path
+- `@repositories` - Static segment indicating the repositories view
+- Example: `/octocat/@repositories` for user "octocat"'s repositories
+
 ### Data Flow
-1. **Screen Initialization**: Route creates ViewModel via Factory
-2. **Data Loading**: ViewModel fetches repositories via GraphQL
+1. **Screen Initialization**: Route creates ViewModel via Factory with extracted login parameter
+2. **Data Loading**: ViewModel fetches repositories via GraphQL using the login parameter
 3. **User Interactions**: Search/filter/sort actions update ViewModel state
 4. **UI Updates**: ViewModel notifies listeners, screen rebuilds with filtered data
 5. **Navigation**: Repository selection triggers navigation to repository details

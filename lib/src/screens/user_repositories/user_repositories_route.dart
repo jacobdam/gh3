@@ -7,5 +7,5 @@ class UserRepositoriesRoute extends AppRoute {
   UserRepositoriesRoute(this.login);
 
   @override
-  String get path => '/$login/repositories';
+  String get path => '/$login/@repositories';
 }

@@ -1,0 +1,94 @@
+#import "../../widgets/repository_card/repository_card.graphql"
+
+fragment UserRepositoriesFragment on Repository {
+  id
+  name
+  nameWithOwner
+  description
+  url
+  isPrivate
+  isFork
+  isTemplate
+  isArchived
+  isMirror
+  primaryLanguage {
+    name
+    color
+  }
+  stargazerCount
+  forkCount
+  updatedAt
+  pushedAt
+  createdAt
+  owner {
+    login
+    avatarUrl
+  }
+}
+
+query GetUserRepositories(
+  $login: String!
+  $first: Int!
+  $after: String
+  $orderBy: RepositoryOrder
+  $affiliations: [RepositoryAffiliation!]
+  $privacy: RepositoryPrivacy
+  $isFork: Boolean
+  $isLocked: Boolean
+) {
+  user(login: $login) {
+    repositories(
+      first: $first
+      after: $after
+      orderBy: $orderBy
+      affiliations: $affiliations
+      privacy: $privacy
+      isFork: $isFork
+      isLocked: $isLocked
+    ) {
+      totalCount
+      pageInfo {
+        hasNextPage
+        hasPreviousPage
+        startCursor
+        endCursor
+      }
+      nodes {
+        ...UserRepositoriesFragment
+      }
+    }
+  }
+}
+
+query GetViewerRepositories(
+  $first: Int!
+  $after: String
+  $orderBy: RepositoryOrder
+  $affiliations: [RepositoryAffiliation!]
+  $privacy: RepositoryPrivacy
+  $isFork: Boolean
+  $isLocked: Boolean
+) {
+  viewer {
+    repositories(
+      first: $first
+      after: $after
+      orderBy: $orderBy
+      affiliations: $affiliations
+      privacy: $privacy
+      isFork: $isFork
+      isLocked: $isLocked
+    ) {
+      totalCount
+      pageInfo {
+        hasNextPage
+        hasPreviousPage
+        startCursor
+        endCursor
+      }
+      nodes {
+        ...UserRepositoriesFragment
+      }
+    }
+  }
+}

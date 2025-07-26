@@ -19,15 +19,13 @@ part 'repository_card.req.gql.g.dart';
 abstract class GRepositoryCardFragmentReq
     implements
         Built<GRepositoryCardFragmentReq, GRepositoryCardFragmentReqBuilder>,
-        _i1.FragmentRequest<
-          _i2.GRepositoryCardFragmentData,
-          _i3.GRepositoryCardFragmentVars
-        > {
+        _i1.FragmentRequest<_i2.GRepositoryCardFragmentData,
+            _i3.GRepositoryCardFragmentVars> {
   GRepositoryCardFragmentReq._();
 
-  factory GRepositoryCardFragmentReq([
-    void Function(GRepositoryCardFragmentReqBuilder b) updates,
-  ]) = _$GRepositoryCardFragmentReq;
+  factory GRepositoryCardFragmentReq(
+          [void Function(GRepositoryCardFragmentReqBuilder b) updates]) =
+      _$GRepositoryCardFragmentReq;
 
   static void _initializeBuilder(GRepositoryCardFragmentReqBuilder b) => b
     ..document = _i4.document
@@ -55,14 +53,14 @@ abstract class GRepositoryCardFragmentReq
   static Serializer<GRepositoryCardFragmentReq> get serializer =>
       _$gRepositoryCardFragmentReqSerializer;
 
-  Map<String, dynamic> toJson() =>
-      (_i6.serializers.serializeWith(
-            GRepositoryCardFragmentReq.serializer,
-            this,
-          )
-          as Map<String, dynamic>);
+  Map<String, dynamic> toJson() => (_i6.serializers.serializeWith(
+        GRepositoryCardFragmentReq.serializer,
+        this,
+      ) as Map<String, dynamic>);
 
-  static GRepositoryCardFragmentReq? fromJson(Map<String, dynamic> json) => _i6
-      .serializers
-      .deserializeWith(GRepositoryCardFragmentReq.serializer, json);
+  static GRepositoryCardFragmentReq? fromJson(Map<String, dynamic> json) =>
+      _i6.serializers.deserializeWith(
+        GRepositoryCardFragmentReq.serializer,
+        json,
+      );
 }

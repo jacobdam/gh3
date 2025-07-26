@@ -33,9 +33,9 @@ abstract class GRepositoryCardFragmentData
         GRepositoryCardFragment {
   GRepositoryCardFragmentData._();
 
-  factory GRepositoryCardFragmentData([
-    void Function(GRepositoryCardFragmentDataBuilder b) updates,
-  ]) = _$GRepositoryCardFragmentData;
+  factory GRepositoryCardFragmentData(
+          [void Function(GRepositoryCardFragmentDataBuilder b) updates]) =
+      _$GRepositoryCardFragmentData;
 
   static void _initializeBuilder(GRepositoryCardFragmentDataBuilder b) =>
       b..G__typename = 'Repository';
@@ -62,34 +62,32 @@ abstract class GRepositoryCardFragmentData
   static Serializer<GRepositoryCardFragmentData> get serializer =>
       _$gRepositoryCardFragmentDataSerializer;
 
-  Map<String, dynamic> toJson() =>
-      (_i2.serializers.serializeWith(
-            GRepositoryCardFragmentData.serializer,
-            this,
-          )
-          as Map<String, dynamic>);
+  Map<String, dynamic> toJson() => (_i2.serializers.serializeWith(
+        GRepositoryCardFragmentData.serializer,
+        this,
+      ) as Map<String, dynamic>);
 
-  static GRepositoryCardFragmentData? fromJson(Map<String, dynamic> json) => _i2
-      .serializers
-      .deserializeWith(GRepositoryCardFragmentData.serializer, json);
+  static GRepositoryCardFragmentData? fromJson(Map<String, dynamic> json) =>
+      _i2.serializers.deserializeWith(
+        GRepositoryCardFragmentData.serializer,
+        json,
+      );
 }
 
 abstract class GRepositoryCardFragmentData_primaryLanguage
     implements
-        Built<
-          GRepositoryCardFragmentData_primaryLanguage,
-          GRepositoryCardFragmentData_primaryLanguageBuilder
-        >,
+        Built<GRepositoryCardFragmentData_primaryLanguage,
+            GRepositoryCardFragmentData_primaryLanguageBuilder>,
         GRepositoryCardFragment_primaryLanguage {
   GRepositoryCardFragmentData_primaryLanguage._();
 
-  factory GRepositoryCardFragmentData_primaryLanguage([
-    void Function(GRepositoryCardFragmentData_primaryLanguageBuilder b) updates,
-  ]) = _$GRepositoryCardFragmentData_primaryLanguage;
+  factory GRepositoryCardFragmentData_primaryLanguage(
+      [void Function(GRepositoryCardFragmentData_primaryLanguageBuilder b)
+          updates]) = _$GRepositoryCardFragmentData_primaryLanguage;
 
   static void _initializeBuilder(
-    GRepositoryCardFragmentData_primaryLanguageBuilder b,
-  ) => b..G__typename = 'Language';
+          GRepositoryCardFragmentData_primaryLanguageBuilder b) =>
+      b..G__typename = 'Language';
 
   @override
   @BuiltValueField(wireName: '__typename')
@@ -99,19 +97,17 @@ abstract class GRepositoryCardFragmentData_primaryLanguage
   @override
   String? get color;
   static Serializer<GRepositoryCardFragmentData_primaryLanguage>
-  get serializer => _$gRepositoryCardFragmentDataPrimaryLanguageSerializer;
+      get serializer => _$gRepositoryCardFragmentDataPrimaryLanguageSerializer;
 
-  Map<String, dynamic> toJson() =>
-      (_i2.serializers.serializeWith(
-            GRepositoryCardFragmentData_primaryLanguage.serializer,
-            this,
-          )
-          as Map<String, dynamic>);
+  Map<String, dynamic> toJson() => (_i2.serializers.serializeWith(
+        GRepositoryCardFragmentData_primaryLanguage.serializer,
+        this,
+      ) as Map<String, dynamic>);
 
   static GRepositoryCardFragmentData_primaryLanguage? fromJson(
-    Map<String, dynamic> json,
-  ) => _i2.serializers.deserializeWith(
-    GRepositoryCardFragmentData_primaryLanguage.serializer,
-    json,
-  );
+          Map<String, dynamic> json) =>
+      _i2.serializers.deserializeWith(
+        GRepositoryCardFragmentData_primaryLanguage.serializer,
+        json,
+      );
 }

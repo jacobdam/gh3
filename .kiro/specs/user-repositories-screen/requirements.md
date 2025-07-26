@@ -85,6 +85,7 @@ The User Repositories Screen provides a comprehensive interface for users to bro
 2. WHEN the user wants to go back THEN the system SHALL provide a back navigation button
 3. WHEN the screen is part of a tab navigation THEN the system SHALL highlight the repositories tab as active
 4. WHEN the user pulls down on the list THEN the system SHALL refresh the repository data
+5. WHEN the screen is accessed via URL THEN the system SHALL use the pattern `/:login/@repositories` for routing
 
 ### Requirement 8
 
