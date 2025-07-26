@@ -13,21 +13,21 @@ abstract class GRepositoryCardFragmentVars
         Built<GRepositoryCardFragmentVars, GRepositoryCardFragmentVarsBuilder> {
   GRepositoryCardFragmentVars._();
 
-  factory GRepositoryCardFragmentVars(
-          [void Function(GRepositoryCardFragmentVarsBuilder b) updates]) =
-      _$GRepositoryCardFragmentVars;
+  factory GRepositoryCardFragmentVars([
+    void Function(GRepositoryCardFragmentVarsBuilder b) updates,
+  ]) = _$GRepositoryCardFragmentVars;
 
   static Serializer<GRepositoryCardFragmentVars> get serializer =>
       _$gRepositoryCardFragmentVarsSerializer;
 
-  Map<String, dynamic> toJson() => (_i1.serializers.serializeWith(
-        GRepositoryCardFragmentVars.serializer,
-        this,
-      ) as Map<String, dynamic>);
+  Map<String, dynamic> toJson() =>
+      (_i1.serializers.serializeWith(
+            GRepositoryCardFragmentVars.serializer,
+            this,
+          )
+          as Map<String, dynamic>);
 
-  static GRepositoryCardFragmentVars? fromJson(Map<String, dynamic> json) =>
-      _i1.serializers.deserializeWith(
-        GRepositoryCardFragmentVars.serializer,
-        json,
-      );
+  static GRepositoryCardFragmentVars? fromJson(Map<String, dynamic> json) => _i1
+      .serializers
+      .deserializeWith(GRepositoryCardFragmentVars.serializer, json);
 }

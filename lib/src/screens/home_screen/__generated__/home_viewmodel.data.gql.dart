@@ -15,9 +15,9 @@ abstract class GGetCurrentUserData
     implements Built<GGetCurrentUserData, GGetCurrentUserDataBuilder> {
   GGetCurrentUserData._();
 
-  factory GGetCurrentUserData(
-          [void Function(GGetCurrentUserDataBuilder b) updates]) =
-      _$GGetCurrentUserData;
+  factory GGetCurrentUserData([
+    void Function(GGetCurrentUserDataBuilder b) updates,
+  ]) = _$GGetCurrentUserData;
 
   static void _initializeBuilder(GGetCurrentUserDataBuilder b) =>
       b..G__typename = 'Query';
@@ -28,16 +28,12 @@ abstract class GGetCurrentUserData
   static Serializer<GGetCurrentUserData> get serializer =>
       _$gGetCurrentUserDataSerializer;
 
-  Map<String, dynamic> toJson() => (_i1.serializers.serializeWith(
-        GGetCurrentUserData.serializer,
-        this,
-      ) as Map<String, dynamic>);
+  Map<String, dynamic> toJson() =>
+      (_i1.serializers.serializeWith(GGetCurrentUserData.serializer, this)
+          as Map<String, dynamic>);
 
   static GGetCurrentUserData? fromJson(Map<String, dynamic> json) =>
-      _i1.serializers.deserializeWith(
-        GGetCurrentUserData.serializer,
-        json,
-      );
+      _i1.serializers.deserializeWith(GGetCurrentUserData.serializer, json);
 }
 
 abstract class GGetCurrentUserData_viewer
@@ -46,9 +42,9 @@ abstract class GGetCurrentUserData_viewer
         _i2.GUserCardFragment {
   GGetCurrentUserData_viewer._();
 
-  factory GGetCurrentUserData_viewer(
-          [void Function(GGetCurrentUserData_viewerBuilder b) updates]) =
-      _$GGetCurrentUserData_viewer;
+  factory GGetCurrentUserData_viewer([
+    void Function(GGetCurrentUserData_viewerBuilder b) updates,
+  ]) = _$GGetCurrentUserData_viewer;
 
   static void _initializeBuilder(GGetCurrentUserData_viewerBuilder b) =>
       b..G__typename = 'User';
@@ -73,32 +69,34 @@ abstract class GGetCurrentUserData_viewer
   static Serializer<GGetCurrentUserData_viewer> get serializer =>
       _$gGetCurrentUserDataViewerSerializer;
 
-  Map<String, dynamic> toJson() => (_i1.serializers.serializeWith(
-        GGetCurrentUserData_viewer.serializer,
-        this,
-      ) as Map<String, dynamic>);
+  Map<String, dynamic> toJson() =>
+      (_i1.serializers.serializeWith(
+            GGetCurrentUserData_viewer.serializer,
+            this,
+          )
+          as Map<String, dynamic>);
 
-  static GGetCurrentUserData_viewer? fromJson(Map<String, dynamic> json) =>
-      _i1.serializers.deserializeWith(
-        GGetCurrentUserData_viewer.serializer,
-        json,
-      );
+  static GGetCurrentUserData_viewer? fromJson(Map<String, dynamic> json) => _i1
+      .serializers
+      .deserializeWith(GGetCurrentUserData_viewer.serializer, json);
 }
 
 abstract class GGetCurrentUserData_viewer_repositories
     implements
-        Built<GGetCurrentUserData_viewer_repositories,
-            GGetCurrentUserData_viewer_repositoriesBuilder>,
+        Built<
+          GGetCurrentUserData_viewer_repositories,
+          GGetCurrentUserData_viewer_repositoriesBuilder
+        >,
         _i2.GUserCardFragment_repositories {
   GGetCurrentUserData_viewer_repositories._();
 
-  factory GGetCurrentUserData_viewer_repositories(
-      [void Function(GGetCurrentUserData_viewer_repositoriesBuilder b)
-          updates]) = _$GGetCurrentUserData_viewer_repositories;
+  factory GGetCurrentUserData_viewer_repositories([
+    void Function(GGetCurrentUserData_viewer_repositoriesBuilder b) updates,
+  ]) = _$GGetCurrentUserData_viewer_repositories;
 
   static void _initializeBuilder(
-          GGetCurrentUserData_viewer_repositoriesBuilder b) =>
-      b..G__typename = 'RepositoryConnection';
+    GGetCurrentUserData_viewer_repositoriesBuilder b,
+  ) => b..G__typename = 'RepositoryConnection';
 
   @override
   @BuiltValueField(wireName: '__typename')
@@ -108,33 +106,37 @@ abstract class GGetCurrentUserData_viewer_repositories
   static Serializer<GGetCurrentUserData_viewer_repositories> get serializer =>
       _$gGetCurrentUserDataViewerRepositoriesSerializer;
 
-  Map<String, dynamic> toJson() => (_i1.serializers.serializeWith(
-        GGetCurrentUserData_viewer_repositories.serializer,
-        this,
-      ) as Map<String, dynamic>);
+  Map<String, dynamic> toJson() =>
+      (_i1.serializers.serializeWith(
+            GGetCurrentUserData_viewer_repositories.serializer,
+            this,
+          )
+          as Map<String, dynamic>);
 
   static GGetCurrentUserData_viewer_repositories? fromJson(
-          Map<String, dynamic> json) =>
-      _i1.serializers.deserializeWith(
-        GGetCurrentUserData_viewer_repositories.serializer,
-        json,
-      );
+    Map<String, dynamic> json,
+  ) => _i1.serializers.deserializeWith(
+    GGetCurrentUserData_viewer_repositories.serializer,
+    json,
+  );
 }
 
 abstract class GGetCurrentUserData_viewer_followers
     implements
-        Built<GGetCurrentUserData_viewer_followers,
-            GGetCurrentUserData_viewer_followersBuilder>,
+        Built<
+          GGetCurrentUserData_viewer_followers,
+          GGetCurrentUserData_viewer_followersBuilder
+        >,
         _i2.GUserCardFragment_followers {
   GGetCurrentUserData_viewer_followers._();
 
-  factory GGetCurrentUserData_viewer_followers(
-      [void Function(GGetCurrentUserData_viewer_followersBuilder b)
-          updates]) = _$GGetCurrentUserData_viewer_followers;
+  factory GGetCurrentUserData_viewer_followers([
+    void Function(GGetCurrentUserData_viewer_followersBuilder b) updates,
+  ]) = _$GGetCurrentUserData_viewer_followers;
 
   static void _initializeBuilder(
-          GGetCurrentUserData_viewer_followersBuilder b) =>
-      b..G__typename = 'FollowerConnection';
+    GGetCurrentUserData_viewer_followersBuilder b,
+  ) => b..G__typename = 'FollowerConnection';
 
   @override
   @BuiltValueField(wireName: '__typename')
@@ -144,15 +146,17 @@ abstract class GGetCurrentUserData_viewer_followers
   static Serializer<GGetCurrentUserData_viewer_followers> get serializer =>
       _$gGetCurrentUserDataViewerFollowersSerializer;
 
-  Map<String, dynamic> toJson() => (_i1.serializers.serializeWith(
-        GGetCurrentUserData_viewer_followers.serializer,
-        this,
-      ) as Map<String, dynamic>);
+  Map<String, dynamic> toJson() =>
+      (_i1.serializers.serializeWith(
+            GGetCurrentUserData_viewer_followers.serializer,
+            this,
+          )
+          as Map<String, dynamic>);
 
   static GGetCurrentUserData_viewer_followers? fromJson(
-          Map<String, dynamic> json) =>
-      _i1.serializers.deserializeWith(
-        GGetCurrentUserData_viewer_followers.serializer,
-        json,
-      );
+    Map<String, dynamic> json,
+  ) => _i1.serializers.deserializeWith(
+    GGetCurrentUserData_viewer_followers.serializer,
+    json,
+  );
 }

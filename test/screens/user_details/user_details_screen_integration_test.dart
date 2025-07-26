@@ -287,7 +287,10 @@ void main() {
       // Verify error state is displayed correctly
       expect(find.text('Connection Problem'), findsAtLeast(1));
       expect(find.text('Try Again'), findsOneWidget);
-      expect(find.text('Please check your internet connection and try again.'), findsOneWidget);
+      expect(
+        find.text('Please check your internet connection and try again.'),
+        findsOneWidget,
+      );
 
       // Verify retry button is functional
       await tester.tap(find.text('Try Again'));
@@ -310,7 +313,7 @@ void main() {
       expect(find.byType(CustomScrollView), findsOneWidget);
       expect(find.byType(SliverAppBar), findsOneWidget);
       expect(find.byType(BackButton), findsOneWidget);
-      
+
       // Verify navigation tiles are shown during loading
       expect(find.text('Repositories'), findsOneWidget);
       expect(find.text('Starred'), findsOneWidget);

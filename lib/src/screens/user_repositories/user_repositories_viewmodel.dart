@@ -33,13 +33,14 @@ class UserRepositoriesViewModel extends DisposableViewModel {
 
   // Available languages extracted from repositories
   List<String> _availableLanguages = [];
-  
+
   // Language counts for display in filter UI
   Map<String, int> _languageCounts = {};
 
   // Getters
   List<GUserRepositoriesFragment> get repositories => _repositories;
-  List<GUserRepositoriesFragment> get filteredRepositories => _filteredRepositories;
+  List<GUserRepositoriesFragment> get filteredRepositories =>
+      _filteredRepositories;
   bool get isLoading => _isLoading;
   String? get error => _error;
   bool get hasNextPage => _hasNextPage;
@@ -54,8 +55,13 @@ class UserRepositoriesViewModel extends DisposableViewModel {
   Map<String, int> get languageCounts => _languageCounts;
 
   // Computed properties
-  bool get canLoadMore => _hasNextPage && !_isLoadingMore && !_isLoading && _currentLoadMoreOperation == null;
-  bool get showLoadingIndicator => _isLoadingMore && _filteredRepositories.isNotEmpty;
+  bool get canLoadMore =>
+      _hasNextPage &&
+      !_isLoadingMore &&
+      !_isLoading &&
+      _currentLoadMoreOperation == null;
+  bool get showLoadingIndicator =>
+      _isLoadingMore && _filteredRepositories.isNotEmpty;
 
   /// Load repositories from GraphQL API
   Future<void> loadRepositories() async {
@@ -68,15 +74,15 @@ class UserRepositoriesViewModel extends DisposableViewModel {
         b.vars.login = _userLogin;
         b.vars.first = 20;
         b.vars.after = null;
-        
+
         final orderBy = _buildOrderBy(_sortOption);
         b.vars.orderBy = orderBy.toBuilder();
-        
+
         final affiliations = _buildAffiliations(_selectedType);
         if (affiliations != null) {
           b.vars.affiliations.addAll(affiliations);
         }
-        
+
         b.vars.privacy = _buildPrivacy(_selectedType);
         b.vars.isFork = _buildIsFork(_selectedType);
         b.vars.isLocked = null;
@@ -85,16 +91,23 @@ class UserRepositoriesViewModel extends DisposableViewModel {
       final result = await _ferryClient.request(request).first;
 
       if (result.hasErrors) {
-        _error = result.graphqlErrors?.first.message ?? 'Failed to load repositories';
+        _error =
+            result.graphqlErrors?.first.message ??
+            'Failed to load repositories';
       } else {
         final data = result.data;
         if (data?.user != null) {
           final repositoryConnection = data!.user!.repositories;
-          _repositories = repositoryConnection.nodes?.where((node) => node != null).cast<GUserRepositoriesFragment>().toList() ?? [];
+          _repositories =
+              repositoryConnection.nodes
+                  ?.where((node) => node != null)
+                  .cast<GUserRepositoriesFragment>()
+                  .toList() ??
+              [];
           _hasNextPage = repositoryConnection.pageInfo.hasNextPage;
           _nextCursor = repositoryConnection.pageInfo.endCursor;
           _totalCount = repositoryConnection.totalCount;
-          
+
           _extractAvailableLanguages();
           _applyFiltersAndSort();
         } else {
@@ -140,15 +153,15 @@ class UserRepositoriesViewModel extends DisposableViewModel {
         b.vars.login = _userLogin;
         b.vars.first = 20;
         b.vars.after = _nextCursor;
-        
+
         final orderBy = _buildOrderBy(_sortOption);
         b.vars.orderBy = orderBy.toBuilder();
-        
+
         final affiliations = _buildAffiliations(_selectedType);
         if (affiliations != null) {
           b.vars.affiliations.addAll(affiliations);
         }
-        
+
         b.vars.privacy = _buildPrivacy(_selectedType);
         b.vars.isFork = _buildIsFork(_selectedType);
         b.vars.isLocked = null;
@@ -157,17 +170,24 @@ class UserRepositoriesViewModel extends DisposableViewModel {
       final result = await _ferryClient.request(request).first;
 
       if (result.hasErrors) {
-        _error = result.graphqlErrors?.first.message ?? 'Failed to load more repositories';
+        _error =
+            result.graphqlErrors?.first.message ??
+            'Failed to load more repositories';
       } else {
         final data = result.data;
         if (data?.user != null) {
           final repositoryConnection = data!.user!.repositories;
-          final newRepositories = repositoryConnection.nodes?.where((node) => node != null).cast<GUserRepositoriesFragment>().toList() ?? [];
-          
+          final newRepositories =
+              repositoryConnection.nodes
+                  ?.where((node) => node != null)
+                  .cast<GUserRepositoriesFragment>()
+                  .toList() ??
+              [];
+
           _repositories.addAll(newRepositories);
           _hasNextPage = repositoryConnection.pageInfo.hasNextPage;
           _nextCursor = repositoryConnection.pageInfo.endCursor;
-          
+
           _extractAvailableLanguages();
           _applyFiltersAndSort();
         }
@@ -238,13 +258,13 @@ class UserRepositoriesViewModel extends DisposableViewModel {
   Future<void> _resetPaginationAndReload() async {
     // Cancel any ongoing load more operation
     _currentLoadMoreOperation = null;
-    
+
     // Clear existing repositories and reset pagination
     _repositories.clear();
     _filteredRepositories.clear();
     _hasNextPage = true;
     _nextCursor = null;
-    
+
     // Reload with new filters/sort
     await loadRepositories();
   }
@@ -259,25 +279,32 @@ class UserRepositoriesViewModel extends DisposableViewModel {
     // Apply search filter
     if (_searchQuery.isNotEmpty) {
       final query = _searchQuery.toLowerCase();
-      filtered = filtered.where((repo) => 
-        repo.name.toLowerCase().contains(query) ||
-        (repo.description?.toLowerCase().contains(query) ?? false)
-      ).toList();
+      filtered = filtered
+          .where(
+            (repo) =>
+                repo.name.toLowerCase().contains(query) ||
+                (repo.description?.toLowerCase().contains(query) ?? false),
+          )
+          .toList();
     }
 
     // Apply language filter
     if (_selectedLanguage != null) {
       if (_selectedLanguage == 'No Language') {
-        filtered = filtered.where((repo) => repo.primaryLanguage == null).toList();
+        filtered = filtered
+            .where((repo) => repo.primaryLanguage == null)
+            .toList();
       } else {
-        filtered = filtered.where((repo) => 
-          repo.primaryLanguage?.name == _selectedLanguage
-        ).toList();
+        filtered = filtered
+            .where((repo) => repo.primaryLanguage?.name == _selectedLanguage)
+            .toList();
       }
     }
 
     // Apply sorting (only for client-side filtering, server-side sorting is handled in GraphQL query)
-    if (_searchQuery.isNotEmpty || _selectedLanguage != null || _needsClientSideTypeFilter(_selectedType)) {
+    if (_searchQuery.isNotEmpty ||
+        _selectedLanguage != null ||
+        _needsClientSideTypeFilter(_selectedType)) {
       filtered = _sortRepositories(filtered, _sortOption);
     }
 
@@ -285,14 +312,19 @@ class UserRepositoriesViewModel extends DisposableViewModel {
   }
 
   /// Filter repositories by type (client-side filtering for types not handled by GraphQL)
-  List<GUserRepositoriesFragment> _filterByRepositoryType(List<GUserRepositoriesFragment> repos, RepositoryType type) {
+  List<GUserRepositoriesFragment> _filterByRepositoryType(
+    List<GUserRepositoriesFragment> repos,
+    RepositoryType type,
+  ) {
     switch (type) {
       case RepositoryType.all:
         return repos;
       case RepositoryType.private:
         return repos.where((repo) => repo.isPrivate).toList();
       case RepositoryType.source:
-        return repos.where((repo) => !repo.isFork && !repo.isMirror && !repo.isTemplate).toList();
+        return repos
+            .where((repo) => !repo.isFork && !repo.isMirror && !repo.isTemplate)
+            .toList();
       case RepositoryType.fork:
         return repos.where((repo) => repo.isFork).toList();
       case RepositoryType.mirror:
@@ -320,9 +352,12 @@ class UserRepositoriesViewModel extends DisposableViewModel {
   }
 
   /// Sort repositories based on the selected sort option
-  List<GUserRepositoriesFragment> _sortRepositories(List<GUserRepositoriesFragment> repos, RepositorySortOption option) {
+  List<GUserRepositoriesFragment> _sortRepositories(
+    List<GUserRepositoriesFragment> repos,
+    RepositorySortOption option,
+  ) {
     final sortedRepos = List<GUserRepositoriesFragment>.from(repos);
-    
+
     switch (option) {
       case RepositorySortOption.recentlyPushed:
         sortedRepos.sort((a, b) {
@@ -339,25 +374,37 @@ class UserRepositoriesViewModel extends DisposableViewModel {
         });
         break;
       case RepositorySortOption.newest:
-        sortedRepos.sort((a, b) => b.createdAt.value.compareTo(a.createdAt.value));
+        sortedRepos.sort(
+          (a, b) => b.createdAt.value.compareTo(a.createdAt.value),
+        );
         break;
       case RepositorySortOption.oldest:
-        sortedRepos.sort((a, b) => a.createdAt.value.compareTo(b.createdAt.value));
+        sortedRepos.sort(
+          (a, b) => a.createdAt.value.compareTo(b.createdAt.value),
+        );
         break;
       case RepositorySortOption.nameAscending:
-        sortedRepos.sort((a, b) => a.name.toLowerCase().compareTo(b.name.toLowerCase()));
+        sortedRepos.sort(
+          (a, b) => a.name.toLowerCase().compareTo(b.name.toLowerCase()),
+        );
         break;
       case RepositorySortOption.nameDescending:
-        sortedRepos.sort((a, b) => b.name.toLowerCase().compareTo(a.name.toLowerCase()));
+        sortedRepos.sort(
+          (a, b) => b.name.toLowerCase().compareTo(a.name.toLowerCase()),
+        );
         break;
       case RepositorySortOption.mostStarred:
-        sortedRepos.sort((a, b) => b.stargazerCount.compareTo(a.stargazerCount));
+        sortedRepos.sort(
+          (a, b) => b.stargazerCount.compareTo(a.stargazerCount),
+        );
         break;
       case RepositorySortOption.leastStarred:
-        sortedRepos.sort((a, b) => a.stargazerCount.compareTo(b.stargazerCount));
+        sortedRepos.sort(
+          (a, b) => a.stargazerCount.compareTo(b.stargazerCount),
+        );
         break;
     }
-    
+
     return sortedRepos;
   }
 
@@ -365,7 +412,7 @@ class UserRepositoriesViewModel extends DisposableViewModel {
   void _extractAvailableLanguages() {
     final languages = <String>{};
     final counts = <String, int>{};
-    
+
     for (final repo in _repositories) {
       if (repo.primaryLanguage?.name != null) {
         final language = repo.primaryLanguage!.name;
@@ -373,12 +420,14 @@ class UserRepositoriesViewModel extends DisposableViewModel {
         counts[language] = (counts[language] ?? 0) + 1;
       }
     }
-    
+
     _availableLanguages = languages.toList()..sort();
     _languageCounts = counts;
-    
+
     // Add "No Language" option if there are repositories without a primary language
-    final noLanguageCount = _repositories.where((repo) => repo.primaryLanguage == null).length;
+    final noLanguageCount = _repositories
+        .where((repo) => repo.primaryLanguage == null)
+        .length;
     if (noLanguageCount > 0) {
       _availableLanguages.insert(0, 'No Language');
       _languageCounts['No Language'] = noLanguageCount;
@@ -389,37 +438,53 @@ class UserRepositoriesViewModel extends DisposableViewModel {
   GRepositoryOrder _buildOrderBy(RepositorySortOption option) {
     switch (option) {
       case RepositorySortOption.recentlyPushed:
-        return GRepositoryOrder((b) => b
-          ..field = GRepositoryOrderField.PUSHED_AT
-          ..direction = GOrderDirection.DESC);
+        return GRepositoryOrder(
+          (b) => b
+            ..field = GRepositoryOrderField.PUSHED_AT
+            ..direction = GOrderDirection.DESC,
+        );
       case RepositorySortOption.leastRecentlyPushed:
-        return GRepositoryOrder((b) => b
-          ..field = GRepositoryOrderField.PUSHED_AT
-          ..direction = GOrderDirection.ASC);
+        return GRepositoryOrder(
+          (b) => b
+            ..field = GRepositoryOrderField.PUSHED_AT
+            ..direction = GOrderDirection.ASC,
+        );
       case RepositorySortOption.newest:
-        return GRepositoryOrder((b) => b
-          ..field = GRepositoryOrderField.CREATED_AT
-          ..direction = GOrderDirection.DESC);
+        return GRepositoryOrder(
+          (b) => b
+            ..field = GRepositoryOrderField.CREATED_AT
+            ..direction = GOrderDirection.DESC,
+        );
       case RepositorySortOption.oldest:
-        return GRepositoryOrder((b) => b
-          ..field = GRepositoryOrderField.CREATED_AT
-          ..direction = GOrderDirection.ASC);
+        return GRepositoryOrder(
+          (b) => b
+            ..field = GRepositoryOrderField.CREATED_AT
+            ..direction = GOrderDirection.ASC,
+        );
       case RepositorySortOption.nameAscending:
-        return GRepositoryOrder((b) => b
-          ..field = GRepositoryOrderField.NAME
-          ..direction = GOrderDirection.ASC);
+        return GRepositoryOrder(
+          (b) => b
+            ..field = GRepositoryOrderField.NAME
+            ..direction = GOrderDirection.ASC,
+        );
       case RepositorySortOption.nameDescending:
-        return GRepositoryOrder((b) => b
-          ..field = GRepositoryOrderField.NAME
-          ..direction = GOrderDirection.DESC);
+        return GRepositoryOrder(
+          (b) => b
+            ..field = GRepositoryOrderField.NAME
+            ..direction = GOrderDirection.DESC,
+        );
       case RepositorySortOption.mostStarred:
-        return GRepositoryOrder((b) => b
-          ..field = GRepositoryOrderField.STARGAZERS
-          ..direction = GOrderDirection.DESC);
+        return GRepositoryOrder(
+          (b) => b
+            ..field = GRepositoryOrderField.STARGAZERS
+            ..direction = GOrderDirection.DESC,
+        );
       case RepositorySortOption.leastStarred:
-        return GRepositoryOrder((b) => b
-          ..field = GRepositoryOrderField.STARGAZERS
-          ..direction = GOrderDirection.ASC);
+        return GRepositoryOrder(
+          (b) => b
+            ..field = GRepositoryOrderField.STARGAZERS
+            ..direction = GOrderDirection.ASC,
+        );
     }
   }
 
@@ -478,15 +543,7 @@ class UserRepositoriesViewModel extends DisposableViewModel {
 }
 
 // Enums for repository filtering and sorting
-enum RepositoryType {
-  all,
-  private,
-  source,
-  fork,
-  mirror,
-  template,
-  archived
-}
+enum RepositoryType { all, private, source, fork, mirror, template, archived }
 
 enum RepositorySortOption {
   recentlyPushed,
@@ -496,5 +553,5 @@ enum RepositorySortOption {
   nameAscending,
   nameDescending,
   mostStarred,
-  leastStarred
+  leastStarred,
 }
