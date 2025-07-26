@@ -58,17 +58,19 @@ void main() {
       test('should handle loading state correctly', () async {
         // Arrange
         final mockResponse = _createSuccessResponse([], false, null, 0);
-        when(mockClient.request(any)).thenAnswer((_) => Stream.value(mockResponse).cast());
+        when(
+          mockClient.request(any),
+        ).thenAnswer((_) => Stream.value(mockResponse).cast());
 
         // Act
         final loadingFuture = viewModel.loadRepositories();
-        
+
         // Assert loading state - Note: loading state is set synchronously
         expect(viewModel.isLoading, true);
         expect(viewModel.error, isNull);
-        
+
         await loadingFuture;
-        
+
         // Assert final state
         expect(viewModel.isLoading, false);
       });
@@ -76,7 +78,9 @@ void main() {
       test('should handle GraphQL errors', () async {
         // Arrange
         final errorResponse = _createErrorResponse('User not found');
-        when(mockClient.request(any)).thenAnswer((_) => Stream.value(errorResponse).cast());
+        when(
+          mockClient.request(any),
+        ).thenAnswer((_) => Stream.value(errorResponse).cast());
 
         // Act
         await viewModel.loadRepositories();
@@ -89,7 +93,9 @@ void main() {
 
       test('should handle network exceptions', () async {
         // Arrange
-        when(mockClient.request(any)).thenAnswer((_) => Stream.error(Exception('Network error')));
+        when(
+          mockClient.request(any),
+        ).thenAnswer((_) => Stream.error(Exception('Network error')));
 
         // Act
         await viewModel.loadRepositories();
@@ -103,7 +109,9 @@ void main() {
       test('should handle user not found', () async {
         // Arrange
         final mockResponse = _createUserNotFoundResponse();
-        when(mockClient.request(any)).thenAnswer((_) => Stream.value(mockResponse).cast());
+        when(
+          mockClient.request(any),
+        ).thenAnswer((_) => Stream.value(mockResponse).cast());
 
         // Act
         await viewModel.loadRepositories();
@@ -119,21 +127,25 @@ void main() {
       test('should handle load more state correctly', () async {
         // Arrange - Initial load
         final initialResponse = _createSuccessResponse([], true, 'cursor1', 1);
-        when(mockClient.request(any)).thenAnswer((_) => Stream.value(initialResponse).cast());
+        when(
+          mockClient.request(any),
+        ).thenAnswer((_) => Stream.value(initialResponse).cast());
         await viewModel.loadRepositories();
 
         // Arrange - Load more
         final moreResponse = _createSuccessResponse([], false, null, 2);
-        when(mockClient.request(any)).thenAnswer((_) => Stream.value(moreResponse).cast());
+        when(
+          mockClient.request(any),
+        ).thenAnswer((_) => Stream.value(moreResponse).cast());
 
         // Act
         final loadMoreFuture = viewModel.loadMoreRepositories();
-        
+
         // Assert loading state
         expect(viewModel.isLoadingMore, true);
-        
+
         await loadMoreFuture;
-        
+
         // Assert final state
         expect(viewModel.isLoadingMore, false);
       });
@@ -141,30 +153,43 @@ void main() {
       test('should prevent race conditions in load more', () async {
         // Arrange - Initial load
         final initialResponse = _createSuccessResponse([], true, 'cursor1', 1);
-        when(mockClient.request(any)).thenAnswer((_) => Stream.value(initialResponse).cast());
+        when(
+          mockClient.request(any),
+        ).thenAnswer((_) => Stream.value(initialResponse).cast());
         await viewModel.loadRepositories();
 
         // Arrange - Load more with delay
         final moreResponse = _createSuccessResponse([], false, null, 2);
-        when(mockClient.request(any)).thenAnswer((_) => Stream.fromFuture(
-          Future.delayed(Duration(milliseconds: 100), () => moreResponse)
-        ).cast());
+        when(mockClient.request(any)).thenAnswer(
+          (_) => Stream.fromFuture(
+            Future.delayed(Duration(milliseconds: 100), () => moreResponse),
+          ).cast(),
+        );
 
         // Act - Call load more multiple times simultaneously
         final future1 = viewModel.loadMoreRepositories();
         final future2 = viewModel.loadMoreRepositories();
         final future3 = viewModel.loadMoreRepositories();
-        
+
         await Future.wait([future1, future2, future3]);
 
         // Assert - Only one request should have been made after initial load
-        verify(mockClient.request(any)).called(2); // Initial load + one load more
+        verify(
+          mockClient.request(any),
+        ).called(2); // Initial load + one load more
       });
 
       test('should not load more when canLoadMore is false', () async {
         // Arrange - Set state where canLoadMore is false
-        final response = _createSuccessResponse([], false, null, 1); // hasNextPage = false
-        when(mockClient.request(any)).thenAnswer((_) => Stream.value(response).cast());
+        final response = _createSuccessResponse(
+          [],
+          false,
+          null,
+          1,
+        ); // hasNextPage = false
+        when(
+          mockClient.request(any),
+        ).thenAnswer((_) => Stream.value(response).cast());
         await viewModel.loadRepositories();
 
         // Reset mock to track additional calls
@@ -181,11 +206,15 @@ void main() {
       test('should handle load more errors', () async {
         // Arrange - Initial load
         final initialResponse = _createSuccessResponse([], true, 'cursor1', 1);
-        when(mockClient.request(any)).thenAnswer((_) => Stream.value(initialResponse).cast());
+        when(
+          mockClient.request(any),
+        ).thenAnswer((_) => Stream.value(initialResponse).cast());
         await viewModel.loadRepositories();
 
         // Arrange - Load more error
-        when(mockClient.request(any)).thenAnswer((_) => Stream.error(Exception('Network error')));
+        when(
+          mockClient.request(any),
+        ).thenAnswer((_) => Stream.error(Exception('Network error')));
 
         // Act
         await viewModel.loadMoreRepositories();
@@ -198,16 +227,22 @@ void main() {
       test('should handle scroll near end', () async {
         // Arrange - Initial load
         final response = _createSuccessResponse([], true, 'cursor1', 1);
-        when(mockClient.request(any)).thenAnswer((_) => Stream.value(response).cast());
+        when(
+          mockClient.request(any),
+        ).thenAnswer((_) => Stream.value(response).cast());
         await viewModel.loadRepositories();
 
         // Arrange - Load more
         final moreResponse = _createSuccessResponse([], false, null, 2);
-        when(mockClient.request(any)).thenAnswer((_) => Stream.value(moreResponse).cast());
+        when(
+          mockClient.request(any),
+        ).thenAnswer((_) => Stream.value(moreResponse).cast());
 
         // Act
         viewModel.onScrollNearEnd();
-        await Future.delayed(Duration(milliseconds: 10)); // Allow async operation to complete
+        await Future.delayed(
+          Duration(milliseconds: 10),
+        ); // Allow async operation to complete
 
         // Assert - Should have triggered load more
         verify(mockClient.request(any)).called(2); // Initial + load more
@@ -240,7 +275,9 @@ void main() {
       test('should update type filter and trigger reload', () async {
         // Arrange
         final response = _createSuccessResponse([], false, null, 0);
-        when(mockClient.request(any)).thenAnswer((_) => Stream.value(response).cast());
+        when(
+          mockClient.request(any),
+        ).thenAnswer((_) => Stream.value(response).cast());
 
         // Act
         viewModel.updateTypeFilter(RepositoryType.private);
@@ -287,7 +324,9 @@ void main() {
       test('should update sort option and trigger reload', () async {
         // Arrange
         final response = _createSuccessResponse([], false, null, 0);
-        when(mockClient.request(any)).thenAnswer((_) => Stream.value(response).cast());
+        when(
+          mockClient.request(any),
+        ).thenAnswer((_) => Stream.value(response).cast());
 
         // Act
         viewModel.updateSortOption(RepositorySortOption.nameAscending);
@@ -312,7 +351,9 @@ void main() {
       test('should clear all filters', () async {
         // Arrange
         final response = _createSuccessResponse([], false, null, 0);
-        when(mockClient.request(any)).thenAnswer((_) => Stream.value(response).cast());
+        when(
+          mockClient.request(any),
+        ).thenAnswer((_) => Stream.value(response).cast());
 
         // Apply filters
         viewModel.updateSearchQuery('flutter');
@@ -328,7 +369,7 @@ void main() {
         expect(viewModel.selectedLanguage, isNull);
         expect(viewModel.selectedType, RepositoryType.all);
         expect(viewModel.sortOption, RepositorySortOption.recentlyPushed);
-        
+
         // Should trigger a reload
         await Future.delayed(Duration(milliseconds: 10));
         verify(mockClient.request(any)).called(greaterThan(0));
@@ -339,12 +380,16 @@ void main() {
       test('should refresh repositories', () async {
         // Arrange - Initial load
         final initialResponse = _createSuccessResponse([], false, null, 1);
-        when(mockClient.request(any)).thenAnswer((_) => Stream.value(initialResponse).cast());
+        when(
+          mockClient.request(any),
+        ).thenAnswer((_) => Stream.value(initialResponse).cast());
         await viewModel.loadRepositories();
 
         // Arrange - Refresh with new data
         final refreshResponse = _createSuccessResponse([], false, null, 2);
-        when(mockClient.request(any)).thenAnswer((_) => Stream.value(refreshResponse).cast());
+        when(
+          mockClient.request(any),
+        ).thenAnswer((_) => Stream.value(refreshResponse).cast());
 
         // Act
         await viewModel.refreshRepositories();
@@ -361,12 +406,16 @@ void main() {
       test('should handle GraphQL errors in load more', () async {
         // Arrange - Initial load
         final response = _createSuccessResponse([], true, 'cursor1', 1);
-        when(mockClient.request(any)).thenAnswer((_) => Stream.value(response).cast());
+        when(
+          mockClient.request(any),
+        ).thenAnswer((_) => Stream.value(response).cast());
         await viewModel.loadRepositories();
 
         // Arrange - Load more with GraphQL error
         final errorResponse = _createErrorResponse('Rate limit exceeded');
-        when(mockClient.request(any)).thenAnswer((_) => Stream.value(errorResponse).cast());
+        when(
+          mockClient.request(any),
+        ).thenAnswer((_) => Stream.value(errorResponse).cast());
 
         // Act
         await viewModel.loadMoreRepositories();
@@ -379,7 +428,9 @@ void main() {
       test('should handle null data in response', () async {
         // Arrange
         final nullResponse = _createNullDataResponse();
-        when(mockClient.request(any)).thenAnswer((_) => Stream.value(nullResponse).cast());
+        when(
+          mockClient.request(any),
+        ).thenAnswer((_) => Stream.value(nullResponse).cast());
 
         // Act
         await viewModel.loadRepositories();
@@ -393,16 +444,20 @@ void main() {
     group('Disposal', () {
       test('should cancel ongoing operations on dispose', () {
         // Arrange
-        when(mockClient.request(any)).thenAnswer((_) => Stream.value(
-          _createSuccessResponse([], false, null, 0)
-        ).cast());
+        when(mockClient.request(any)).thenAnswer(
+          (_) =>
+              Stream.value(_createSuccessResponse([], false, null, 0)).cast(),
+        );
 
         // Act
         viewModel.dispose();
 
         // Assert
         expect(viewModel.disposed, true);
-        expect(() => viewModel.dispose(), returnsNormally); // Should handle multiple dispose calls
+        expect(
+          () => viewModel.dispose(),
+          returnsNormally,
+        ); // Should handle multiple dispose calls
       });
     });
 
@@ -410,17 +465,22 @@ void main() {
       test('should compute canLoadMore correctly', () async {
         // Test various states
         expect(viewModel.canLoadMore, true); // Initial state
-        
+
         // Set up mock response
         final response = _createSuccessResponse([], false, null, 0);
-        when(mockClient.request(any)).thenAnswer((_) => Stream.value(response).cast());
-        
+        when(
+          mockClient.request(any),
+        ).thenAnswer((_) => Stream.value(response).cast());
+
         // Simulate loading state
         final loadingFuture = viewModel.loadRepositories();
         expect(viewModel.canLoadMore, false); // Should be false when loading
-        
+
         await loadingFuture;
-        expect(viewModel.canLoadMore, false); // Should be false when hasNextPage is false
+        expect(
+          viewModel.canLoadMore,
+          false,
+        ); // Should be false when hasNextPage is false
       });
 
       test('should compute showLoadingIndicator correctly', () {
@@ -438,54 +498,71 @@ OperationResponse<GGetUserRepositoriesData, Object> _createSuccessResponse(
   int totalCount,
 ) {
   return OperationResponse<GGetUserRepositoriesData, Object>(
-    operationRequest: GGetUserRepositoriesReq((b) => b
-      ..vars.login = 'testuser'
-      ..vars.first = 20),
-    data: GGetUserRepositoriesData((b) => b
-      ..G__typename = 'Query'
-      ..user = (GGetUserRepositoriesData_userBuilder()
-        ..G__typename = 'User'
-        ..repositories = (GGetUserRepositoriesData_user_repositoriesBuilder()
-          ..G__typename = 'RepositoryConnection'
-          ..totalCount = totalCount
-          ..pageInfo = (GGetUserRepositoriesData_user_repositories_pageInfoBuilder()
-            ..G__typename = 'PageInfo'
-            ..hasNextPage = hasNextPage
-            ..hasPreviousPage = false
-            ..startCursor = null
-            ..endCursor = endCursor)
-          ..nodes = BuiltList<GGetUserRepositoriesData_user_repositories_nodes?>(repositories).toBuilder()))),
+    operationRequest: GGetUserRepositoriesReq(
+      (b) => b
+        ..vars.login = 'testuser'
+        ..vars.first = 20,
+    ),
+    data: GGetUserRepositoriesData(
+      (b) => b
+        ..G__typename = 'Query'
+        ..user = (GGetUserRepositoriesData_userBuilder()
+          ..G__typename = 'User'
+          ..repositories = (GGetUserRepositoriesData_user_repositoriesBuilder()
+            ..G__typename = 'RepositoryConnection'
+            ..totalCount = totalCount
+            ..pageInfo =
+                (GGetUserRepositoriesData_user_repositories_pageInfoBuilder()
+                  ..G__typename = 'PageInfo'
+                  ..hasNextPage = hasNextPage
+                  ..hasPreviousPage = false
+                  ..startCursor = null
+                  ..endCursor = endCursor)
+            ..nodes =
+                BuiltList<GGetUserRepositoriesData_user_repositories_nodes?>(
+                  repositories,
+                ).toBuilder())),
+    ),
   );
 }
 
-OperationResponse<GGetUserRepositoriesData, Object> _createErrorResponse(String message) {
+OperationResponse<GGetUserRepositoriesData, Object> _createErrorResponse(
+  String message,
+) {
   return OperationResponse<GGetUserRepositoriesData, Object>(
-    operationRequest: GGetUserRepositoriesReq((b) => b
-      ..vars.login = 'testuser'
-      ..vars.first = 20),
+    operationRequest: GGetUserRepositoriesReq(
+      (b) => b
+        ..vars.login = 'testuser'
+        ..vars.first = 20,
+    ),
     data: null,
-    graphqlErrors: [
-      GraphQLError(message: message),
-    ],
+    graphqlErrors: [GraphQLError(message: message)],
   );
 }
 
-OperationResponse<GGetUserRepositoriesData, Object> _createUserNotFoundResponse() {
+OperationResponse<GGetUserRepositoriesData, Object>
+_createUserNotFoundResponse() {
   return OperationResponse<GGetUserRepositoriesData, Object>(
-    operationRequest: GGetUserRepositoriesReq((b) => b
-      ..vars.login = 'testuser'
-      ..vars.first = 20),
-    data: GGetUserRepositoriesData((b) => b
-      ..G__typename = 'Query'
-      ..user = null),
+    operationRequest: GGetUserRepositoriesReq(
+      (b) => b
+        ..vars.login = 'testuser'
+        ..vars.first = 20,
+    ),
+    data: GGetUserRepositoriesData(
+      (b) => b
+        ..G__typename = 'Query'
+        ..user = null,
+    ),
   );
 }
 
 OperationResponse<GGetUserRepositoriesData, Object> _createNullDataResponse() {
   return OperationResponse<GGetUserRepositoriesData, Object>(
-    operationRequest: GGetUserRepositoriesReq((b) => b
-      ..vars.login = 'testuser'
-      ..vars.first = 20),
+    operationRequest: GGetUserRepositoriesReq(
+      (b) => b
+        ..vars.login = 'testuser'
+        ..vars.first = 20,
+    ),
     data: null,
   );
 }

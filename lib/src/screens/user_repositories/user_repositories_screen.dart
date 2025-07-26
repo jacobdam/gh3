@@ -51,7 +51,7 @@ class _UserRepositoriesScreenState extends State<UserRepositoriesScreen> {
   }
 
   void _onScroll() {
-    if (_scrollController.position.pixels >= 
+    if (_scrollController.position.pixels >=
         _scrollController.position.maxScrollExtent - 200) {
       _viewModel.onScrollNearEnd();
     }
@@ -79,9 +79,7 @@ class _UserRepositoriesScreenState extends State<UserRepositoriesScreen> {
 
   Widget _buildBody() {
     if (_viewModel.isLoading && _viewModel.filteredRepositories.isEmpty) {
-      return const Center(
-        child: CircularProgressIndicator(),
-      );
+      return const Center(child: CircularProgressIndicator());
     }
 
     if (_viewModel.error != null && _viewModel.filteredRepositories.isEmpty) {
@@ -115,16 +113,13 @@ class _UserRepositoriesScreenState extends State<UserRepositoriesScreen> {
       controller: _scrollController,
       slivers: [
         // Search and filter section
-        SliverToBoxAdapter(
-          child: _buildSearchAndFilterSection(),
-        ),
-        
+        SliverToBoxAdapter(child: _buildSearchAndFilterSection()),
+
         // Repository list or empty state
         if (_viewModel.filteredRepositories.isEmpty && !_viewModel.isLoading)
-          SliverFillRemaining(
-            child: _buildEmptyState(),
-          )
-        else if (_viewModel.isLoading && _viewModel.filteredRepositories.isEmpty)
+          SliverFillRemaining(child: _buildEmptyState())
+        else if (_viewModel.isLoading &&
+            _viewModel.filteredRepositories.isEmpty)
           SliverList(
             delegate: SliverChildBuilderDelegate(
               (context, index) => _buildRepositoryCardSkeleton(),
@@ -133,18 +128,15 @@ class _UserRepositoriesScreenState extends State<UserRepositoriesScreen> {
           )
         else
           SliverList(
-            delegate: SliverChildBuilderDelegate(
-              (context, index) {
-                final repository = _viewModel.filteredRepositories[index];
-                return RepositoryCard.fromUserRepositoriesFragment(
-                  repository,
-                  onTap: () => _onRepositoryTap(repository),
-                );
-              },
-              childCount: _viewModel.filteredRepositories.length,
-            ),
+            delegate: SliverChildBuilderDelegate((context, index) {
+              final repository = _viewModel.filteredRepositories[index];
+              return RepositoryCard.fromUserRepositoriesFragment(
+                repository,
+                onTap: () => _onRepositoryTap(repository),
+              );
+            }, childCount: _viewModel.filteredRepositories.length),
           ),
-        
+
         // Loading indicator for pagination
         if (_viewModel.showLoadingIndicator)
           const SliverToBoxAdapter(
@@ -184,15 +176,13 @@ class _UserRepositoriesScreenState extends State<UserRepositoriesScreen> {
             ),
             onChanged: (value) => _viewModel.updateSearchQuery(value),
           ),
-          
+
           const SizedBox(height: 16),
-          
+
           // Filter chips and buttons
           Row(
             children: [
-              Expanded(
-                child: _buildActiveFiltersChips(),
-              ),
+              Expanded(child: _buildActiveFiltersChips()),
               const SizedBox(width: 8),
               Tooltip(
                 message: 'Filter repositories',
@@ -211,7 +201,7 @@ class _UserRepositoriesScreenState extends State<UserRepositoriesScreen> {
 
   Widget _buildActiveFiltersChips() {
     final activeFilters = <Widget>[];
-    
+
     // Repository type filter chip
     if (_viewModel.selectedType != RepositoryType.all) {
       activeFilters.add(
@@ -222,7 +212,7 @@ class _UserRepositoriesScreenState extends State<UserRepositoriesScreen> {
         ),
       );
     }
-    
+
     // Language filter chip
     if (_viewModel.selectedLanguage != null) {
       activeFilters.add(
@@ -233,30 +223,35 @@ class _UserRepositoriesScreenState extends State<UserRepositoriesScreen> {
         ),
       );
     }
-    
+
     // Sort option chip (only show if not default)
     if (_viewModel.sortOption != RepositorySortOption.recentlyPushed) {
       activeFilters.add(
         Chip(
-          label: Text('Sort: ${_getSortOptionDisplayName(_viewModel.sortOption)}'),
-          onDeleted: () => _viewModel.updateSortOption(RepositorySortOption.recentlyPushed),
+          label: Text(
+            'Sort: ${_getSortOptionDisplayName(_viewModel.sortOption)}',
+          ),
+          onDeleted: () =>
+              _viewModel.updateSortOption(RepositorySortOption.recentlyPushed),
           deleteIcon: const Icon(Icons.close, size: 18),
         ),
       );
     }
-    
+
     if (activeFilters.isEmpty) {
       return const SizedBox.shrink();
     }
-    
+
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
       child: Row(
         children: [
-          ...activeFilters.map((chip) => Padding(
-            padding: const EdgeInsets.only(right: 8.0),
-            child: chip,
-          )),
+          ...activeFilters.map(
+            (chip) => Padding(
+              padding: const EdgeInsets.only(right: 8.0),
+              child: chip,
+            ),
+          ),
           if (activeFilters.length > 1)
             TextButton(
               onPressed: () => _viewModel.clearAllFilters(),
@@ -317,9 +312,10 @@ class _UserRepositoriesScreenState extends State<UserRepositoriesScreen> {
 
   Widget _buildEmptyState() {
     final hasSearchQuery = _viewModel.searchQuery.isNotEmpty;
-    final hasFilters = _viewModel.selectedType != RepositoryType.all || 
-                      _viewModel.selectedLanguage != null;
-    
+    final hasFilters =
+        _viewModel.selectedType != RepositoryType.all ||
+        _viewModel.selectedLanguage != null;
+
     if (hasSearchQuery || hasFilters) {
       return Center(
         child: Column(
@@ -400,7 +396,7 @@ class _UserRepositoriesScreenState extends State<UserRepositoriesScreen> {
                 ),
               ),
               const SizedBox(height: 16),
-              
+
               // Title
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -418,11 +414,11 @@ class _UserRepositoriesScreenState extends State<UserRepositoriesScreen> {
                   ),
                 ],
               ),
-              
+
               const SizedBox(height: 8),
               const Divider(),
               const SizedBox(height: 8),
-              
+
               Expanded(
                 child: ListView(
                   controller: scrollController,
@@ -430,41 +426,40 @@ class _UserRepositoriesScreenState extends State<UserRepositoriesScreen> {
                     // Repository type filter
                     _buildFilterSection(
                       'Repository Type',
-                      RepositoryType.values.map((type) => 
-                        _buildFilterOption(
-                          _getRepositoryTypeDisplayName(type),
-                          _viewModel.selectedType == type,
-                          () => _viewModel.updateTypeFilter(type),
-                        ),
-                      ).toList(),
+                      RepositoryType.values
+                          .map(
+                            (type) => _buildFilterOption(
+                              _getRepositoryTypeDisplayName(type),
+                              _viewModel.selectedType == type,
+                              () => _viewModel.updateTypeFilter(type),
+                            ),
+                          )
+                          .toList(),
                     ),
-                    
+
                     const SizedBox(height: 24),
-                    
+
                     // Language filter
                     if (_viewModel.availableLanguages.isNotEmpty)
-                      _buildFilterSection(
-                        'Language',
-                        [
-                          _buildFilterOption(
-                            'All Languages',
-                            _viewModel.selectedLanguage == null,
-                            () => _viewModel.updateLanguageFilter(null),
+                      _buildFilterSection('Language', [
+                        _buildFilterOption(
+                          'All Languages',
+                          _viewModel.selectedLanguage == null,
+                          () => _viewModel.updateLanguageFilter(null),
+                        ),
+                        ..._viewModel.availableLanguages.map(
+                          (language) => _buildLanguageFilterOption(
+                            language,
+                            _viewModel.languageCounts[language] ?? 0,
+                            _viewModel.selectedLanguage == language,
+                            () => _viewModel.updateLanguageFilter(language),
                           ),
-                          ..._viewModel.availableLanguages.map((language) =>
-                            _buildLanguageFilterOption(
-                              language,
-                              _viewModel.languageCounts[language] ?? 0,
-                              _viewModel.selectedLanguage == language,
-                              () => _viewModel.updateLanguageFilter(language),
-                            ),
-                          ),
-                        ],
-                      ),
+                        ),
+                      ]),
                   ],
                 ),
               ),
-              
+
               // Apply button
               const SizedBox(height: 16),
               SizedBox(
@@ -487,9 +482,9 @@ class _UserRepositoriesScreenState extends State<UserRepositoriesScreen> {
       children: [
         Text(
           title,
-          style: Theme.of(context).textTheme.titleMedium?.copyWith(
-            fontWeight: FontWeight.bold,
-          ),
+          style: Theme.of(
+            context,
+          ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 8),
         ...options,
@@ -506,17 +501,19 @@ class _UserRepositoriesScreenState extends State<UserRepositoriesScreen> {
     );
   }
 
-  Widget _buildLanguageFilterOption(String language, int count, bool isSelected, VoidCallback onTap) {
+  Widget _buildLanguageFilterOption(
+    String language,
+    int count,
+    bool isSelected,
+    VoidCallback onTap,
+  ) {
     return ListTile(
       title: Row(
         children: [
           Expanded(child: Text(language)),
           Text(
             '($count)',
-            style: TextStyle(
-              color: Colors.grey[600],
-              fontSize: 14,
-            ),
+            style: TextStyle(color: Colors.grey[600], fontSize: 14),
           ),
         ],
       ),
@@ -547,17 +544,17 @@ class _UserRepositoriesScreenState extends State<UserRepositoriesScreen> {
               ),
             ),
             const SizedBox(height: 16),
-            
+
             Text(
               'Sort Repositories',
               style: Theme.of(context).textTheme.headlineSmall,
             ),
             const SizedBox(height: 16),
-            ...RepositorySortOption.values.map((option) =>
-              ListTile(
+            ...RepositorySortOption.values.map(
+              (option) => ListTile(
                 title: Text(_getSortOptionDisplayName(option)),
-                trailing: _viewModel.sortOption == option 
-                    ? const Icon(Icons.check, color: Colors.blue) 
+                trailing: _viewModel.sortOption == option
+                    ? const Icon(Icons.check, color: Colors.blue)
                     : null,
                 onTap: () {
                   _viewModel.updateSortOption(option);

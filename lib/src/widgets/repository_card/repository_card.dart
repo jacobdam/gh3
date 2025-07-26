@@ -72,15 +72,14 @@ class RepositoryCard extends StatelessWidget {
         title: Row(
           children: [
             Expanded(
-              child: Text(name, style: const TextStyle(fontWeight: FontWeight.bold)),
+              child: Text(
+                name,
+                style: const TextStyle(fontWeight: FontWeight.bold),
+              ),
             ),
             if (isPrivate) ...[
               const SizedBox(width: 8),
-              Icon(
-                Icons.lock,
-                size: 16,
-                color: Colors.grey[600],
-              ),
+              Icon(Icons.lock, size: 16, color: Colors.grey[600]),
             ],
           ],
         ),

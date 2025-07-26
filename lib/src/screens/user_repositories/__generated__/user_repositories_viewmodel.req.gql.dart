@@ -20,13 +20,15 @@ part 'user_repositories_viewmodel.req.gql.g.dart';
 abstract class GGetUserRepositoriesReq
     implements
         Built<GGetUserRepositoriesReq, GGetUserRepositoriesReqBuilder>,
-        _i1.OperationRequest<_i2.GGetUserRepositoriesData,
-            _i3.GGetUserRepositoriesVars> {
+        _i1.OperationRequest<
+          _i2.GGetUserRepositoriesData,
+          _i3.GGetUserRepositoriesVars
+        > {
   GGetUserRepositoriesReq._();
 
-  factory GGetUserRepositoriesReq(
-          [void Function(GGetUserRepositoriesReqBuilder b) updates]) =
-      _$GGetUserRepositoriesReq;
+  factory GGetUserRepositoriesReq([
+    void Function(GGetUserRepositoriesReqBuilder b) updates,
+  ]) = _$GGetUserRepositoriesReq;
 
   static void _initializeBuilder(GGetUserRepositoriesReqBuilder b) => b
     ..operation = _i4.Operation(
@@ -41,10 +43,10 @@ abstract class GGetUserRepositoriesReq
   _i4.Operation get operation;
   @override
   _i4.Request get execRequest => _i4.Request(
-        operation: operation,
-        variables: vars.toJson(),
-        context: context ?? const _i4.Context(),
-      );
+    operation: operation,
+    variables: vars.toJson(),
+    context: context ?? const _i4.Context(),
+  );
 
   @override
   String? get requestId;
@@ -53,7 +55,8 @@ abstract class GGetUserRepositoriesReq
   _i2.GGetUserRepositoriesData? Function(
     _i2.GGetUserRepositoriesData?,
     _i2.GGetUserRepositoriesData?,
-  )? get updateResult;
+  )?
+  get updateResult;
   @override
   _i2.GGetUserRepositoriesData? get optimisticResponse;
   @override
@@ -79,36 +82,36 @@ abstract class GGetUserRepositoriesReq
       data.toJson();
 
   @override
-  _i1.OperationRequest<_i2.GGetUserRepositoriesData,
-      _i3.GGetUserRepositoriesVars> transformOperation(
-          _i4.Operation Function(_i4.Operation) transform) =>
+  _i1.OperationRequest<
+    _i2.GGetUserRepositoriesData,
+    _i3.GGetUserRepositoriesVars
+  >
+  transformOperation(_i4.Operation Function(_i4.Operation) transform) =>
       this.rebuild((b) => b..operation = transform(operation));
 
   static Serializer<GGetUserRepositoriesReq> get serializer =>
       _$gGetUserRepositoriesReqSerializer;
 
-  Map<String, dynamic> toJson() => (_i6.serializers.serializeWith(
-        GGetUserRepositoriesReq.serializer,
-        this,
-      ) as Map<String, dynamic>);
+  Map<String, dynamic> toJson() =>
+      (_i6.serializers.serializeWith(GGetUserRepositoriesReq.serializer, this)
+          as Map<String, dynamic>);
 
   static GGetUserRepositoriesReq? fromJson(Map<String, dynamic> json) =>
-      _i6.serializers.deserializeWith(
-        GGetUserRepositoriesReq.serializer,
-        json,
-      );
+      _i6.serializers.deserializeWith(GGetUserRepositoriesReq.serializer, json);
 }
 
 abstract class GGetViewerRepositoriesReq
     implements
         Built<GGetViewerRepositoriesReq, GGetViewerRepositoriesReqBuilder>,
-        _i1.OperationRequest<_i2.GGetViewerRepositoriesData,
-            _i3.GGetViewerRepositoriesVars> {
+        _i1.OperationRequest<
+          _i2.GGetViewerRepositoriesData,
+          _i3.GGetViewerRepositoriesVars
+        > {
   GGetViewerRepositoriesReq._();
 
-  factory GGetViewerRepositoriesReq(
-          [void Function(GGetViewerRepositoriesReqBuilder b) updates]) =
-      _$GGetViewerRepositoriesReq;
+  factory GGetViewerRepositoriesReq([
+    void Function(GGetViewerRepositoriesReqBuilder b) updates,
+  ]) = _$GGetViewerRepositoriesReq;
 
   static void _initializeBuilder(GGetViewerRepositoriesReqBuilder b) => b
     ..operation = _i4.Operation(
@@ -123,10 +126,10 @@ abstract class GGetViewerRepositoriesReq
   _i4.Operation get operation;
   @override
   _i4.Request get execRequest => _i4.Request(
-        operation: operation,
-        variables: vars.toJson(),
-        context: context ?? const _i4.Context(),
-      );
+    operation: operation,
+    variables: vars.toJson(),
+    context: context ?? const _i4.Context(),
+  );
 
   @override
   String? get requestId;
@@ -135,7 +138,8 @@ abstract class GGetViewerRepositoriesReq
   _i2.GGetViewerRepositoriesData? Function(
     _i2.GGetViewerRepositoriesData?,
     _i2.GGetViewerRepositoriesData?,
-  )? get updateResult;
+  )?
+  get updateResult;
   @override
   _i2.GGetViewerRepositoriesData? get optimisticResponse;
   @override
@@ -161,37 +165,40 @@ abstract class GGetViewerRepositoriesReq
       data.toJson();
 
   @override
-  _i1.OperationRequest<_i2.GGetViewerRepositoriesData,
-      _i3.GGetViewerRepositoriesVars> transformOperation(
-          _i4.Operation Function(_i4.Operation) transform) =>
+  _i1.OperationRequest<
+    _i2.GGetViewerRepositoriesData,
+    _i3.GGetViewerRepositoriesVars
+  >
+  transformOperation(_i4.Operation Function(_i4.Operation) transform) =>
       this.rebuild((b) => b..operation = transform(operation));
 
   static Serializer<GGetViewerRepositoriesReq> get serializer =>
       _$gGetViewerRepositoriesReqSerializer;
 
-  Map<String, dynamic> toJson() => (_i6.serializers.serializeWith(
-        GGetViewerRepositoriesReq.serializer,
-        this,
-      ) as Map<String, dynamic>);
+  Map<String, dynamic> toJson() =>
+      (_i6.serializers.serializeWith(GGetViewerRepositoriesReq.serializer, this)
+          as Map<String, dynamic>);
 
-  static GGetViewerRepositoriesReq? fromJson(Map<String, dynamic> json) =>
-      _i6.serializers.deserializeWith(
-        GGetViewerRepositoriesReq.serializer,
-        json,
-      );
+  static GGetViewerRepositoriesReq? fromJson(Map<String, dynamic> json) => _i6
+      .serializers
+      .deserializeWith(GGetViewerRepositoriesReq.serializer, json);
 }
 
 abstract class GUserRepositoriesFragmentReq
     implements
-        Built<GUserRepositoriesFragmentReq,
-            GUserRepositoriesFragmentReqBuilder>,
-        _i1.FragmentRequest<_i2.GUserRepositoriesFragmentData,
-            _i3.GUserRepositoriesFragmentVars> {
+        Built<
+          GUserRepositoriesFragmentReq,
+          GUserRepositoriesFragmentReqBuilder
+        >,
+        _i1.FragmentRequest<
+          _i2.GUserRepositoriesFragmentData,
+          _i3.GUserRepositoriesFragmentVars
+        > {
   GUserRepositoriesFragmentReq._();
 
-  factory GUserRepositoriesFragmentReq(
-          [void Function(GUserRepositoriesFragmentReqBuilder b) updates]) =
-      _$GUserRepositoriesFragmentReq;
+  factory GUserRepositoriesFragmentReq([
+    void Function(GUserRepositoriesFragmentReqBuilder b) updates,
+  ]) = _$GUserRepositoriesFragmentReq;
 
   static void _initializeBuilder(GUserRepositoriesFragmentReqBuilder b) => b
     ..document = _i5.document
@@ -219,10 +226,12 @@ abstract class GUserRepositoriesFragmentReq
   static Serializer<GUserRepositoriesFragmentReq> get serializer =>
       _$gUserRepositoriesFragmentReqSerializer;
 
-  Map<String, dynamic> toJson() => (_i6.serializers.serializeWith(
-        GUserRepositoriesFragmentReq.serializer,
-        this,
-      ) as Map<String, dynamic>);
+  Map<String, dynamic> toJson() =>
+      (_i6.serializers.serializeWith(
+            GUserRepositoriesFragmentReq.serializer,
+            this,
+          )
+          as Map<String, dynamic>);
 
   static GUserRepositoriesFragmentReq? fromJson(Map<String, dynamic> json) =>
       _i6.serializers.deserializeWith(

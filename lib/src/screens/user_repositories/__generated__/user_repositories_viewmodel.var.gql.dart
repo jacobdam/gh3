@@ -15,9 +15,9 @@ abstract class GGetUserRepositoriesVars
         Built<GGetUserRepositoriesVars, GGetUserRepositoriesVarsBuilder> {
   GGetUserRepositoriesVars._();
 
-  factory GGetUserRepositoriesVars(
-          [void Function(GGetUserRepositoriesVarsBuilder b) updates]) =
-      _$GGetUserRepositoriesVars;
+  factory GGetUserRepositoriesVars([
+    void Function(GGetUserRepositoriesVarsBuilder b) updates,
+  ]) = _$GGetUserRepositoriesVars;
 
   String get login;
   int get first;
@@ -30,16 +30,13 @@ abstract class GGetUserRepositoriesVars
   static Serializer<GGetUserRepositoriesVars> get serializer =>
       _$gGetUserRepositoriesVarsSerializer;
 
-  Map<String, dynamic> toJson() => (_i2.serializers.serializeWith(
-        GGetUserRepositoriesVars.serializer,
-        this,
-      ) as Map<String, dynamic>);
+  Map<String, dynamic> toJson() =>
+      (_i2.serializers.serializeWith(GGetUserRepositoriesVars.serializer, this)
+          as Map<String, dynamic>);
 
-  static GGetUserRepositoriesVars? fromJson(Map<String, dynamic> json) =>
-      _i2.serializers.deserializeWith(
-        GGetUserRepositoriesVars.serializer,
-        json,
-      );
+  static GGetUserRepositoriesVars? fromJson(Map<String, dynamic> json) => _i2
+      .serializers
+      .deserializeWith(GGetUserRepositoriesVars.serializer, json);
 }
 
 abstract class GGetViewerRepositoriesVars
@@ -47,9 +44,9 @@ abstract class GGetViewerRepositoriesVars
         Built<GGetViewerRepositoriesVars, GGetViewerRepositoriesVarsBuilder> {
   GGetViewerRepositoriesVars._();
 
-  factory GGetViewerRepositoriesVars(
-          [void Function(GGetViewerRepositoriesVarsBuilder b) updates]) =
-      _$GGetViewerRepositoriesVars;
+  factory GGetViewerRepositoriesVars([
+    void Function(GGetViewerRepositoriesVarsBuilder b) updates,
+  ]) = _$GGetViewerRepositoriesVars;
 
   int get first;
   String? get after;
@@ -61,35 +58,39 @@ abstract class GGetViewerRepositoriesVars
   static Serializer<GGetViewerRepositoriesVars> get serializer =>
       _$gGetViewerRepositoriesVarsSerializer;
 
-  Map<String, dynamic> toJson() => (_i2.serializers.serializeWith(
-        GGetViewerRepositoriesVars.serializer,
-        this,
-      ) as Map<String, dynamic>);
+  Map<String, dynamic> toJson() =>
+      (_i2.serializers.serializeWith(
+            GGetViewerRepositoriesVars.serializer,
+            this,
+          )
+          as Map<String, dynamic>);
 
-  static GGetViewerRepositoriesVars? fromJson(Map<String, dynamic> json) =>
-      _i2.serializers.deserializeWith(
-        GGetViewerRepositoriesVars.serializer,
-        json,
-      );
+  static GGetViewerRepositoriesVars? fromJson(Map<String, dynamic> json) => _i2
+      .serializers
+      .deserializeWith(GGetViewerRepositoriesVars.serializer, json);
 }
 
 abstract class GUserRepositoriesFragmentVars
     implements
-        Built<GUserRepositoriesFragmentVars,
-            GUserRepositoriesFragmentVarsBuilder> {
+        Built<
+          GUserRepositoriesFragmentVars,
+          GUserRepositoriesFragmentVarsBuilder
+        > {
   GUserRepositoriesFragmentVars._();
 
-  factory GUserRepositoriesFragmentVars(
-          [void Function(GUserRepositoriesFragmentVarsBuilder b) updates]) =
-      _$GUserRepositoriesFragmentVars;
+  factory GUserRepositoriesFragmentVars([
+    void Function(GUserRepositoriesFragmentVarsBuilder b) updates,
+  ]) = _$GUserRepositoriesFragmentVars;
 
   static Serializer<GUserRepositoriesFragmentVars> get serializer =>
       _$gUserRepositoriesFragmentVarsSerializer;
 
-  Map<String, dynamic> toJson() => (_i2.serializers.serializeWith(
-        GUserRepositoriesFragmentVars.serializer,
-        this,
-      ) as Map<String, dynamic>);
+  Map<String, dynamic> toJson() =>
+      (_i2.serializers.serializeWith(
+            GUserRepositoriesFragmentVars.serializer,
+            this,
+          )
+          as Map<String, dynamic>);
 
   static GUserRepositoriesFragmentVars? fromJson(Map<String, dynamic> json) =>
       _i2.serializers.deserializeWith(

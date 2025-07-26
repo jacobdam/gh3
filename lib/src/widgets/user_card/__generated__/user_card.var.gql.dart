@@ -12,21 +12,17 @@ abstract class GUserCardFragmentVars
     implements Built<GUserCardFragmentVars, GUserCardFragmentVarsBuilder> {
   GUserCardFragmentVars._();
 
-  factory GUserCardFragmentVars(
-          [void Function(GUserCardFragmentVarsBuilder b) updates]) =
-      _$GUserCardFragmentVars;
+  factory GUserCardFragmentVars([
+    void Function(GUserCardFragmentVarsBuilder b) updates,
+  ]) = _$GUserCardFragmentVars;
 
   static Serializer<GUserCardFragmentVars> get serializer =>
       _$gUserCardFragmentVarsSerializer;
 
-  Map<String, dynamic> toJson() => (_i1.serializers.serializeWith(
-        GUserCardFragmentVars.serializer,
-        this,
-      ) as Map<String, dynamic>);
+  Map<String, dynamic> toJson() =>
+      (_i1.serializers.serializeWith(GUserCardFragmentVars.serializer, this)
+          as Map<String, dynamic>);
 
   static GUserCardFragmentVars? fromJson(Map<String, dynamic> json) =>
-      _i1.serializers.deserializeWith(
-        GUserCardFragmentVars.serializer,
-        json,
-      );
+      _i1.serializers.deserializeWith(GUserCardFragmentVars.serializer, json);
 }
