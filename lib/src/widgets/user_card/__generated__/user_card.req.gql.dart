@@ -19,15 +19,13 @@ part 'user_card.req.gql.g.dart';
 abstract class GUserCardFragmentReq
     implements
         Built<GUserCardFragmentReq, GUserCardFragmentReqBuilder>,
-        _i1.FragmentRequest<
-          _i2.GUserCardFragmentData,
-          _i3.GUserCardFragmentVars
-        > {
+        _i1
+        .FragmentRequest<_i2.GUserCardFragmentData, _i3.GUserCardFragmentVars> {
   GUserCardFragmentReq._();
 
-  factory GUserCardFragmentReq([
-    void Function(GUserCardFragmentReqBuilder b) updates,
-  ]) = _$GUserCardFragmentReq;
+  factory GUserCardFragmentReq(
+          [void Function(GUserCardFragmentReqBuilder b) updates]) =
+      _$GUserCardFragmentReq;
 
   static void _initializeBuilder(GUserCardFragmentReqBuilder b) => b
     ..document = _i4.document
@@ -55,10 +53,14 @@ abstract class GUserCardFragmentReq
   static Serializer<GUserCardFragmentReq> get serializer =>
       _$gUserCardFragmentReqSerializer;
 
-  Map<String, dynamic> toJson() =>
-      (_i6.serializers.serializeWith(GUserCardFragmentReq.serializer, this)
-          as Map<String, dynamic>);
+  Map<String, dynamic> toJson() => (_i6.serializers.serializeWith(
+        GUserCardFragmentReq.serializer,
+        this,
+      ) as Map<String, dynamic>);
 
   static GUserCardFragmentReq? fromJson(Map<String, dynamic> json) =>
-      _i6.serializers.deserializeWith(GUserCardFragmentReq.serializer, json);
+      _i6.serializers.deserializeWith(
+        GUserCardFragmentReq.serializer,
+        json,
+      );
 }

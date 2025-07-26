@@ -19,15 +19,13 @@ part 'user_profile.req.gql.g.dart';
 abstract class GUserProfileFragmentReq
     implements
         Built<GUserProfileFragmentReq, GUserProfileFragmentReqBuilder>,
-        _i1.FragmentRequest<
-          _i2.GUserProfileFragmentData,
-          _i3.GUserProfileFragmentVars
-        > {
+        _i1.FragmentRequest<_i2.GUserProfileFragmentData,
+            _i3.GUserProfileFragmentVars> {
   GUserProfileFragmentReq._();
 
-  factory GUserProfileFragmentReq([
-    void Function(GUserProfileFragmentReqBuilder b) updates,
-  ]) = _$GUserProfileFragmentReq;
+  factory GUserProfileFragmentReq(
+          [void Function(GUserProfileFragmentReqBuilder b) updates]) =
+      _$GUserProfileFragmentReq;
 
   static void _initializeBuilder(GUserProfileFragmentReqBuilder b) => b
     ..document = _i4.document
@@ -55,10 +53,14 @@ abstract class GUserProfileFragmentReq
   static Serializer<GUserProfileFragmentReq> get serializer =>
       _$gUserProfileFragmentReqSerializer;
 
-  Map<String, dynamic> toJson() =>
-      (_i6.serializers.serializeWith(GUserProfileFragmentReq.serializer, this)
-          as Map<String, dynamic>);
+  Map<String, dynamic> toJson() => (_i6.serializers.serializeWith(
+        GUserProfileFragmentReq.serializer,
+        this,
+      ) as Map<String, dynamic>);
 
   static GUserProfileFragmentReq? fromJson(Map<String, dynamic> json) =>
-      _i6.serializers.deserializeWith(GUserProfileFragmentReq.serializer, json);
+      _i6.serializers.deserializeWith(
+        GUserProfileFragmentReq.serializer,
+        json,
+      );
 }

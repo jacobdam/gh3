@@ -84,6 +84,13 @@ const RepositoryCardFragment = _i1.FragmentDefinitionNode(
       directives: [],
       selectionSet: null,
     ),
+    _i1.FieldNode(
+      name: _i1.NameNode(value: 'isPrivate'),
+      alias: null,
+      arguments: [],
+      directives: [],
+      selectionSet: null,
+    ),
   ]),
 );
 const document = _i1.DocumentNode(definitions: [RepositoryCardFragment]);

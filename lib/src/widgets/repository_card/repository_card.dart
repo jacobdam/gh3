@@ -40,7 +40,7 @@ class RepositoryCard extends StatelessWidget {
       stargazerCount: fragment.stargazerCount,
       forkCount: fragment.forkCount,
       updatedAt: DateTime.parse(fragment.updatedAt.value),
-      isPrivate: false, // RepositoryCardFragment doesn't include isPrivate
+      isPrivate: fragment.isPrivate,
       onTap: onTap,
     );
   }

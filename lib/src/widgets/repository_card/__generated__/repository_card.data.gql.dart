@@ -19,6 +19,7 @@ abstract class GRepositoryCardFragment {
   int get forkCount;
   GRepositoryCardFragment_primaryLanguage? get primaryLanguage;
   _i1.GDateTime get updatedAt;
+  bool get isPrivate;
 }
 
 abstract class GRepositoryCardFragment_primaryLanguage {
@@ -59,6 +60,8 @@ abstract class GRepositoryCardFragmentData
   GRepositoryCardFragmentData_primaryLanguage? get primaryLanguage;
   @override
   _i1.GDateTime get updatedAt;
+  @override
+  bool get isPrivate;
   static Serializer<GRepositoryCardFragmentData> get serializer =>
       _$gRepositoryCardFragmentDataSerializer;
 

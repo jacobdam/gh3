@@ -59,6 +59,11 @@ class _$GRepositoryCardFragmentDataSerializer
         object.updatedAt,
         specifiedType: const FullType(_i1.GDateTime),
       ),
+      'isPrivate',
+      serializers.serialize(
+        object.isPrivate,
+        specifiedType: const FullType(bool),
+      ),
     ];
     Object? value;
     value = object.description;
@@ -175,6 +180,14 @@ class _$GRepositoryCardFragmentDataSerializer
                 as _i1.GDateTime,
           );
           break;
+        case 'isPrivate':
+          result.isPrivate =
+              serializers.deserialize(
+                    value,
+                    specifiedType: const FullType(bool),
+                  )!
+                  as bool;
+          break;
       }
     }
 
@@ -284,6 +297,8 @@ class _$GRepositoryCardFragmentData extends GRepositoryCardFragmentData {
   final GRepositoryCardFragmentData_primaryLanguage? primaryLanguage;
   @override
   final _i1.GDateTime updatedAt;
+  @override
+  final bool isPrivate;
 
   factory _$GRepositoryCardFragmentData([
     void Function(GRepositoryCardFragmentDataBuilder)? updates,
@@ -299,6 +314,7 @@ class _$GRepositoryCardFragmentData extends GRepositoryCardFragmentData {
     required this.forkCount,
     this.primaryLanguage,
     required this.updatedAt,
+    required this.isPrivate,
   }) : super._();
   @override
   GRepositoryCardFragmentData rebuild(
@@ -321,7 +337,8 @@ class _$GRepositoryCardFragmentData extends GRepositoryCardFragmentData {
         stargazerCount == other.stargazerCount &&
         forkCount == other.forkCount &&
         primaryLanguage == other.primaryLanguage &&
-        updatedAt == other.updatedAt;
+        updatedAt == other.updatedAt &&
+        isPrivate == other.isPrivate;
   }
 
   @override
@@ -336,6 +353,7 @@ class _$GRepositoryCardFragmentData extends GRepositoryCardFragmentData {
     _$hash = $jc(_$hash, forkCount.hashCode);
     _$hash = $jc(_$hash, primaryLanguage.hashCode);
     _$hash = $jc(_$hash, updatedAt.hashCode);
+    _$hash = $jc(_$hash, isPrivate.hashCode);
     _$hash = $jf(_$hash);
     return _$hash;
   }
@@ -351,7 +369,8 @@ class _$GRepositoryCardFragmentData extends GRepositoryCardFragmentData {
           ..add('stargazerCount', stargazerCount)
           ..add('forkCount', forkCount)
           ..add('primaryLanguage', primaryLanguage)
-          ..add('updatedAt', updatedAt))
+          ..add('updatedAt', updatedAt)
+          ..add('isPrivate', isPrivate))
         .toString();
   }
 }
@@ -408,6 +427,10 @@ class GRepositoryCardFragmentDataBuilder
   set updatedAt(_i1.GDateTimeBuilder? updatedAt) =>
       _$this._updatedAt = updatedAt;
 
+  bool? _isPrivate;
+  bool? get isPrivate => _$this._isPrivate;
+  set isPrivate(bool? isPrivate) => _$this._isPrivate = isPrivate;
+
   GRepositoryCardFragmentDataBuilder() {
     GRepositoryCardFragmentData._initializeBuilder(this);
   }
@@ -424,6 +447,7 @@ class GRepositoryCardFragmentDataBuilder
       _forkCount = $v.forkCount;
       _primaryLanguage = $v.primaryLanguage?.toBuilder();
       _updatedAt = $v.updatedAt.toBuilder();
+      _isPrivate = $v.isPrivate;
       _$v = null;
     }
     return this;
@@ -481,6 +505,11 @@ class GRepositoryCardFragmentDataBuilder
             ),
             primaryLanguage: _primaryLanguage?.build(),
             updatedAt: updatedAt.build(),
+            isPrivate: BuiltValueNullFieldError.checkNotNull(
+              isPrivate,
+              r'GRepositoryCardFragmentData',
+              'isPrivate',
+            ),
           );
     } catch (_) {
       late String _$failedField;

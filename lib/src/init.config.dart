@@ -134,7 +134,7 @@ extension GetItInjectableX on _i174.GetIt {
       ),
       instanceName: 'UserDetailsRouteProvider',
     );
-    gh.singleton<_i518.RouteProvider>(
+    gh.factory<_i518.RouteProvider>(
       () => _i208.UserRepositoriesRouteProvider(
         gh<_i676.UserRepositoriesViewModelFactory>(),
       ),

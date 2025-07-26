@@ -49,14 +49,14 @@
   - Add proper loading states with shimmer/skeleton loading
   - _Requirements: 1.1-1.4, 6.1-6.6_
 
-- [ ] 7. Enhance RepositoryCard widget for additional requirements
+- [x] 7. Enhance RepositoryCard widget for additional requirements
   - Add support for private repository indicator
   - Add last updated timestamp display
   - Ensure all required repository information is displayed
   - Update GraphQL fragment if needed for additional fields
   - _Requirements: 6.1-6.6_
 
-- [ ] 8. Implement filter and sort UI components
+- [x] 8. Implement filter and sort UI components
   - Create filter bottom sheet with all repository type options
   - Add language filter with dynamic language list from repositories
   - Create sort options UI (dropdown or bottom sheet)
@@ -64,19 +64,19 @@
   - Show active filter indicators in the UI
   - _Requirements: 3.1-3.4, 4.1-4.4, 5.1-5.5, 8.1-8.4_
 
-- [ ] 9. Create UserRepositoriesRoute for typed navigation
+- [x] 9. Create UserRepositoriesRoute for typed navigation
   - Implement AppRoute subclass with user login parameter
   - Define proper path structure for the route
   - _Requirements: 7.1-7.3_
 
-- [ ] 10. Create UserRepositoriesRouteProvider
+- [x] 10. Create UserRepositoriesRouteProvider
   - Implement RouteProvider interface with @Named and @Singleton annotations
   - Configure GoRoute with path parameter for user login
   - Integrate with UserRepositoriesViewModelFactory
   - Wire up screen instantiation with ViewModel
   - _Requirements: 1.1, 7.1-7.3_
 
-- [ ] 11. Add navigation integration to existing screens
+- [x] 11. Add navigation integration to existing screens
   - Update user profile or relevant screens to navigate to repositories screen
   - Add proper navigation calls using the new route
   - Test navigation flow from other parts of the app

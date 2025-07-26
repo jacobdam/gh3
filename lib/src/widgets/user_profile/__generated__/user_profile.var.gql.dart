@@ -13,18 +13,21 @@ abstract class GUserProfileFragmentVars
         Built<GUserProfileFragmentVars, GUserProfileFragmentVarsBuilder> {
   GUserProfileFragmentVars._();
 
-  factory GUserProfileFragmentVars([
-    void Function(GUserProfileFragmentVarsBuilder b) updates,
-  ]) = _$GUserProfileFragmentVars;
+  factory GUserProfileFragmentVars(
+          [void Function(GUserProfileFragmentVarsBuilder b) updates]) =
+      _$GUserProfileFragmentVars;
 
   static Serializer<GUserProfileFragmentVars> get serializer =>
       _$gUserProfileFragmentVarsSerializer;
 
-  Map<String, dynamic> toJson() =>
-      (_i1.serializers.serializeWith(GUserProfileFragmentVars.serializer, this)
-          as Map<String, dynamic>);
+  Map<String, dynamic> toJson() => (_i1.serializers.serializeWith(
+        GUserProfileFragmentVars.serializer,
+        this,
+      ) as Map<String, dynamic>);
 
-  static GUserProfileFragmentVars? fromJson(Map<String, dynamic> json) => _i1
-      .serializers
-      .deserializeWith(GUserProfileFragmentVars.serializer, json);
+  static GUserProfileFragmentVars? fromJson(Map<String, dynamic> json) =>
+      _i1.serializers.deserializeWith(
+        GUserProfileFragmentVars.serializer,
+        json,
+      );
 }
