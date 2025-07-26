@@ -1208,6 +1208,11 @@ class _$GGetUserRepositoriesData_user_repositories_nodesSerializer
         object.updatedAt,
         specifiedType: const FullType(_i3.GDateTime),
       ),
+      'isPrivate',
+      serializers.serialize(
+        object.isPrivate,
+        specifiedType: const FullType(bool),
+      ),
     ];
     Object? value;
     value = object.description;
@@ -1323,6 +1328,14 @@ class _$GGetUserRepositoriesData_user_repositories_nodesSerializer
                 )!
                 as _i3.GDateTime,
           );
+          break;
+        case 'isPrivate':
+          result.isPrivate =
+              serializers.deserialize(
+                    value,
+                    specifiedType: const FullType(bool),
+                  )!
+                  as bool;
           break;
       }
     }
@@ -3336,6 +3349,8 @@ class _$GGetUserRepositoriesData_user_repositories_nodes
   primaryLanguage;
   @override
   final _i3.GDateTime updatedAt;
+  @override
+  final bool isPrivate;
 
   factory _$GGetUserRepositoriesData_user_repositories_nodes([
     void Function(GGetUserRepositoriesData_user_repositories_nodesBuilder)?
@@ -3355,6 +3370,7 @@ class _$GGetUserRepositoriesData_user_repositories_nodes
     required this.forkCount,
     this.primaryLanguage,
     required this.updatedAt,
+    required this.isPrivate,
   }) : super._();
   @override
   GGetUserRepositoriesData_user_repositories_nodes rebuild(
@@ -3378,7 +3394,8 @@ class _$GGetUserRepositoriesData_user_repositories_nodes
         stargazerCount == other.stargazerCount &&
         forkCount == other.forkCount &&
         primaryLanguage == other.primaryLanguage &&
-        updatedAt == other.updatedAt;
+        updatedAt == other.updatedAt &&
+        isPrivate == other.isPrivate;
   }
 
   @override
@@ -3393,6 +3410,7 @@ class _$GGetUserRepositoriesData_user_repositories_nodes
     _$hash = $jc(_$hash, forkCount.hashCode);
     _$hash = $jc(_$hash, primaryLanguage.hashCode);
     _$hash = $jc(_$hash, updatedAt.hashCode);
+    _$hash = $jc(_$hash, isPrivate.hashCode);
     _$hash = $jf(_$hash);
     return _$hash;
   }
@@ -3410,7 +3428,8 @@ class _$GGetUserRepositoriesData_user_repositories_nodes
           ..add('stargazerCount', stargazerCount)
           ..add('forkCount', forkCount)
           ..add('primaryLanguage', primaryLanguage)
-          ..add('updatedAt', updatedAt))
+          ..add('updatedAt', updatedAt)
+          ..add('isPrivate', isPrivate))
         .toString();
   }
 }
@@ -3469,6 +3488,10 @@ class GGetUserRepositoriesData_user_repositories_nodesBuilder
   set updatedAt(_i3.GDateTimeBuilder? updatedAt) =>
       _$this._updatedAt = updatedAt;
 
+  bool? _isPrivate;
+  bool? get isPrivate => _$this._isPrivate;
+  set isPrivate(bool? isPrivate) => _$this._isPrivate = isPrivate;
+
   GGetUserRepositoriesData_user_repositories_nodesBuilder() {
     GGetUserRepositoriesData_user_repositories_nodes._initializeBuilder(this);
   }
@@ -3485,6 +3508,7 @@ class GGetUserRepositoriesData_user_repositories_nodesBuilder
       _forkCount = $v.forkCount;
       _primaryLanguage = $v.primaryLanguage?.toBuilder();
       _updatedAt = $v.updatedAt.toBuilder();
+      _isPrivate = $v.isPrivate;
       _$v = null;
     }
     return this;
@@ -3545,6 +3569,11 @@ class GGetUserRepositoriesData_user_repositories_nodesBuilder
             ),
             primaryLanguage: _primaryLanguage?.build(),
             updatedAt: updatedAt.build(),
+            isPrivate: BuiltValueNullFieldError.checkNotNull(
+              isPrivate,
+              r'GGetUserRepositoriesData_user_repositories_nodes',
+              'isPrivate',
+            ),
           );
     } catch (_) {
       late String _$failedField;

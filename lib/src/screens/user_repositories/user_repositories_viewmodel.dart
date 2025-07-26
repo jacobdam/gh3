@@ -33,6 +33,9 @@ class UserRepositoriesViewModel extends DisposableViewModel {
 
   // Available languages extracted from repositories
   List<String> _availableLanguages = [];
+  
+  // Language counts for display in filter UI
+  Map<String, int> _languageCounts = {};
 
   // Getters
   List<GUserRepositoriesFragment> get repositories => _repositories;
@@ -48,6 +51,7 @@ class UserRepositoriesViewModel extends DisposableViewModel {
   String? get selectedLanguage => _selectedLanguage;
   RepositorySortOption get sortOption => _sortOption;
   List<String> get availableLanguages => _availableLanguages;
+  Map<String, int> get languageCounts => _languageCounts;
 
   // Computed properties
   bool get canLoadMore => _hasNextPage && !_isLoadingMore && !_isLoading && _currentLoadMoreOperation == null;
@@ -360,18 +364,24 @@ class UserRepositoriesViewModel extends DisposableViewModel {
   /// Extract available languages from all repositories
   void _extractAvailableLanguages() {
     final languages = <String>{};
+    final counts = <String, int>{};
     
     for (final repo in _repositories) {
       if (repo.primaryLanguage?.name != null) {
-        languages.add(repo.primaryLanguage!.name);
+        final language = repo.primaryLanguage!.name;
+        languages.add(language);
+        counts[language] = (counts[language] ?? 0) + 1;
       }
     }
     
     _availableLanguages = languages.toList()..sort();
+    _languageCounts = counts;
     
     // Add "No Language" option if there are repositories without a primary language
-    if (_repositories.any((repo) => repo.primaryLanguage == null)) {
+    final noLanguageCount = _repositories.where((repo) => repo.primaryLanguage == null).length;
+    if (noLanguageCount > 0) {
       _availableLanguages.insert(0, 'No Language');
+      _languageCounts['No Language'] = noLanguageCount;
     }
   }
 

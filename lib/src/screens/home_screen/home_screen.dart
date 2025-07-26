@@ -5,6 +5,7 @@ import 'widgets/section_header.dart';
 import 'widgets/work_item_list_tile.dart';
 import '../../widgets/user_card/user_card.dart';
 import '../user_details/user_details_route.dart';
+import '../user_repositories/user_repositories_route.dart';
 
 class HomeScreen extends StatefulWidget {
   final AuthViewModel authViewModel;
@@ -139,9 +140,15 @@ class _HomeScreenState extends State<HomeScreen> {
                   title: 'Projects',
                   icon: Icons.folder_open,
                 ),
-                const WorkItemListTile(
+                WorkItemListTile(
                   title: 'Repositories',
                   icon: Icons.source,
+                  onTap: () {
+                    final login = _homeViewModel.currentUser?.login;
+                    if (login != null) {
+                      UserRepositoriesRoute(login).go(context);
+                    }
+                  },
                 ),
                 const WorkItemListTile(
                   title: 'Organizations',

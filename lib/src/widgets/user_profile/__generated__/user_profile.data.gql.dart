@@ -49,9 +49,9 @@ abstract class GUserProfileFragmentData
         GUserProfileFragment {
   GUserProfileFragmentData._();
 
-  factory GUserProfileFragmentData([
-    void Function(GUserProfileFragmentDataBuilder b) updates,
-  ]) = _$GUserProfileFragmentData;
+  factory GUserProfileFragmentData(
+          [void Function(GUserProfileFragmentDataBuilder b) updates]) =
+      _$GUserProfileFragmentData;
 
   static void _initializeBuilder(GUserProfileFragmentDataBuilder b) =>
       b..G__typename = 'User';
@@ -92,31 +92,32 @@ abstract class GUserProfileFragmentData
   static Serializer<GUserProfileFragmentData> get serializer =>
       _$gUserProfileFragmentDataSerializer;
 
-  Map<String, dynamic> toJson() =>
-      (_i2.serializers.serializeWith(GUserProfileFragmentData.serializer, this)
-          as Map<String, dynamic>);
+  Map<String, dynamic> toJson() => (_i2.serializers.serializeWith(
+        GUserProfileFragmentData.serializer,
+        this,
+      ) as Map<String, dynamic>);
 
-  static GUserProfileFragmentData? fromJson(Map<String, dynamic> json) => _i2
-      .serializers
-      .deserializeWith(GUserProfileFragmentData.serializer, json);
+  static GUserProfileFragmentData? fromJson(Map<String, dynamic> json) =>
+      _i2.serializers.deserializeWith(
+        GUserProfileFragmentData.serializer,
+        json,
+      );
 }
 
 abstract class GUserProfileFragmentData_repositories
     implements
-        Built<
-          GUserProfileFragmentData_repositories,
-          GUserProfileFragmentData_repositoriesBuilder
-        >,
+        Built<GUserProfileFragmentData_repositories,
+            GUserProfileFragmentData_repositoriesBuilder>,
         GUserProfileFragment_repositories {
   GUserProfileFragmentData_repositories._();
 
-  factory GUserProfileFragmentData_repositories([
-    void Function(GUserProfileFragmentData_repositoriesBuilder b) updates,
-  ]) = _$GUserProfileFragmentData_repositories;
+  factory GUserProfileFragmentData_repositories(
+      [void Function(GUserProfileFragmentData_repositoriesBuilder b)
+          updates]) = _$GUserProfileFragmentData_repositories;
 
   static void _initializeBuilder(
-    GUserProfileFragmentData_repositoriesBuilder b,
-  ) => b..G__typename = 'RepositoryConnection';
+          GUserProfileFragmentData_repositoriesBuilder b) =>
+      b..G__typename = 'RepositoryConnection';
 
   @override
   @BuiltValueField(wireName: '__typename')
@@ -126,33 +127,29 @@ abstract class GUserProfileFragmentData_repositories
   static Serializer<GUserProfileFragmentData_repositories> get serializer =>
       _$gUserProfileFragmentDataRepositoriesSerializer;
 
-  Map<String, dynamic> toJson() =>
-      (_i2.serializers.serializeWith(
-            GUserProfileFragmentData_repositories.serializer,
-            this,
-          )
-          as Map<String, dynamic>);
+  Map<String, dynamic> toJson() => (_i2.serializers.serializeWith(
+        GUserProfileFragmentData_repositories.serializer,
+        this,
+      ) as Map<String, dynamic>);
 
   static GUserProfileFragmentData_repositories? fromJson(
-    Map<String, dynamic> json,
-  ) => _i2.serializers.deserializeWith(
-    GUserProfileFragmentData_repositories.serializer,
-    json,
-  );
+          Map<String, dynamic> json) =>
+      _i2.serializers.deserializeWith(
+        GUserProfileFragmentData_repositories.serializer,
+        json,
+      );
 }
 
 abstract class GUserProfileFragmentData_followers
     implements
-        Built<
-          GUserProfileFragmentData_followers,
-          GUserProfileFragmentData_followersBuilder
-        >,
+        Built<GUserProfileFragmentData_followers,
+            GUserProfileFragmentData_followersBuilder>,
         GUserProfileFragment_followers {
   GUserProfileFragmentData_followers._();
 
-  factory GUserProfileFragmentData_followers([
-    void Function(GUserProfileFragmentData_followersBuilder b) updates,
-  ]) = _$GUserProfileFragmentData_followers;
+  factory GUserProfileFragmentData_followers(
+      [void Function(GUserProfileFragmentData_followersBuilder b)
+          updates]) = _$GUserProfileFragmentData_followers;
 
   static void _initializeBuilder(GUserProfileFragmentData_followersBuilder b) =>
       b..G__typename = 'FollowerConnection';
@@ -165,33 +162,29 @@ abstract class GUserProfileFragmentData_followers
   static Serializer<GUserProfileFragmentData_followers> get serializer =>
       _$gUserProfileFragmentDataFollowersSerializer;
 
-  Map<String, dynamic> toJson() =>
-      (_i2.serializers.serializeWith(
-            GUserProfileFragmentData_followers.serializer,
-            this,
-          )
-          as Map<String, dynamic>);
+  Map<String, dynamic> toJson() => (_i2.serializers.serializeWith(
+        GUserProfileFragmentData_followers.serializer,
+        this,
+      ) as Map<String, dynamic>);
 
   static GUserProfileFragmentData_followers? fromJson(
-    Map<String, dynamic> json,
-  ) => _i2.serializers.deserializeWith(
-    GUserProfileFragmentData_followers.serializer,
-    json,
-  );
+          Map<String, dynamic> json) =>
+      _i2.serializers.deserializeWith(
+        GUserProfileFragmentData_followers.serializer,
+        json,
+      );
 }
 
 abstract class GUserProfileFragmentData_following
     implements
-        Built<
-          GUserProfileFragmentData_following,
-          GUserProfileFragmentData_followingBuilder
-        >,
+        Built<GUserProfileFragmentData_following,
+            GUserProfileFragmentData_followingBuilder>,
         GUserProfileFragment_following {
   GUserProfileFragmentData_following._();
 
-  factory GUserProfileFragmentData_following([
-    void Function(GUserProfileFragmentData_followingBuilder b) updates,
-  ]) = _$GUserProfileFragmentData_following;
+  factory GUserProfileFragmentData_following(
+      [void Function(GUserProfileFragmentData_followingBuilder b)
+          updates]) = _$GUserProfileFragmentData_following;
 
   static void _initializeBuilder(GUserProfileFragmentData_followingBuilder b) =>
       b..G__typename = 'FollowingConnection';
@@ -204,17 +197,15 @@ abstract class GUserProfileFragmentData_following
   static Serializer<GUserProfileFragmentData_following> get serializer =>
       _$gUserProfileFragmentDataFollowingSerializer;
 
-  Map<String, dynamic> toJson() =>
-      (_i2.serializers.serializeWith(
-            GUserProfileFragmentData_following.serializer,
-            this,
-          )
-          as Map<String, dynamic>);
+  Map<String, dynamic> toJson() => (_i2.serializers.serializeWith(
+        GUserProfileFragmentData_following.serializer,
+        this,
+      ) as Map<String, dynamic>);
 
   static GUserProfileFragmentData_following? fromJson(
-    Map<String, dynamic> json,
-  ) => _i2.serializers.deserializeWith(
-    GUserProfileFragmentData_following.serializer,
-    json,
-  );
+          Map<String, dynamic> json) =>
+      _i2.serializers.deserializeWith(
+        GUserProfileFragmentData_following.serializer,
+        json,
+      );
 }

@@ -194,10 +194,13 @@ class _UserRepositoriesScreenState extends State<UserRepositoriesScreen> {
                 child: _buildActiveFiltersChips(),
               ),
               const SizedBox(width: 8),
-              OutlinedButton.icon(
-                onPressed: _showFilterOptions,
-                icon: const Icon(Icons.filter_list),
-                label: const Text('Filter'),
+              Tooltip(
+                message: 'Filter repositories',
+                child: OutlinedButton.icon(
+                  onPressed: _showFilterOptions,
+                  icon: const Icon(Icons.filter_list),
+                  label: const Text('Filter'),
+                ),
               ),
             ],
           ),
@@ -416,7 +419,9 @@ class _UserRepositoriesScreenState extends State<UserRepositoriesScreen> {
                 ],
               ),
               
-              const SizedBox(height: 16),
+              const SizedBox(height: 8),
+              const Divider(),
+              const SizedBox(height: 8),
               
               Expanded(
                 child: ListView(
@@ -447,8 +452,9 @@ class _UserRepositoriesScreenState extends State<UserRepositoriesScreen> {
                             () => _viewModel.updateLanguageFilter(null),
                           ),
                           ..._viewModel.availableLanguages.map((language) =>
-                            _buildFilterOption(
+                            _buildLanguageFilterOption(
                               language,
+                              _viewModel.languageCounts[language] ?? 0,
                               _viewModel.selectedLanguage == language,
                               () => _viewModel.updateLanguageFilter(language),
                             ),
@@ -500,6 +506,26 @@ class _UserRepositoriesScreenState extends State<UserRepositoriesScreen> {
     );
   }
 
+  Widget _buildLanguageFilterOption(String language, int count, bool isSelected, VoidCallback onTap) {
+    return ListTile(
+      title: Row(
+        children: [
+          Expanded(child: Text(language)),
+          Text(
+            '($count)',
+            style: TextStyle(
+              color: Colors.grey[600],
+              fontSize: 14,
+            ),
+          ),
+        ],
+      ),
+      trailing: isSelected ? const Icon(Icons.check, color: Colors.blue) : null,
+      onTap: onTap,
+      dense: true,
+    );
+  }
+
   void _showSortOptions() {
     showModalBottomSheet(
       context: context,
@@ -509,6 +535,19 @@ class _UserRepositoriesScreenState extends State<UserRepositoriesScreen> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // Handle bar
+            Center(
+              child: Container(
+                width: 40,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: Colors.grey[300],
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+            ),
+            const SizedBox(height: 16),
+            
             Text(
               'Sort Repositories',
               style: Theme.of(context).textTheme.headlineSmall,

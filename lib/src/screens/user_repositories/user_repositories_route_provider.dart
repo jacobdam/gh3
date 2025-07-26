@@ -8,7 +8,7 @@ import 'user_repositories_viewmodel_factory.dart';
 /// Implements RouteProvider interface to provide modular route configuration
 /// with parameterized routes.
 @Named("UserRepositoriesRouteProvider")
-@Singleton(as: RouteProvider)
+@Injectable(as: RouteProvider)
 class UserRepositoriesRouteProvider implements RouteProvider {
   final UserRepositoriesViewModelFactory _viewModelFactory;
 

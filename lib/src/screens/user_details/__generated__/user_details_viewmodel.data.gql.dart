@@ -18,9 +18,9 @@ abstract class GGetUserDetailsData
     implements Built<GGetUserDetailsData, GGetUserDetailsDataBuilder> {
   GGetUserDetailsData._();
 
-  factory GGetUserDetailsData([
-    void Function(GGetUserDetailsDataBuilder b) updates,
-  ]) = _$GGetUserDetailsData;
+  factory GGetUserDetailsData(
+          [void Function(GGetUserDetailsDataBuilder b) updates]) =
+      _$GGetUserDetailsData;
 
   static void _initializeBuilder(GGetUserDetailsDataBuilder b) =>
       b..G__typename = 'Query';
@@ -31,12 +31,16 @@ abstract class GGetUserDetailsData
   static Serializer<GGetUserDetailsData> get serializer =>
       _$gGetUserDetailsDataSerializer;
 
-  Map<String, dynamic> toJson() =>
-      (_i1.serializers.serializeWith(GGetUserDetailsData.serializer, this)
-          as Map<String, dynamic>);
+  Map<String, dynamic> toJson() => (_i1.serializers.serializeWith(
+        GGetUserDetailsData.serializer,
+        this,
+      ) as Map<String, dynamic>);
 
   static GGetUserDetailsData? fromJson(Map<String, dynamic> json) =>
-      _i1.serializers.deserializeWith(GGetUserDetailsData.serializer, json);
+      _i1.serializers.deserializeWith(
+        GGetUserDetailsData.serializer,
+        json,
+      );
 }
 
 abstract class GGetUserDetailsData_user
@@ -46,9 +50,9 @@ abstract class GGetUserDetailsData_user
         GUserStatusFragment {
   GGetUserDetailsData_user._();
 
-  factory GGetUserDetailsData_user([
-    void Function(GGetUserDetailsData_userBuilder b) updates,
-  ]) = _$GGetUserDetailsData_user;
+  factory GGetUserDetailsData_user(
+          [void Function(GGetUserDetailsData_userBuilder b) updates]) =
+      _$GGetUserDetailsData_user;
 
   static void _initializeBuilder(GGetUserDetailsData_userBuilder b) =>
       b..G__typename = 'User';
@@ -93,31 +97,32 @@ abstract class GGetUserDetailsData_user
   static Serializer<GGetUserDetailsData_user> get serializer =>
       _$gGetUserDetailsDataUserSerializer;
 
-  Map<String, dynamic> toJson() =>
-      (_i1.serializers.serializeWith(GGetUserDetailsData_user.serializer, this)
-          as Map<String, dynamic>);
+  Map<String, dynamic> toJson() => (_i1.serializers.serializeWith(
+        GGetUserDetailsData_user.serializer,
+        this,
+      ) as Map<String, dynamic>);
 
-  static GGetUserDetailsData_user? fromJson(Map<String, dynamic> json) => _i1
-      .serializers
-      .deserializeWith(GGetUserDetailsData_user.serializer, json);
+  static GGetUserDetailsData_user? fromJson(Map<String, dynamic> json) =>
+      _i1.serializers.deserializeWith(
+        GGetUserDetailsData_user.serializer,
+        json,
+      );
 }
 
 abstract class GGetUserDetailsData_user_repositories
     implements
-        Built<
-          GGetUserDetailsData_user_repositories,
-          GGetUserDetailsData_user_repositoriesBuilder
-        >,
+        Built<GGetUserDetailsData_user_repositories,
+            GGetUserDetailsData_user_repositoriesBuilder>,
         _i2.GUserProfileFragment_repositories {
   GGetUserDetailsData_user_repositories._();
 
-  factory GGetUserDetailsData_user_repositories([
-    void Function(GGetUserDetailsData_user_repositoriesBuilder b) updates,
-  ]) = _$GGetUserDetailsData_user_repositories;
+  factory GGetUserDetailsData_user_repositories(
+      [void Function(GGetUserDetailsData_user_repositoriesBuilder b)
+          updates]) = _$GGetUserDetailsData_user_repositories;
 
   static void _initializeBuilder(
-    GGetUserDetailsData_user_repositoriesBuilder b,
-  ) => b..G__typename = 'RepositoryConnection';
+          GGetUserDetailsData_user_repositoriesBuilder b) =>
+      b..G__typename = 'RepositoryConnection';
 
   @override
   @BuiltValueField(wireName: '__typename')
@@ -127,33 +132,29 @@ abstract class GGetUserDetailsData_user_repositories
   static Serializer<GGetUserDetailsData_user_repositories> get serializer =>
       _$gGetUserDetailsDataUserRepositoriesSerializer;
 
-  Map<String, dynamic> toJson() =>
-      (_i1.serializers.serializeWith(
-            GGetUserDetailsData_user_repositories.serializer,
-            this,
-          )
-          as Map<String, dynamic>);
+  Map<String, dynamic> toJson() => (_i1.serializers.serializeWith(
+        GGetUserDetailsData_user_repositories.serializer,
+        this,
+      ) as Map<String, dynamic>);
 
   static GGetUserDetailsData_user_repositories? fromJson(
-    Map<String, dynamic> json,
-  ) => _i1.serializers.deserializeWith(
-    GGetUserDetailsData_user_repositories.serializer,
-    json,
-  );
+          Map<String, dynamic> json) =>
+      _i1.serializers.deserializeWith(
+        GGetUserDetailsData_user_repositories.serializer,
+        json,
+      );
 }
 
 abstract class GGetUserDetailsData_user_followers
     implements
-        Built<
-          GGetUserDetailsData_user_followers,
-          GGetUserDetailsData_user_followersBuilder
-        >,
+        Built<GGetUserDetailsData_user_followers,
+            GGetUserDetailsData_user_followersBuilder>,
         _i2.GUserProfileFragment_followers {
   GGetUserDetailsData_user_followers._();
 
-  factory GGetUserDetailsData_user_followers([
-    void Function(GGetUserDetailsData_user_followersBuilder b) updates,
-  ]) = _$GGetUserDetailsData_user_followers;
+  factory GGetUserDetailsData_user_followers(
+      [void Function(GGetUserDetailsData_user_followersBuilder b)
+          updates]) = _$GGetUserDetailsData_user_followers;
 
   static void _initializeBuilder(GGetUserDetailsData_user_followersBuilder b) =>
       b..G__typename = 'FollowerConnection';
@@ -166,33 +167,29 @@ abstract class GGetUserDetailsData_user_followers
   static Serializer<GGetUserDetailsData_user_followers> get serializer =>
       _$gGetUserDetailsDataUserFollowersSerializer;
 
-  Map<String, dynamic> toJson() =>
-      (_i1.serializers.serializeWith(
-            GGetUserDetailsData_user_followers.serializer,
-            this,
-          )
-          as Map<String, dynamic>);
+  Map<String, dynamic> toJson() => (_i1.serializers.serializeWith(
+        GGetUserDetailsData_user_followers.serializer,
+        this,
+      ) as Map<String, dynamic>);
 
   static GGetUserDetailsData_user_followers? fromJson(
-    Map<String, dynamic> json,
-  ) => _i1.serializers.deserializeWith(
-    GGetUserDetailsData_user_followers.serializer,
-    json,
-  );
+          Map<String, dynamic> json) =>
+      _i1.serializers.deserializeWith(
+        GGetUserDetailsData_user_followers.serializer,
+        json,
+      );
 }
 
 abstract class GGetUserDetailsData_user_following
     implements
-        Built<
-          GGetUserDetailsData_user_following,
-          GGetUserDetailsData_user_followingBuilder
-        >,
+        Built<GGetUserDetailsData_user_following,
+            GGetUserDetailsData_user_followingBuilder>,
         _i2.GUserProfileFragment_following {
   GGetUserDetailsData_user_following._();
 
-  factory GGetUserDetailsData_user_following([
-    void Function(GGetUserDetailsData_user_followingBuilder b) updates,
-  ]) = _$GGetUserDetailsData_user_following;
+  factory GGetUserDetailsData_user_following(
+      [void Function(GGetUserDetailsData_user_followingBuilder b)
+          updates]) = _$GGetUserDetailsData_user_following;
 
   static void _initializeBuilder(GGetUserDetailsData_user_followingBuilder b) =>
       b..G__typename = 'FollowingConnection';
@@ -205,33 +202,29 @@ abstract class GGetUserDetailsData_user_following
   static Serializer<GGetUserDetailsData_user_following> get serializer =>
       _$gGetUserDetailsDataUserFollowingSerializer;
 
-  Map<String, dynamic> toJson() =>
-      (_i1.serializers.serializeWith(
-            GGetUserDetailsData_user_following.serializer,
-            this,
-          )
-          as Map<String, dynamic>);
+  Map<String, dynamic> toJson() => (_i1.serializers.serializeWith(
+        GGetUserDetailsData_user_following.serializer,
+        this,
+      ) as Map<String, dynamic>);
 
   static GGetUserDetailsData_user_following? fromJson(
-    Map<String, dynamic> json,
-  ) => _i1.serializers.deserializeWith(
-    GGetUserDetailsData_user_following.serializer,
-    json,
-  );
+          Map<String, dynamic> json) =>
+      _i1.serializers.deserializeWith(
+        GGetUserDetailsData_user_following.serializer,
+        json,
+      );
 }
 
 abstract class GGetUserDetailsData_user_status
     implements
-        Built<
-          GGetUserDetailsData_user_status,
-          GGetUserDetailsData_user_statusBuilder
-        >,
+        Built<GGetUserDetailsData_user_status,
+            GGetUserDetailsData_user_statusBuilder>,
         GUserStatusFragment_status {
   GGetUserDetailsData_user_status._();
 
-  factory GGetUserDetailsData_user_status([
-    void Function(GGetUserDetailsData_user_statusBuilder b) updates,
-  ]) = _$GGetUserDetailsData_user_status;
+  factory GGetUserDetailsData_user_status(
+          [void Function(GGetUserDetailsData_user_statusBuilder b) updates]) =
+      _$GGetUserDetailsData_user_status;
 
   static void _initializeBuilder(GGetUserDetailsData_user_statusBuilder b) =>
       b..G__typename = 'UserStatus';
@@ -248,12 +241,10 @@ abstract class GGetUserDetailsData_user_status
   static Serializer<GGetUserDetailsData_user_status> get serializer =>
       _$gGetUserDetailsDataUserStatusSerializer;
 
-  Map<String, dynamic> toJson() =>
-      (_i1.serializers.serializeWith(
-            GGetUserDetailsData_user_status.serializer,
-            this,
-          )
-          as Map<String, dynamic>);
+  Map<String, dynamic> toJson() => (_i1.serializers.serializeWith(
+        GGetUserDetailsData_user_status.serializer,
+        this,
+      ) as Map<String, dynamic>);
 
   static GGetUserDetailsData_user_status? fromJson(Map<String, dynamic> json) =>
       _i1.serializers.deserializeWith(
@@ -264,57 +255,50 @@ abstract class GGetUserDetailsData_user_status
 
 abstract class GGetUserDetailsData_user_starredRepositories
     implements
-        Built<
-          GGetUserDetailsData_user_starredRepositories,
-          GGetUserDetailsData_user_starredRepositoriesBuilder
-        > {
+        Built<GGetUserDetailsData_user_starredRepositories,
+            GGetUserDetailsData_user_starredRepositoriesBuilder> {
   GGetUserDetailsData_user_starredRepositories._();
 
-  factory GGetUserDetailsData_user_starredRepositories([
-    void Function(GGetUserDetailsData_user_starredRepositoriesBuilder b)
-    updates,
-  ]) = _$GGetUserDetailsData_user_starredRepositories;
+  factory GGetUserDetailsData_user_starredRepositories(
+      [void Function(GGetUserDetailsData_user_starredRepositoriesBuilder b)
+          updates]) = _$GGetUserDetailsData_user_starredRepositories;
 
   static void _initializeBuilder(
-    GGetUserDetailsData_user_starredRepositoriesBuilder b,
-  ) => b..G__typename = 'StarredRepositoryConnection';
+          GGetUserDetailsData_user_starredRepositoriesBuilder b) =>
+      b..G__typename = 'StarredRepositoryConnection';
 
   @BuiltValueField(wireName: '__typename')
   String get G__typename;
   int get totalCount;
   static Serializer<GGetUserDetailsData_user_starredRepositories>
-  get serializer => _$gGetUserDetailsDataUserStarredRepositoriesSerializer;
+      get serializer => _$gGetUserDetailsDataUserStarredRepositoriesSerializer;
 
-  Map<String, dynamic> toJson() =>
-      (_i1.serializers.serializeWith(
-            GGetUserDetailsData_user_starredRepositories.serializer,
-            this,
-          )
-          as Map<String, dynamic>);
+  Map<String, dynamic> toJson() => (_i1.serializers.serializeWith(
+        GGetUserDetailsData_user_starredRepositories.serializer,
+        this,
+      ) as Map<String, dynamic>);
 
   static GGetUserDetailsData_user_starredRepositories? fromJson(
-    Map<String, dynamic> json,
-  ) => _i1.serializers.deserializeWith(
-    GGetUserDetailsData_user_starredRepositories.serializer,
-    json,
-  );
+          Map<String, dynamic> json) =>
+      _i1.serializers.deserializeWith(
+        GGetUserDetailsData_user_starredRepositories.serializer,
+        json,
+      );
 }
 
 abstract class GGetUserDetailsData_user_organizations
     implements
-        Built<
-          GGetUserDetailsData_user_organizations,
-          GGetUserDetailsData_user_organizationsBuilder
-        > {
+        Built<GGetUserDetailsData_user_organizations,
+            GGetUserDetailsData_user_organizationsBuilder> {
   GGetUserDetailsData_user_organizations._();
 
-  factory GGetUserDetailsData_user_organizations([
-    void Function(GGetUserDetailsData_user_organizationsBuilder b) updates,
-  ]) = _$GGetUserDetailsData_user_organizations;
+  factory GGetUserDetailsData_user_organizations(
+      [void Function(GGetUserDetailsData_user_organizationsBuilder b)
+          updates]) = _$GGetUserDetailsData_user_organizations;
 
   static void _initializeBuilder(
-    GGetUserDetailsData_user_organizationsBuilder b,
-  ) => b..G__typename = 'OrganizationConnection';
+          GGetUserDetailsData_user_organizationsBuilder b) =>
+      b..G__typename = 'OrganizationConnection';
 
   @BuiltValueField(wireName: '__typename')
   String get G__typename;
@@ -322,19 +306,17 @@ abstract class GGetUserDetailsData_user_organizations
   static Serializer<GGetUserDetailsData_user_organizations> get serializer =>
       _$gGetUserDetailsDataUserOrganizationsSerializer;
 
-  Map<String, dynamic> toJson() =>
-      (_i1.serializers.serializeWith(
-            GGetUserDetailsData_user_organizations.serializer,
-            this,
-          )
-          as Map<String, dynamic>);
+  Map<String, dynamic> toJson() => (_i1.serializers.serializeWith(
+        GGetUserDetailsData_user_organizations.serializer,
+        this,
+      ) as Map<String, dynamic>);
 
   static GGetUserDetailsData_user_organizations? fromJson(
-    Map<String, dynamic> json,
-  ) => _i1.serializers.deserializeWith(
-    GGetUserDetailsData_user_organizations.serializer,
-    json,
-  );
+          Map<String, dynamic> json) =>
+      _i1.serializers.deserializeWith(
+        GGetUserDetailsData_user_organizations.serializer,
+        json,
+      );
 }
 
 abstract class GGetUserRepositoriesData
@@ -342,9 +324,9 @@ abstract class GGetUserRepositoriesData
         Built<GGetUserRepositoriesData, GGetUserRepositoriesDataBuilder> {
   GGetUserRepositoriesData._();
 
-  factory GGetUserRepositoriesData([
-    void Function(GGetUserRepositoriesDataBuilder b) updates,
-  ]) = _$GGetUserRepositoriesData;
+  factory GGetUserRepositoriesData(
+          [void Function(GGetUserRepositoriesDataBuilder b) updates]) =
+      _$GGetUserRepositoriesData;
 
   static void _initializeBuilder(GGetUserRepositoriesDataBuilder b) =>
       b..G__typename = 'Query';
@@ -355,26 +337,27 @@ abstract class GGetUserRepositoriesData
   static Serializer<GGetUserRepositoriesData> get serializer =>
       _$gGetUserRepositoriesDataSerializer;
 
-  Map<String, dynamic> toJson() =>
-      (_i1.serializers.serializeWith(GGetUserRepositoriesData.serializer, this)
-          as Map<String, dynamic>);
+  Map<String, dynamic> toJson() => (_i1.serializers.serializeWith(
+        GGetUserRepositoriesData.serializer,
+        this,
+      ) as Map<String, dynamic>);
 
-  static GGetUserRepositoriesData? fromJson(Map<String, dynamic> json) => _i1
-      .serializers
-      .deserializeWith(GGetUserRepositoriesData.serializer, json);
+  static GGetUserRepositoriesData? fromJson(Map<String, dynamic> json) =>
+      _i1.serializers.deserializeWith(
+        GGetUserRepositoriesData.serializer,
+        json,
+      );
 }
 
 abstract class GGetUserRepositoriesData_user
     implements
-        Built<
-          GGetUserRepositoriesData_user,
-          GGetUserRepositoriesData_userBuilder
-        > {
+        Built<GGetUserRepositoriesData_user,
+            GGetUserRepositoriesData_userBuilder> {
   GGetUserRepositoriesData_user._();
 
-  factory GGetUserRepositoriesData_user([
-    void Function(GGetUserRepositoriesData_userBuilder b) updates,
-  ]) = _$GGetUserRepositoriesData_user;
+  factory GGetUserRepositoriesData_user(
+          [void Function(GGetUserRepositoriesData_userBuilder b) updates]) =
+      _$GGetUserRepositoriesData_user;
 
   static void _initializeBuilder(GGetUserRepositoriesData_userBuilder b) =>
       b..G__typename = 'User';
@@ -385,12 +368,10 @@ abstract class GGetUserRepositoriesData_user
   static Serializer<GGetUserRepositoriesData_user> get serializer =>
       _$gGetUserRepositoriesDataUserSerializer;
 
-  Map<String, dynamic> toJson() =>
-      (_i1.serializers.serializeWith(
-            GGetUserRepositoriesData_user.serializer,
-            this,
-          )
-          as Map<String, dynamic>);
+  Map<String, dynamic> toJson() => (_i1.serializers.serializeWith(
+        GGetUserRepositoriesData_user.serializer,
+        this,
+      ) as Map<String, dynamic>);
 
   static GGetUserRepositoriesData_user? fromJson(Map<String, dynamic> json) =>
       _i1.serializers.deserializeWith(
@@ -401,59 +382,52 @@ abstract class GGetUserRepositoriesData_user
 
 abstract class GGetUserRepositoriesData_user_repositories
     implements
-        Built<
-          GGetUserRepositoriesData_user_repositories,
-          GGetUserRepositoriesData_user_repositoriesBuilder
-        > {
+        Built<GGetUserRepositoriesData_user_repositories,
+            GGetUserRepositoriesData_user_repositoriesBuilder> {
   GGetUserRepositoriesData_user_repositories._();
 
-  factory GGetUserRepositoriesData_user_repositories([
-    void Function(GGetUserRepositoriesData_user_repositoriesBuilder b) updates,
-  ]) = _$GGetUserRepositoriesData_user_repositories;
+  factory GGetUserRepositoriesData_user_repositories(
+      [void Function(GGetUserRepositoriesData_user_repositoriesBuilder b)
+          updates]) = _$GGetUserRepositoriesData_user_repositories;
 
   static void _initializeBuilder(
-    GGetUserRepositoriesData_user_repositoriesBuilder b,
-  ) => b..G__typename = 'RepositoryConnection';
+          GGetUserRepositoriesData_user_repositoriesBuilder b) =>
+      b..G__typename = 'RepositoryConnection';
 
   @BuiltValueField(wireName: '__typename')
   String get G__typename;
   BuiltList<GGetUserRepositoriesData_user_repositories_nodes?>? get nodes;
   GGetUserRepositoriesData_user_repositories_pageInfo get pageInfo;
   static Serializer<GGetUserRepositoriesData_user_repositories>
-  get serializer => _$gGetUserRepositoriesDataUserRepositoriesSerializer;
+      get serializer => _$gGetUserRepositoriesDataUserRepositoriesSerializer;
 
-  Map<String, dynamic> toJson() =>
-      (_i1.serializers.serializeWith(
-            GGetUserRepositoriesData_user_repositories.serializer,
-            this,
-          )
-          as Map<String, dynamic>);
+  Map<String, dynamic> toJson() => (_i1.serializers.serializeWith(
+        GGetUserRepositoriesData_user_repositories.serializer,
+        this,
+      ) as Map<String, dynamic>);
 
   static GGetUserRepositoriesData_user_repositories? fromJson(
-    Map<String, dynamic> json,
-  ) => _i1.serializers.deserializeWith(
-    GGetUserRepositoriesData_user_repositories.serializer,
-    json,
-  );
+          Map<String, dynamic> json) =>
+      _i1.serializers.deserializeWith(
+        GGetUserRepositoriesData_user_repositories.serializer,
+        json,
+      );
 }
 
 abstract class GGetUserRepositoriesData_user_repositories_nodes
     implements
-        Built<
-          GGetUserRepositoriesData_user_repositories_nodes,
-          GGetUserRepositoriesData_user_repositories_nodesBuilder
-        >,
+        Built<GGetUserRepositoriesData_user_repositories_nodes,
+            GGetUserRepositoriesData_user_repositories_nodesBuilder>,
         _i4.GRepositoryCardFragment {
   GGetUserRepositoriesData_user_repositories_nodes._();
 
-  factory GGetUserRepositoriesData_user_repositories_nodes([
-    void Function(GGetUserRepositoriesData_user_repositories_nodesBuilder b)
-    updates,
-  ]) = _$GGetUserRepositoriesData_user_repositories_nodes;
+  factory GGetUserRepositoriesData_user_repositories_nodes(
+      [void Function(GGetUserRepositoriesData_user_repositories_nodesBuilder b)
+          updates]) = _$GGetUserRepositoriesData_user_repositories_nodes;
 
   static void _initializeBuilder(
-    GGetUserRepositoriesData_user_repositories_nodesBuilder b,
-  ) => b..G__typename = 'Repository';
+          GGetUserRepositoriesData_user_repositories_nodesBuilder b) =>
+      b..G__typename = 'Repository';
 
   @override
   @BuiltValueField(wireName: '__typename')
@@ -472,46 +446,46 @@ abstract class GGetUserRepositoriesData_user_repositories_nodes
   int get forkCount;
   @override
   GGetUserRepositoriesData_user_repositories_nodes_primaryLanguage?
-  get primaryLanguage;
+      get primaryLanguage;
   @override
   _i3.GDateTime get updatedAt;
+  @override
+  bool get isPrivate;
   static Serializer<GGetUserRepositoriesData_user_repositories_nodes>
-  get serializer => _$gGetUserRepositoriesDataUserRepositoriesNodesSerializer;
+      get serializer =>
+          _$gGetUserRepositoriesDataUserRepositoriesNodesSerializer;
 
-  Map<String, dynamic> toJson() =>
-      (_i1.serializers.serializeWith(
-            GGetUserRepositoriesData_user_repositories_nodes.serializer,
-            this,
-          )
-          as Map<String, dynamic>);
+  Map<String, dynamic> toJson() => (_i1.serializers.serializeWith(
+        GGetUserRepositoriesData_user_repositories_nodes.serializer,
+        this,
+      ) as Map<String, dynamic>);
 
   static GGetUserRepositoriesData_user_repositories_nodes? fromJson(
-    Map<String, dynamic> json,
-  ) => _i1.serializers.deserializeWith(
-    GGetUserRepositoriesData_user_repositories_nodes.serializer,
-    json,
-  );
+          Map<String, dynamic> json) =>
+      _i1.serializers.deserializeWith(
+        GGetUserRepositoriesData_user_repositories_nodes.serializer,
+        json,
+      );
 }
 
 abstract class GGetUserRepositoriesData_user_repositories_nodes_primaryLanguage
     implements
-        Built<
-          GGetUserRepositoriesData_user_repositories_nodes_primaryLanguage,
-          GGetUserRepositoriesData_user_repositories_nodes_primaryLanguageBuilder
-        >,
+        Built<GGetUserRepositoriesData_user_repositories_nodes_primaryLanguage,
+            GGetUserRepositoriesData_user_repositories_nodes_primaryLanguageBuilder>,
         _i4.GRepositoryCardFragment_primaryLanguage {
   GGetUserRepositoriesData_user_repositories_nodes_primaryLanguage._();
 
-  factory GGetUserRepositoriesData_user_repositories_nodes_primaryLanguage([
-    void Function(
-      GGetUserRepositoriesData_user_repositories_nodes_primaryLanguageBuilder b,
-    )
-    updates,
-  ]) = _$GGetUserRepositoriesData_user_repositories_nodes_primaryLanguage;
+  factory GGetUserRepositoriesData_user_repositories_nodes_primaryLanguage(
+          [void Function(
+                  GGetUserRepositoriesData_user_repositories_nodes_primaryLanguageBuilder
+                      b)
+              updates]) =
+      _$GGetUserRepositoriesData_user_repositories_nodes_primaryLanguage;
 
   static void _initializeBuilder(
-    GGetUserRepositoriesData_user_repositories_nodes_primaryLanguageBuilder b,
-  ) => b..G__typename = 'Language';
+          GGetUserRepositoriesData_user_repositories_nodes_primaryLanguageBuilder
+              b) =>
+      b..G__typename = 'Language';
 
   @override
   @BuiltValueField(wireName: '__typename')
@@ -521,64 +495,58 @@ abstract class GGetUserRepositoriesData_user_repositories_nodes_primaryLanguage
   @override
   String? get color;
   static Serializer<
-    GGetUserRepositoriesData_user_repositories_nodes_primaryLanguage
-  >
-  get serializer =>
-      _$gGetUserRepositoriesDataUserRepositoriesNodesPrimaryLanguageSerializer;
+          GGetUserRepositoriesData_user_repositories_nodes_primaryLanguage>
+      get serializer =>
+          _$gGetUserRepositoriesDataUserRepositoriesNodesPrimaryLanguageSerializer;
 
-  Map<String, dynamic> toJson() =>
-      (_i1.serializers.serializeWith(
-            GGetUserRepositoriesData_user_repositories_nodes_primaryLanguage
-                .serializer,
-            this,
-          )
-          as Map<String, dynamic>);
+  Map<String, dynamic> toJson() => (_i1.serializers.serializeWith(
+        GGetUserRepositoriesData_user_repositories_nodes_primaryLanguage
+            .serializer,
+        this,
+      ) as Map<String, dynamic>);
 
   static GGetUserRepositoriesData_user_repositories_nodes_primaryLanguage?
-  fromJson(Map<String, dynamic> json) => _i1.serializers.deserializeWith(
-    GGetUserRepositoriesData_user_repositories_nodes_primaryLanguage.serializer,
-    json,
-  );
+      fromJson(Map<String, dynamic> json) => _i1.serializers.deserializeWith(
+            GGetUserRepositoriesData_user_repositories_nodes_primaryLanguage
+                .serializer,
+            json,
+          );
 }
 
 abstract class GGetUserRepositoriesData_user_repositories_pageInfo
     implements
-        Built<
-          GGetUserRepositoriesData_user_repositories_pageInfo,
-          GGetUserRepositoriesData_user_repositories_pageInfoBuilder
-        > {
+        Built<GGetUserRepositoriesData_user_repositories_pageInfo,
+            GGetUserRepositoriesData_user_repositories_pageInfoBuilder> {
   GGetUserRepositoriesData_user_repositories_pageInfo._();
 
-  factory GGetUserRepositoriesData_user_repositories_pageInfo([
-    void Function(GGetUserRepositoriesData_user_repositories_pageInfoBuilder b)
-    updates,
-  ]) = _$GGetUserRepositoriesData_user_repositories_pageInfo;
+  factory GGetUserRepositoriesData_user_repositories_pageInfo(
+      [void Function(
+              GGetUserRepositoriesData_user_repositories_pageInfoBuilder b)
+          updates]) = _$GGetUserRepositoriesData_user_repositories_pageInfo;
 
   static void _initializeBuilder(
-    GGetUserRepositoriesData_user_repositories_pageInfoBuilder b,
-  ) => b..G__typename = 'PageInfo';
+          GGetUserRepositoriesData_user_repositories_pageInfoBuilder b) =>
+      b..G__typename = 'PageInfo';
 
   @BuiltValueField(wireName: '__typename')
   String get G__typename;
   bool get hasNextPage;
   String? get endCursor;
   static Serializer<GGetUserRepositoriesData_user_repositories_pageInfo>
-  get serializer =>
-      _$gGetUserRepositoriesDataUserRepositoriesPageInfoSerializer;
+      get serializer =>
+          _$gGetUserRepositoriesDataUserRepositoriesPageInfoSerializer;
 
-  Map<String, dynamic> toJson() =>
-      (_i1.serializers.serializeWith(
-            GGetUserRepositoriesData_user_repositories_pageInfo.serializer,
-            this,
-          )
-          as Map<String, dynamic>);
+  Map<String, dynamic> toJson() => (_i1.serializers.serializeWith(
+        GGetUserRepositoriesData_user_repositories_pageInfo.serializer,
+        this,
+      ) as Map<String, dynamic>);
 
   static GGetUserRepositoriesData_user_repositories_pageInfo? fromJson(
-    Map<String, dynamic> json,
-  ) => _i1.serializers.deserializeWith(
-    GGetUserRepositoriesData_user_repositories_pageInfo.serializer,
-    json,
-  );
+          Map<String, dynamic> json) =>
+      _i1.serializers.deserializeWith(
+        GGetUserRepositoriesData_user_repositories_pageInfo.serializer,
+        json,
+      );
 }
 
 abstract class GUserStatusFragment {
@@ -599,9 +567,9 @@ abstract class GUserStatusFragmentData
         GUserStatusFragment {
   GUserStatusFragmentData._();
 
-  factory GUserStatusFragmentData([
-    void Function(GUserStatusFragmentDataBuilder b) updates,
-  ]) = _$GUserStatusFragmentData;
+  factory GUserStatusFragmentData(
+          [void Function(GUserStatusFragmentDataBuilder b) updates]) =
+      _$GUserStatusFragmentData;
 
   static void _initializeBuilder(GUserStatusFragmentDataBuilder b) =>
       b..G__typename = 'User';
@@ -614,26 +582,28 @@ abstract class GUserStatusFragmentData
   static Serializer<GUserStatusFragmentData> get serializer =>
       _$gUserStatusFragmentDataSerializer;
 
-  Map<String, dynamic> toJson() =>
-      (_i1.serializers.serializeWith(GUserStatusFragmentData.serializer, this)
-          as Map<String, dynamic>);
+  Map<String, dynamic> toJson() => (_i1.serializers.serializeWith(
+        GUserStatusFragmentData.serializer,
+        this,
+      ) as Map<String, dynamic>);
 
   static GUserStatusFragmentData? fromJson(Map<String, dynamic> json) =>
-      _i1.serializers.deserializeWith(GUserStatusFragmentData.serializer, json);
+      _i1.serializers.deserializeWith(
+        GUserStatusFragmentData.serializer,
+        json,
+      );
 }
 
 abstract class GUserStatusFragmentData_status
     implements
-        Built<
-          GUserStatusFragmentData_status,
-          GUserStatusFragmentData_statusBuilder
-        >,
+        Built<GUserStatusFragmentData_status,
+            GUserStatusFragmentData_statusBuilder>,
         GUserStatusFragment_status {
   GUserStatusFragmentData_status._();
 
-  factory GUserStatusFragmentData_status([
-    void Function(GUserStatusFragmentData_statusBuilder b) updates,
-  ]) = _$GUserStatusFragmentData_status;
+  factory GUserStatusFragmentData_status(
+          [void Function(GUserStatusFragmentData_statusBuilder b) updates]) =
+      _$GUserStatusFragmentData_status;
 
   static void _initializeBuilder(GUserStatusFragmentData_statusBuilder b) =>
       b..G__typename = 'UserStatus';
@@ -650,12 +620,10 @@ abstract class GUserStatusFragmentData_status
   static Serializer<GUserStatusFragmentData_status> get serializer =>
       _$gUserStatusFragmentDataStatusSerializer;
 
-  Map<String, dynamic> toJson() =>
-      (_i1.serializers.serializeWith(
-            GUserStatusFragmentData_status.serializer,
-            this,
-          )
-          as Map<String, dynamic>);
+  Map<String, dynamic> toJson() => (_i1.serializers.serializeWith(
+        GUserStatusFragmentData_status.serializer,
+        this,
+      ) as Map<String, dynamic>);
 
   static GUserStatusFragmentData_status? fromJson(Map<String, dynamic> json) =>
       _i1.serializers.deserializeWith(
