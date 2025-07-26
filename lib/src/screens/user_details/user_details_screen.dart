@@ -6,6 +6,9 @@ import '../../widgets/user_profile/user_profile.dart';
 import '../../widgets/user_status_card/user_status_card.dart';
 import '../../widgets/skeleton_loading/skeleton_loading.dart';
 import '../../widgets/cached_avatar/cached_avatar.dart';
+import '../user_repositories/user_repositories_route.dart';
+import '../user_starred/user_starred_route.dart';
+import '../user_organizations/user_organizations_route.dart';
 
 class UserDetailsScreen extends StatefulWidget {
   final UserDetailsViewModel viewModel;
@@ -276,14 +279,7 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
                       count: _viewModel.repositoriesCount,
                       isLoading: _viewModel.isUserLoading,
                       onTap: () {
-                        // TODO: Navigate to user repositories
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text(
-                              'Repositories navigation not implemented yet',
-                            ),
-                          ),
-                        );
+                        UserRepositoriesRoute(_viewModel.login).push(context);
                       },
                     ),
                     _buildNavigationTile(
@@ -293,14 +289,7 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
                       count: _viewModel.starredRepositoriesCount,
                       isLoading: _viewModel.isUserLoading,
                       onTap: () {
-                        // TODO: Navigate to starred repositories
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text(
-                              'Starred repositories navigation not implemented yet',
-                            ),
-                          ),
-                        );
+                        UserStarredRoute(_viewModel.login).push(context);
                       },
                     ),
                     _buildNavigationTile(
@@ -310,14 +299,7 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
                       count: _viewModel.organizationsCount,
                       isLoading: _viewModel.isUserLoading,
                       onTap: () {
-                        // TODO: Navigate to user organizations
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text(
-                              'Organizations navigation not implemented yet',
-                            ),
-                          ),
-                        );
+                        UserOrganizationsRoute(_viewModel.login).push(context);
                       },
                     ),
                   ],

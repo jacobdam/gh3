@@ -28,6 +28,12 @@ import 'package:gh3/src/screens/user_details/user_details_route_provider.dart'
     as _i57;
 import 'package:gh3/src/screens/user_details/user_details_viewmodel_factory.dart'
     as _i627;
+import 'package:gh3/src/screens/user_organizations/user_organizations_route_provider.dart'
+    as _i590;
+import 'package:gh3/src/screens/user_repositories/user_repositories_route_provider.dart'
+    as _i208;
+import 'package:gh3/src/screens/user_starred/user_starred_route_provider.dart'
+    as _i384;
 import 'package:gh3/src/services/auth_service.dart' as _i336;
 import 'package:gh3/src/services/ferry_module.dart' as _i762;
 import 'package:gh3/src/services/github_auth_client.dart' as _i1035;
@@ -54,9 +60,21 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i519.Client>(() => httpModule.httpClient);
     gh.lazySingleton<_i1066.TimerService>(() => _i1066.DefaultTimerService());
     gh.lazySingleton<_i895.ITokenStorage>(() => _i895.PrefsTokenStorage());
+    gh.singleton<_i518.RouteProvider>(
+      () => _i384.UserStarredRouteProvider(),
+      instanceName: 'UserStarredRouteProvider',
+    );
     gh.factory<String>(
       () => envModule.githubClientId,
       instanceName: 'GithubClientID',
+    );
+    gh.singleton<_i518.RouteProvider>(
+      () => _i590.UserOrganizationsRouteProvider(),
+      instanceName: 'UserOrganizationsRouteProvider',
+    );
+    gh.singleton<_i518.RouteProvider>(
+      () => _i208.UserRepositoriesRouteProvider(),
+      instanceName: 'UserRepositoriesRouteProvider',
     );
     gh.factory<_i1035.GithubNonRecoverableException>(
       () => _i1035.GithubNonRecoverableException(gh<String>(), gh<String>()),
