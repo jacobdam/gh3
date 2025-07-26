@@ -1,6 +1,8 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:gh3/src/screens/base_viewmodel.dart';
 
+// Test implementation class that extends DisposableViewModel to test inheritance behavior.
+// Cannot be replaced with mockito as it needs to test actual implementation logic.
 class TestViewModel extends DisposableViewModel {
   bool onDisposeCalled = false;
   int notifyCount = 0;

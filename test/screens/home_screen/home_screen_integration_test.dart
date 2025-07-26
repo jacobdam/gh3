@@ -6,51 +6,40 @@ import 'package:gh3/src/screens/home_screen/home_screen.dart';
 import 'package:gh3/src/screens/home_screen/home_viewmodel.dart';
 import 'package:gh3/src/screens/app/auth_viewmodel.dart';
 import 'package:gh3/src/widgets/user_card/__generated__/user_card.data.gql.dart';
-import 'package:gh3/__generated__/github_schema.schema.gql.dart';
 import 'package:mocktail_image_network/mocktail_image_network.dart';
 import 'package:go_router/go_router.dart';
 
 import 'home_screen_integration_test.mocks.dart';
 
-@GenerateMocks([
-  HomeViewModel,
-  AuthViewModel,
-  GUserCardFragment,
-  GUserCardFragment_repositories,
-  GUserCardFragment_followers,
-  GoRouter,
-])
+@GenerateMocks([HomeViewModel, AuthViewModel, GoRouter])
 void main() {
   group('HomeScreen Integration', () {
     late MockHomeViewModel mockHomeViewModel;
     late MockAuthViewModel mockAuthViewModel;
-    late MockGUserCardFragment mockUserFragment;
+    late GUserCardFragment realUserFragment;
 
     setUp(() {
       mockHomeViewModel = MockHomeViewModel();
       mockAuthViewModel = MockAuthViewModel();
-      mockUserFragment = MockGUserCardFragment();
+
+      // Create real Ferry generated class instances instead of mocks
+      realUserFragment = GUserCardFragmentData(
+        (b) => b
+          ..id = 'test-id'
+          ..name = 'Test User'
+          ..login = 'testuser'
+          ..avatarUrl.value = 'https://example.com/avatar.jpg'
+          ..bio = 'Test bio'
+          ..repositories = (GUserCardFragmentData_repositoriesBuilder()
+            ..totalCount = 10)
+          ..followers = (GUserCardFragmentData_followersBuilder()
+            ..totalCount = 5),
+      );
 
       // Setup default mock behavior for new HomeViewModel
       when(mockHomeViewModel.isLoading).thenReturn(false);
       when(mockHomeViewModel.error).thenReturn(null);
-      when(mockHomeViewModel.currentUser).thenReturn(mockUserFragment);
-
-      // Setup mock user fragment
-      when(mockUserFragment.name).thenReturn('Test User');
-      when(mockUserFragment.login).thenReturn('testuser');
-      when(
-        mockUserFragment.avatarUrl,
-      ).thenReturn(GURI('https://example.com/avatar.jpg'));
-      when(mockUserFragment.bio).thenReturn('Test bio');
-
-      // Setup mock repositories and followers
-      final mockRepositories = MockGUserCardFragment_repositories();
-      final mockFollowers = MockGUserCardFragment_followers();
-      when(mockRepositories.totalCount).thenReturn(10);
-      when(mockFollowers.totalCount).thenReturn(5);
-      when(mockUserFragment.repositories).thenReturn(mockRepositories);
-      when(mockUserFragment.followers).thenReturn(mockFollowers);
+      when(mockHomeViewModel.currentUser).thenReturn(realUserFragment);
     });
 
     testWidgets(

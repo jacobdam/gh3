@@ -1,19 +1,20 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:ferry/ferry.dart';
-import 'package:mockito/mockito.dart';
+import 'package:mockito/annotations.dart';
 
 import 'package:gh3/src/screens/user_details/user_details_viewmodel_factory.dart';
 import 'package:gh3/src/screens/user_details/user_details_viewmodel.dart';
 
-class MockFerryClient extends Mock implements Client {}
+import 'user_details_viewmodel_factory_test.mocks.dart';
 
+@GenerateMocks([Client])
 void main() {
   group('UserDetailsViewModelFactory', () {
     late UserDetailsViewModelFactory factory;
-    late MockFerryClient mockFerryClient;
+    late MockClient mockFerryClient;
 
     setUp(() {
-      mockFerryClient = MockFerryClient();
+      mockFerryClient = MockClient();
       factory = UserDetailsViewModelFactory(mockFerryClient);
     });
 

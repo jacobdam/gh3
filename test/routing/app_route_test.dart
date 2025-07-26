@@ -4,7 +4,8 @@ import 'package:go_router/go_router.dart';
 
 import 'package:gh3/src/routing/routing.dart';
 
-// Test implementation of AppRoute
+// Test implementation class that extends AppRoute to test abstract class behavior.
+// Cannot be replaced with mockito as it needs to test actual inheritance and implementation.
 class TestRoute extends AppRoute {
   final String _path;
 
