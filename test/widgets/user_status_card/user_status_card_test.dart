@@ -124,7 +124,7 @@ void main() {
       testWidgets(
         'should create widget from GraphQL fragment with message and emoji',
         (tester) async {
-          final fragment = _createMockStatusFragment(
+          final fragment = _createStatusFragment(
             message: 'Building something awesome',
             emoji: '⚡',
           );
@@ -142,7 +142,7 @@ void main() {
       testWidgets(
         'should create widget from GraphQL fragment with only message',
         (tester) async {
-          final fragment = _createMockStatusFragment(
+          final fragment = _createStatusFragment(
             message: 'Building something awesome',
             emoji: null,
           );
@@ -159,7 +159,7 @@ void main() {
       testWidgets('should not render when fragment has null message', (
         tester,
       ) async {
-        final fragment = _createMockStatusFragment(message: null, emoji: '🎯');
+        final fragment = _createStatusFragment(message: null, emoji: '🎯');
 
         final widget = UserStatusCard.fromFragment(fragment);
 
@@ -172,7 +172,7 @@ void main() {
       testWidgets('should not render when fragment has empty message', (
         tester,
       ) async {
-        final fragment = _createMockStatusFragment(message: '', emoji: '🎯');
+        final fragment = _createStatusFragment(message: '', emoji: '🎯');
 
         final widget = UserStatusCard.fromFragment(fragment);
 
@@ -220,26 +220,15 @@ void main() {
   });
 }
 
-// Helper function to create mock status fragment
-GUserStatusFragment_status _createMockStatusFragment({
+// Helper function to create status fragment using builder pattern
+GUserStatusFragment_status _createStatusFragment({
   String? message,
   String? emoji,
 }) {
-  return _MockUserStatusFragment(message: message, emoji: emoji);
-}
-
-class _MockUserStatusFragment implements GUserStatusFragment_status {
-  @override
-  final String? message;
-
-  @override
-  final String? emoji;
-
-  @override
-  final String G__typename = 'UserStatus';
-
-  @override
-  final GDateTime createdAt = GDateTime('2024-01-01T00:00:00Z');
-
-  _MockUserStatusFragment({required this.message, required this.emoji});
+  return GUserStatusFragmentData_status(
+    (b) => b
+      ..message = message
+      ..emoji = emoji
+      ..createdAt = GDateTime('2024-01-01T00:00:00Z').toBuilder(),
+  );
 }

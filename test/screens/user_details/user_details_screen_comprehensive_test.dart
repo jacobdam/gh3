@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:go_router/go_router.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'package:gh3/src/screens/user_details/user_details_screen.dart';
@@ -284,13 +285,32 @@ void main() {
         final mockUser = createMockUser(name: 'Test User');
         setupBasicMocks(user: mockUser);
 
-        await tester.pumpWidget(
-          MaterialApp(
-            home: UserDetailsScreen(viewModel: mockUserDetailsViewModel),
-          ),
+        final router = GoRouter(
+          routes: [
+            GoRoute(
+              path: '/',
+              builder: (context, state) => UserDetailsScreen(viewModel: mockUserDetailsViewModel),
+            ),
+            GoRoute(
+              path: '/user/testuser/repositories',
+              builder: (context, state) => const Scaffold(body: Text('Repositories')),
+            ),
+            GoRoute(
+              path: '/user/testuser/starred',
+              builder: (context, state) => const Scaffold(body: Text('Starred')),
+            ),
+            GoRoute(
+              path: '/user/testuser/organizations',
+              builder: (context, state) => const Scaffold(body: Text('Organizations')),
+            ),
+          ],
         );
 
-        // Just verify the tiles are tappable without checking snackbar content
+        await tester.pumpWidget(
+          MaterialApp.router(routerConfig: router),
+        );
+
+        // Just verify the tiles are tappable without causing navigation errors
         await tester.tap(find.text('Repositories'));
         await tester.tap(find.text('Starred'));
         await tester.tap(find.text('Organizations'));

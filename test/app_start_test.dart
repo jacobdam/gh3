@@ -6,8 +6,6 @@ import 'package:gh3/src/screens/app/gh3_app.dart';
 import 'package:gh3/src/screens/home_screen/home_viewmodel.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
-import 'package:gh3/src/screens/home_screen/__generated__/home_viewmodel.data.gql.dart';
-import 'package:gh3/src/screens/home_screen/__generated__/home_viewmodel.var.gql.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:gh3/src/services/auth_service.dart';
@@ -52,9 +50,7 @@ void main() {
     when(mockAuthService.isLoggedIn).thenReturn(true);
     when(mockAuthService.init()).thenAnswer((_) async {});
     // Ferry client still registered for other parts of the app that may need it
-    when(
-      mockFerryClient.request<GGetFollowingData, GGetFollowingVars>(any),
-    ).thenAnswer((_) => const Stream.empty());
+    when(mockFerryClient.request(any)).thenAnswer((_) => const Stream.empty());
 
     // Mock route collection service to return test routes
     when(mockRouteCollectionService.collectRoutes()).thenReturn([
@@ -62,7 +58,7 @@ void main() {
         path: '/',
         builder: (context, state) => HomeScreen(
           authViewModel: AuthViewModel(mockAuthService),
-          homeViewModel: HomeViewModel(mockAuthService),
+          homeViewModel: HomeViewModel(mockFerryClient),
         ),
       ),
       GoRoute(
@@ -121,9 +117,8 @@ void main() {
     when(mockAuthService.isLoggedIn).thenReturn(false);
     when(mockAuthService.init()).thenAnswer((_) async {});
     // Ferry client still registered for other parts of the app that may need it
-    // ignore: argument_type_not_assignable, avoid_redundant_argument_values
     when(
-      mockFerryClient.request<GGetFollowingData, GGetFollowingVars>(captureAny),
+      mockFerryClient.request(captureAny),
     ).thenAnswer((_) => const Stream.empty());
 
     // Mock route collection service to return test routes
@@ -132,7 +127,7 @@ void main() {
         path: '/',
         builder: (context, state) => HomeScreen(
           authViewModel: AuthViewModel(mockAuthService),
-          homeViewModel: HomeViewModel(mockAuthService),
+          homeViewModel: HomeViewModel(mockFerryClient),
         ),
       ),
       GoRoute(

@@ -194,8 +194,7 @@ void main() {
     testWidgets('should navigate to user details when profile card is tapped', (
       tester,
     ) async {
-      // Create a mock GoRouter
-      final mockGoRouter = MockGoRouter();
+      // Create a mock GoRouter (unused but kept for future navigation testing)
 
       await mockNetworkImages(() async {
         await tester.pumpWidget(

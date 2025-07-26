@@ -52,7 +52,7 @@ void main() {
 
         // Register all factories
         GetIt.I.registerFactory<HomeViewModelFactory>(
-          () => HomeViewModelFactory(mockAuthService),
+          () => HomeViewModelFactory(mockFerryClient),
         );
         GetIt.I.registerFactory<LoginViewModelFactory>(
           () => LoginViewModelFactory(
@@ -113,7 +113,7 @@ void main() {
 
       // Register factories
       GetIt.I.registerFactory<HomeViewModelFactory>(
-        () => HomeViewModelFactory(mockAuthService),
+        () => HomeViewModelFactory(mockFerryClient),
       );
       GetIt.I.registerFactory<LoginViewModelFactory>(
         () => LoginViewModelFactory(
@@ -207,7 +207,7 @@ void main() {
 
       // Register factories
       GetIt.I.registerFactory<HomeViewModelFactory>(
-        () => HomeViewModelFactory(mockAuthService),
+        () => HomeViewModelFactory(mockFerryClient),
       );
       GetIt.I.registerFactory<UserDetailsViewModelFactory>(
         () => UserDetailsViewModelFactory(mockFerryClient),
