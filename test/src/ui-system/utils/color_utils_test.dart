@@ -211,9 +211,18 @@ void main() {
         final originalColor = const Color(0xFF0000FF);
         final transparentColor = ColorUtils.withOpacity(originalColor, 0.3);
 
-        expect((transparentColor.r * 255.0).round(), equals((originalColor.r * 255.0).round()));
-        expect((transparentColor.g * 255.0).round(), equals((originalColor.g * 255.0).round()));
-        expect((transparentColor.b * 255.0).round(), equals((originalColor.b * 255.0).round()));
+        expect(
+          (transparentColor.r * 255.0).round(),
+          equals((originalColor.r * 255.0).round()),
+        );
+        expect(
+          (transparentColor.g * 255.0).round(),
+          equals((originalColor.g * 255.0).round()),
+        );
+        expect(
+          (transparentColor.b * 255.0).round(),
+          equals((originalColor.b * 255.0).round()),
+        );
         expect(transparentColor.a, closeTo(0.3, 0.01));
       });
     });

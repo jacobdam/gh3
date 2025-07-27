@@ -77,7 +77,10 @@ class ColorUtils {
   /// Returns true if the color is considered light.
   static bool isLightColor(Color color) {
     final luminance =
-        (0.299 * (color.r * 255.0).round() + 0.587 * (color.g * 255.0).round() + 0.114 * (color.b * 255.0).round()) / 255;
+        (0.299 * (color.r * 255.0).round() +
+            0.587 * (color.g * 255.0).round() +
+            0.114 * (color.b * 255.0).round()) /
+        255;
     return luminance > 0.5;
   }
 

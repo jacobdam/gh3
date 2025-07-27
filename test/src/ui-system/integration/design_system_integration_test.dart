@@ -42,9 +42,12 @@ void main() {
       await tester.pumpWidget(const DesignSystemUATApp());
 
       // Scroll down to make View Tokens button visible
-      await tester.drag(find.byType(SingleChildScrollView), const Offset(0, -500));
+      await tester.drag(
+        find.byType(SingleChildScrollView),
+        const Offset(0, -500),
+      );
       await tester.pump();
-      
+
       // Tap on View Tokens button
       await tester.tap(find.text('View Tokens'), warnIfMissed: false);
       await tester.pumpAndSettle();
@@ -67,7 +70,7 @@ void main() {
 
       // Should have theme toggle button
       expect(find.byIcon(Icons.dark_mode), findsOneWidget);
-      
+
       // Initially should be light theme
       var theme = Theme.of(tester.element(find.byType(Scaffold)));
       expect(theme.brightness, equals(Brightness.light));

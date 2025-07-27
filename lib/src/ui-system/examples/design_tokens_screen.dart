@@ -186,27 +186,27 @@ class _DesignTokensScreenState extends State<DesignTokensScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
           children: [
-          Text(name, style: GHTokens.labelLarge.copyWith(color: textColor)),
-          const SizedBox(height: GHTokens.spacing4),
-          Text(
-            hexColor,
-            style: GHTokens.labelMedium.copyWith(
-              color: textColor.withValues(alpha: 0.8),
-            ),
-          ),
-          if (description != null) ...[
+            Text(name, style: GHTokens.labelLarge.copyWith(color: textColor)),
             const SizedBox(height: GHTokens.spacing4),
             Text(
-              description,
+              hexColor,
               style: GHTokens.labelMedium.copyWith(
-                color: textColor.withValues(alpha: 0.7),
-                fontSize: 10,
+                color: textColor.withValues(alpha: 0.8),
               ),
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
             ),
+            if (description != null) ...[
+              const SizedBox(height: GHTokens.spacing4),
+              Text(
+                description,
+                style: GHTokens.labelMedium.copyWith(
+                  color: textColor.withValues(alpha: 0.7),
+                  fontSize: 10,
+                ),
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ],
           ],
-        ],
         ),
       ),
     );
@@ -242,7 +242,9 @@ class _DesignTokensScreenState extends State<DesignTokensScreen> {
             color: Theme.of(context).colorScheme.surface,
             borderRadius: BorderRadius.circular(GHTokens.radius8),
             border: Border.all(
-              color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.2),
+              color: Theme.of(
+                context,
+              ).colorScheme.outline.withValues(alpha: 0.2),
             ),
           ),
           child: Column(
@@ -327,7 +329,9 @@ class _DesignTokensScreenState extends State<DesignTokensScreen> {
             color: Theme.of(context).colorScheme.surface,
             borderRadius: BorderRadius.circular(GHTokens.radius8),
             border: Border.all(
-              color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.2),
+              color: Theme.of(
+                context,
+              ).colorScheme.outline.withValues(alpha: 0.2),
             ),
           ),
           child: Row(
@@ -384,7 +388,9 @@ class _DesignTokensScreenState extends State<DesignTokensScreen> {
             color: Theme.of(context).colorScheme.surface,
             borderRadius: BorderRadius.circular(GHTokens.radius16),
             border: Border.all(
-              color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.2),
+              color: Theme.of(
+                context,
+              ).colorScheme.outline.withValues(alpha: 0.2),
             ),
           ),
           child: Row(
