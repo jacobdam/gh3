@@ -97,6 +97,37 @@ class GHUserCard extends StatelessWidget {
     );
   }
 
+  /// Factory constructor for fake data integration
+  ///
+  /// This creates a user card from fake data for demo purposes.
+  factory GHUserCard.fromFakeUser(
+    dynamic fakeUser, {
+    Key? key,
+    VoidCallback? onTap,
+    bool showFollowButton = false,
+    bool isFollowing = false,
+    VoidCallback? onFollowTap,
+    double avatarSize = 48.0,
+    bool showStats = true,
+  }) {
+    return GHUserCard(
+      key: key,
+      login: fakeUser.login,
+      name: fakeUser.name,
+      bio: fakeUser.bio,
+      avatarUrl: fakeUser.avatarUrl,
+      repositoryCount: fakeUser.repositoryCount,
+      followerCount: fakeUser.followerCount,
+      followingCount: fakeUser.followingCount,
+      onTap: onTap,
+      showFollowButton: showFollowButton,
+      isFollowing: isFollowing,
+      onFollowTap: onFollowTap,
+      avatarSize: avatarSize,
+      showStats: showStats,
+    );
+  }
+
   Widget _buildAvatar(BuildContext context) {
     return CircleAvatar(
       radius: avatarSize / 2,
