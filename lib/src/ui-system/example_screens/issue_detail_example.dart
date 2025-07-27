@@ -221,7 +221,7 @@ class _IssueDetailExampleState extends State<IssueDetailExample> {
             final url =
                 'https://github.com/${widget.owner}/${widget.name}/issues/${widget.number}';
             await Clipboard.setData(ClipboardData(text: url));
-            if (mounted) {
+            if (mounted && context.mounted) {
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(content: Text('Issue URL copied to clipboard')),
               );
