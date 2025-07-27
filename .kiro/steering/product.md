@@ -8,6 +8,7 @@
 - View repository details, files, and metadata
 - Deep linking support compatible with github.com URL structure
 - Read-only content viewing (not a git client or file editor)
+- **AI Agent Development Tools** - MCP integration with screenshot capabilities for enhanced development workflow
 
 ## Target Platform
 - **Current**: iOS only
@@ -20,3 +21,4 @@
 3. **User Profiles**: Explore other users' profiles and their public repositories
 4. **Repository Browsing**: Navigate repository structure, view files, and explore project details
 5. **Deep Linking**: Access content directly via github.com-compatible URLs
+6. **AI Development**: Use MCP debug overlay for screenshot capture, UI inspection, and development automation

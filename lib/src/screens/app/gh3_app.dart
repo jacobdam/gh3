@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gh3/src/screens/app/auth_viewmodel.dart';
 import 'package:gh3/src/routing/route_collection_service.dart';
+import 'package:gh3/src/widgets/mcp_integration/mcp_debug_overlay.dart';
 import 'package:go_router/go_router.dart';
 
 class Gh3App extends StatelessWidget {
@@ -40,12 +41,15 @@ class Gh3App extends StatelessWidget {
         return null;
       },
     );
-    return MaterialApp.router(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.black),
+    return McpDebugOverlay(
+      enabled: true, // Enable MCP debug overlay for development
+      child: MaterialApp.router(
+        title: 'Flutter Demo',
+        theme: ThemeData(
+          colorScheme: ColorScheme.fromSeed(seedColor: Colors.black),
+        ),
+        routerConfig: router,
       ),
-      routerConfig: router,
     );
   }
 }

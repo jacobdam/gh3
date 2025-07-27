@@ -13,6 +13,7 @@
 - **GoRouter** for declarative routing with ViewModel factory integration
 - **Explicit dependency management** - All dependencies injected through constructors, no hidden GetIt calls
 - **Avoid strict layer separation** - focus on modularity and testability
+- **MCP Service Architecture** - AI agent development tools integrated with existing DI system
 
 ## Key Dependencies
 
@@ -37,6 +38,12 @@
 - `flutter_octicons: ^1.52.0` - GitHub-style icons
 - `flutter_markdown: ^0.7.4+1` - Markdown rendering
 - `envied: ^1.1.1` - Environment variable management
+
+### AI Agent Development
+- **Custom MCP (Model Context Protocol) Integration** - AI assistant development tools built with native Flutter services
+- **Screenshot & Inspection Tools** - Visual debugging and analysis capabilities
+- **GitHub Workflow Automation** - AI-powered repository and user profile analysis
+- **Development Workflow Tools** - Build analysis, testing automation, and code quality monitoring
 
 ### Development & Testing
 - `build_runner: ^2.5.4` - Code generation
@@ -124,6 +131,54 @@ class HomeRouteProvider implements RouteProvider { /* ... */ }
 - Only register as the `RouteProvider` interface to enable `getAll<RouteProvider>()` collection
 
 This pattern enables `RouteCollectionService` to collect all routes via `GetIt.instance.getAll<RouteProvider>()` while maintaining modular architecture.
+
+### MCP (Model Context Protocol) Architecture
+
+**Custom MCP Integration** provides AI assistant development tools with screenshot capabilities and GitHub workflow automation, built as native Flutter services without external dependencies.
+
+#### Core MCP Services
+
+```dart
+@lazySingleton  // McpService - Core MCP functionality
+@injectable     // McpGitHubTools - GitHub-specific tools  
+@injectable     // McpDevelopmentWorkflow - Development automation
+```
+
+**Service Architecture:**
+- **McpService**: Core screenshot capture, view inspection, and tool registration
+- **McpGitHubTools**: Repository analysis, user profiles, navigation integration
+- **McpDevelopmentWorkflow**: Build analysis, testing automation, code quality monitoring
+
+#### MCP Service Integration Pattern
+
+```dart
+// Automatic initialization in main.dart
+final mcpService = getIt<McpService>();
+final mcpGitHubTools = getIt<McpGitHubTools>();
+final mcpWorkflow = getIt<McpDevelopmentWorkflow>();
+
+await mcpService.initialize();
+await mcpGitHubTools.initialize();
+await mcpWorkflow.initialize();
+```
+
+#### MCP UI Components
+
+- **McpDebugOverlay**: Development debug panel with real-time MCP tool testing
+- **McpScreenshotWidget**: Reusable screenshot capture for AI analysis
+
+#### Graceful Degradation
+
+MCP components handle missing services gracefully:
+- UI components check for service availability before use
+- Test environments continue to work without MCP services
+- Error handling provides structured responses for AI assistants
+
+#### MCP Tool Integration
+
+- **GitHub Integration**: Leverages existing AuthService and GraphQL infrastructure
+- **Navigation Integration**: Compatible with GoRouter for app navigation
+- **Development Tools**: Integrates with existing build and test workflows
 
 ## Build System & Code Generation
 

@@ -39,6 +39,8 @@ import 'package:gh3/src/screens/user_starred/user_starred_route_provider.dart'
 import 'package:gh3/src/services/auth_service.dart' as _i336;
 import 'package:gh3/src/services/ferry_module.dart' as _i762;
 import 'package:gh3/src/services/github_auth_client.dart' as _i1035;
+import 'package:gh3/src/services/mcp_github_tools.dart' as _i975;
+import 'package:gh3/src/services/mcp_service.dart' as _i768;
 import 'package:gh3/src/services/scope_service.dart' as _i792;
 import 'package:gh3/src/services/timer_service.dart' as _i1066;
 import 'package:gh3/src/services/token_storage.dart' as _i895;
@@ -59,6 +61,7 @@ extension GetItInjectableX on _i174.GetIt {
       () => _i482.RouteCollectionService(),
     );
     gh.lazySingleton<_i589.Env>(() => envModule.env);
+    gh.lazySingleton<_i768.McpService>(() => _i768.McpService());
     gh.lazySingleton<_i519.Client>(() => httpModule.httpClient);
     gh.lazySingleton<_i1066.TimerService>(() => _i1066.DefaultTimerService());
     gh.lazySingleton<_i895.ITokenStorage>(() => _i895.PrefsTokenStorage());
@@ -93,6 +96,10 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i792.IScopeService>(),
         gh<_i1066.TimerService>(),
       ),
+    );
+    gh.factory<_i975.McpGitHubTools>(
+      () =>
+          _i975.McpGitHubTools(gh<_i768.McpService>(), gh<_i336.AuthService>()),
     );
     gh.lazySingleton<_i25.Client>(
       () =>
