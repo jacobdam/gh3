@@ -108,6 +108,35 @@ class GHRepositoryCard extends StatelessWidget {
     );
   }
 
+  /// Factory constructor for fake data integration
+  ///
+  /// This creates a repository card from fake data for demo purposes.
+  factory GHRepositoryCard.fromFakeRepository(
+    dynamic fakeRepository, {
+    Key? key,
+    VoidCallback? onTap,
+    bool showStarButton = false,
+    bool isStarred = false,
+    VoidCallback? onStarTap,
+  }) {
+    return GHRepositoryCard(
+      key: key,
+      owner: fakeRepository.owner,
+      name: fakeRepository.name,
+      description: fakeRepository.description,
+      language: fakeRepository.language,
+      languageColor: ColorUtils.getLanguageColor(fakeRepository.language),
+      starCount: fakeRepository.starCount,
+      forkCount: fakeRepository.forkCount,
+      lastUpdated: fakeRepository.lastUpdated,
+      isPrivate: fakeRepository.isPrivate,
+      onTap: onTap,
+      showStarButton: showStarButton,
+      isStarred: isStarred,
+      onStarTap: onStarTap,
+    );
+  }
+
   Widget _buildPrivacyIndicator(BuildContext context) {
     if (!isPrivate) return const SizedBox.shrink();
 

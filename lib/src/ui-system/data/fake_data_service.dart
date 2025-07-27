@@ -44,7 +44,10 @@ class FakeDataService {
           (repo) =>
               repo.name.toLowerCase().contains(lowerQuery) ||
               repo.description.toLowerCase().contains(lowerQuery) ||
-              repo.owner.toLowerCase().contains(lowerQuery),
+              repo.owner.toLowerCase().contains(lowerQuery) ||
+              repo.topics.any(
+                (topic) => topic.toLowerCase().contains(lowerQuery),
+              ),
         )
         .toList();
   }
@@ -59,7 +62,9 @@ class FakeDataService {
           (user) =>
               user.login.toLowerCase().contains(lowerQuery) ||
               (user.name?.toLowerCase().contains(lowerQuery) ?? false) ||
-              (user.bio?.toLowerCase().contains(lowerQuery) ?? false),
+              (user.bio?.toLowerCase().contains(lowerQuery) ?? false) ||
+              (user.company?.toLowerCase().contains(lowerQuery) ?? false) ||
+              (user.location?.toLowerCase().contains(lowerQuery) ?? false),
         )
         .toList();
   }
@@ -70,8 +75,32 @@ class FakeDataService {
 
     final lowerQuery = query.toLowerCase();
     return _issues
-        .where((issue) => issue.title.toLowerCase().contains(lowerQuery))
+        .where(
+          (issue) =>
+              issue.title.toLowerCase().contains(lowerQuery) ||
+              (issue.body?.toLowerCase().contains(lowerQuery) ?? false) ||
+              issue.labels.any(
+                (label) => label.toLowerCase().contains(lowerQuery),
+              ),
+        )
         .toList();
+  }
+
+  /// Advanced search across all content types
+  Map<String, List<dynamic>> searchAll(String query) {
+    if (query.isEmpty) {
+      return {
+        'repositories': <FakeRepository>[],
+        'users': <FakeUser>[],
+        'issues': <FakeIssue>[],
+      };
+    }
+
+    return {
+      'repositories': searchRepositories(query),
+      'users': searchUsers(query),
+      'issues': searchIssues(query),
+    };
   }
 
   /// Filter repositories by language
@@ -79,9 +108,219 @@ class FakeDataService {
     return _repositories.where((repo) => repo.language == language).toList();
   }
 
+  /// Filter repositories by multiple criteria
+  List<FakeRepository> filterRepositories({
+    String? language,
+    bool? isPrivate,
+    List<String>? topics,
+    int? minStars,
+    int? maxStars,
+    DateTime? updatedAfter,
+    DateTime? updatedBefore,
+  }) {
+    return _repositories.where((repo) {
+      if (language != null && repo.language != language) return false;
+      if (isPrivate != null && repo.isPrivate != isPrivate) return false;
+      if (topics != null && !topics.any((topic) => repo.topics.contains(topic))) {
+        return false;
+      }
+      if (minStars != null && repo.starCount < minStars) return false;
+      if (maxStars != null && repo.starCount > maxStars) return false;
+      if (updatedAfter != null && repo.lastUpdated.isBefore(updatedAfter)) {
+        return false;
+      }
+      if (updatedBefore != null && repo.lastUpdated.isAfter(updatedBefore)) {
+        return false;
+      }
+      return true;
+    }).toList();
+  }
+
   /// Filter issues by status
   List<FakeIssue> filterIssuesByStatus(GHStatus status) {
     return _issues.where((issue) => issue.status == status).toList();
+  }
+
+  /// Filter issues by multiple criteria
+  List<FakeIssue> filterIssues({
+    GHStatus? status,
+    List<String>? labels,
+    String? assignee,
+    String? author,
+    bool? isPullRequest,
+    DateTime? createdAfter,
+    DateTime? createdBefore,
+  }) {
+    return _issues.where((issue) {
+      if (status != null && issue.status != status) return false;
+      if (labels != null &&
+          !labels.any((label) => issue.labels.contains(label))) {
+        return false;
+      }
+      if (assignee != null && issue.assigneeLogin != assignee) return false;
+      if (author != null && issue.authorLogin != author) return false;
+      if (isPullRequest != null && issue.isPullRequest != isPullRequest) {
+        return false;
+      }
+      if (createdAfter != null && issue.createdAt.isBefore(createdAfter)) {
+        return false;
+      }
+      if (createdBefore != null && issue.createdAt.isAfter(createdBefore)) {
+        return false;
+      }
+      return true;
+    }).toList();
+  }
+
+  /// Filter users by criteria
+  List<FakeUser> filterUsers({
+    String? location,
+    String? company,
+    int? minRepos,
+    int? maxRepos,
+    int? minFollowers,
+    int? maxFollowers,
+  }) {
+    return _users.where((user) {
+      if (location != null &&
+          user.location?.toLowerCase() != location.toLowerCase()) {
+        return false;
+      }
+      if (company != null &&
+          user.company?.toLowerCase() != company.toLowerCase()) {
+        return false;
+      }
+      if (minRepos != null && user.repositoryCount < minRepos) return false;
+      if (maxRepos != null && user.repositoryCount > maxRepos) return false;
+      if (minFollowers != null && user.followerCount < minFollowers) {
+        return false;
+      }
+      if (maxFollowers != null && user.followerCount > maxFollowers) {
+        return false;
+      }
+      return true;
+    }).toList();
+  }
+
+  /// Get available filter options
+  Map<String, List<String>> getFilterOptions() {
+    final languages = _repositories.map((r) => r.language).toSet().toList();
+    final topics = _repositories.expand((r) => r.topics).toSet().toList();
+    final labels = _issues.expand((i) => i.labels).toSet().toList();
+    final locations = _users
+        .map((u) => u.location)
+        .where((l) => l != null)
+        .cast<String>()
+        .toSet()
+        .toList();
+    final companies = _users
+        .map((u) => u.company)
+        .where((c) => c != null)
+        .cast<String>()
+        .toSet()
+        .toList();
+
+    return {
+      'languages': languages,
+      'topics': topics,
+      'labels': labels,
+      'locations': locations,
+      'companies': companies,
+    };
+  }
+
+  /// Sort repositories by different criteria
+  List<FakeRepository> sortRepositories(
+    List<FakeRepository> repos,
+    String sortBy, {
+    bool ascending = false,
+  }) {
+    final sorted = List<FakeRepository>.from(repos);
+
+    switch (sortBy) {
+      case 'name':
+        sorted.sort(
+          (a, b) =>
+              ascending ? a.name.compareTo(b.name) : b.name.compareTo(a.name),
+        );
+        break;
+      case 'stars':
+        sorted.sort(
+          (a, b) => ascending
+              ? a.starCount.compareTo(b.starCount)
+              : b.starCount.compareTo(a.starCount),
+        );
+        break;
+      case 'forks':
+        sorted.sort(
+          (a, b) => ascending
+              ? a.forkCount.compareTo(b.forkCount)
+              : b.forkCount.compareTo(a.forkCount),
+        );
+        break;
+      case 'updated':
+        sorted.sort(
+          (a, b) => ascending
+              ? a.lastUpdated.compareTo(b.lastUpdated)
+              : b.lastUpdated.compareTo(a.lastUpdated),
+        );
+        break;
+      case 'created':
+        sorted.sort((a, b) {
+          final aCreated = a.createdAt ?? DateTime(2000);
+          final bCreated = b.createdAt ?? DateTime(2000);
+          return ascending
+              ? aCreated.compareTo(bCreated)
+              : bCreated.compareTo(aCreated);
+        });
+        break;
+    }
+
+    return sorted;
+  }
+
+  /// Sort issues by different criteria
+  List<FakeIssue> sortIssues(
+    List<FakeIssue> issues,
+    String sortBy, {
+    bool ascending = false,
+  }) {
+    final sorted = List<FakeIssue>.from(issues);
+
+    switch (sortBy) {
+      case 'created':
+        sorted.sort(
+          (a, b) => ascending
+              ? a.createdAt.compareTo(b.createdAt)
+              : b.createdAt.compareTo(a.createdAt),
+        );
+        break;
+      case 'updated':
+        sorted.sort((a, b) {
+          final aUpdated = a.closedAt ?? a.createdAt;
+          final bUpdated = b.closedAt ?? b.createdAt;
+          return ascending
+              ? aUpdated.compareTo(bUpdated)
+              : bUpdated.compareTo(aUpdated);
+        });
+        break;
+      case 'comments':
+        sorted.sort(
+          (a, b) => ascending
+              ? a.commentCount.compareTo(b.commentCount)
+              : b.commentCount.compareTo(a.commentCount),
+        );
+        break;
+      case 'title':
+        sorted.sort(
+          (a, b) => ascending
+              ? a.title.compareTo(b.title)
+              : b.title.compareTo(a.title),
+        );
+        break;
+    }
+
+    return sorted;
   }
 
   /// Get random repository
@@ -99,6 +338,167 @@ class FakeDataService {
     return _issues[_random.nextInt(_issues.length)];
   }
 
+  /// Get activity feed data
+  List<FakeActivity> getActivityFeed({int count = 20}) {
+    return _generateActivityFeed(count);
+  }
+
+  /// Get user's starred repositories
+  List<FakeRepository> getUserStarredRepos(String username, {int count = 20}) {
+    // Simulate user-specific starred repos
+    return _repositories.take(count).toList();
+  }
+
+  /// Get user's organizations
+  List<String> getUserOrganizations(String username) {
+    final user = _users.firstWhere(
+      (u) => u.login == username,
+      orElse: () => _users.first,
+    );
+    return user.organizations;
+  }
+
+  /// Get repository issues
+  List<FakeIssue> getRepositoryIssues(
+    String owner,
+    String name, {
+    int count = 30,
+  }) {
+    // Simulate repository-specific issues
+    return _issues.take(count).toList();
+  }
+
+  /// Get repository contributors
+  List<FakeContributor> getRepositoryContributors(
+    String owner,
+    String name, {
+    int count = 10,
+  }) {
+    return _generateContributors(count);
+  }
+
+  /// Get repository releases
+  List<FakeRelease> getRepositoryReleases(
+    String owner,
+    String name, {
+    int count = 5,
+  }) {
+    return _generateReleases(count);
+  }
+
+  /// Generate activity feed
+  List<FakeActivity> _generateActivityFeed(int count) {
+    final activities = <FakeActivity>[];
+    final activityTypes = [
+      'starred',
+      'forked',
+      'created',
+      'pushed',
+      'opened_issue',
+      'opened_pr',
+    ];
+
+    for (int i = 0; i < count; i++) {
+      final user = getRandomUser();
+      final repo = getRandomRepository();
+      final type = activityTypes[_random.nextInt(activityTypes.length)];
+
+      activities.add(
+        FakeActivity(
+          type: type,
+          title: _getActivityTitle(type, user.login, repo),
+          description: _getActivityDescription(type),
+          actorLogin: user.login,
+          actorAvatarUrl: user.avatarUrl,
+          createdAt: DateTime.now().subtract(Duration(hours: i * 2)),
+          repositoryName: repo.name,
+          repositoryOwner: repo.owner,
+        ),
+      );
+    }
+
+    return activities;
+  }
+
+  /// Generate contributors
+  List<FakeContributor> _generateContributors(int count) {
+    final contributors = <FakeContributor>[];
+    final users = _users.take(count).toList();
+
+    for (int i = 0; i < users.length; i++) {
+      contributors.add(
+        FakeContributor(
+          login: users[i].login,
+          avatarUrl: users[i].avatarUrl,
+          contributions: _random.nextInt(500) + 1,
+        ),
+      );
+    }
+
+    return contributors
+      ..sort((a, b) => b.contributions.compareTo(a.contributions));
+  }
+
+  /// Generate releases
+  List<FakeRelease> _generateReleases(int count) {
+    final releases = <FakeRelease>[];
+
+    for (int i = 0; i < count; i++) {
+      final version = 'v${2 - (i * 0.1)}.$i.0';
+      releases.add(
+        FakeRelease(
+          tagName: version,
+          name: version,
+          body:
+              'Release notes for $version\n\n- Bug fixes and improvements\n- New features added',
+          authorLogin: getRandomUser().login,
+          publishedAt: DateTime.now().subtract(Duration(days: i * 30)),
+          isPrerelease: i == 0 && _random.nextBool(),
+        ),
+      );
+    }
+
+    return releases;
+  }
+
+  String _getActivityTitle(String type, String username, FakeRepository repo) {
+    switch (type) {
+      case 'starred':
+        return '$username starred ${repo.owner}/${repo.name}';
+      case 'forked':
+        return '$username forked ${repo.owner}/${repo.name}';
+      case 'created':
+        return '$username created ${repo.owner}/${repo.name}';
+      case 'pushed':
+        return '$username pushed to ${repo.owner}/${repo.name}';
+      case 'opened_issue':
+        return '$username opened an issue in ${repo.owner}/${repo.name}';
+      case 'opened_pr':
+        return '$username opened a pull request in ${repo.owner}/${repo.name}';
+      default:
+        return '$username performed an action on ${repo.owner}/${repo.name}';
+    }
+  }
+
+  String _getActivityDescription(String type) {
+    switch (type) {
+      case 'starred':
+        return 'Added this repository to their stars';
+      case 'forked':
+        return 'Created a fork of this repository';
+      case 'created':
+        return 'Created a new repository';
+      case 'pushed':
+        return 'Pushed new commits';
+      case 'opened_issue':
+        return 'Opened a new issue';
+      case 'opened_pr':
+        return 'Opened a new pull request';
+      default:
+        return 'Performed an action';
+    }
+  }
+
   // Static data collections
   static final List<FakeRepository> _repositories = [
     FakeRepository(
@@ -108,8 +508,13 @@ class FakeDataService {
       language: 'JavaScript',
       starCount: 218000,
       forkCount: 45200,
+      watcherCount: 6800,
       lastUpdated: DateTime.now().subtract(const Duration(hours: 2)),
+      createdAt: DateTime(2013, 5, 24),
       isPrivate: false,
+      topics: ['javascript', 'react', 'frontend', 'ui'],
+      license: 'MIT',
+      homepage: 'https://reactjs.org',
     ),
     FakeRepository(
       owner: 'flutter',
@@ -119,8 +524,13 @@ class FakeDataService {
       language: 'Dart',
       starCount: 158000,
       forkCount: 25800,
+      watcherCount: 3200,
       lastUpdated: DateTime.now().subtract(const Duration(hours: 4)),
+      createdAt: DateTime(2015, 3, 6),
       isPrivate: false,
+      topics: ['dart', 'flutter', 'mobile', 'cross-platform'],
+      license: 'BSD-3-Clause',
+      homepage: 'https://flutter.dev',
     ),
     FakeRepository(
       owner: 'microsoft',
@@ -654,27 +1064,40 @@ class FakeDataService {
       name: 'The Octocat',
       bio: 'GitHub mascot and friendly neighborhood cat',
       avatarUrl: 'https://github.com/octocat.png',
+      location: 'San Francisco, CA',
+      company: 'GitHub',
+      website: 'https://github.com',
       repositoryCount: 8,
       followerCount: 4200,
       followingCount: 9,
+      createdAt: DateTime(2011, 1, 25),
+      organizations: ['github'],
     ),
     FakeUser(
       login: 'torvalds',
       name: 'Linus Torvalds',
       bio: 'Creator of Linux and Git',
       avatarUrl: 'https://github.com/torvalds.png',
+      location: 'Portland, OR',
       repositoryCount: 4,
       followerCount: 180000,
       followingCount: 0,
+      createdAt: DateTime(2011, 9, 3),
+      organizations: [],
     ),
     FakeUser(
       login: 'gaearon',
       name: 'Dan Abramov',
       bio: 'Working on @reactjs. Co-author of Redux and Create React App.',
       avatarUrl: 'https://github.com/gaearon.png',
+      location: 'London, UK',
+      company: 'Meta',
+      website: 'https://overreacted.io',
       repositoryCount: 67,
       followerCount: 89000,
       followingCount: 171,
+      createdAt: DateTime(2011, 6, 2),
+      organizations: ['facebook', 'reactjs'],
     ),
     FakeUser(
       login: 'kentcdodds',
@@ -682,9 +1105,14 @@ class FakeDataService {
       bio:
           'Making software development more accessible · Husband, Father, Latter-day Saint, Teacher, OSS, @remix_run',
       avatarUrl: 'https://github.com/kentcdodds.png',
+      location: 'Utah, USA',
+      company: 'Remix',
+      website: 'https://kentcdodds.com',
       repositoryCount: 234,
       followerCount: 45000,
       followingCount: 156,
+      createdAt: DateTime(2010, 8, 30),
+      organizations: ['remix-run', 'testing-library'],
     ),
     FakeUser(
       login: 'sindresorhus',
@@ -885,6 +1313,8 @@ class FakeDataService {
     FakeIssue(
       number: 1234,
       title: 'Add dark mode support to the application',
+      body:
+          'We should add dark mode support to improve user experience in low-light environments. This would include:\n\n- Dark theme colors\n- Proper contrast ratios\n- System theme detection\n- Theme switching UI',
       status: GHStatus.open,
       labels: ['enhancement', 'ui', 'good first issue'],
       authorLogin: 'johndoe',
@@ -893,6 +1323,27 @@ class FakeDataService {
       commentCount: 5,
       assigneeLogin: 'janedoe',
       assigneeAvatarUrl: 'https://github.com/janedoe.png',
+      comments: [
+        FakeComment(
+          id: 1,
+          body: 'Great idea! I\'d love to help with this.',
+          authorLogin: 'gaearon',
+          authorAvatarUrl: 'https://github.com/gaearon.png',
+          createdAt: DateTime.now().subtract(const Duration(hours: 1)),
+          reactions: [
+            FakeReaction(
+              emoji: '👍',
+              count: 3,
+              users: ['alice', 'bob', 'charlie'],
+            ),
+            FakeReaction(emoji: '❤️', count: 1, users: ['alice']),
+          ],
+        ),
+      ],
+      reactions: [
+        FakeReaction(emoji: '👍', count: 8, users: ['alice', 'bob', 'charlie']),
+        FakeReaction(emoji: '🎉', count: 2, users: ['alice', 'bob']),
+      ],
     ),
     FakeIssue(
       number: 1235,
@@ -1218,6 +1669,32 @@ class FakeDataService {
       lastModified: DateTime.now().subtract(const Duration(days: 2)),
       author: 'johndoe',
       size: 2400,
+      path: 'README.md',
+      content: '''# GitHub Client
+
+A modern GitHub client built with Flutter.
+
+## Features
+
+- Browse repositories
+- View issues and pull requests
+- User profiles and organizations
+- Dark mode support
+- Cross-platform (iOS, Android, Web)
+
+## Installation
+
+1. Clone the repository
+2. Run `flutter pub get`
+3. Run `flutter run`
+
+## Contributing
+
+Pull requests are welcome! Please read our contributing guidelines first.
+
+## License
+
+MIT License - see LICENSE file for details.''',
     ),
     FakeFile(
       name: 'src',
@@ -1248,6 +1725,29 @@ class FakeDataService {
       lastModified: DateTime.now().subtract(const Duration(hours: 8)),
       author: 'sindresorhus',
       size: 3400,
+      path: 'lib/main.dart',
+      content: '''import 'package:flutter/material.dart';
+import 'src/app.dart';
+
+void main() {
+  runApp(const MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'GitHub Client',
+      theme: ThemeData(
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        useMaterial3: true,
+      ),
+      home: const MyHomePage(title: 'GitHub Client'),
+    );
+  }
+}''',
     ),
     FakeFile(
       name: 'pubspec.yaml',
@@ -1447,8 +1947,20 @@ class FakeRepository {
   final String language;
   final int starCount;
   final int forkCount;
+  final int watcherCount;
   final DateTime lastUpdated;
+  final DateTime? createdAt;
   final bool isPrivate;
+  final List<String> topics;
+  final String? license;
+  final String? homepage;
+  final List<FakeFile> files;
+  final List<FakeIssue> issues;
+  final List<FakeRelease> releases;
+  final List<FakeContributor> contributors;
+  final String? readme;
+  final bool isStarred;
+  final bool isWatched;
 
   const FakeRepository({
     required this.owner,
@@ -1457,8 +1969,20 @@ class FakeRepository {
     required this.language,
     required this.starCount,
     required this.forkCount,
+    this.watcherCount = 0,
     required this.lastUpdated,
+    this.createdAt,
     this.isPrivate = false,
+    this.topics = const [],
+    this.license,
+    this.homepage,
+    this.files = const [],
+    this.issues = const [],
+    this.releases = const [],
+    this.contributors = const [],
+    this.readme,
+    this.isStarred = false,
+    this.isWatched = false,
   });
 }
 
@@ -1468,18 +1992,30 @@ class FakeUser {
   final String? name;
   final String? bio;
   final String avatarUrl;
+  final String? location;
+  final String? company;
+  final String? website;
   final int repositoryCount;
   final int followerCount;
   final int followingCount;
+  final DateTime? createdAt;
+  final List<String> organizations;
+  final bool isFollowing;
 
   const FakeUser({
     required this.login,
     this.name,
     this.bio,
     required this.avatarUrl,
+    this.location,
+    this.company,
+    this.website,
     required this.repositoryCount,
     required this.followerCount,
     required this.followingCount,
+    this.createdAt,
+    this.organizations = const [],
+    this.isFollowing = false,
   });
 }
 
@@ -1487,26 +2023,36 @@ class FakeUser {
 class FakeIssue {
   final int number;
   final String title;
+  final String? body;
   final GHStatus status;
   final List<String> labels;
   final String authorLogin;
   final String? authorAvatarUrl;
   final DateTime createdAt;
+  final DateTime? closedAt;
   final int commentCount;
   final String? assigneeLogin;
   final String? assigneeAvatarUrl;
+  final List<FakeComment> comments;
+  final List<FakeReaction> reactions;
+  final bool isPullRequest;
 
   const FakeIssue({
     required this.number,
     required this.title,
+    this.body,
     required this.status,
     this.labels = const [],
     required this.authorLogin,
     this.authorAvatarUrl,
     required this.createdAt,
+    this.closedAt,
     this.commentCount = 0,
     this.assigneeLogin,
     this.assigneeAvatarUrl,
+    this.comments = const [],
+    this.reactions = const [],
+    this.isPullRequest = false,
   });
 }
 
@@ -1518,6 +2064,8 @@ class FakeFile {
   final DateTime lastModified;
   final String author;
   final int? size;
+  final String? content;
+  final String path;
 
   const FakeFile({
     required this.name,
@@ -1526,5 +2074,113 @@ class FakeFile {
     required this.lastModified,
     required this.author,
     this.size,
+    this.content,
+    this.path = '',
+  });
+}
+
+/// Fake comment data model
+class FakeComment {
+  final int id;
+  final String body;
+  final String authorLogin;
+  final String authorAvatarUrl;
+  final DateTime createdAt;
+  final DateTime? updatedAt;
+  final List<FakeReaction> reactions;
+
+  const FakeComment({
+    required this.id,
+    required this.body,
+    required this.authorLogin,
+    required this.authorAvatarUrl,
+    required this.createdAt,
+    this.updatedAt,
+    this.reactions = const [],
+  });
+}
+
+/// Fake reaction data model
+class FakeReaction {
+  final String emoji;
+  final int count;
+  final List<String> users;
+
+  const FakeReaction({
+    required this.emoji,
+    required this.count,
+    this.users = const [],
+  });
+}
+
+/// Fake release data model
+class FakeRelease {
+  final String tagName;
+  final String name;
+  final String? body;
+  final String authorLogin;
+  final DateTime publishedAt;
+  final bool isPrerelease;
+  final bool isDraft;
+  final List<FakeAsset> assets;
+
+  const FakeRelease({
+    required this.tagName,
+    required this.name,
+    this.body,
+    required this.authorLogin,
+    required this.publishedAt,
+    this.isPrerelease = false,
+    this.isDraft = false,
+    this.assets = const [],
+  });
+}
+
+/// Fake asset data model
+class FakeAsset {
+  final String name;
+  final int size;
+  final int downloadCount;
+
+  const FakeAsset({
+    required this.name,
+    required this.size,
+    required this.downloadCount,
+  });
+}
+
+/// Fake contributor data model
+class FakeContributor {
+  final String login;
+  final String avatarUrl;
+  final int contributions;
+
+  const FakeContributor({
+    required this.login,
+    required this.avatarUrl,
+    required this.contributions,
+  });
+}
+
+/// Fake activity data model
+class FakeActivity {
+  final String type;
+  final String title;
+  final String? description;
+  final String actorLogin;
+  final String actorAvatarUrl;
+  final DateTime createdAt;
+  final String? repositoryName;
+  final String? repositoryOwner;
+
+  const FakeActivity({
+    required this.type,
+    required this.title,
+    this.description,
+    required this.actorLogin,
+    required this.actorAvatarUrl,
+    required this.createdAt,
+    this.repositoryName,
+    this.repositoryOwner,
   });
 }
