@@ -2,6 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../example_screens/home_screen_example.dart';
 import '../example_screens/user_profile_example.dart';
+import '../example_screens/repository_details_example.dart';
+import '../example_screens/repository_tree_example.dart';
+import '../example_screens/repository_file_example.dart';
+import '../example_screens/issues_list_example.dart';
+import '../example_screens/issue_detail_example.dart';
+import '../example_screens/pulls_list_example.dart';
+import '../example_screens/search_example.dart';
+import '../example_screens/trending_example.dart';
 import 'example_routes.dart';
 
 /// Navigation service for the UI system example screens
@@ -25,7 +33,7 @@ class NavigationService {
         builder: (context, state) {
           final owner = state.pathParameters['owner']!;
           final name = state.pathParameters['name']!;
-          return _buildPlaceholderScreen('Repository: $owner/$name');
+          return RepositoryDetailsExample(owner: owner, name: name);
         },
       ),
       GoRoute(
@@ -33,7 +41,8 @@ class NavigationService {
         builder: (context, state) {
           final owner = state.pathParameters['owner']!;
           final name = state.pathParameters['name']!;
-          return _buildPlaceholderScreen('Repository Tree: $owner/$name');
+          final path = state.uri.queryParameters['path'];
+          return RepositoryTreeExample(owner: owner, name: name, path: path);
         },
       ),
       GoRoute(
@@ -41,7 +50,12 @@ class NavigationService {
         builder: (context, state) {
           final owner = state.pathParameters['owner']!;
           final name = state.pathParameters['name']!;
-          return _buildPlaceholderScreen('Repository File: $owner/$name');
+          final filePath = state.uri.queryParameters['path'] ?? 'README.md';
+          return RepositoryFileExample(
+            owner: owner,
+            name: name,
+            filePath: filePath,
+          );
         },
       ),
       GoRoute(
@@ -49,7 +63,7 @@ class NavigationService {
         builder: (context, state) {
           final owner = state.pathParameters['owner']!;
           final name = state.pathParameters['name']!;
-          return _buildPlaceholderScreen('Issues: $owner/$name');
+          return IssuesListExample(owner: owner, name: name);
         },
       ),
       GoRoute(
@@ -57,8 +71,8 @@ class NavigationService {
         builder: (context, state) {
           final owner = state.pathParameters['owner']!;
           final name = state.pathParameters['name']!;
-          final number = state.pathParameters['number']!;
-          return _buildPlaceholderScreen('Issue #$number: $owner/$name');
+          final number = int.parse(state.pathParameters['number']!);
+          return IssueDetailExample(owner: owner, name: name, number: number);
         },
       ),
       GoRoute(
@@ -66,7 +80,7 @@ class NavigationService {
         builder: (context, state) {
           final owner = state.pathParameters['owner']!;
           final name = state.pathParameters['name']!;
-          return _buildPlaceholderScreen('Pull Requests: $owner/$name');
+          return PullsListExample(owner: owner, name: name);
         },
       ),
       GoRoute(
@@ -80,11 +94,14 @@ class NavigationService {
       ),
       GoRoute(
         path: ExampleRoutes.search,
-        builder: (context, state) => _buildPlaceholderScreen('Search'),
+        builder: (context, state) {
+          final query = state.uri.queryParameters['q'];
+          return SearchExample(initialQuery: query);
+        },
       ),
       GoRoute(
         path: ExampleRoutes.trending,
-        builder: (context, state) => _buildPlaceholderScreen('Trending'),
+        builder: (context, state) => const TrendingExample(),
       ),
       GoRoute(
         path: ExampleRoutes.starred,
@@ -102,12 +119,22 @@ class NavigationService {
     router.go(ExampleRoutes.repositoryPath(owner, name));
   }
 
-  static void navigateToRepositoryTree(String owner, String name) {
-    router.go(ExampleRoutes.repositoryTreePath(owner, name));
+  static void navigateToRepositoryTree(
+    String owner,
+    String name, {
+    String? path,
+  }) {
+    router.go(ExampleRoutes.repositoryTreePath(owner, name, path: path));
   }
 
-  static void navigateToRepositoryFile(String owner, String name) {
-    router.go(ExampleRoutes.repositoryFilePath(owner, name));
+  static void navigateToRepositoryFile(
+    String owner,
+    String name, {
+    String? filePath,
+  }) {
+    router.go(
+      ExampleRoutes.repositoryFilePath(owner, name, filePath: filePath),
+    );
   }
 
   static void navigateToIssues(String owner, String name) {
@@ -126,8 +153,12 @@ class NavigationService {
     router.go(ExampleRoutes.pullDetailPath(owner, name, number));
   }
 
-  static void navigateToSearch() {
-    router.go(ExampleRoutes.search);
+  static void navigateToSearch({String? query}) {
+    if (query != null && query.isNotEmpty) {
+      router.go('${ExampleRoutes.search}?q=${Uri.encodeQueryComponent(query)}');
+    } else {
+      router.go(ExampleRoutes.search);
+    }
   }
 
   static void navigateToTrending() {

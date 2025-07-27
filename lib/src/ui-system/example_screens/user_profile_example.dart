@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
 import '../layouts/gh_screen_template.dart';
 import '../layouts/gh_list_template.dart';
-
 import '../widgets/gh_repository_card.dart';
+import '../widgets/gh_filter_bar.dart';
 import '../data/fake_data_service.dart';
 import '../components/gh_card.dart';
+import '../components/gh_chip.dart';
 import '../tokens/gh_tokens.dart';
 import '../navigation/navigation_service.dart';
 import '../utils/number_formatter.dart';
+import '../utils/debounced_search.dart';
 
 /// User profile example screen showing comprehensive user information
 /// with tabbed navigation for repositories, starred, organizations, etc.
@@ -27,10 +29,22 @@ class _UserProfileExampleState extends State<UserProfileExample>
   late TabController _tabController;
   late FakeUser _user;
   List<FakeRepository> _repositories = [];
+  List<FakeRepository> _filteredRepositories = [];
   List<FakeRepository> _starredRepos = [];
+  List<FakeRepository> _filteredStarredRepos = [];
   List<String> _organizations = [];
   bool _isLoading = true;
   bool _isFollowing = false;
+
+  // Search and filtering state
+  late final DebouncedSearch _repositorySearch;
+  late final DebouncedSearch _starredSearch;
+  String _repositoryQuery = '';
+  String _starredQuery = '';
+  String _repositoryFilter = 'all'; // all, sources, forks, archived
+  String _starredFilter = 'all';
+  String _repositorySortBy = 'updated'; // name, stars, updated
+  String _starredSortBy = 'updated';
 
   // Tab-specific loading states
   bool _repositoriesLoading = false;
@@ -51,6 +65,11 @@ class _UserProfileExampleState extends State<UserProfileExample>
     super.initState();
     _tabController = TabController(length: _tabTitles.length, vsync: this);
     _tabController.addListener(_onTabChanged);
+
+    // Initialize debounced search
+    _repositorySearch = DebouncedSearch(onSearch: _onRepositorySearch);
+    _starredSearch = DebouncedSearch(onSearch: _onStarredSearch);
+
     _loadUserData();
   }
 
@@ -80,6 +99,8 @@ class _UserProfileExampleState extends State<UserProfileExample>
   @override
   void dispose() {
     _tabController.dispose();
+    _repositorySearch.dispose();
+    _starredSearch.dispose();
     super.dispose();
   }
 
@@ -102,6 +123,10 @@ class _UserProfileExampleState extends State<UserProfileExample>
     _repositories = _dataService.getRepositories(count: 10);
     _starredRepos = _dataService.getUserStarredRepos(widget.username, count: 8);
 
+    // Initialize filtered lists
+    _applyRepositoryFilters();
+    _applyStarredFilters();
+
     setState(() {
       _isLoading = false;
     });
@@ -121,6 +146,7 @@ class _UserProfileExampleState extends State<UserProfileExample>
     await Future.delayed(const Duration(milliseconds: 300));
 
     _repositories = _dataService.getRepositories(count: 15);
+    _applyRepositoryFilters();
 
     setState(() {
       _repositoriesLoading = false;
@@ -141,6 +167,7 @@ class _UserProfileExampleState extends State<UserProfileExample>
       widget.username,
       count: 12,
     );
+    _applyStarredFilters();
 
     setState(() {
       _starredLoading = false;
@@ -162,6 +189,148 @@ class _UserProfileExampleState extends State<UserProfileExample>
     setState(() {
       _organizationsLoading = false;
     });
+  }
+
+  void _applyRepositoryFilters() {
+    var filtered = List<FakeRepository>.from(_repositories);
+
+    // Apply type filter
+    switch (_repositoryFilter) {
+      case 'sources':
+        filtered = filtered
+            .where((repo) => !repo.name.contains('fork'))
+            .toList();
+        break;
+      case 'forks':
+        filtered = filtered
+            .where((repo) => repo.name.contains('fork'))
+            .toList();
+        break;
+      case 'archived':
+        // For demo purposes, consider repos with low star count as archived
+        filtered = filtered.where((repo) => repo.starCount < 5).toList();
+        break;
+      case 'all':
+      default:
+        // Keep all repositories
+        break;
+    }
+
+    // Apply search filter
+    if (_repositoryQuery.isNotEmpty) {
+      filtered = filtered.where((repo) {
+        final query = _repositoryQuery.toLowerCase();
+        return repo.name.toLowerCase().contains(query) ||
+            repo.description.toLowerCase().contains(query) ||
+            repo.language.toLowerCase().contains(query);
+      }).toList();
+    }
+
+    // Apply sorting
+    switch (_repositorySortBy) {
+      case 'name':
+        filtered.sort((a, b) => a.name.compareTo(b.name));
+        break;
+      case 'stars':
+        filtered.sort((a, b) => b.starCount.compareTo(a.starCount));
+        break;
+      case 'updated':
+      default:
+        filtered.sort((a, b) => b.lastUpdated.compareTo(a.lastUpdated));
+        break;
+    }
+
+    _filteredRepositories = filtered;
+  }
+
+  void _applyStarredFilters() {
+    var filtered = List<FakeRepository>.from(_starredRepos);
+
+    // Apply type filter for starred repos
+    switch (_starredFilter) {
+      case 'sources':
+        filtered = filtered
+            .where((repo) => !repo.name.contains('fork'))
+            .toList();
+        break;
+      case 'forks':
+        filtered = filtered
+            .where((repo) => repo.name.contains('fork'))
+            .toList();
+        break;
+      case 'all':
+      default:
+        // Keep all starred repositories
+        break;
+    }
+
+    // Apply search filter
+    if (_starredQuery.isNotEmpty) {
+      filtered = filtered.where((repo) {
+        final query = _starredQuery.toLowerCase();
+        return repo.name.toLowerCase().contains(query) ||
+            repo.description.toLowerCase().contains(query) ||
+            repo.language.toLowerCase().contains(query);
+      }).toList();
+    }
+
+    // Apply sorting
+    switch (_starredSortBy) {
+      case 'name':
+        filtered.sort((a, b) => a.name.compareTo(b.name));
+        break;
+      case 'stars':
+        filtered.sort((a, b) => b.starCount.compareTo(a.starCount));
+        break;
+      case 'updated':
+      default:
+        filtered.sort((a, b) => b.lastUpdated.compareTo(a.lastUpdated));
+        break;
+    }
+
+    _filteredStarredRepos = filtered;
+  }
+
+  void _onRepositorySearch(String query) {
+    setState(() {
+      _repositoryQuery = query;
+    });
+    _applyRepositoryFilters();
+  }
+
+  void _onStarredSearch(String query) {
+    setState(() {
+      _starredQuery = query;
+    });
+    _applyStarredFilters();
+  }
+
+  void _onRepositoryFilterChanged(String filter) {
+    setState(() {
+      _repositoryFilter = filter;
+    });
+    _applyRepositoryFilters();
+  }
+
+  void _onStarredFilterChanged(String filter) {
+    setState(() {
+      _starredFilter = filter;
+    });
+    _applyStarredFilters();
+  }
+
+  void _onRepositorySortChanged(String sortBy) {
+    setState(() {
+      _repositorySortBy = sortBy;
+    });
+    _applyRepositoryFilters();
+  }
+
+  void _onStarredSortChanged(String sortBy) {
+    setState(() {
+      _starredSortBy = sortBy;
+    });
+    _applyStarredFilters();
   }
 
   @override
@@ -462,12 +631,12 @@ class _UserProfileExampleState extends State<UserProfileExample>
   String? _getTabBadge(int tabIndex) {
     switch (tabIndex) {
       case 0: // Repositories
-        return _repositories.isNotEmpty
-            ? _repositories.length.toString()
+        return _filteredRepositories.isNotEmpty
+            ? _filteredRepositories.length.toString()
             : _user.repositoryCount.toString();
       case 1: // Starred
-        return _starredRepos.isNotEmpty
-            ? _starredRepos.length.toString()
+        return _filteredStarredRepos.isNotEmpty
+            ? _filteredStarredRepos.length.toString()
             : null;
       case 2: // Organizations
         return _organizations.isNotEmpty
@@ -488,15 +657,93 @@ class _UserProfileExampleState extends State<UserProfileExample>
       );
     }
 
+    final sourceCount = _repositories
+        .where((repo) => !repo.name.contains('fork'))
+        .length;
+    final forkCount = _repositories
+        .where((repo) => repo.name.contains('fork'))
+        .length;
+    final archivedCount = _repositories
+        .where((repo) => repo.starCount < 5)
+        .length;
+
     return GHListTemplate(
       searchHint: 'Find a repository...',
       onRefresh: _loadRepositories,
       onSearch: (query) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Searching repositories: $query')),
-        );
+        _repositorySearch.search(query);
       },
-      children: _repositories
+      filters: [
+        // Repository type filters
+        GHFilterBar(
+          filters:
+              GHFilterItems.repositoryType(
+                    allCount: _repositories.length,
+                    sourcesCount: sourceCount,
+                    forksCount: forkCount,
+                    archivedCount: archivedCount,
+                  )
+                  .map(
+                    (item) => GHFilterItem(
+                      label: item.label,
+                      value: item.value,
+                      count: item.count,
+                      isActive: item.value == _repositoryFilter,
+                      colorIndicator: item.colorIndicator,
+                    ),
+                  )
+                  .toList(),
+          onFilterChanged: (filter) {
+            _onRepositoryFilterChanged(filter.value);
+          },
+          onClearAll: () {
+            _onRepositoryFilterChanged('all');
+          },
+        ),
+
+        // Sort options
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: GHTokens.spacing16),
+          child: Row(
+            children: [
+              Text(
+                'Sort:',
+                style: GHTokens.labelMedium.copyWith(
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                ),
+              ),
+              const SizedBox(width: GHTokens.spacing8),
+              Expanded(
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Row(
+                    children: [
+                      GHChip(
+                        label: 'Recently updated',
+                        isSelected: _repositorySortBy == 'updated',
+                        onTap: () => _onRepositorySortChanged('updated'),
+                      ),
+                      const SizedBox(width: GHTokens.spacing8),
+                      GHChip(
+                        label: 'Name',
+                        isSelected: _repositorySortBy == 'name',
+                        onTap: () => _onRepositorySortChanged('name'),
+                      ),
+                      const SizedBox(width: GHTokens.spacing8),
+                      GHChip(
+                        label: 'Stars',
+                        isSelected: _repositorySortBy == 'stars',
+                        onTap: () => _onRepositorySortChanged('stars'),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+      children: _filteredRepositories
           .map(
             (repo) => GHRepositoryCard.fromFakeRepository(
               repo,
@@ -552,15 +799,93 @@ class _UserProfileExampleState extends State<UserProfileExample>
       );
     }
 
+    final starredSourceCount = _starredRepos
+        .where((repo) => !repo.name.contains('fork'))
+        .length;
+    final starredForkCount = _starredRepos
+        .where((repo) => repo.name.contains('fork'))
+        .length;
+
     return GHListTemplate(
       searchHint: 'Search starred repositories...',
       onRefresh: _loadStarredRepositories,
       onSearch: (query) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text('Searching starred: $query')));
+        _starredSearch.search(query);
       },
-      children: _starredRepos
+      filters: [
+        // Starred repository type filters
+        GHFilterBar(
+          filters: [
+            GHFilterItem(
+              label: 'All',
+              value: 'all',
+              count: _starredRepos.length,
+              isActive: _starredFilter == 'all',
+            ),
+            GHFilterItem(
+              label: 'Sources',
+              value: 'sources',
+              count: starredSourceCount,
+              isActive: _starredFilter == 'sources',
+            ),
+            GHFilterItem(
+              label: 'Forks',
+              value: 'forks',
+              count: starredForkCount,
+              isActive: _starredFilter == 'forks',
+            ),
+          ],
+          onFilterChanged: (filter) {
+            _onStarredFilterChanged(filter.value);
+          },
+          onClearAll: () {
+            _onStarredFilterChanged('all');
+          },
+        ),
+
+        // Sort options for starred repos
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: GHTokens.spacing16),
+          child: Row(
+            children: [
+              Text(
+                'Sort:',
+                style: GHTokens.labelMedium.copyWith(
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                ),
+              ),
+              const SizedBox(width: GHTokens.spacing8),
+              Expanded(
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Row(
+                    children: [
+                      GHChip(
+                        label: 'Recently starred',
+                        isSelected: _starredSortBy == 'updated',
+                        onTap: () => _onStarredSortChanged('updated'),
+                      ),
+                      const SizedBox(width: GHTokens.spacing8),
+                      GHChip(
+                        label: 'Name',
+                        isSelected: _starredSortBy == 'name',
+                        onTap: () => _onStarredSortChanged('name'),
+                      ),
+                      const SizedBox(width: GHTokens.spacing8),
+                      GHChip(
+                        label: 'Stars',
+                        isSelected: _starredSortBy == 'stars',
+                        onTap: () => _onStarredSortChanged('stars'),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+      children: _filteredStarredRepos
           .map(
             (repo) => GHRepositoryCard.fromFakeRepository(
               repo,

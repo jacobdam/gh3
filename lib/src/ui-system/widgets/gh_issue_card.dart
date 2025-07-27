@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../tokens/gh_tokens.dart';
 import '../components/gh_card.dart';
-import '../components/gh_status_badge.dart';
+import 'gh_status_badge.dart';
 import '../components/gh_chip.dart';
 import '../utils/date_formatter.dart';
 import '../utils/color_utils.dart';
@@ -19,7 +19,7 @@ class GHIssueCard extends StatelessWidget {
   final String title;
 
   /// Issue status (open, closed, merged, draft)
-  final GHStatus status;
+  final GHStatusType status;
 
   /// List of label names
   final List<String> labels;
@@ -105,18 +105,18 @@ class GHIssueCard extends StatelessWidget {
     );
   }
 
-  static GHStatus _mapStatusFromString(String state) {
+  static GHStatusType _mapStatusFromString(String state) {
     switch (state.toLowerCase()) {
       case 'open':
-        return GHStatus.open;
+        return GHStatusType.open;
       case 'closed':
-        return GHStatus.closed;
+        return GHStatusType.closed;
       case 'merged':
-        return GHStatus.merged;
+        return GHStatusType.merged;
       case 'draft':
-        return GHStatus.draft;
+        return GHStatusType.draft;
       default:
-        return GHStatus.open;
+        return GHStatusType.open;
     }
   }
 

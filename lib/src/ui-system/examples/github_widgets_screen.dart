@@ -8,9 +8,9 @@ import '../widgets/gh_file_tree_item.dart';
 import '../widgets/gh_entity_header.dart';
 import '../widgets/gh_navigation_grid.dart';
 import '../widgets/gh_filter_bar.dart';
+import '../widgets/gh_status_badge.dart';
 import '../data/fake_data_service.dart';
 import '../tokens/gh_tokens.dart';
-import '../components/gh_status_badge.dart';
 
 /// GitHub widgets showcase screen demonstrating all GitHub-specific widgets.
 ///
@@ -124,9 +124,11 @@ class _GitHubWidgetsScreenState extends State<GitHubWidgetsScreen>
 
   Widget _buildIssuesTab() {
     final issues = _dataService.getIssues(count: 30);
-    final openIssues = issues.where((i) => i.status == GHStatus.open).length;
+    final openIssues = issues
+        .where((i) => i.status == GHStatusType.open)
+        .length;
     final closedIssues = issues
-        .where((i) => i.status == GHStatus.closed)
+        .where((i) => i.status == GHStatusType.closed)
         .length;
 
     return GHListTemplate(
