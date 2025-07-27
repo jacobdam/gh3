@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import '../tokens/gh_tokens.dart';
 
+/// Chip size options
+enum GHChipSize { small, medium, large }
+
 /// A GitHub-styled chip component with selection states and count badges.
 ///
 /// This component provides filter chips with GitHub-specific styling,
@@ -24,6 +27,15 @@ class GHChip extends StatelessWidget {
   /// Whether the chip can be selected/deselected
   final bool isSelectable;
 
+  /// Size of the chip
+  final GHChipSize size;
+
+  /// Custom background color
+  final Color? backgroundColor;
+
+  /// Custom text color
+  final Color? textColor;
+
   const GHChip({
     super.key,
     required this.label,
@@ -32,51 +44,89 @@ class GHChip extends StatelessWidget {
     this.count,
     this.colorIndicator,
     this.isSelectable = true,
+    this.size = GHChipSize.medium,
+    this.backgroundColor,
+    this.textColor,
   });
+
+  EdgeInsetsGeometry _getPadding() {
+    switch (size) {
+      case GHChipSize.small:
+        return const EdgeInsets.symmetric(
+          horizontal: GHTokens.spacing4,
+          vertical: 2,
+        );
+      case GHChipSize.medium:
+        return const EdgeInsets.symmetric(
+          horizontal: GHTokens.spacing8,
+          vertical: GHTokens.spacing4,
+        );
+      case GHChipSize.large:
+        return const EdgeInsets.symmetric(
+          horizontal: GHTokens.spacing12,
+          vertical: GHTokens.spacing8,
+        );
+    }
+  }
+
+  TextStyle _getTextStyle() {
+    switch (size) {
+      case GHChipSize.small:
+        return GHTokens.labelMedium.copyWith(fontSize: 10);
+      case GHChipSize.medium:
+        return GHTokens.labelMedium;
+      case GHChipSize.large:
+        return GHTokens.labelLarge;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final chipTextStyle = _getTextStyle().copyWith(
+      color:
+          textColor ??
+          (isSelected
+              ? theme.colorScheme.onPrimary
+              : theme.colorScheme.onSurface),
+    );
 
     if (isSelectable) {
       return FilterChip(
-        label: _buildChipContent(theme),
+        label: _buildChipContent(theme, chipTextStyle),
         selected: isSelected,
         onSelected: onTap != null ? (_) => onTap!() : null,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(GHTokens.radius16),
         ),
-        labelStyle: GHTokens.labelMedium,
-        padding: const EdgeInsets.symmetric(
-          horizontal: GHTokens.spacing8,
-          vertical: GHTokens.spacing4,
-        ),
+        labelStyle: chipTextStyle,
+        padding: _getPadding(),
         materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+        backgroundColor: backgroundColor,
+        selectedColor: backgroundColor ?? theme.colorScheme.primary,
       );
     } else {
-      return Chip(
-        label: _buildChipContent(theme),
-        shape: RoundedRectangleBorder(
+      return Container(
+        padding: _getPadding(),
+        decoration: BoxDecoration(
+          color: backgroundColor ?? theme.colorScheme.surfaceContainerHighest,
           borderRadius: BorderRadius.circular(GHTokens.radius16),
         ),
-        labelStyle: GHTokens.labelMedium,
-        padding: const EdgeInsets.symmetric(
-          horizontal: GHTokens.spacing8,
-          vertical: GHTokens.spacing4,
-        ),
-        materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+        child: _buildChipContent(theme, chipTextStyle),
       );
     }
   }
 
-  Widget _buildChipContent(ThemeData theme) {
+  Widget _buildChipContent(ThemeData theme, TextStyle textStyle) {
+    final indicatorSize = size == GHChipSize.small ? 8.0 : 12.0;
+
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
         if (colorIndicator != null) ...[
           Container(
-            width: 12,
-            height: 12,
+            width: indicatorSize,
+            height: indicatorSize,
             decoration: BoxDecoration(
               color: colorIndicator,
               shape: BoxShape.circle,
@@ -84,7 +134,7 @@ class GHChip extends StatelessWidget {
           ),
           const SizedBox(width: GHTokens.spacing4),
         ],
-        Text(label, style: GHTokens.labelMedium),
+        Text(label, style: textStyle),
         if (count != null) ...[
           const SizedBox(width: GHTokens.spacing4),
           Container(
