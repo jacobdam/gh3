@@ -59,6 +59,17 @@ flutter test
 - **Never commit** if any tests are failing
 - Address all issues before proceeding with commit
 
+### 6. Check-in Process
+**When human asks for check-in:**
+- **Review ALL uncommitted files** using `git status` and `git diff`
+- **Confirm with human** if any files are unrelated to the current session's changes
+- **Mandatory quality verification**: Ensure all three commands pass with zero issues:
+  - `dart format .` - All files properly formatted
+  - `flutter analyze --fatal-infos --fatal-warnings` - Zero errors/warnings/info
+  - `flutter test` - All tests passing
+- **If quality issues exist but are unrelated to your changes**: Confirm with human before proceeding
+- **Only commit files relevant to the current work session**
+
 ## Working with Kiro Files
 
 ### Reading Specifications
