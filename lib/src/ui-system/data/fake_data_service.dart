@@ -1,5 +1,5 @@
 import 'dart:math';
-import '../components/gh_status_badge.dart';
+import '../widgets/gh_status_badge.dart';
 import '../widgets/gh_file_tree_item.dart';
 
 /// Centralized fake data service for the UI system.
@@ -29,9 +29,243 @@ class FakeDataService {
     return _issues.take(count).toList();
   }
 
+  /// Get comments for a specific issue
+  List<FakeComment> getIssueComments(int issueNumber) {
+    // Generate consistent comments based on issue number
+    final random = Random(issueNumber);
+    final commentCount = random.nextInt(10) + 1;
+
+    return List.generate(commentCount, (index) {
+      final authors = ['alice', 'bob', 'charlie', 'diana', 'eve'];
+      final author = authors[random.nextInt(authors.length)];
+
+      return FakeComment(
+        id: index + 1,
+        body: _generateCommentBody(random),
+        authorLogin: author,
+        authorAvatarUrl: 'https://github.com/$author.png',
+        createdAt: DateTime.now().subtract(
+          Duration(hours: random.nextInt(48), minutes: random.nextInt(60)),
+        ),
+        reactions: _generateReactions(random),
+      );
+    });
+  }
+
+  String _generateCommentBody(Random random) {
+    final comments = [
+      'This looks good to me! 👍',
+      'I think we should also consider the edge case where the user input is empty.',
+      'Could you add some unit tests for this functionality?',
+      'The implementation looks solid, but we might want to optimize for performance.',
+      'Great work! This fixes the issue I was experiencing.',
+      'Can we make sure this is backwards compatible?',
+      'I\'ve tested this locally and it works perfectly.',
+      'We should update the documentation to reflect these changes.',
+      'This might conflict with the changes in PR #123.',
+      'Approved! Ready to merge once tests pass.',
+      'I found a small bug in line 42 - the null check is missing.',
+      'This feature request has been highly anticipated by our users.',
+    ];
+    return comments[random.nextInt(comments.length)];
+  }
+
+  List<FakeReaction> _generateReactions(Random random) {
+    final reactions = ['👍', '👎', '😄', '🎉', '😕', '❤️', '🚀', '👀'];
+    final reactionCount = random.nextInt(4);
+
+    return List.generate(reactionCount, (index) {
+      return FakeReaction(
+        emoji: reactions[random.nextInt(reactions.length)],
+        count: random.nextInt(5) + 1,
+      );
+    });
+  }
+
   /// Get a list of fake files
   List<FakeFile> getFiles({int count = 20}) {
     return _files.take(count).toList();
+  }
+
+  /// Get repository files for a specific path
+  List<FakeFile> getRepositoryFiles(String owner, String name, {String? path}) {
+    // Generate consistent files based on repository and path
+    final repoKey = '$owner/$name';
+    final pathKey = path ?? '';
+    final seed = repoKey.hashCode + pathKey.hashCode;
+    final random = Random(seed);
+
+    if (pathKey.isEmpty) {
+      // Root directory
+      return [
+        FakeFile(
+          name: 'lib',
+          type: GHFileType.directory,
+          lastCommitMessage: 'Add main library structure',
+          author: 'flutter-dev',
+          lastModified: DateTime.now().subtract(
+            Duration(days: random.nextInt(30)),
+          ),
+        ),
+        FakeFile(
+          name: 'test',
+          type: GHFileType.directory,
+          lastCommitMessage: 'Add comprehensive tests',
+          author: 'test-author',
+          lastModified: DateTime.now().subtract(
+            Duration(days: random.nextInt(15)),
+          ),
+        ),
+        FakeFile(
+          name: 'README.md',
+          type: GHFileType.markdown,
+          size: 1024 + random.nextInt(5000),
+          lastCommitMessage: 'Update documentation',
+          author: 'docs-team',
+          lastModified: DateTime.now().subtract(
+            Duration(days: random.nextInt(7)),
+          ),
+        ),
+        FakeFile(
+          name: 'pubspec.yaml',
+          type: GHFileType.config,
+          size: 512 + random.nextInt(1000),
+          lastCommitMessage: 'Update dependencies',
+          author: 'maintainer',
+          lastModified: DateTime.now().subtract(
+            Duration(days: random.nextInt(10)),
+          ),
+        ),
+        FakeFile(
+          name: 'analysis_options.yaml',
+          type: GHFileType.config,
+          size: 256 + random.nextInt(500),
+          lastCommitMessage: 'Configure analysis options',
+          author: 'flutter-dev',
+          lastModified: DateTime.now().subtract(
+            Duration(days: random.nextInt(20)),
+          ),
+        ),
+        FakeFile(
+          name: 'CHANGELOG.md',
+          type: GHFileType.markdown,
+          size: 2048 + random.nextInt(3000),
+          lastCommitMessage: 'Update changelog for v2.1.0',
+          author: 'release-bot',
+          lastModified: DateTime.now().subtract(
+            Duration(days: random.nextInt(5)),
+          ),
+        ),
+      ];
+    } else if (pathKey == 'lib') {
+      // lib directory
+      return [
+        FakeFile(
+          name: 'src',
+          type: GHFileType.directory,
+          lastCommitMessage: 'Organize source code',
+          author: 'flutter-dev',
+          lastModified: DateTime.now().subtract(
+            Duration(days: random.nextInt(25)),
+          ),
+        ),
+        FakeFile(
+          name: 'main.dart',
+          type: GHFileType.code,
+          size: 1024 + random.nextInt(2000),
+          lastCommitMessage: 'Update main entry point',
+          author: 'flutter-dev',
+          lastModified: DateTime.now().subtract(
+            Duration(days: random.nextInt(12)),
+          ),
+        ),
+        FakeFile(
+          name: 'app.dart',
+          type: GHFileType.code,
+          size: 2048 + random.nextInt(3000),
+          lastCommitMessage: 'Refactor app structure',
+          author: 'architect',
+          lastModified: DateTime.now().subtract(
+            Duration(days: random.nextInt(8)),
+          ),
+        ),
+      ];
+    } else if (pathKey == 'lib/src') {
+      // lib/src directory
+      return [
+        FakeFile(
+          name: 'ui',
+          type: GHFileType.directory,
+          lastCommitMessage: 'Add UI components',
+          author: 'ui-team',
+          lastModified: DateTime.now().subtract(
+            Duration(days: random.nextInt(20)),
+          ),
+        ),
+        FakeFile(
+          name: 'data',
+          type: GHFileType.directory,
+          lastCommitMessage: 'Add data models',
+          author: 'backend-dev',
+          lastModified: DateTime.now().subtract(
+            Duration(days: random.nextInt(15)),
+          ),
+        ),
+        FakeFile(
+          name: 'utils',
+          type: GHFileType.directory,
+          lastCommitMessage: 'Add utility functions',
+          author: 'utils-team',
+          lastModified: DateTime.now().subtract(
+            Duration(days: random.nextInt(18)),
+          ),
+        ),
+        FakeFile(
+          name: 'constants.dart',
+          type: GHFileType.code,
+          size: 512 + random.nextInt(1000),
+          lastCommitMessage: 'Update app constants',
+          author: 'config-team',
+          lastModified: DateTime.now().subtract(
+            Duration(days: random.nextInt(10)),
+          ),
+        ),
+      ];
+    } else if (pathKey == 'test') {
+      // test directory
+      return [
+        FakeFile(
+          name: 'unit',
+          type: GHFileType.directory,
+          lastCommitMessage: 'Add unit tests',
+          author: 'test-author',
+          lastModified: DateTime.now().subtract(
+            Duration(days: random.nextInt(12)),
+          ),
+        ),
+        FakeFile(
+          name: 'widget',
+          type: GHFileType.directory,
+          lastCommitMessage: 'Add widget tests',
+          author: 'ui-tester',
+          lastModified: DateTime.now().subtract(
+            Duration(days: random.nextInt(8)),
+          ),
+        ),
+        FakeFile(
+          name: 'integration',
+          type: GHFileType.directory,
+          lastCommitMessage: 'Add integration tests',
+          author: 'qa-team',
+          lastModified: DateTime.now().subtract(
+            Duration(days: random.nextInt(15)),
+          ),
+        ),
+      ];
+    } else {
+      // Default empty or nested directories
+      return [];
+    }
   }
 
   /// Search repositories by name or description
@@ -78,7 +312,7 @@ class FakeDataService {
         .where(
           (issue) =>
               issue.title.toLowerCase().contains(lowerQuery) ||
-              (issue.body?.toLowerCase().contains(lowerQuery) ?? false) ||
+              issue.body.toLowerCase().contains(lowerQuery) ||
               issue.labels.any(
                 (label) => label.toLowerCase().contains(lowerQuery),
               ),
@@ -121,7 +355,8 @@ class FakeDataService {
     return _repositories.where((repo) {
       if (language != null && repo.language != language) return false;
       if (isPrivate != null && repo.isPrivate != isPrivate) return false;
-      if (topics != null && !topics.any((topic) => repo.topics.contains(topic))) {
+      if (topics != null &&
+          !topics.any((topic) => repo.topics.contains(topic))) {
         return false;
       }
       if (minStars != null && repo.starCount < minStars) return false;
@@ -137,13 +372,13 @@ class FakeDataService {
   }
 
   /// Filter issues by status
-  List<FakeIssue> filterIssuesByStatus(GHStatus status) {
+  List<FakeIssue> filterIssuesByStatus(GHStatusType status) {
     return _issues.where((issue) => issue.status == status).toList();
   }
 
   /// Filter issues by multiple criteria
   List<FakeIssue> filterIssues({
-    GHStatus? status,
+    GHStatusType? status,
     List<String>? labels,
     String? assignee,
     String? author,
@@ -1315,14 +1550,14 @@ class FakeDataService {
       title: 'Add dark mode support to the application',
       body:
           'We should add dark mode support to improve user experience in low-light environments. This would include:\n\n- Dark theme colors\n- Proper contrast ratios\n- System theme detection\n- Theme switching UI',
-      status: GHStatus.open,
+      status: GHStatusType.open,
       labels: ['enhancement', 'ui', 'good first issue'],
       authorLogin: 'johndoe',
       authorAvatarUrl: 'https://github.com/johndoe.png',
       createdAt: DateTime.now().subtract(const Duration(hours: 2)),
+      updatedAt: DateTime.now().subtract(const Duration(minutes: 30)),
       commentCount: 5,
-      assigneeLogin: 'janedoe',
-      assigneeAvatarUrl: 'https://github.com/janedoe.png',
+      assignee: 'janedoe',
       comments: [
         FakeComment(
           id: 1,
@@ -1348,7 +1583,7 @@ class FakeDataService {
     FakeIssue(
       number: 1235,
       title: 'Fix memory leak in image loading component',
-      status: GHStatus.closed,
+      status: GHStatusType.closed,
       labels: ['bug', 'performance'],
       authorLogin: 'alice',
       authorAvatarUrl: 'https://github.com/alice.png',
@@ -1358,19 +1593,19 @@ class FakeDataService {
     FakeIssue(
       number: 1236,
       title: 'Implement user authentication with OAuth',
-      status: GHStatus.open,
+      status: GHStatusType.open,
       labels: ['feature', 'authentication', 'security'],
       authorLogin: 'gaearon',
       authorAvatarUrl: 'https://github.com/gaearon.png',
       createdAt: DateTime.now().subtract(const Duration(hours: 6)),
       commentCount: 8,
-      assigneeLogin: 'kentcdodds',
-      assigneeAvatarUrl: 'https://github.com/kentcdodds.png',
+      assignee: 'kentcdodds',
+      // assigneeAvatarUrl: 'https://github.com/kentcdodds.png',
     ),
     FakeIssue(
       number: 1237,
       title: 'Update dependencies to latest versions',
-      status: GHStatus.merged,
+      status: GHStatusType.merged,
       labels: ['dependencies', 'maintenance'],
       authorLogin: 'sindresorhus',
       authorAvatarUrl: 'https://github.com/sindresorhus.png',
@@ -1380,19 +1615,19 @@ class FakeDataService {
     FakeIssue(
       number: 1238,
       title: 'Add TypeScript support for better type safety',
-      status: GHStatus.draft,
+      status: GHStatusType.draft,
       labels: ['typescript', 'enhancement'],
       authorLogin: 'addyosmani',
       authorAvatarUrl: 'https://github.com/addyosmani.png',
       createdAt: DateTime.now().subtract(const Duration(hours: 12)),
       commentCount: 15,
-      assigneeLogin: 'tj',
-      assigneeAvatarUrl: 'https://github.com/tj.png',
+      assignee: 'tj',
+      // assigneeAvatarUrl: 'https://github.com/tj.png',
     ),
     FakeIssue(
       number: 1239,
       title: 'Performance optimization for large datasets',
-      status: GHStatus.open,
+      status: GHStatusType.open,
       labels: ['performance', 'optimization', 'help wanted'],
       authorLogin: 'yyx990803',
       authorAvatarUrl: 'https://github.com/yyx990803.png',
@@ -1402,19 +1637,19 @@ class FakeDataService {
     FakeIssue(
       number: 1240,
       title: 'Fix responsive design issues on mobile devices',
-      status: GHStatus.closed,
+      status: GHStatusType.closed,
       labels: ['bug', 'mobile', 'css'],
       authorLogin: 'ryanflorence',
       authorAvatarUrl: 'https://github.com/ryanflorence.png',
       createdAt: DateTime.now().subtract(const Duration(days: 2)),
       commentCount: 7,
-      assigneeLogin: 'mjackson',
-      assigneeAvatarUrl: 'https://github.com/mjackson.png',
+      assignee: 'mjackson',
+      // assigneeAvatarUrl: 'https://github.com/mjackson.png',
     ),
     FakeIssue(
       number: 1241,
       title: 'Add comprehensive unit tests for core components',
-      status: GHStatus.open,
+      status: GHStatusType.open,
       labels: ['testing', 'quality', 'good first issue'],
       authorLogin: 'sebmarkbage',
       authorAvatarUrl: 'https://github.com/sebmarkbage.png',
@@ -1424,19 +1659,19 @@ class FakeDataService {
     FakeIssue(
       number: 1242,
       title: 'Implement real-time notifications system',
-      status: GHStatus.open,
+      status: GHStatusType.open,
       labels: ['feature', 'websockets', 'notifications'],
       authorLogin: 'sophiebits',
       authorAvatarUrl: 'https://github.com/sophiebits.png',
       createdAt: DateTime.now().subtract(const Duration(days: 4)),
       commentCount: 19,
-      assigneeLogin: 'acdlite',
-      assigneeAvatarUrl: 'https://github.com/acdlite.png',
+      assignee: 'acdlite',
+      // assigneeAvatarUrl: 'https://github.com/acdlite.png',
     ),
     FakeIssue(
       number: 1243,
       title: 'Security vulnerability in user input validation',
-      status: GHStatus.closed,
+      status: GHStatusType.closed,
       labels: ['security', 'critical', 'bug'],
       authorLogin: 'rickhanlonii',
       authorAvatarUrl: 'https://github.com/rickhanlonii.png',
@@ -1446,7 +1681,7 @@ class FakeDataService {
     FakeIssue(
       number: 1244,
       title: 'Add internationalization (i18n) support',
-      status: GHStatus.draft,
+      status: GHStatusType.draft,
       labels: ['i18n', 'enhancement', 'help wanted'],
       authorLogin: 'bvaughn',
       authorAvatarUrl: 'https://github.com/bvaughn.png',
@@ -1456,19 +1691,19 @@ class FakeDataService {
     FakeIssue(
       number: 1245,
       title: 'Improve accessibility for screen readers',
-      status: GHStatus.open,
+      status: GHStatusType.open,
       labels: ['accessibility', 'a11y', 'enhancement'],
       authorLogin: 'timneutkens',
       authorAvatarUrl: 'https://github.com/timneutkens.png',
       createdAt: DateTime.now().subtract(const Duration(days: 6)),
       commentCount: 9,
-      assigneeLogin: 'rauchg',
-      assigneeAvatarUrl: 'https://github.com/rauchg.png',
+      assignee: 'rauchg',
+      // assigneeAvatarUrl: 'https://github.com/rauchg.png',
     ),
     FakeIssue(
       number: 1246,
       title: 'Database migration script fails on production',
-      status: GHStatus.open,
+      status: GHStatusType.open,
       labels: ['bug', 'database', 'production', 'critical'],
       authorLogin: 'zenorocha',
       authorAvatarUrl: 'https://github.com/zenorocha.png',
@@ -1478,7 +1713,7 @@ class FakeDataService {
     FakeIssue(
       number: 1247,
       title: 'Add support for custom themes',
-      status: GHStatus.merged,
+      status: GHStatusType.merged,
       labels: ['feature', 'theming', 'ui'],
       authorLogin: 'wesbos',
       authorAvatarUrl: 'https://github.com/wesbos.png',
@@ -1488,7 +1723,7 @@ class FakeDataService {
     FakeIssue(
       number: 1248,
       title: 'Optimize bundle size for better performance',
-      status: GHStatus.open,
+      status: GHStatusType.open,
       labels: ['performance', 'bundling', 'optimization'],
       authorLogin: 'bradtraversy',
       authorAvatarUrl: 'https://github.com/bradtraversy.png',
@@ -1498,19 +1733,19 @@ class FakeDataService {
     FakeIssue(
       number: 1249,
       title: 'Add drag and drop functionality',
-      status: GHStatus.draft,
+      status: GHStatusType.draft,
       labels: ['feature', 'ui', 'interaction'],
       authorLogin: 'getify',
       authorAvatarUrl: 'https://github.com/getify.png',
       createdAt: DateTime.now().subtract(const Duration(days: 8)),
       commentCount: 12,
-      assigneeLogin: 'mdo',
-      assigneeAvatarUrl: 'https://github.com/mdo.png',
+      assignee: 'mdo',
+      // assigneeAvatarUrl: 'https://github.com/mdo.png',
     ),
     FakeIssue(
       number: 1250,
       title: 'Fix broken links in documentation',
-      status: GHStatus.closed,
+      status: GHStatusType.closed,
       labels: ['documentation', 'bug', 'good first issue'],
       authorLogin: 'fat',
       authorAvatarUrl: 'https://github.com/fat.png',
@@ -1520,7 +1755,7 @@ class FakeDataService {
     FakeIssue(
       number: 1251,
       title: 'Implement caching strategy for API responses',
-      status: GHStatus.open,
+      status: GHStatusType.open,
       labels: ['performance', 'caching', 'api'],
       authorLogin: 'dhh',
       authorAvatarUrl: 'https://github.com/dhh.png',
@@ -1530,19 +1765,19 @@ class FakeDataService {
     FakeIssue(
       number: 1252,
       title: 'Add support for keyboard shortcuts',
-      status: GHStatus.open,
+      status: GHStatusType.open,
       labels: ['feature', 'accessibility', 'ux'],
       authorLogin: 'tenderlove',
       authorAvatarUrl: 'https://github.com/tenderlove.png',
       createdAt: DateTime.now().subtract(const Duration(days: 10)),
       commentCount: 7,
-      assigneeLogin: 'octocat',
-      assigneeAvatarUrl: 'https://github.com/octocat.png',
+      assignee: 'octocat',
+      // assigneeAvatarUrl: 'https://github.com/octocat.png',
     ),
     FakeIssue(
       number: 1253,
       title: 'Memory usage spikes during file uploads',
-      status: GHStatus.open,
+      status: GHStatusType.open,
       labels: ['bug', 'memory', 'file-upload'],
       authorLogin: 'torvalds',
       authorAvatarUrl: 'https://github.com/torvalds.png',
@@ -1552,7 +1787,7 @@ class FakeDataService {
     FakeIssue(
       number: 1254,
       title: 'Add progressive web app (PWA) support',
-      status: GHStatus.draft,
+      status: GHStatusType.draft,
       labels: ['pwa', 'enhancement', 'mobile'],
       authorLogin: 'gaearon',
       authorAvatarUrl: 'https://github.com/gaearon.png',
@@ -1562,7 +1797,7 @@ class FakeDataService {
     FakeIssue(
       number: 1255,
       title: 'Improve error handling and user feedback',
-      status: GHStatus.open,
+      status: GHStatusType.open,
       labels: ['ux', 'error-handling', 'enhancement'],
       authorLogin: 'kentcdodds',
       authorAvatarUrl: 'https://github.com/kentcdodds.png',
@@ -1572,7 +1807,7 @@ class FakeDataService {
     FakeIssue(
       number: 1256,
       title: 'Add support for multiple file formats',
-      status: GHStatus.merged,
+      status: GHStatusType.merged,
       labels: ['feature', 'file-handling'],
       authorLogin: 'sindresorhus',
       authorAvatarUrl: 'https://github.com/sindresorhus.png',
@@ -1582,7 +1817,7 @@ class FakeDataService {
     FakeIssue(
       number: 1257,
       title: 'Fix race condition in async operations',
-      status: GHStatus.closed,
+      status: GHStatusType.closed,
       labels: ['bug', 'async', 'concurrency'],
       authorLogin: 'addyosmani',
       authorAvatarUrl: 'https://github.com/addyosmani.png',
@@ -1592,7 +1827,7 @@ class FakeDataService {
     FakeIssue(
       number: 1258,
       title: 'Add comprehensive API documentation',
-      status: GHStatus.open,
+      status: GHStatusType.open,
       labels: ['documentation', 'api', 'help wanted'],
       authorLogin: 'tj',
       authorAvatarUrl: 'https://github.com/tj.png',
@@ -1602,7 +1837,7 @@ class FakeDataService {
     FakeIssue(
       number: 1259,
       title: 'Implement user preferences and settings',
-      status: GHStatus.draft,
+      status: GHStatusType.draft,
       labels: ['feature', 'user-settings', 'ui'],
       authorLogin: 'yyx990803',
       authorAvatarUrl: 'https://github.com/yyx990803.png',
@@ -1612,7 +1847,7 @@ class FakeDataService {
     FakeIssue(
       number: 1260,
       title: 'Fix CSS layout issues in Safari',
-      status: GHStatus.open,
+      status: GHStatusType.open,
       labels: ['bug', 'css', 'safari', 'browser-specific'],
       authorLogin: 'ryanflorence',
       authorAvatarUrl: 'https://github.com/ryanflorence.png',
@@ -1622,7 +1857,7 @@ class FakeDataService {
     FakeIssue(
       number: 1261,
       title: 'Add automated testing pipeline',
-      status: GHStatus.merged,
+      status: GHStatusType.merged,
       labels: ['testing', 'ci-cd', 'automation'],
       authorLogin: 'mjackson',
       authorAvatarUrl: 'https://github.com/mjackson.png',
@@ -1632,7 +1867,7 @@ class FakeDataService {
     FakeIssue(
       number: 1262,
       title: 'Improve search functionality with filters',
-      status: GHStatus.open,
+      status: GHStatusType.open,
       labels: ['feature', 'search', 'ui'],
       authorLogin: 'sebmarkbage',
       authorAvatarUrl: 'https://github.com/sebmarkbage.png',
@@ -1642,7 +1877,7 @@ class FakeDataService {
     FakeIssue(
       number: 1263,
       title: 'Add support for custom plugins',
-      status: GHStatus.draft,
+      status: GHStatusType.draft,
       labels: ['feature', 'plugins', 'extensibility'],
       authorLogin: 'sophiebits',
       authorAvatarUrl: 'https://github.com/sophiebits.png',
@@ -1652,7 +1887,7 @@ class FakeDataService {
     FakeIssue(
       number: 1264,
       title: 'Fix memory leaks in event listeners',
-      status: GHStatus.closed,
+      status: GHStatusType.closed,
       labels: ['bug', 'memory', 'events'],
       authorLogin: 'acdlite',
       authorAvatarUrl: 'https://github.com/acdlite.png',
@@ -1984,6 +2219,53 @@ class FakeRepository {
     this.isStarred = false,
     this.isWatched = false,
   });
+
+  /// Create a copy of this repository with optional field overrides
+  FakeRepository copyWith({
+    String? owner,
+    String? name,
+    String? description,
+    String? language,
+    int? starCount,
+    int? forkCount,
+    int? watcherCount,
+    DateTime? lastUpdated,
+    DateTime? createdAt,
+    bool? isPrivate,
+    List<String>? topics,
+    String? license,
+    String? homepage,
+    List<FakeFile>? files,
+    List<FakeIssue>? issues,
+    List<FakeRelease>? releases,
+    List<FakeContributor>? contributors,
+    String? readme,
+    bool? isStarred,
+    bool? isWatched,
+  }) {
+    return FakeRepository(
+      owner: owner ?? this.owner,
+      name: name ?? this.name,
+      description: description ?? this.description,
+      language: language ?? this.language,
+      starCount: starCount ?? this.starCount,
+      forkCount: forkCount ?? this.forkCount,
+      watcherCount: watcherCount ?? this.watcherCount,
+      lastUpdated: lastUpdated ?? this.lastUpdated,
+      createdAt: createdAt ?? this.createdAt,
+      isPrivate: isPrivate ?? this.isPrivate,
+      topics: topics ?? this.topics,
+      license: license ?? this.license,
+      homepage: homepage ?? this.homepage,
+      files: files ?? this.files,
+      issues: issues ?? this.issues,
+      releases: releases ?? this.releases,
+      contributors: contributors ?? this.contributors,
+      readme: readme ?? this.readme,
+      isStarred: isStarred ?? this.isStarred,
+      isWatched: isWatched ?? this.isWatched,
+    );
+  }
 }
 
 /// Fake user data model
@@ -2023,16 +2305,16 @@ class FakeUser {
 class FakeIssue {
   final int number;
   final String title;
-  final String? body;
-  final GHStatus status;
+  final String body;
+  final GHStatusType status;
   final List<String> labels;
   final String authorLogin;
-  final String? authorAvatarUrl;
+  final String authorAvatarUrl;
   final DateTime createdAt;
+  final DateTime? updatedAt;
   final DateTime? closedAt;
   final int commentCount;
-  final String? assigneeLogin;
-  final String? assigneeAvatarUrl;
+  final String? assignee;
   final List<FakeComment> comments;
   final List<FakeReaction> reactions;
   final bool isPullRequest;
@@ -2040,20 +2322,64 @@ class FakeIssue {
   const FakeIssue({
     required this.number,
     required this.title,
-    this.body,
+    this.body = '',
     required this.status,
     this.labels = const [],
     required this.authorLogin,
-    this.authorAvatarUrl,
+    required this.authorAvatarUrl,
     required this.createdAt,
+    this.updatedAt,
     this.closedAt,
     this.commentCount = 0,
-    this.assigneeLogin,
-    this.assigneeAvatarUrl,
+    this.assignee,
     this.comments = const [],
     this.reactions = const [],
     this.isPullRequest = false,
   });
+
+  /// Getter for assignee login (for compatibility with GHIssueCard)
+  String? get assigneeLogin => assignee;
+
+  /// Getter for assignee avatar URL (for compatibility with GHIssueCard)
+  String? get assigneeAvatarUrl =>
+      assignee != null ? 'https://github.com/$assignee.png' : null;
+
+  /// Creates a copy of this issue with the given fields replaced with new values
+  FakeIssue copyWith({
+    int? number,
+    String? title,
+    String? body,
+    GHStatusType? status,
+    List<String>? labels,
+    String? authorLogin,
+    String? authorAvatarUrl,
+    DateTime? createdAt,
+    DateTime? updatedAt,
+    DateTime? closedAt,
+    int? commentCount,
+    String? assignee,
+    List<FakeComment>? comments,
+    List<FakeReaction>? reactions,
+    bool? isPullRequest,
+  }) {
+    return FakeIssue(
+      number: number ?? this.number,
+      title: title ?? this.title,
+      body: body ?? this.body,
+      status: status ?? this.status,
+      labels: labels ?? this.labels,
+      authorLogin: authorLogin ?? this.authorLogin,
+      authorAvatarUrl: authorAvatarUrl ?? this.authorAvatarUrl,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+      closedAt: closedAt ?? this.closedAt,
+      commentCount: commentCount ?? this.commentCount,
+      assignee: assignee ?? this.assignee,
+      comments: comments ?? this.comments,
+      reactions: reactions ?? this.reactions,
+      isPullRequest: isPullRequest ?? this.isPullRequest,
+    );
+  }
 }
 
 /// Fake file data model
@@ -2077,6 +2403,9 @@ class FakeFile {
     this.content,
     this.path = '',
   });
+
+  /// Returns true if this file is a directory
+  bool get isDirectory => type == GHFileType.directory;
 }
 
 /// Fake comment data model

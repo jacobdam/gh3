@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../tokens/gh_tokens.dart';
-import '../components/gh_status_badge.dart';
+import 'gh_status_badge.dart';
 import '../utils/number_formatter.dart';
 import '../utils/color_utils.dart';
 
@@ -23,7 +23,7 @@ class GHEntityHeader extends StatelessWidget {
   final List<GHEntityStat> stats;
 
   /// Optional status badge
-  final GHStatus? status;
+  final GHStatusType? status;
 
   /// List of action buttons
   final List<Widget> actions;

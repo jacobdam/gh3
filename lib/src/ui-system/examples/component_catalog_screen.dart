@@ -5,7 +5,7 @@ import '../components/gh_button.dart';
 import '../components/gh_chip.dart';
 import '../components/gh_list_tile.dart';
 import '../components/gh_search_bar.dart';
-import '../components/gh_status_badge.dart';
+import '../widgets/gh_status_badge.dart';
 import '../components/gh_text_field.dart';
 import '../utils/color_utils.dart';
 
@@ -461,10 +461,10 @@ class _ComponentCatalogScreenState extends State<ComponentCatalogScreen> {
           spacing: GHTokens.spacing12,
           runSpacing: GHTokens.spacing12,
           children: const [
-            GHStatusBadge(status: GHStatus.open),
-            GHStatusBadge(status: GHStatus.closed),
-            GHStatusBadge(status: GHStatus.merged),
-            GHStatusBadge(status: GHStatus.draft),
+            GHStatusBadge(status: GHStatusType.open),
+            GHStatusBadge(status: GHStatusType.closed),
+            GHStatusBadge(status: GHStatusType.merged),
+            GHStatusBadge(status: GHStatusType.draft),
           ],
         ),
 
@@ -477,13 +477,16 @@ class _ComponentCatalogScreenState extends State<ComponentCatalogScreen> {
           spacing: GHTokens.spacing12,
           runSpacing: GHTokens.spacing12,
           children: [
-            GHStatusBadge(status: GHStatus.open, customLabel: 'In Progress'),
-            GHStatusBadge(status: GHStatus.merged, customLabel: 'Approved'),
             GHStatusBadge(
-              status: GHStatus.draft,
+              status: GHStatusType.open,
+              customLabel: 'In Progress',
+            ),
+            GHStatusBadge(status: GHStatusType.merged, customLabel: 'Approved'),
+            GHStatusBadge(
+              status: GHStatusType.draft,
               customLabel: 'Pending Review',
             ),
-            GHStatusBadge(status: GHStatus.closed, customLabel: 'Rejected'),
+            GHStatusBadge(status: GHStatusType.closed, customLabel: 'Rejected'),
           ],
         ),
 
@@ -496,10 +499,10 @@ class _ComponentCatalogScreenState extends State<ComponentCatalogScreen> {
           spacing: GHTokens.spacing12,
           runSpacing: GHTokens.spacing12,
           children: [
-            GHStatusBadge(status: GHStatus.open, showIcon: false),
-            GHStatusBadge(status: GHStatus.closed, showIcon: false),
-            GHStatusBadge(status: GHStatus.merged, showIcon: false),
-            GHStatusBadge(status: GHStatus.draft, showIcon: false),
+            GHStatusBadge(status: GHStatusType.open),
+            GHStatusBadge(status: GHStatusType.closed),
+            GHStatusBadge(status: GHStatusType.merged),
+            GHStatusBadge(status: GHStatusType.draft),
           ],
         ),
       ],

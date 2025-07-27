@@ -76,6 +76,13 @@ class GHTokens {
     height: 1.5,
   );
 
+  /// Title Small - 14sp, small headers
+  static const TextStyle titleSmall = TextStyle(
+    fontSize: 14,
+    fontWeight: FontWeight.w500,
+    height: 1.43,
+  );
+
   /// Body Large - 16sp, primary content
   static const TextStyle bodyLarge = TextStyle(
     fontSize: 16,
@@ -104,12 +111,25 @@ class GHTokens {
     height: 1.33,
   );
 
+  /// Label Small - 10sp, small labels and badges
+  static const TextStyle labelSmall = TextStyle(
+    fontSize: 10,
+    fontWeight: FontWeight.w500,
+    height: 1.4,
+  );
+
   // ==========================================================================
   // SPACING SYSTEM
   // ==========================================================================
 
+  /// Tiny spacing - 2dp (very small gaps)
+  static const double spacing2 = 2.0;
+
   /// Micro spacing - 4dp (icon gaps)
   static const double spacing4 = 4.0;
+
+  /// Extra small spacing - 6dp (small gaps)
+  static const double spacing6 = 6.0;
 
   /// Small spacing - 8dp (chip gaps)
   static const double spacing8 = 8.0;

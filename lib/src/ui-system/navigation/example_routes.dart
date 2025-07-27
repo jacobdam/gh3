@@ -17,10 +17,13 @@ class ExampleRoutes {
   static String userProfilePath(String username) => '/user/$username';
   static String repositoryPath(String owner, String name) =>
       '/repo/$owner/$name';
-  static String repositoryTreePath(String owner, String name) =>
-      '/repo/$owner/$name/tree';
-  static String repositoryFilePath(String owner, String name) =>
-      '/repo/$owner/$name/file';
+  static String repositoryTreePath(String owner, String name, {String? path}) =>
+      '/repo/$owner/$name/tree${path != null ? '?path=$path' : ''}';
+  static String repositoryFilePath(
+    String owner,
+    String name, {
+    String? filePath,
+  }) => '/repo/$owner/$name/file${filePath != null ? '?path=$filePath' : ''}';
   static String issuesPath(String owner, String name) =>
       '/repo/$owner/$name/issues';
   static String issueDetailPath(String owner, String name, int number) =>
