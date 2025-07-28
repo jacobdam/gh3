@@ -119,9 +119,7 @@ class SpacingValidator {
       debugPrint(
         '$contextStr❌ Invalid spacing: ${result.value}dp - not aligned to 4dp grid',
       );
-      debugPrint(
-        '$contextStr   Nearest valid: ${result.nearestValidValue}dp',
-      );
+      debugPrint('$contextStr   Nearest valid: ${result.nearestValidValue}dp');
       debugPrint(
         '$contextStr   Closest standard: ${result.closestStandardName} (${result.closestStandardValue}dp)',
       );
