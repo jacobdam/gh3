@@ -128,9 +128,7 @@ class SpacingDeveloperTools {
         .where((s) => !SpacingValidator.isValidSpacing(s))
         .toList();
     if (nonCompliant.isNotEmpty) {
-      debugPrint(
-        '$contextStr❌ Non-4dp aligned spacings found: $nonCompliant',
-      );
+      debugPrint('$contextStr❌ Non-4dp aligned spacings found: $nonCompliant');
     }
 
     // Check for odd values that might indicate mistakes
