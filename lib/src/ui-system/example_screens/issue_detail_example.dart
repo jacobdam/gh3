@@ -352,8 +352,8 @@ class _IssueDetailExampleState extends State<IssueDetailExample> {
             if (_issue.labels.isNotEmpty) ...[
               const SizedBox(height: GHTokens.spacing12),
               Wrap(
-                spacing: GHTokens.spacing6,
-                runSpacing: GHTokens.spacing6,
+                spacing: GHTokens.spacing8,
+                runSpacing: GHTokens.spacing8,
                 children: _issue.labels.map((label) {
                   return Container(
                     padding: const EdgeInsets.symmetric(
@@ -514,7 +514,7 @@ class _IssueDetailExampleState extends State<IssueDetailExample> {
             if (_issue.reactions.isNotEmpty) ...[
               const SizedBox(height: GHTokens.spacing12),
               Wrap(
-                spacing: GHTokens.spacing6,
+                spacing: GHTokens.spacing8,
                 children: _issue.reactions.map((reaction) {
                   return GestureDetector(
                     onTap: () {
@@ -524,8 +524,8 @@ class _IssueDetailExampleState extends State<IssueDetailExample> {
                     },
                     child: Container(
                       padding: const EdgeInsets.symmetric(
-                        horizontal: GHTokens.spacing6,
-                        vertical: GHTokens.spacing2,
+                        horizontal: GHTokens.spacing8,
+                        vertical: GHTokens.spacing4,
                       ),
                       decoration: BoxDecoration(
                         border: Border.all(
@@ -591,7 +591,7 @@ class _IssueDetailExampleState extends State<IssueDetailExample> {
                             ),
                           ),
                           if (comment.authorLogin == _issue.authorLogin) ...[
-                            const SizedBox(width: GHTokens.spacing6),
+                            const SizedBox(width: GHTokens.spacing8),
                             Container(
                               padding: const EdgeInsets.symmetric(
                                 horizontal: GHTokens.spacing4,
@@ -653,7 +653,7 @@ class _IssueDetailExampleState extends State<IssueDetailExample> {
             if (comment.reactions.isNotEmpty) ...[
               const SizedBox(height: GHTokens.spacing12),
               Wrap(
-                spacing: GHTokens.spacing6,
+                spacing: GHTokens.spacing8,
                 children: comment.reactions.map((reaction) {
                   return GestureDetector(
                     onTap: () {
@@ -663,8 +663,8 @@ class _IssueDetailExampleState extends State<IssueDetailExample> {
                     },
                     child: Container(
                       padding: const EdgeInsets.symmetric(
-                        horizontal: GHTokens.spacing6,
-                        vertical: GHTokens.spacing2,
+                        horizontal: GHTokens.spacing8,
+                        vertical: GHTokens.spacing4,
                       ),
                       decoration: BoxDecoration(
                         border: Border.all(

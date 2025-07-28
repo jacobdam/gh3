@@ -57,7 +57,10 @@ class _UserRepositoriesScreenState extends State<UserRepositoriesScreen> {
     );
 
     // Get user's repositories (simulated)
-    _allRepositories = _dataService.getRepositories(count: _user.repositoryCount).where((repo) => repo.owner == _user.login).toList();
+    _allRepositories = _dataService
+        .getRepositories(count: _user.repositoryCount)
+        .where((repo) => repo.owner == _user.login)
+        .toList();
     if (_allRepositories.isEmpty) {
       // Fallback: use some random repositories
       _allRepositories = _dataService.getRepositories(count: 5);
@@ -92,7 +95,9 @@ class _UserRepositoriesScreenState extends State<UserRepositoriesScreen> {
           .where(
             (repo) =>
                 repo.name.toLowerCase().contains(_searchQuery.toLowerCase()) ||
-                repo.description.toLowerCase().contains(_searchQuery.toLowerCase()),
+                repo.description.toLowerCase().contains(
+                  _searchQuery.toLowerCase(),
+                ),
           )
           .toList();
     }
@@ -141,11 +146,7 @@ class _UserRepositoriesScreenState extends State<UserRepositoriesScreen> {
         searchHint: 'Search repositories...',
         emptyState: Column(
           children: [
-            const Icon(
-              Icons.folder_outlined,
-              size: 64,
-              color: Colors.grey,
-            ),
+            const Icon(Icons.folder_outlined, size: 64, color: Colors.grey),
             const SizedBox(height: GHTokens.spacing16),
             Text(
               _searchQuery.isNotEmpty || _selectedFilter != 'All'
@@ -168,22 +169,24 @@ class _UserRepositoriesScreenState extends State<UserRepositoriesScreen> {
             ],
           ],
         ),
-        children: _filteredRepositories.map((repository) => 
-          GHRepositoryCard(
-            owner: repository.owner,
-            name: repository.name,
-            description: repository.description,
-            language: repository.language,
-            starCount: repository.starCount,
-            forkCount: repository.forkCount,
-            lastUpdated: repository.lastUpdated,
-            isPrivate: repository.isPrivate,
-            onTap: () => NavigationService.navigateToRepository(
-              repository.owner,
-              repository.name,
-            ),
-          ),
-        ).toList(),
+        children: _filteredRepositories
+            .map(
+              (repository) => GHRepositoryCard(
+                owner: repository.owner,
+                name: repository.name,
+                description: repository.description,
+                language: repository.language,
+                starCount: repository.starCount,
+                forkCount: repository.forkCount,
+                lastUpdated: repository.lastUpdated,
+                isPrivate: repository.isPrivate,
+                onTap: () => NavigationService.navigateToRepository(
+                  repository.owner,
+                  repository.name,
+                ),
+              ),
+            )
+            .toList(),
       ),
     );
   }

@@ -90,7 +90,9 @@ class _UserStarredScreenState extends State<UserStarredScreen> {
           .where(
             (repo) =>
                 repo.name.toLowerCase().contains(_searchQuery.toLowerCase()) ||
-                repo.description.toLowerCase().contains(_searchQuery.toLowerCase()) ||
+                repo.description.toLowerCase().contains(
+                  _searchQuery.toLowerCase(),
+                ) ||
                 repo.owner.toLowerCase().contains(_searchQuery.toLowerCase()),
           )
           .toList();
@@ -118,7 +120,9 @@ class _UserStarredScreenState extends State<UserStarredScreen> {
         filters: _languageOptions.map((language) {
           final count = language == 'All'
               ? _allStarredRepos.length
-              : _allStarredRepos.where((repo) => repo.language == language).length;
+              : _allStarredRepos
+                    .where((repo) => repo.language == language)
+                    .length;
 
           return GHChip(
             label: '$language ($count)',
@@ -162,24 +166,26 @@ class _UserStarredScreenState extends State<UserStarredScreen> {
             ],
           ],
         ),
-        children: _filteredStarredRepos.map((repository) => 
-          GHRepositoryCard(
-            owner: repository.owner,
-            name: repository.name,
-            description: repository.description,
-            language: repository.language,
-            starCount: repository.starCount,
-            forkCount: repository.forkCount,
-            lastUpdated: repository.lastUpdated,
-            isPrivate: repository.isPrivate,
-            showStarButton: true,
-            isStarred: true, // All repos in starred screen are starred
-            onTap: () => NavigationService.navigateToRepository(
-              repository.owner,
-              repository.name,
-            ),
-          ),
-        ).toList(),
+        children: _filteredStarredRepos
+            .map(
+              (repository) => GHRepositoryCard(
+                owner: repository.owner,
+                name: repository.name,
+                description: repository.description,
+                language: repository.language,
+                starCount: repository.starCount,
+                forkCount: repository.forkCount,
+                lastUpdated: repository.lastUpdated,
+                isPrivate: repository.isPrivate,
+                showStarButton: true,
+                isStarred: true, // All repos in starred screen are starred
+                onTap: () => NavigationService.navigateToRepository(
+                  repository.owner,
+                  repository.name,
+                ),
+              ),
+            )
+            .toList(),
       ),
     );
   }

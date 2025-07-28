@@ -487,8 +487,8 @@ class _IssuesListExampleState extends State<IssuesListExample> {
                     const SizedBox(width: GHTokens.spacing8),
                     Container(
                       padding: const EdgeInsets.symmetric(
-                        horizontal: GHTokens.spacing6,
-                        vertical: GHTokens.spacing2,
+                        horizontal: GHTokens.spacing8,
+                        vertical: GHTokens.spacing4,
                       ),
                       decoration: BoxDecoration(
                         color: Theme.of(
@@ -549,8 +549,8 @@ class _IssuesListExampleState extends State<IssuesListExample> {
                           children: issue.labels.take(3).map((label) {
                             return Container(
                               padding: const EdgeInsets.symmetric(
-                                horizontal: GHTokens.spacing6,
-                                vertical: GHTokens.spacing2,
+                                horizontal: GHTokens.spacing8,
+                                vertical: GHTokens.spacing4,
                               ),
                               decoration: BoxDecoration(
                                 color: _getLabelColor(label),
