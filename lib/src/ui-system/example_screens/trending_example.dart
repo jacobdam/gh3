@@ -470,7 +470,7 @@ class _TrendingExampleState extends State<TrendingExample>
                           size: 16,
                           color: Theme.of(context).colorScheme.onSurfaceVariant,
                         ),
-                        const SizedBox(width: GHTokens.spacing6),
+                        const SizedBox(width: GHTokens.spacing8),
                         Expanded(
                           child: Text(
                             '${repo.owner}/${repo.name}',
@@ -483,7 +483,7 @@ class _TrendingExampleState extends State<TrendingExample>
                       ],
                     ),
 
-                    const SizedBox(height: GHTokens.spacing6),
+                    const SizedBox(height: GHTokens.spacing8),
 
                     Text(
                       repo.description,
@@ -506,7 +506,7 @@ class _TrendingExampleState extends State<TrendingExample>
                             shape: BoxShape.circle,
                           ),
                         ),
-                        const SizedBox(width: GHTokens.spacing6),
+                        const SizedBox(width: GHTokens.spacing8),
                         Text(
                           repo.language,
                           style: GHTokens.bodyMedium.copyWith(

@@ -1347,7 +1347,8 @@ class FakeDataService {
         FakeOrganization(
           login: 'facebook',
           name: 'Facebook',
-          description: 'We are working to build community through open source technology.',
+          description:
+              'We are working to build community through open source technology.',
           avatarUrl: 'https://github.com/facebook.png',
           publicRepos: 180,
           publicMembers: 230,
@@ -1355,7 +1356,8 @@ class FakeDataService {
         FakeOrganization(
           login: 'reactjs',
           name: 'React',
-          description: 'React is a JavaScript library for building user interfaces.',
+          description:
+              'React is a JavaScript library for building user interfaces.',
           avatarUrl: 'https://github.com/reactjs.png',
           publicRepos: 25,
           publicMembers: 45,
@@ -1388,7 +1390,8 @@ class FakeDataService {
         FakeOrganization(
           login: 'testing-library',
           name: 'Testing Library',
-          description: 'Simple and complete testing utilities that encourage good testing practices',
+          description:
+              'Simple and complete testing utilities that encourage good testing practices',
           avatarUrl: 'https://github.com/testing-library.png',
           publicRepos: 35,
           publicMembers: 25,

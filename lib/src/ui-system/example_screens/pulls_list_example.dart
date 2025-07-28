@@ -573,8 +573,8 @@ class _PullsListExampleState extends State<PullsListExample> {
                         const SizedBox(height: GHTokens.spacing4),
                         Container(
                           padding: const EdgeInsets.symmetric(
-                            horizontal: GHTokens.spacing6,
-                            vertical: GHTokens.spacing2,
+                            horizontal: GHTokens.spacing8,
+                            vertical: GHTokens.spacing4,
                           ),
                           decoration: BoxDecoration(
                             color: Theme.of(
@@ -673,8 +673,8 @@ class _PullsListExampleState extends State<PullsListExample> {
                       children: pr.labels.take(2).map((label) {
                         return Container(
                           padding: const EdgeInsets.symmetric(
-                            horizontal: GHTokens.spacing6,
-                            vertical: GHTokens.spacing2,
+                            horizontal: GHTokens.spacing8,
+                            vertical: GHTokens.spacing4,
                           ),
                           decoration: BoxDecoration(
                             color: _getLabelColor(label),

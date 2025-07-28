@@ -536,8 +536,8 @@ class _SearchExampleState extends State<SearchExample>
                     const SizedBox(width: GHTokens.spacing4),
                     Container(
                       padding: const EdgeInsets.symmetric(
-                        horizontal: GHTokens.spacing6,
-                        vertical: GHTokens.spacing2,
+                        horizontal: GHTokens.spacing8,
+                        vertical: GHTokens.spacing4,
                       ),
                       decoration: BoxDecoration(
                         color: Theme.of(context).colorScheme.primaryContainer,
@@ -567,8 +567,8 @@ class _SearchExampleState extends State<SearchExample>
                     const SizedBox(width: GHTokens.spacing4),
                     Container(
                       padding: const EdgeInsets.symmetric(
-                        horizontal: GHTokens.spacing6,
-                        vertical: GHTokens.spacing2,
+                        horizontal: GHTokens.spacing8,
+                        vertical: GHTokens.spacing4,
                       ),
                       decoration: BoxDecoration(
                         color: Theme.of(context).colorScheme.primaryContainer,
@@ -598,8 +598,8 @@ class _SearchExampleState extends State<SearchExample>
                     const SizedBox(width: GHTokens.spacing4),
                     Container(
                       padding: const EdgeInsets.symmetric(
-                        horizontal: GHTokens.spacing6,
-                        vertical: GHTokens.spacing2,
+                        horizontal: GHTokens.spacing8,
+                        vertical: GHTokens.spacing4,
                       ),
                       decoration: BoxDecoration(
                         color: Theme.of(context).colorScheme.primaryContainer,
@@ -629,8 +629,8 @@ class _SearchExampleState extends State<SearchExample>
                     const SizedBox(width: GHTokens.spacing4),
                     Container(
                       padding: const EdgeInsets.symmetric(
-                        horizontal: GHTokens.spacing6,
-                        vertical: GHTokens.spacing2,
+                        horizontal: GHTokens.spacing8,
+                        vertical: GHTokens.spacing4,
                       ),
                       decoration: BoxDecoration(
                         color: Theme.of(context).colorScheme.primaryContainer,
@@ -950,7 +950,7 @@ class _SearchExampleState extends State<SearchExample>
                       shape: BoxShape.circle,
                     ),
                   ),
-                  const SizedBox(width: GHTokens.spacing6),
+                  const SizedBox(width: GHTokens.spacing8),
                   Text(
                     repo.language,
                     style: GHTokens.bodyMedium.copyWith(
@@ -1107,12 +1107,12 @@ class _SearchExampleState extends State<SearchExample>
               if (issue.labels.isNotEmpty) ...[
                 const SizedBox(height: GHTokens.spacing8),
                 Wrap(
-                  spacing: GHTokens.spacing6,
+                  spacing: GHTokens.spacing8,
                   children: issue.labels.take(3).map((label) {
                     return Container(
                       padding: const EdgeInsets.symmetric(
-                        horizontal: GHTokens.spacing6,
-                        vertical: GHTokens.spacing2,
+                        horizontal: GHTokens.spacing8,
+                        vertical: GHTokens.spacing4,
                       ),
                       decoration: BoxDecoration(
                         color: _getLabelColor(label),
