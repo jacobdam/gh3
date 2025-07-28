@@ -129,14 +129,8 @@ class GHTokens {
   // SPACING SYSTEM
   // ==========================================================================
 
-  /// Tiny spacing - 2dp (very small gaps)
-  static const double spacing2 = 2.0;
-
-  /// Micro spacing - 4dp (icon gaps)
+  /// Micro spacing - 4dp (icon gaps, very small gaps)
   static const double spacing4 = 4.0;
-
-  /// Extra small spacing - 6dp (small gaps)
-  static const double spacing6 = 6.0;
 
   /// Small spacing - 8dp (chip gaps)
   static const double spacing8 = 8.0;

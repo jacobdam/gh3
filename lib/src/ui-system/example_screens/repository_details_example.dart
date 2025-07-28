@@ -275,7 +275,7 @@ class _RepositoryDetailsExampleState extends State<RepositoryDetailsExample> {
         onRefresh: _loadRepositoryData,
         child: SingleChildScrollView(
           physics: const AlwaysScrollableScrollPhysics(),
-          padding: const EdgeInsets.all(GHTokens.spacing16),
+          padding: const EdgeInsets.symmetric(vertical: GHTokens.spacing16),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
