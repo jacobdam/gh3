@@ -56,13 +56,11 @@ class _HomeScreenExampleState extends State<HomeScreenExample> {
         onSearch: _handleSearch,
         children: [
           // User profile summary
-          GHCard(
-            child: GHUserCard.fromFakeUser(
-              currentUser,
-              onTap: () {
-                NavigationService.navigateToUser(currentUser.login);
-              },
-            ),
+          GHUserCard.fromFakeUser(
+            currentUser,
+            onTap: () {
+              NavigationService.navigateToUser(currentUser.login);
+            },
           ),
 
           const SizedBox(height: GHTokens.spacing20),

@@ -585,7 +585,7 @@ class FakeDataService {
   }
 
   /// Get user's organizations
-  List<String> getUserOrganizations(String username) {
+  List<FakeOrganization> getUserOrganizations(String username) {
     final user = _users.firstWhere(
       (u) => u.login == username,
       orElse: () => _users.first,
@@ -1306,7 +1306,17 @@ class FakeDataService {
       followerCount: 4200,
       followingCount: 9,
       createdAt: DateTime(2011, 1, 25),
-      organizations: ['github'],
+      organizations: [
+        FakeOrganization(
+          login: 'github',
+          name: 'GitHub',
+          description: 'Built for developers',
+          avatarUrl: 'https://github.com/github.png',
+          publicRepos: 150,
+          publicMembers: 500,
+        ),
+      ],
+      starredCount: 42,
     ),
     FakeUser(
       login: 'torvalds',
@@ -1319,6 +1329,7 @@ class FakeDataService {
       followingCount: 0,
       createdAt: DateTime(2011, 9, 3),
       organizations: [],
+      starredCount: 12,
     ),
     FakeUser(
       login: 'gaearon',
@@ -1332,7 +1343,25 @@ class FakeDataService {
       followerCount: 89000,
       followingCount: 171,
       createdAt: DateTime(2011, 6, 2),
-      organizations: ['facebook', 'reactjs'],
+      organizations: [
+        FakeOrganization(
+          login: 'facebook',
+          name: 'Facebook',
+          description: 'We are working to build community through open source technology.',
+          avatarUrl: 'https://github.com/facebook.png',
+          publicRepos: 180,
+          publicMembers: 230,
+        ),
+        FakeOrganization(
+          login: 'reactjs',
+          name: 'React',
+          description: 'React is a JavaScript library for building user interfaces.',
+          avatarUrl: 'https://github.com/reactjs.png',
+          publicRepos: 25,
+          publicMembers: 45,
+        ),
+      ],
+      starredCount: 89,
     ),
     FakeUser(
       login: 'kentcdodds',
@@ -1347,7 +1376,25 @@ class FakeDataService {
       followerCount: 45000,
       followingCount: 156,
       createdAt: DateTime(2010, 8, 30),
-      organizations: ['remix-run', 'testing-library'],
+      organizations: [
+        FakeOrganization(
+          login: 'remix-run',
+          name: 'Remix',
+          description: 'Build Better Websites',
+          avatarUrl: 'https://github.com/remix-run.png',
+          publicRepos: 50,
+          publicMembers: 12,
+        ),
+        FakeOrganization(
+          login: 'testing-library',
+          name: 'Testing Library',
+          description: 'Simple and complete testing utilities that encourage good testing practices',
+          avatarUrl: 'https://github.com/testing-library.png',
+          publicRepos: 35,
+          publicMembers: 25,
+        ),
+      ],
+      starredCount: 156,
     ),
     FakeUser(
       login: 'sindresorhus',
@@ -2191,6 +2238,8 @@ class FakeRepository {
   final String? homepage;
   final List<FakeFile> files;
   final List<FakeIssue> issues;
+  final bool isFork;
+  final bool isArchived;
   final List<FakeRelease> releases;
   final List<FakeContributor> contributors;
   final String? readme;
@@ -2218,6 +2267,8 @@ class FakeRepository {
     this.readme,
     this.isStarred = false,
     this.isWatched = false,
+    this.isFork = false,
+    this.isArchived = false,
   });
 
   /// Create a copy of this repository with optional field overrides
@@ -2281,8 +2332,9 @@ class FakeUser {
   final int followerCount;
   final int followingCount;
   final DateTime? createdAt;
-  final List<String> organizations;
+  final List<FakeOrganization> organizations;
   final bool isFollowing;
+  final int? starredCount;
 
   const FakeUser({
     required this.login,
@@ -2298,6 +2350,30 @@ class FakeUser {
     this.createdAt,
     this.organizations = const [],
     this.isFollowing = false,
+    this.starredCount,
+  });
+}
+
+/// Fake organization data model
+class FakeOrganization {
+  final String login;
+  final String name;
+  final String? description;
+  final String avatarUrl;
+  final int publicRepos;
+  final int publicMembers;
+  final String? website;
+  final String? location;
+
+  const FakeOrganization({
+    required this.login,
+    required this.name,
+    this.description,
+    required this.avatarUrl,
+    required this.publicRepos,
+    required this.publicMembers,
+    this.website,
+    this.location,
   });
 }
 

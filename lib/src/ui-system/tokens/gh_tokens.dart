@@ -97,6 +97,13 @@ class GHTokens {
     height: 1.43,
   );
 
+  /// Body Small - 12sp, small body text
+  static const TextStyle bodySmall = TextStyle(
+    fontSize: 12,
+    fontWeight: FontWeight.w400,
+    height: 1.33,
+  );
+
   /// Label Large - 14sp, button text
   static const TextStyle labelLarge = TextStyle(
     fontSize: 14,
