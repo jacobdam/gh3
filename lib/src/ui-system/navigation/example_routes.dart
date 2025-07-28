@@ -12,6 +12,9 @@ class ExampleRoutes {
   static const String search = '/search';
   static const String trending = '/trending';
   static const String starred = '/starred';
+  static const String userRepositories = '/user/:username/repositories';
+  static const String userStarred = '/user/:username/starred';
+  static const String userOrganizations = '/user/:username/organizations';
 
   /// Helper methods for navigation
   static String userProfilePath(String username) => '/user/$username';
@@ -32,4 +35,9 @@ class ExampleRoutes {
       '/repo/$owner/$name/pulls';
   static String pullDetailPath(String owner, String name, int number) =>
       '/repo/$owner/$name/pull/$number';
+  static String userRepositoriesPath(String username) =>
+      '/user/$username/repositories';
+  static String userStarredPath(String username) => '/user/$username/starred';
+  static String userOrganizationsPath(String username) =>
+      '/user/$username/organizations';
 }

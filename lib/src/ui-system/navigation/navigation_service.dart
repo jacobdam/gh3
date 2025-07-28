@@ -10,6 +10,9 @@ import '../example_screens/issue_detail_example.dart';
 import '../example_screens/pulls_list_example.dart';
 import '../example_screens/search_example.dart';
 import '../example_screens/trending_example.dart';
+import '../example_screens/user_repositories_screen.dart';
+import '../example_screens/user_starred_screen.dart';
+import '../example_screens/user_organizations_screen.dart';
 import 'example_routes.dart';
 
 /// Navigation service for the UI system example screens
@@ -107,16 +110,37 @@ class NavigationService {
         path: ExampleRoutes.starred,
         builder: (context, state) => _buildPlaceholderScreen('Starred'),
       ),
+      GoRoute(
+        path: ExampleRoutes.userRepositories,
+        builder: (context, state) {
+          final username = state.pathParameters['username']!;
+          return UserRepositoriesScreen(username: username);
+        },
+      ),
+      GoRoute(
+        path: ExampleRoutes.userStarred,
+        builder: (context, state) {
+          final username = state.pathParameters['username']!;
+          return UserStarredScreen(username: username);
+        },
+      ),
+      GoRoute(
+        path: ExampleRoutes.userOrganizations,
+        builder: (context, state) {
+          final username = state.pathParameters['username']!;
+          return UserOrganizationsScreen(username: username);
+        },
+      ),
     ],
   );
 
-  /// Navigation helper methods
+  /// Navigation helper methods - Using push navigation
   static void navigateToUser(String username) {
-    router.go(ExampleRoutes.userProfilePath(username));
+    router.push(ExampleRoutes.userProfilePath(username));
   }
 
   static void navigateToRepository(String owner, String name) {
-    router.go(ExampleRoutes.repositoryPath(owner, name));
+    router.push(ExampleRoutes.repositoryPath(owner, name));
   }
 
   static void navigateToRepositoryTree(
@@ -124,7 +148,7 @@ class NavigationService {
     String name, {
     String? path,
   }) {
-    router.go(ExampleRoutes.repositoryTreePath(owner, name, path: path));
+    router.push(ExampleRoutes.repositoryTreePath(owner, name, path: path));
   }
 
   static void navigateToRepositoryFile(
@@ -132,41 +156,67 @@ class NavigationService {
     String name, {
     String? filePath,
   }) {
-    router.go(
+    router.push(
       ExampleRoutes.repositoryFilePath(owner, name, filePath: filePath),
     );
   }
 
   static void navigateToIssues(String owner, String name) {
-    router.go(ExampleRoutes.issuesPath(owner, name));
+    router.push(ExampleRoutes.issuesPath(owner, name));
   }
 
   static void navigateToIssue(String owner, String name, int number) {
-    router.go(ExampleRoutes.issueDetailPath(owner, name, number));
+    router.push(ExampleRoutes.issueDetailPath(owner, name, number));
   }
 
   static void navigateToPulls(String owner, String name) {
-    router.go(ExampleRoutes.pullsPath(owner, name));
+    router.push(ExampleRoutes.pullsPath(owner, name));
   }
 
   static void navigateToPull(String owner, String name, int number) {
-    router.go(ExampleRoutes.pullDetailPath(owner, name, number));
+    router.push(ExampleRoutes.pullDetailPath(owner, name, number));
   }
 
   static void navigateToSearch({String? query}) {
     if (query != null && query.isNotEmpty) {
-      router.go('${ExampleRoutes.search}?q=${Uri.encodeQueryComponent(query)}');
+      router.push(
+        '${ExampleRoutes.search}?q=${Uri.encodeQueryComponent(query)}',
+      );
     } else {
-      router.go(ExampleRoutes.search);
+      router.push(ExampleRoutes.search);
     }
   }
 
   static void navigateToTrending() {
-    router.go(ExampleRoutes.trending);
+    router.push(ExampleRoutes.trending);
   }
 
   static void navigateToStarred() {
-    router.go(ExampleRoutes.starred);
+    router.push(ExampleRoutes.starred);
+  }
+
+  static void navigateToUserRepositories(String username) {
+    router.push(ExampleRoutes.userRepositoriesPath(username));
+  }
+
+  static void navigateToUserStarred(String username) {
+    router.push(ExampleRoutes.userStarredPath(username));
+  }
+
+  static void navigateToUserOrganizations(String username) {
+    router.push(ExampleRoutes.userOrganizationsPath(username));
+  }
+
+  /// Navigate back
+  static void navigateBack() {
+    if (router.canPop()) {
+      router.pop();
+    }
+  }
+
+  /// Check if can navigate back
+  static bool canNavigateBack() {
+    return router.canPop();
   }
 
   /// Build placeholder screen for routes not yet implemented
