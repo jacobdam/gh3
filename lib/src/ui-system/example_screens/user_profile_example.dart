@@ -99,25 +99,26 @@ class _UserProfileExampleState extends State<UserProfileExample> {
 
           // Content
           SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.all(GHTokens.spacing16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // User profile header (without title)
-                  _buildUserHeader(),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const SizedBox(height: GHTokens.spacing16),
 
-                  const SizedBox(height: GHTokens.spacing16),
+                // User profile header (without title)
+                _buildUserHeader(),
 
-                  // Action buttons
-                  _buildActionButtons(),
+                const SizedBox(height: GHTokens.spacing16),
 
-                  const SizedBox(height: GHTokens.spacing20),
+                // Action buttons
+                _buildActionButtons(),
 
-                  // Action list
-                  _buildActionsList(),
-                ],
-              ),
+                const SizedBox(height: GHTokens.spacing20),
+
+                // Action list
+                _buildActionsList(),
+
+                const SizedBox(height: GHTokens.spacing16),
+              ],
             ),
           ),
         ],

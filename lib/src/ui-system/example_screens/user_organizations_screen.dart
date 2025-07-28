@@ -64,7 +64,11 @@ class _UserOrganizationsScreenState extends State<UserOrganizationsScreen> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Icon(Icons.people_outline, size: 64, color: Colors.grey),
+                  const Icon(
+                    Icons.people_outline,
+                    size: 64,
+                    color: Colors.grey,
+                  ),
                   const SizedBox(height: GHTokens.spacing16),
                   Text(
                     '${_user.login} isn\'t a member of any organizations',
@@ -85,10 +89,12 @@ class _UserOrganizationsScreenState extends State<UserOrganizationsScreen> {
               ),
             )
           : ListView.separated(
-              padding: const EdgeInsets.all(GHTokens.spacing16),
+              padding: const EdgeInsets.symmetric(vertical: GHTokens.spacing16),
               itemCount: _organizations.length,
-              separatorBuilder: (context, index) => const SizedBox(height: GHTokens.spacing12),
-              itemBuilder: (context, index) => _buildOrganizationCard(_organizations[index]),
+              separatorBuilder: (context, index) =>
+                  const SizedBox(height: GHTokens.spacing12),
+              itemBuilder: (context, index) =>
+                  _buildOrganizationCard(_organizations[index]),
             ),
     );
   }

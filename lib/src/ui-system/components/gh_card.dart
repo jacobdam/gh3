@@ -30,6 +30,33 @@ class GHCard extends StatelessWidget {
     this.margin,
   });
 
+  /// Creates a card with compact padding (12dp on all sides)
+  const GHCard.compact({
+    super.key,
+    required this.child,
+    this.onTap,
+    this.elevation,
+    this.margin,
+  }) : padding = const EdgeInsets.all(GHTokens.spacing12);
+
+  /// Creates a card with tight padding (8dp on all sides)
+  const GHCard.tight({
+    super.key,
+    required this.child,
+    this.onTap,
+    this.elevation,
+    this.margin,
+  }) : padding = const EdgeInsets.all(GHTokens.spacing8);
+
+  /// Creates a card with zero padding (for use with ListTile and similar widgets)
+  const GHCard.zeroPadding({
+    super.key,
+    required this.child,
+    this.onTap,
+    this.elevation,
+    this.margin,
+  }) : padding = EdgeInsets.zero;
+
   @override
   Widget build(BuildContext context) {
     return Card(

@@ -202,7 +202,7 @@ class _HomeScreenExampleState extends State<HomeScreenExample> {
   }
 
   Widget _buildActivityItem(FakeActivity activity) {
-    return GHCard(
+    return GHCard.zeroPadding(
       child: ListTile(
         leading: CircleAvatar(
           radius: 16,
@@ -296,7 +296,7 @@ class _HomeScreenExampleState extends State<HomeScreenExample> {
 
         ...repos.map(
           (repo) => Padding(
-            padding: const EdgeInsets.only(bottom: GHTokens.spacing8),
+            padding: const EdgeInsets.only(bottom: GHTokens.spacing12),
             child: GHRepositoryCard.fromFakeRepository(
               repo,
               showStarButton: true,

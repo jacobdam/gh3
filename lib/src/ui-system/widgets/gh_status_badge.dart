@@ -98,8 +98,8 @@ class GHStatusBadge extends StatelessWidget {
     switch (size) {
       case GHStatusBadgeSize.small:
         return _SizeConfig(
-          horizontalPadding: GHTokens.spacing6,
-          verticalPadding: GHTokens.spacing2,
+          horizontalPadding: GHTokens.spacing8,
+          verticalPadding: GHTokens.spacing4,
           borderRadius: GHTokens.radius12,
           iconSize: 12,
           spacing: GHTokens.spacing4,
@@ -111,13 +111,13 @@ class GHStatusBadge extends StatelessWidget {
           verticalPadding: GHTokens.spacing4,
           borderRadius: GHTokens.radius12,
           iconSize: 14,
-          spacing: GHTokens.spacing6,
+          spacing: GHTokens.spacing8,
           textStyle: GHTokens.labelMedium,
         );
       case GHStatusBadgeSize.large:
         return _SizeConfig(
           horizontalPadding: GHTokens.spacing12,
-          verticalPadding: GHTokens.spacing6,
+          verticalPadding: GHTokens.spacing8,
           borderRadius: GHTokens.radius16,
           iconSize: 16,
           spacing: GHTokens.spacing8,
