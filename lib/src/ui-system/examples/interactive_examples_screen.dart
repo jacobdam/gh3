@@ -11,10 +11,28 @@ import '../state_widgets/gh_empty_state.dart';
 import '../state_widgets/gh_error_state.dart';
 import '../state_widgets/gh_loading_indicator.dart';
 import '../layouts/gh_content_template.dart';
+import '../layouts/gh_screen_template.dart';
 import '../widgets/gh_content_metadata.dart';
 import '../utils/color_utils.dart';
 
-/// An interactive showcase screen with advanced component interactions and real-world scenarios.
+/// **REFERENCE IMPLEMENTATION** - Interactive Examples Screen
+///
+/// This screen serves as the primary reference implementation for advanced
+/// interaction patterns and state management in the GH3 design system. It demonstrates:
+///
+/// - Complex state management with multiple interactive components
+/// - Animation integration with proper duration and curves
+/// - Error handling and state transitions
+/// - Form input patterns with validation
+/// - Real-world GitHub application scenarios
+/// - Proper loading, empty, and error state implementations
+///
+/// **Usage as Reference:**
+/// - Copy state management patterns from this file
+/// - Follow the animation implementation approaches
+/// - Use the error handling strategies demonstrated
+/// - Maintain the same interaction feedback patterns
+/// - Reference the form validation implementations
 ///
 /// This screen demonstrates proper usage patterns and different configurations
 /// of UI components with practical examples from the GitHub application context.
@@ -54,6 +72,8 @@ class _InteractiveExamplesScreenState extends State<InteractiveExamplesScreen>
   @override
   void initState() {
     super.initState();
+    // REFERENCE PATTERN: Animation controllers for smooth UI transitions
+    // Use 300ms for subtle animations, 500ms for more prominent transitions
     _fadeController = AnimationController(
       duration: const Duration(milliseconds: 300),
       vsync: this,
@@ -83,18 +103,19 @@ class _InteractiveExamplesScreenState extends State<InteractiveExamplesScreen>
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Interactive Component Examples'),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.refresh),
-            onPressed: _resetAllStates,
-            tooltip: 'Reset all states',
-          ),
-        ],
-      ),
+    // REFERENCE PATTERN: GHScreenTemplate with action buttons for screen controls
+    return GHScreenTemplate(
+      title: 'Interactive Component Examples',
+      actions: [
+        // REFERENCE PATTERN: Action buttons for screen-level interactions
+        IconButton(
+          icon: const Icon(Icons.refresh),
+          onPressed: _resetAllStates,
+          tooltip: 'Reset all states',
+        ),
+      ],
       body: SingleChildScrollView(
+        // REFERENCE PATTERN: Standard screen padding using spacing tokens
         padding: const EdgeInsets.all(GHTokens.spacing16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,

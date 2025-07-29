@@ -4,6 +4,15 @@ import 'src/ui-system/examples/design_tokens_screen.dart';
 import 'src/ui-system/examples/component_catalog_screen.dart';
 import 'src/ui-system/examples/interactive_examples_screen.dart';
 import 'src/ui-system/examples/uat_home_screen.dart';
+import 'src/ui-system/examples/documentation_screen.dart';
+import 'src/ui-system/examples/reference_patterns_guide.dart';
+import 'src/ui-system/examples/developer_guide_screen.dart';
+import 'src/ui-system/examples/interactive_component_demo_screen.dart';
+import 'src/ui-system/comparison/navigation_comparison_screen.dart';
+import 'src/ui-system/comparison/spacing_comparison_screen.dart';
+import 'src/ui-system/comparison/component_showcase_comparison_screen.dart';
+import 'src/ui-system/tools/measurement_validation_screen.dart';
+import 'src/ui-system/tools/standards_compliance_screen.dart';
 
 /// UAT-specific main entry point for design system demonstration.
 ///
@@ -54,6 +63,18 @@ class _DesignSystemUATAppState extends State<DesignSystemUATApp> {
         '/tokens': (context) => const DesignTokensScreen(),
         '/components': (context) => const ComponentCatalogScreen(),
         '/interactive': (context) => const InteractiveExamplesScreen(),
+        '/comparison/navigation': (context) =>
+            const NavigationComparisonScreen(),
+        '/comparison/spacing': (context) => const SpacingComparisonScreen(),
+        '/comparison/components': (context) =>
+            const ComponentShowcaseComparisonScreen(),
+        '/tools/measurement': (context) => const MeasurementValidationScreen(),
+        '/tools/compliance': (context) => const StandardsComplianceScreen(),
+        '/documentation': (context) => const DocumentationScreen(),
+        '/reference': (context) => const ReferenceExampleScreen(),
+        '/developer-guide': (context) => const DeveloperGuideScreen(),
+        '/interactive-demo': (context) =>
+            const InteractiveComponentDemoScreen(),
       },
     );
   }
