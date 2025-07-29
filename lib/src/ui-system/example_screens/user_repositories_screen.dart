@@ -6,6 +6,7 @@ import '../data/fake_data_service.dart';
 import '../components/gh_chip.dart';
 import '../tokens/gh_tokens.dart';
 import '../navigation/navigation_service.dart';
+import '../state_widgets/gh_loading_indicator.dart';
 
 /// User repositories screen showing a user's repositories with filtering and search
 class UserRepositoriesScreen extends StatefulWidget {
@@ -125,7 +126,12 @@ class _UserRepositoriesScreenState extends State<UserRepositoriesScreen> {
   @override
   Widget build(BuildContext context) {
     if (_isLoading) {
-      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+      return const Scaffold(
+        body: GHLoadingIndicator.large(
+          label: 'Loading repositories...',
+          centered: true,
+        ),
+      );
     }
 
     return GHScreenTemplate(

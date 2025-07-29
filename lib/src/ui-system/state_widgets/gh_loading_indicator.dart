@@ -144,14 +144,20 @@ class GHLoadingOverlay extends StatelessWidget {
         child,
         if (isLoading)
           Positioned.fill(
-            child: Container(
-              color:
-                  backgroundColor ??
-                  Theme.of(context).colorScheme.surface.withValues(alpha: 0.8),
-              child: Center(
-                child:
-                    loadingIndicator ??
-                    GHLoadingIndicator.large(label: message, centered: true),
+            child: AnimatedOpacity(
+              duration: const Duration(milliseconds: 200),
+              opacity: 1.0,
+              child: Container(
+                color:
+                    backgroundColor ??
+                    Theme.of(
+                      context,
+                    ).colorScheme.surface.withValues(alpha: 0.8),
+                child: Center(
+                  child:
+                      loadingIndicator ??
+                      GHLoadingIndicator.large(label: message, centered: true),
+                ),
               ),
             ),
           ),
@@ -266,3 +272,73 @@ class _GHLoadingButtonState extends State<GHLoadingButton> {
 
 /// Button styles for GHLoadingButton
 enum GHLoadingButtonStyle { elevated, outlined, text }
+
+/// A widget that provides smooth animated transitions between loading and content states.
+///
+/// This widget automatically handles the transition from loading indicators to
+/// content with configurable fade and scale animations for improved user experience.
+class GHLoadingTransition extends StatelessWidget {
+  /// Whether to show the loading state
+  final bool isLoading;
+
+  /// The content to display when not loading
+  final Widget child;
+
+  /// The loading indicator to display when loading
+  final Widget? loadingIndicator;
+
+  /// Optional loading message
+  final String? loadingMessage;
+
+  /// Duration of the transition animation
+  final Duration duration;
+
+  /// Whether to use fade transition
+  final bool useFadeTransition;
+
+  /// Whether to use scale transition
+  final bool useScaleTransition;
+
+  const GHLoadingTransition({
+    super.key,
+    required this.isLoading,
+    required this.child,
+    this.loadingIndicator,
+    this.loadingMessage,
+    this.duration = const Duration(milliseconds: 300),
+    this.useFadeTransition = true,
+    this.useScaleTransition = false,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    Widget currentWidget = isLoading
+        ? (loadingIndicator ??
+              GHLoadingIndicator.large(label: loadingMessage, centered: true))
+        : child;
+
+    // Apply scale transition if enabled
+    if (useScaleTransition && !isLoading) {
+      currentWidget = TweenAnimationBuilder<double>(
+        duration: duration,
+        tween: Tween(begin: 0.8, end: 1.0),
+        builder: (context, scale, child) {
+          return Transform.scale(scale: scale, child: child);
+        },
+        child: currentWidget,
+      );
+    }
+
+    // Apply fade transition if enabled
+    if (useFadeTransition) {
+      return AnimatedSwitcher(
+        duration: duration,
+        switchInCurve: Curves.easeInOut,
+        switchOutCurve: Curves.easeInOut,
+        child: currentWidget,
+      );
+    }
+
+    return AnimatedSwitcher(duration: duration, child: currentWidget);
+  }
+}

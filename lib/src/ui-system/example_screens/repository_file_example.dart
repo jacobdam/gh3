@@ -8,6 +8,7 @@ import '../widgets/gh_file_tree_item.dart';
 import '../tokens/gh_tokens.dart';
 import '../navigation/navigation_service.dart';
 import '../utils/date_formatter.dart';
+import '../state_widgets/gh_loading_indicator.dart';
 
 /// Repository file example screen showing file content with syntax highlighting
 /// and file metadata.
@@ -220,10 +221,10 @@ class _${className}State extends State<$className> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            if (_isLoading) ...[
-              const CircularProgressIndicator(),
-              const SizedBox(height: 16),
-              const Text('Loading...'),
+            if (_isLoading) ..[
+              const GHLoadingIndicator.medium(
+                label: 'Loading...',
+              ),
             ] else ...[
               const Icon(
                 Icons.check_circle,
@@ -889,7 +890,13 @@ End of file content''';
   @override
   Widget build(BuildContext context) {
     if (_isLoading) {
-      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+      return Scaffold(
+        appBar: AppBar(title: Text(widget.filePath)),
+        body: const GHLoadingIndicator.large(
+          label: 'Loading file...',
+          centered: true,
+        ),
+      );
     }
 
     if (_error != null) {

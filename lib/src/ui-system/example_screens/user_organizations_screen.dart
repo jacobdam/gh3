@@ -3,6 +3,7 @@ import '../layouts/gh_screen_template.dart';
 import '../data/fake_data_service.dart';
 import '../components/gh_card.dart';
 import '../tokens/gh_tokens.dart';
+import '../state_widgets/gh_loading_indicator.dart';
 
 /// User organizations screen showing organizations the user belongs to
 class UserOrganizationsScreen extends StatefulWidget {
@@ -54,7 +55,12 @@ class _UserOrganizationsScreenState extends State<UserOrganizationsScreen> {
   @override
   Widget build(BuildContext context) {
     if (_isLoading) {
-      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+      return const Scaffold(
+        body: GHLoadingIndicator.large(
+          label: 'Loading organizations...',
+          centered: true,
+        ),
+      );
     }
 
     return GHScreenTemplate(

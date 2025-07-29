@@ -5,6 +5,7 @@ import '../components/gh_chip.dart';
 import '../data/fake_data_service.dart';
 import '../tokens/gh_tokens.dart';
 import '../navigation/navigation_service.dart';
+import '../state_widgets/gh_loading_indicator.dart';
 
 /// Trending and discovery example screen
 class TrendingExample extends StatefulWidget {
@@ -207,7 +208,10 @@ class _TrendingExampleState extends State<TrendingExample>
         ),
       ],
       body: _isLoading
-          ? const Center(child: CircularProgressIndicator())
+          ? const GHLoadingIndicator.large(
+              label: 'Loading trending repositories...',
+              centered: true,
+            )
           : Column(
               children: [
                 // Filters section

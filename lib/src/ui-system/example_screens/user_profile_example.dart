@@ -5,6 +5,7 @@ import '../components/gh_card.dart';
 import '../tokens/gh_tokens.dart';
 import '../navigation/navigation_service.dart';
 import '../utils/number_formatter.dart';
+import '../state_widgets/gh_loading_indicator.dart';
 
 /// User profile example screen showing comprehensive user information
 /// with action-based navigation replacing tab navigation.
@@ -52,76 +53,79 @@ class _UserProfileExampleState extends State<UserProfileExample> {
 
   @override
   Widget build(BuildContext context) {
-    if (_isLoading) {
-      return const Scaffold(body: Center(child: CircularProgressIndicator()));
-    }
+    return GHLoadingTransition(
+      isLoading: _isLoading,
+      loadingMessage: 'Loading user profile...',
+      child: GHScreenTemplate(
+        title: _user.name ?? _user.login,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.share),
+            onPressed: () {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text('Share ${_user.login}\'s profile')),
+              );
+            },
+          ),
+          PopupMenuButton<String>(
+            onSelected: (value) {
+              ScaffoldMessenger.of(
+                context,
+              ).showSnackBar(SnackBar(content: Text('$value action')));
+            },
+            itemBuilder: (context) => [
+              const PopupMenuItem(
+                value: 'Block user',
+                child: Text('Block user'),
+              ),
+              const PopupMenuItem(
+                value: 'Report user',
+                child: Text('Report user'),
+              ),
+            ],
+          ),
+        ],
+        body: CustomScrollView(
+          slivers: [
+            // Scrolling app bar
+            SliverAppBar(
+              expandedHeight: 120.0,
+              pinned: true,
+              automaticallyImplyLeading: true,
+              flexibleSpace: FlexibleSpaceBar(
+                title: Text(_user.name ?? _user.login),
+                titlePadding: const EdgeInsets.only(left: 56, bottom: 16),
+                collapseMode: CollapseMode.parallax,
+              ),
+              backgroundColor: Theme.of(context).colorScheme.surface,
+            ),
 
-    return GHScreenTemplate(
-      title: _user.name ?? _user.login,
-      actions: [
-        IconButton(
-          icon: const Icon(Icons.share),
-          onPressed: () {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('Share ${_user.login}\'s profile')),
-            );
-          },
-        ),
-        PopupMenuButton<String>(
-          onSelected: (value) {
-            ScaffoldMessenger.of(
-              context,
-            ).showSnackBar(SnackBar(content: Text('$value action')));
-          },
-          itemBuilder: (context) => [
-            const PopupMenuItem(value: 'Block user', child: Text('Block user')),
-            const PopupMenuItem(
-              value: 'Report user',
-              child: Text('Report user'),
+            // Content
+            SliverToBoxAdapter(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const SizedBox(height: GHTokens.spacing16),
+
+                  // User profile header (without title)
+                  _buildUserHeader(),
+
+                  const SizedBox(height: GHTokens.spacing16),
+
+                  // Action buttons
+                  _buildActionButtons(),
+
+                  const SizedBox(height: GHTokens.spacing20),
+
+                  // Action list
+                  _buildActionsList(),
+
+                  const SizedBox(height: GHTokens.spacing16),
+                ],
+              ),
             ),
           ],
         ),
-      ],
-      body: CustomScrollView(
-        slivers: [
-          // Scrolling app bar
-          SliverAppBar(
-            expandedHeight: 120.0,
-            pinned: true,
-            automaticallyImplyLeading: true,
-            flexibleSpace: FlexibleSpaceBar(
-              title: Text(_user.name ?? _user.login),
-              titlePadding: const EdgeInsets.only(left: 56, bottom: 16),
-              collapseMode: CollapseMode.parallax,
-            ),
-            backgroundColor: Theme.of(context).colorScheme.surface,
-          ),
-
-          // Content
-          SliverToBoxAdapter(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const SizedBox(height: GHTokens.spacing16),
-
-                // User profile header (without title)
-                _buildUserHeader(),
-
-                const SizedBox(height: GHTokens.spacing16),
-
-                // Action buttons
-                _buildActionButtons(),
-
-                const SizedBox(height: GHTokens.spacing20),
-
-                // Action list
-                _buildActionsList(),
-
-                const SizedBox(height: GHTokens.spacing16),
-              ],
-            ),
-          ),
-        ],
       ),
     );
   }

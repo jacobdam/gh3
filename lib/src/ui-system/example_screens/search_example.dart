@@ -7,6 +7,8 @@ import '../tokens/gh_tokens.dart';
 import '../navigation/navigation_service.dart';
 import '../utils/date_formatter.dart';
 import '../utils/debounced_search.dart';
+import '../state_widgets/gh_empty_state.dart';
+import '../state_widgets/gh_loading_indicator.dart';
 
 /// Global search example screen with categorized results
 class SearchExample extends StatefulWidget {
@@ -435,9 +437,12 @@ class _SearchExampleState extends State<SearchExample>
           // Results section
           if (_currentQuery.isNotEmpty || _isSearching)
             Expanded(
-              child: _isSearching
-                  ? const Center(child: CircularProgressIndicator())
-                  : _buildSearchResults(),
+              child: GHLoadingTransition(
+                isLoading: _isSearching,
+                loadingMessage: 'Searching...',
+                useScaleTransition: true,
+                child: _buildSearchResults(),
+              ),
             ),
         ],
       ),
@@ -824,7 +829,13 @@ class _SearchExampleState extends State<SearchExample>
 
   Widget _buildRepositoryResults() {
     if (_repositoryResults.isEmpty) {
-      return const Center(child: Text('No repositories found'));
+      return GHEmptyStates.noSearchResults(
+        query: _currentQuery,
+        onClearSearch: () {
+          _searchController.clear();
+          _performSearch('');
+        },
+      );
     }
 
     return ListView.builder(
@@ -839,7 +850,13 @@ class _SearchExampleState extends State<SearchExample>
 
   Widget _buildUserResults() {
     if (_userResults.isEmpty) {
-      return const Center(child: Text('No users found'));
+      return GHEmptyStates.noSearchResults(
+        query: _currentQuery,
+        onClearSearch: () {
+          _searchController.clear();
+          _performSearch('');
+        },
+      );
     }
 
     return ListView.builder(
@@ -854,7 +871,13 @@ class _SearchExampleState extends State<SearchExample>
 
   Widget _buildIssueResults() {
     if (_issueResults.isEmpty) {
-      return const Center(child: Text('No issues found'));
+      return GHEmptyStates.noSearchResults(
+        query: _currentQuery,
+        onClearSearch: () {
+          _searchController.clear();
+          _performSearch('');
+        },
+      );
     }
 
     return ListView.builder(
@@ -869,7 +892,13 @@ class _SearchExampleState extends State<SearchExample>
 
   Widget _buildCodeResults() {
     if (_codeResults.isEmpty) {
-      return const Center(child: Text('No code found'));
+      return GHEmptyStates.noSearchResults(
+        query: _currentQuery,
+        onClearSearch: () {
+          _searchController.clear();
+          _performSearch('');
+        },
+      );
     }
 
     return ListView.builder(

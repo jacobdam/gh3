@@ -10,6 +10,7 @@ import '../tokens/gh_tokens.dart';
 import '../navigation/navigation_service.dart';
 import '../utils/date_formatter.dart';
 import '../utils/debounced_search.dart';
+import '../state_widgets/gh_loading_indicator.dart';
 
 /// Issues list example screen showing repository issues with filtering and search
 class IssuesListExample extends StatefulWidget {
@@ -221,7 +222,10 @@ class _IssuesListExampleState extends State<IssuesListExample> {
         ),
       ],
       body: _isLoading
-          ? const Center(child: CircularProgressIndicator())
+          ? const GHLoadingIndicator.large(
+              label: 'Loading issues...',
+              centered: true,
+            )
           : GHListTemplate(
               searchHint: 'Search issues...',
               onRefresh: _loadIssues,
