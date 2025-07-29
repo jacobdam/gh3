@@ -9,6 +9,7 @@ import '../data/fake_data_service.dart';
 import '../tokens/gh_tokens.dart';
 import '../navigation/navigation_service.dart';
 import '../utils/date_formatter.dart';
+import '../state_widgets/gh_loading_indicator.dart';
 
 /// Issue detail example screen showing comprehensive issue information with comments
 class IssueDetailExample extends StatefulWidget {
@@ -180,7 +181,13 @@ class _IssueDetailExampleState extends State<IssueDetailExample> {
   @override
   Widget build(BuildContext context) {
     if (_isLoading) {
-      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+      return Scaffold(
+        appBar: AppBar(title: Text('Issue #${widget.number}')),
+        body: const GHLoadingIndicator.large(
+          label: 'Loading issue...',
+          centered: true,
+        ),
+      );
     }
 
     if (_error != null) {
@@ -759,8 +766,7 @@ class _IssueDetailExampleState extends State<IssueDetailExample> {
                   ? SizedBox(
                       width: 16,
                       height: 16,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2,
+                      child: GHLoadingIndicator.small(
                         color: Theme.of(context).colorScheme.onPrimary,
                       ),
                     )

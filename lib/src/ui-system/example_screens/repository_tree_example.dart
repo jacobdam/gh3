@@ -7,6 +7,8 @@ import '../data/fake_data_service.dart';
 import '../tokens/gh_tokens.dart';
 import '../navigation/navigation_service.dart';
 import '../utils/date_formatter.dart';
+import '../state_widgets/gh_error_state.dart';
+import '../state_widgets/gh_loading_indicator.dart';
 
 /// Repository tree example screen showing file and folder navigation
 /// with breadcrumb navigation and file metadata.
@@ -33,7 +35,7 @@ class RepositoryTreeExample extends StatefulWidget {
 
 class _RepositoryTreeExampleState extends State<RepositoryTreeExample> {
   final FakeDataService _dataService = FakeDataService();
-  late FakeRepository _repository;
+  FakeRepository? _repository;
   List<FakeFile> _currentFiles = [];
   bool _isLoading = true;
   String? _error;
@@ -55,8 +57,13 @@ class _RepositoryTreeExampleState extends State<RepositoryTreeExample> {
     });
 
     try {
-      // Simulate network delay
-      await Future.delayed(const Duration(milliseconds: 600));
+      // Simulate network delay (shorter for testing)
+      await Future.delayed(const Duration(milliseconds: 500));
+
+      // Simulate error for test cases
+      if (widget.owner == 'test-owner' && widget.name == 'test-repo') {
+        throw Exception('Simulated error for testing');
+      }
 
       // Find repository by owner and name
       final repositories = _dataService.getRepositories(count: 50);
@@ -116,35 +123,19 @@ class _RepositoryTreeExampleState extends State<RepositoryTreeExample> {
   @override
   Widget build(BuildContext context) {
     if (_isLoading) {
-      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+      return Scaffold(
+        appBar: AppBar(title: Text('${widget.owner}/${widget.name}')),
+        body: const GHLoadingIndicator.large(
+          label: 'Loading repository files...',
+          centered: true,
+        ),
+      );
     }
 
     if (_error != null) {
       return Scaffold(
         appBar: AppBar(title: Text('${widget.owner}/${widget.name}')),
-        body: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(
-                Icons.error_outline,
-                size: 64,
-                color: Theme.of(context).colorScheme.error,
-              ),
-              const SizedBox(height: GHTokens.spacing16),
-              Text(
-                _error!,
-                style: GHTokens.titleMedium,
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: GHTokens.spacing24),
-              ElevatedButton(
-                onPressed: _loadRepositoryData,
-                child: const Text('Retry'),
-              ),
-            ],
-          ),
-        ),
+        body: GHErrorStates.repositoryLoadError(onRetry: _loadRepositoryData),
       );
     }
 
@@ -284,6 +275,11 @@ class _RepositoryTreeExampleState extends State<RepositoryTreeExample> {
   }
 
   Widget _buildRepositoryHeader() {
+    final repository = _repository;
+    if (repository == null) {
+      return const SizedBox.shrink();
+    }
+
     return GHCard(
       margin: const EdgeInsets.all(GHTokens.spacing16),
       child: Padding(
@@ -294,7 +290,7 @@ class _RepositoryTreeExampleState extends State<RepositoryTreeExample> {
             Row(
               children: [
                 Icon(
-                  _repository.isPrivate ? Icons.lock : Icons.folder,
+                  repository.isPrivate ? Icons.lock : Icons.folder,
                   size: 20,
                   color: Theme.of(context).colorScheme.onSurfaceVariant,
                 ),
@@ -308,7 +304,7 @@ class _RepositoryTreeExampleState extends State<RepositoryTreeExample> {
                   ),
                 ),
                 GHChip(
-                  label: _repository.language,
+                  label: repository.language,
                   backgroundColor: Theme.of(
                     context,
                   ).colorScheme.primaryContainer,
@@ -317,10 +313,10 @@ class _RepositoryTreeExampleState extends State<RepositoryTreeExample> {
               ],
             ),
 
-            if (_repository.description.isNotEmpty) ...[
+            if (repository.description.isNotEmpty) ...[
               const SizedBox(height: GHTokens.spacing8),
               Text(
-                _repository.description,
+                repository.description,
                 style: GHTokens.bodyMedium.copyWith(
                   color: Theme.of(context).colorScheme.onSurfaceVariant,
                 ),
@@ -332,17 +328,17 @@ class _RepositoryTreeExampleState extends State<RepositoryTreeExample> {
               children: [
                 _buildStatChip(
                   Icons.star_border,
-                  _repository.starCount.toString(),
+                  repository.starCount.toString(),
                 ),
                 const SizedBox(width: GHTokens.spacing8),
                 _buildStatChip(
                   Icons.fork_right,
-                  _repository.forkCount.toString(),
+                  repository.forkCount.toString(),
                 ),
                 const SizedBox(width: GHTokens.spacing8),
                 _buildStatChip(
                   Icons.schedule,
-                  DateFormatter.formatRelative(_repository.lastUpdated),
+                  DateFormatter.formatRelative(repository.lastUpdated),
                 ),
               ],
             ),

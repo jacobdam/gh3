@@ -1,14 +1,17 @@
 import 'package:flutter/material.dart';
 import '../layouts/gh_screen_template.dart';
+import '../layouts/gh_content_template.dart';
 import '../widgets/gh_entity_header.dart';
 import '../widgets/gh_navigation_grid.dart';
+import '../widgets/gh_content_metadata.dart';
 import '../components/gh_card.dart';
-import '../components/gh_chip.dart';
 import '../components/gh_button.dart';
 import '../data/fake_data_service.dart';
 import '../tokens/gh_tokens.dart';
 import '../navigation/navigation_service.dart';
 import '../utils/date_formatter.dart';
+import '../state_widgets/gh_error_state.dart';
+import '../state_widgets/gh_loading_indicator.dart';
 
 /// Repository details example screen showing comprehensive repository information
 /// with header, metadata, navigation, and README content.
@@ -32,7 +35,7 @@ class RepositoryDetailsExample extends StatefulWidget {
 
 class _RepositoryDetailsExampleState extends State<RepositoryDetailsExample> {
   final FakeDataService _dataService = FakeDataService();
-  late FakeRepository _repository;
+  FakeRepository? _repository;
   bool _isLoading = true;
   String? _error;
 
@@ -55,8 +58,13 @@ class _RepositoryDetailsExampleState extends State<RepositoryDetailsExample> {
     });
 
     try {
-      // Simulate network delay
-      await Future.delayed(const Duration(milliseconds: 800));
+      // Simulate network delay (shorter for testing)
+      await Future.delayed(const Duration(milliseconds: 500));
+
+      // Simulate error for test cases
+      if (widget.owner == 'test-owner' && widget.name == 'test-repo') {
+        throw Exception('Simulated error for testing');
+      }
 
       // Find repository by owner and name
       final repositories = _dataService.getRepositories(count: 50);
@@ -205,98 +213,78 @@ class _RepositoryDetailsExampleState extends State<RepositoryDetailsExample> {
 
   @override
   Widget build(BuildContext context) {
-    if (_isLoading) {
-      return const Scaffold(body: Center(child: CircularProgressIndicator()));
-    }
-
     if (_error != null) {
       return Scaffold(
         appBar: AppBar(title: Text('${widget.owner}/${widget.name}')),
-        body: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(
-                Icons.error_outline,
-                size: 64,
-                color: Theme.of(context).colorScheme.error,
-              ),
-              const SizedBox(height: GHTokens.spacing16),
-              Text(
-                _error!,
-                style: GHTokens.titleMedium,
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: GHTokens.spacing24),
-              ElevatedButton(
-                onPressed: _loadRepositoryData,
-                child: const Text('Retry'),
-              ),
-            ],
-          ),
-        ),
+        body: GHErrorStates.repositoryLoadError(onRetry: _loadRepositoryData),
       );
     }
 
-    return GHScreenTemplate(
-      title: '${widget.owner}/${widget.name}',
-      actions: [
-        IconButton(
-          icon: const Icon(Icons.share),
-          onPressed: () {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('Share ${widget.owner}/${widget.name}')),
-            );
-          },
-        ),
-        PopupMenuButton<String>(
-          onSelected: (value) {
-            ScaffoldMessenger.of(
-              context,
-            ).showSnackBar(SnackBar(content: Text('$value action')));
-          },
-          itemBuilder: (context) => [
-            const PopupMenuItem(
-              value: 'Pin repository',
-              child: Text('Pin repository'),
-            ),
-            const PopupMenuItem(
-              value: 'Add to list',
-              child: Text('Add to list'),
-            ),
-            const PopupMenuItem(
-              value: 'Report repository',
-              child: Text('Report repository'),
-            ),
-          ],
-        ),
-      ],
-      body: RefreshIndicator(
-        onRefresh: _loadRepositoryData,
-        child: SingleChildScrollView(
-          physics: const AlwaysScrollableScrollPhysics(),
-          padding: const EdgeInsets.symmetric(vertical: GHTokens.spacing16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Repository header
-              _buildRepositoryHeader(),
-              const SizedBox(height: GHTokens.spacing16),
+    return GHLoadingTransition(
+      isLoading: _isLoading,
+      loadingMessage: 'Loading repository...',
+      child: GHScreenTemplate(
+        title: '${widget.owner}/${widget.name}',
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.share),
+            onPressed: () {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text('Share ${widget.owner}/${widget.name}')),
+              );
+            },
+          ),
+          PopupMenuButton<String>(
+            onSelected: (value) {
+              ScaffoldMessenger.of(
+                context,
+              ).showSnackBar(SnackBar(content: Text('$value action')));
+            },
+            itemBuilder: (context) => [
+              const PopupMenuItem(
+                value: 'Pin repository',
+                child: Text('Pin repository'),
+              ),
+              const PopupMenuItem(
+                value: 'Add to list',
+                child: Text('Add to list'),
+              ),
+              const PopupMenuItem(
+                value: 'Report repository',
+                child: Text('Report repository'),
+              ),
+            ],
+          ),
+        ],
+        body: RefreshIndicator(
+          onRefresh: _loadRepositoryData,
+          child: GHContentTemplate(
+            physics: const AlwaysScrollableScrollPhysics(),
+            padding: const EdgeInsets.symmetric(vertical: GHTokens.spacing16),
+            sections: [
+              // Repository header section
+              GHContentSection(content: _buildRepositoryHeader()),
 
-              // Action buttons
-              _buildActionButtons(),
-              const SizedBox(height: GHTokens.spacing24),
+              // Action buttons section
+              GHContentSection(content: _buildActionButtons()),
 
-              // Repository metadata
-              _buildRepositoryMetadata(),
-              const SizedBox(height: GHTokens.spacing24),
+              // Repository metadata section
+              GHContentSection(
+                title: 'About',
+                content: _buildRepositoryMetadata(),
+              ),
 
-              // Navigation grid
-              _buildNavigationGrid(),
-              const SizedBox(height: GHTokens.spacing24),
+              // Navigation section
+              GHContentSection(
+                title: 'Explore',
+                content: _buildNavigationGrid(),
+              ),
 
-              // README section placeholder
-              _buildReadmeSection(),
+              // README section
+              GHContentSection(
+                title: 'README.md',
+                content: _buildReadmeSection(),
+              ),
             ],
           ),
         ),
@@ -305,24 +293,29 @@ class _RepositoryDetailsExampleState extends State<RepositoryDetailsExample> {
   }
 
   Widget _buildRepositoryHeader() {
+    final repository = _repository;
+    if (repository == null) {
+      return const SizedBox.shrink();
+    }
+
     return GHEntityHeader(
       title: '${widget.owner}/${widget.name}',
-      subtitle: _repository.description,
+      subtitle: repository.description,
       avatar: CircleAvatar(
         radius: 24,
         backgroundColor: Theme.of(context).colorScheme.primaryContainer,
         child: Icon(
-          _repository.isPrivate ? Icons.lock : Icons.folder,
+          repository.isPrivate ? Icons.lock : Icons.folder,
           color: Theme.of(context).colorScheme.onPrimaryContainer,
         ),
       ),
       stats: GHEntityStats.repository(
-        stars: _repository.starCount,
-        forks: _repository.forkCount,
-        watchers: _repository.starCount ~/ 10,
-        language: _repository.language,
+        stars: repository.starCount,
+        forks: repository.forkCount,
+        watchers: repository.starCount ~/ 10,
+        language: repository.language,
       ),
-      isPrivate: _repository.isPrivate,
+      isPrivate: repository.isPrivate,
     );
   }
 
@@ -365,210 +358,144 @@ class _RepositoryDetailsExampleState extends State<RepositoryDetailsExample> {
   }
 
   Widget _buildRepositoryMetadata() {
+    final repository = _repository;
+    if (repository == null) {
+      return const SizedBox.shrink();
+    }
+
+    // Build metadata items list
+    final List<GHMetadataItem> metadataItems = [];
+
+    // Website
+    if (repository.homepage != null) {
+      metadataItems.add(
+        GHMetadataItem(
+          icon: Icons.link,
+          label: 'Website',
+          value: repository.homepage!,
+          isLink: true,
+          onTap: () {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('Open ${repository.homepage}')),
+            );
+          },
+        ),
+      );
+    }
+
+    // License
+    if (repository.license != null) {
+      metadataItems.add(
+        GHMetadataItem(
+          icon: Icons.balance,
+          label: 'License',
+          value: repository.license!,
+          onTap: () {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('View license details')),
+            );
+          },
+        ),
+      );
+    }
+
+    // Last updated
+    metadataItems.add(
+      GHMetadataItem(
+        icon: Icons.schedule,
+        label: 'Updated',
+        value: DateFormatter.formatRelative(repository.lastUpdated),
+      ),
+    );
+
+    // Created date
+    if (repository.createdAt != null) {
+      metadataItems.add(
+        GHMetadataItem(
+          icon: Icons.calendar_today,
+          label: 'Created',
+          value: DateFormatter.formatRelative(repository.createdAt!),
+        ),
+      );
+    }
+
     return GHCard(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            'About',
-            style: GHTokens.titleMedium.copyWith(
-              color: Theme.of(context).colorScheme.onSurface,
+          // Topics using chips
+          if (repository.topics.isNotEmpty) ...[
+            GHMetadataChips(
+              title: 'Topics',
+              items: repository.topics
+                  .map(
+                    (topic) => GHMetadataItem(
+                      label: topic,
+                      value: topic,
+                      onTap: () {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text('Search topic: $topic')),
+                        );
+                      },
+                    ),
+                  )
+                  .toList(),
             ),
-          ),
-          const SizedBox(height: GHTokens.spacing12),
-
-          // Topics
-          if (_repository.topics.isNotEmpty) ...[
-            Text(
-              'Topics',
-              style: GHTokens.labelLarge.copyWith(
-                color: Theme.of(context).colorScheme.onSurfaceVariant,
-              ),
-            ),
-            const SizedBox(height: GHTokens.spacing8),
-            Wrap(
-              spacing: GHTokens.spacing8,
-              runSpacing: GHTokens.spacing4,
-              children: _repository.topics.map((topic) {
-                return GHChip(
-                  label: topic,
-                  onTap: () {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('Search topic: $topic')),
-                    );
-                  },
-                );
-              }).toList(),
-            ),
-            const SizedBox(height: GHTokens.spacing16),
+            if (metadataItems.isNotEmpty)
+              const SizedBox(height: GHTokens.spacing16),
           ],
 
-          // Website
-          if (_repository.homepage != null) ...[
-            _buildMetadataItem(
-              icon: Icons.link,
-              label: 'Website',
-              value: _repository.homepage!,
-              onTap: () {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('Open ${_repository.homepage}')),
-                );
-              },
-            ),
-            const SizedBox(height: GHTokens.spacing8),
-          ],
-
-          // License
-          if (_repository.license != null) ...[
-            _buildMetadataItem(
-              icon: Icons.balance,
-              label: 'License',
-              value: _repository.license!,
-              onTap: () {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('View license details')),
-                );
-              },
-            ),
-            const SizedBox(height: GHTokens.spacing8),
-          ],
-
-          // Last updated
-          _buildMetadataItem(
-            icon: Icons.schedule,
-            label: 'Updated',
-            value: DateFormatter.formatRelative(_repository.lastUpdated),
-          ),
-          const SizedBox(height: GHTokens.spacing8),
-
-          // Created date
-          if (_repository.createdAt != null)
-            _buildMetadataItem(
-              icon: Icons.calendar_today,
-              label: 'Created',
-              value: DateFormatter.formatRelative(_repository.createdAt!),
-            ),
+          // Repository metadata
+          if (metadataItems.isNotEmpty) GHContentMetadata(items: metadataItems),
         ],
-      ),
-    );
-  }
-
-  Widget _buildMetadataItem({
-    required IconData icon,
-    required String label,
-    required String value,
-    VoidCallback? onTap,
-  }) {
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(GHTokens.radius4),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 2),
-        child: Row(
-          children: [
-            Icon(
-              icon,
-              size: 16,
-              color: Theme.of(context).colorScheme.onSurfaceVariant,
-            ),
-            const SizedBox(width: GHTokens.spacing8),
-            Text(
-              label,
-              style: GHTokens.bodyMedium.copyWith(
-                color: Theme.of(context).colorScheme.onSurfaceVariant,
-              ),
-            ),
-            const SizedBox(width: GHTokens.spacing8),
-            Expanded(
-              child: Text(
-                value,
-                style: GHTokens.bodyMedium.copyWith(
-                  color: onTap != null
-                      ? Theme.of(context).colorScheme.primary
-                      : Theme.of(context).colorScheme.onSurface,
-                  decoration: onTap != null ? TextDecoration.underline : null,
-                ),
-              ),
-            ),
-            if (onTap != null)
-              Icon(
-                Icons.open_in_new,
-                size: 16,
-                color: Theme.of(context).colorScheme.onSurfaceVariant,
-              ),
-          ],
-        ),
       ),
     );
   }
 
   Widget _buildNavigationGrid() {
-    return GHCard(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            'Explore',
-            style: GHTokens.titleMedium.copyWith(
-              color: Theme.of(context).colorScheme.onSurface,
-            ),
-          ),
-          const SizedBox(height: GHTokens.spacing16),
+    final repository = _repository;
+    if (repository == null) {
+      return const SizedBox.shrink();
+    }
 
-          GHNavigationGrid.twoByTwo(
-            items: GHNavigationItems.repository(
-              issues: _repository.issues.length,
-              pullRequests: _repository.issues
-                  .where((i) => i.isPullRequest)
-                  .length,
-              actions: 12, // Simulated actions count
-              onCodeTap: () {
-                NavigationService.navigateToRepositoryTree(
-                  widget.owner,
-                  widget.name,
-                );
-              },
-              onIssuesTap: () {
-                NavigationService.navigateToIssues(widget.owner, widget.name);
-              },
-              onPullRequestsTap: () {
-                NavigationService.navigateToPulls(widget.owner, widget.name);
-              },
-              onActionsTap: () {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Navigate to Actions')),
-                );
-              },
-            ),
-          ),
-        ],
+    return GHCard(
+      child: GHNavigationGrid.twoByTwo(
+        items: GHNavigationItems.repository(
+          issues: repository.issues.length,
+          pullRequests: repository.issues.where((i) => i.isPullRequest).length,
+          actions: 12, // Simulated actions count
+          onCodeTap: () {
+            NavigationService.navigateToRepositoryTree(
+              widget.owner,
+              widget.name,
+            );
+          },
+          onIssuesTap: () {
+            NavigationService.navigateToIssues(widget.owner, widget.name);
+          },
+          onPullRequestsTap: () {
+            NavigationService.navigateToPulls(widget.owner, widget.name);
+          },
+          onActionsTap: () {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Navigate to Actions')),
+            );
+          },
+        ),
       ),
     );
   }
 
   Widget _buildReadmeSection() {
+    final repository = _repository;
+    if (repository == null) {
+      return const SizedBox.shrink();
+    }
+
     return GHCard(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            children: [
-              Icon(
-                Icons.description_outlined,
-                size: 20,
-                color: Theme.of(context).colorScheme.onSurfaceVariant,
-              ),
-              const SizedBox(width: GHTokens.spacing8),
-              Text(
-                'README.md',
-                style: GHTokens.titleMedium.copyWith(
-                  color: Theme.of(context).colorScheme.onSurface,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: GHTokens.spacing16),
-
           Container(
             width: double.infinity,
             padding: const EdgeInsets.all(GHTokens.spacing16),
@@ -589,7 +516,7 @@ class _RepositoryDetailsExampleState extends State<RepositoryDetailsExample> {
                 const SizedBox(height: GHTokens.spacing12),
 
                 Text(
-                  _repository.description,
+                  repository.description,
                   style: GHTokens.bodyMedium.copyWith(
                     color: Theme.of(context).colorScheme.onSurface,
                   ),

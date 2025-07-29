@@ -227,6 +227,31 @@ class GHEmptyStates {
     );
   }
 
+  /// Empty state for no activity feed
+  static GHEmptyState noActivity({VoidCallback? onExplore}) {
+    return GHEmptyState(
+      icon: Icons.timeline_outlined,
+      title: 'Your activity will appear here',
+      subtitle:
+          'When you star repositories, follow people, or contribute to projects, your activity will show up here',
+      action: onExplore != null
+          ? ElevatedButton(
+              onPressed: onExplore,
+              child: const Text('Explore GitHub'),
+            )
+          : null,
+    );
+  }
+
+  /// Empty state for no notifications
+  static GHEmptyState noNotifications() {
+    return const GHEmptyState(
+      icon: Icons.notifications_none_outlined,
+      title: 'No notifications',
+      subtitle: 'When you have notifications, they\'ll appear here',
+    );
+  }
+
   /// Generic empty state for lists
   static GHEmptyState emptyList({
     required String title,

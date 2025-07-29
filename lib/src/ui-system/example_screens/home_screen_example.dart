@@ -8,6 +8,7 @@ import '../data/fake_data_service.dart';
 import '../components/gh_card.dart';
 import '../tokens/gh_tokens.dart';
 import '../navigation/navigation_service.dart';
+import '../state_widgets/gh_empty_state.dart';
 
 /// Home screen example showing authenticated GitHub dashboard
 class HomeScreenExample extends StatefulWidget {
@@ -170,25 +171,14 @@ class _HomeScreenExampleState extends State<HomeScreenExample> {
         const SizedBox(height: GHTokens.spacing12),
 
         if (activities.isEmpty)
-          const GHCard(
-            child: Padding(
-              padding: EdgeInsets.all(GHTokens.spacing12),
-              child: Column(
-                children: [
-                  Icon(Icons.timeline, size: 48, color: Colors.grey),
-                  SizedBox(height: GHTokens.spacing8),
-                  Text(
-                    'No recent activity',
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
-                  ),
-                  SizedBox(height: GHTokens.spacing4),
-                  Text(
-                    'Your GitHub activity will appear here',
-                    style: TextStyle(color: Colors.grey),
-                  ),
-                ],
-              ),
-            ),
+          GHEmptyStates.noActivity(
+            onExplore: () {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('Explore GitHub feature coming soon'),
+                ),
+              );
+            },
           )
         else
           ...activities.map(

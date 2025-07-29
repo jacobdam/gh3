@@ -10,6 +10,7 @@ import '../tokens/gh_tokens.dart';
 import '../navigation/navigation_service.dart';
 import '../utils/date_formatter.dart';
 import '../utils/debounced_search.dart';
+import '../state_widgets/gh_loading_indicator.dart';
 
 /// Pull requests list example screen showing repository PRs with filtering
 class PullsListExample extends StatefulWidget {
@@ -234,7 +235,10 @@ class _PullsListExampleState extends State<PullsListExample> {
         ),
       ],
       body: _isLoading
-          ? const Center(child: CircularProgressIndicator())
+          ? const GHLoadingIndicator.large(
+              label: 'Loading pull requests...',
+              centered: true,
+            )
           : GHListTemplate(
               searchHint: 'Search pull requests...',
               onRefresh: _loadPulls,

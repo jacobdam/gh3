@@ -6,6 +6,7 @@ import '../data/fake_data_service.dart';
 import '../components/gh_chip.dart';
 import '../tokens/gh_tokens.dart';
 import '../navigation/navigation_service.dart';
+import '../state_widgets/gh_loading_indicator.dart';
 
 /// User starred repositories screen showing repositories starred by the user
 class UserStarredScreen extends StatefulWidget {
@@ -111,7 +112,12 @@ class _UserStarredScreenState extends State<UserStarredScreen> {
   @override
   Widget build(BuildContext context) {
     if (_isLoading) {
-      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+      return const Scaffold(
+        body: GHLoadingIndicator.large(
+          label: 'Loading starred repositories...',
+          centered: true,
+        ),
+      );
     }
 
     return GHScreenTemplate(
