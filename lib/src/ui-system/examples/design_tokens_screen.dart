@@ -1,9 +1,26 @@
 import 'package:flutter/material.dart';
 import '../tokens/gh_tokens.dart';
+import '../layouts/gh_screen_template.dart';
 import '../utils/color_utils.dart';
 
-/// A showcase screen that displays all design tokens including colors,
-/// typography, spacing, and theme switching functionality.
+/// **REFERENCE IMPLEMENTATION** - Design Tokens Screen
+///
+/// This screen serves as the definitive reference implementation for design token
+/// usage and theming patterns in the GH3 design system. It demonstrates:
+///
+/// - Proper GHTokens constant usage for all design values
+/// - Theme-aware color implementations
+/// - Typography scale application
+/// - Spacing system demonstrations
+/// - Icon sizing and usage patterns
+/// - Semantic color mapping (success, warning, error)
+///
+/// **Usage as Reference:**
+/// - Copy token usage patterns for consistent styling
+/// - Follow the theme-aware color implementations
+/// - Use the demonstrated typography patterns
+/// - Reference spacing usage throughout the file
+/// - Maintain semantic color meanings shown here
 ///
 /// This screen serves as a visual reference for developers and designers
 /// to see all available design tokens in action.
@@ -29,19 +46,17 @@ class _DesignTokensScreenState extends State<DesignTokensScreen> {
       data: _isDarkMode
           ? ThemeData.dark(useMaterial3: true)
           : ThemeData.light(useMaterial3: true),
-      child: Scaffold(
-        appBar: AppBar(
-          title: const Text('Design Tokens'),
-          actions: [
-            IconButton(
-              icon: Icon(_isDarkMode ? Icons.light_mode : Icons.dark_mode),
-              onPressed: _toggleTheme,
-              tooltip: _isDarkMode
-                  ? 'Switch to Light Mode'
-                  : 'Switch to Dark Mode',
-            ),
-          ],
-        ),
+      child: GHScreenTemplate(
+        title: 'Design Tokens',
+        actions: [
+          IconButton(
+            icon: Icon(_isDarkMode ? Icons.light_mode : Icons.dark_mode),
+            onPressed: _toggleTheme,
+            tooltip: _isDarkMode
+                ? 'Switch to Light Mode'
+                : 'Switch to Dark Mode',
+          ),
+        ],
         body: SingleChildScrollView(
           padding: const EdgeInsets.all(GHTokens.spacing16),
           child: Column(

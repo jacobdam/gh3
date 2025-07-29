@@ -11,10 +11,26 @@ import '../state_widgets/gh_empty_state.dart';
 import '../state_widgets/gh_error_state.dart';
 import '../state_widgets/gh_loading_indicator.dart';
 import '../layouts/gh_content_template.dart';
+import '../layouts/gh_screen_template.dart';
 import '../widgets/gh_content_metadata.dart';
 import '../utils/color_utils.dart';
 
-/// A showcase screen that displays all core UI components in different states.
+/// **REFERENCE IMPLEMENTATION** - Component Catalog Screen
+///
+/// This screen serves as the primary reference implementation for component usage
+/// patterns in the GH3 design system. It demonstrates:
+///
+/// - Proper component instantiation and configuration
+/// - Correct spacing using GHTokens constants
+/// - State management patterns for interactive components
+/// - GHScreenTemplate usage for consistent navigation
+/// - Material Design 3 theming integration
+///
+/// **Usage as Reference:**
+/// - Copy component examples from this file for new implementations
+/// - Follow the spacing patterns demonstrated here
+/// - Use the state management approaches shown in interactive sections
+/// - Maintain the same component configuration patterns
 ///
 /// This screen serves as an interactive component library where developers
 /// can see all components in action with various configurations and states.
@@ -34,9 +50,11 @@ class _ComponentCatalogScreenState extends State<ComponentCatalogScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Component Catalog')),
+    // REFERENCE PATTERN: Always use GHScreenTemplate for consistent screen structure
+    return GHScreenTemplate(
+      title: 'Component Catalog',
       body: SingleChildScrollView(
+        // REFERENCE PATTERN: Use GHTokens spacing constants for all padding/margins
         padding: const EdgeInsets.all(GHTokens.spacing16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -97,9 +115,12 @@ class _ComponentCatalogScreenState extends State<ComponentCatalogScreen> {
     );
   }
 
+  // REFERENCE PATTERN: Helper method for consistent section headers
   Widget _buildSectionHeader(String title) {
     return Padding(
+      // REFERENCE PATTERN: Use specific spacing tokens instead of arbitrary values
       padding: const EdgeInsets.only(bottom: GHTokens.spacing16),
+      // REFERENCE PATTERN: Use GHTokens typography constants for consistent text styling
       child: Text(title, style: GHTokens.titleLarge),
     );
   }
@@ -111,12 +132,14 @@ class _ComponentCatalogScreenState extends State<ComponentCatalogScreen> {
         Text('Basic Cards', style: GHTokens.titleMedium),
         const SizedBox(height: GHTokens.spacing12),
 
-        // Basic card
+        // REFERENCE PATTERN: Basic card with standard content layout
         GHCard(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              // REFERENCE PATTERN: Always use GHTokens for typography
               Text('Basic Card', style: GHTokens.titleMedium),
+              // REFERENCE PATTERN: Use spacing tokens for consistent vertical spacing
               const SizedBox(height: GHTokens.spacing8),
               Text(
                 'This is a basic card with default styling and padding.',
@@ -126,9 +149,10 @@ class _ComponentCatalogScreenState extends State<ComponentCatalogScreen> {
           ),
         ),
 
+        // REFERENCE PATTERN: Consistent spacing between components
         const SizedBox(height: GHTokens.spacing16),
 
-        // Interactive card
+        // REFERENCE PATTERN: Interactive card with tap handler and visual feedback
         GHCard(
           onTap: () {
             ScaffoldMessenger.of(
