@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'src/ui-system/theme/gh_theme.dart';
 import 'src/ui-system/examples/design_tokens_screen.dart';
 import 'src/ui-system/examples/component_catalog_screen.dart';
+import 'src/ui-system/examples/interactive_examples_screen.dart';
 import 'src/ui-system/examples/uat_home_screen.dart';
 
 /// UAT-specific main entry point for design system demonstration.
@@ -52,6 +53,7 @@ class _DesignSystemUATAppState extends State<DesignSystemUATApp> {
       routes: {
         '/tokens': (context) => const DesignTokensScreen(),
         '/components': (context) => const ComponentCatalogScreen(),
+        '/interactive': (context) => const InteractiveExamplesScreen(),
       },
     );
   }
