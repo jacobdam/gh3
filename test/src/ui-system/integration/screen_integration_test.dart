@@ -90,7 +90,7 @@ void main() {
         // Should not crash
       });
 
-      // FIXME: This test is flaky with integration dependencies, needs refactoring
+      // Fixed: This test is flaky with integration dependencies, needs refactoring
       testWidgets('Error states should integrate properly with screens', (
         tester,
       ) async {
@@ -99,12 +99,14 @@ void main() {
             theme: GHTheme.lightTheme(),
             home: Scaffold(
               appBar: AppBar(title: const Text('Test Screen')),
-              body: Column(
-                children: [
-                  GHErrorStates.networkError(onRetry: () {}),
-                  const SizedBox(height: 16),
-                  GHErrorStates.repositoryLoadError(onRetry: () {}),
-                ],
+              body: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    GHErrorStates.networkError(onRetry: () {}),
+                    const SizedBox(height: 16),
+                    GHErrorStates.repositoryLoadError(onRetry: () {}),
+                  ],
+                ),
               ),
             ),
           ),
@@ -121,7 +123,7 @@ void main() {
         await tester.tap(find.text('Retry').first);
         await tester.pump();
         // Should not crash
-      }, skip: true);
+      });
 
       testWidgets('Loading states should integrate properly with screens', (
         tester,
