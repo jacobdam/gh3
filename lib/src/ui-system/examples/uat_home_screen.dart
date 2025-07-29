@@ -72,6 +72,16 @@ class UATHomeScreen extends StatelessWidget {
               route: '/components',
               isPrimary: false,
             ),
+            const SizedBox(height: GHTokens.spacing16),
+
+            _buildNavigationCard(
+              context,
+              title: 'Interactive Examples',
+              description: 'Real-world scenarios and advanced interactions',
+              icon: Icons.touch_app,
+              route: '/interactive',
+              isPrimary: false,
+            ),
 
             const SizedBox(height: GHTokens.spacing32),
 
