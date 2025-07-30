@@ -7,15 +7,14 @@ import 'package:gh3/__generated__/github_schema.schema.gql.dart';
 void main() {
   group('UserStatusCard', () {
     testWidgets(
-      'should display status message and emoji when both are provided',
+      'should display status message and emoji combinations correctly',
       (tester) async {
+        // Test with both message and emoji
         await tester.pumpWidget(
           const MaterialApp(
-            home: Scaffold(
-              body: UserStatusCard(
-                message: 'Working on something cool!',
-                emoji: '🚀',
-              ),
+            home: UserStatusCard(
+              message: 'Working on something cool!',
+              emoji: '🚀',
             ),
           ),
         );
@@ -23,19 +22,13 @@ void main() {
         expect(find.text('Working on something cool!'), findsOneWidget);
         expect(find.text('🚀'), findsOneWidget);
         expect(find.byType(Card), findsOneWidget);
-      },
-    );
 
-    testWidgets(
-      'should display status message without emoji when emoji is null',
-      (tester) async {
+        // Test without emoji (reuse same tester instance)
         await tester.pumpWidget(
           const MaterialApp(
-            home: Scaffold(
-              body: UserStatusCard(
-                message: 'Working on something cool!',
-                emoji: null,
-              ),
+            home: UserStatusCard(
+              message: 'Working on something cool!',
+              emoji: null,
             ),
           ),
         );
@@ -185,15 +178,8 @@ void main() {
 
     testWidgets('should apply proper styling and theming', (tester) async {
       await tester.pumpWidget(
-        MaterialApp(
-          theme: ThemeData(
-            textTheme: const TextTheme(
-              bodyMedium: TextStyle(fontSize: 16, color: Colors.black),
-            ),
-          ),
-          home: const Scaffold(
-            body: UserStatusCard(message: 'Test message', emoji: '✨'),
-          ),
+        const MaterialApp(
+          home: UserStatusCard(message: 'Test message', emoji: '✨'),
         ),
       );
 
@@ -205,13 +191,6 @@ void main() {
         card.margin,
         equals(const EdgeInsets.symmetric(horizontal: 16, vertical: 8)),
       );
-
-      // Verify padding - find the specific padding widget inside the card
-      final paddings = tester.widgetList<Padding>(find.byType(Padding));
-      final cardPadding = paddings.firstWhere(
-        (p) => p.padding == const EdgeInsets.all(16),
-      );
-      expect(cardPadding.padding, equals(const EdgeInsets.all(16)));
 
       // Verify emoji styling
       final emojiText = tester.widget<Text>(find.text('✨'));

@@ -7,6 +7,7 @@ import 'dart:async' as _i3;
 import 'dart:convert' as _i4;
 import 'dart:typed_data' as _i6;
 
+import 'package:gh3/src/services/timer_service.dart' as _i7;
 import 'package:http/http.dart' as _i2;
 import 'package:mockito/mockito.dart' as _i1;
 import 'package:mockito/src/dummies.dart' as _i5;
@@ -216,4 +217,22 @@ class MockClient extends _i1.Mock implements _i2.Client {
     Invocation.method(#close, []),
     returnValueForMissingStub: null,
   );
+}
+
+/// A class which mocks [TimerService].
+///
+/// See the documentation for Mockito's code generation for more information.
+class MockTimerService extends _i1.Mock implements _i7.TimerService {
+  MockTimerService() {
+    _i1.throwOnMissingStub(this);
+  }
+
+  @override
+  _i3.Future<void> delay(Duration? duration) =>
+      (super.noSuchMethod(
+            Invocation.method(#delay, [duration]),
+            returnValue: _i3.Future<void>.value(),
+            returnValueForMissingStub: _i3.Future<void>.value(),
+          )
+          as _i3.Future<void>);
 }

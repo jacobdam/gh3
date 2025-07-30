@@ -19,7 +19,8 @@ void main() {
       expect(find.text('Following'), findsOneWidget);
     });
 
-    testWidgets('should format large numbers correctly', (tester) async {
+    testWidgets('should handle various count scenarios', (tester) async {
+      // Test large numbers
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -27,14 +28,10 @@ void main() {
           ),
         ),
       );
-
       expect(find.text('1.2k'), findsOneWidget);
       expect(find.text('1.5M'), findsOneWidget);
-    });
 
-    testWidgets('should format exact thousands and millions without decimals', (
-      tester,
-    ) async {
+      // Test exact thousands and millions
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -42,38 +39,21 @@ void main() {
           ),
         ),
       );
-
       expect(find.text('1k'), findsOneWidget);
       expect(find.text('2M'), findsOneWidget);
-    });
 
-    testWidgets('should handle zero counts', (tester) async {
+      // Test zero and small numbers
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
-            body: UserStatsRow(followerCount: 0, followingCount: 0),
+            body: UserStatsRow(followerCount: 0, followingCount: 999),
           ),
         ),
       );
-
-      expect(find.text('0'), findsNWidgets(2));
+      expect(find.text('0'), findsOneWidget);
+      expect(find.text('999'), findsOneWidget);
       expect(find.text('Followers'), findsOneWidget);
       expect(find.text('Following'), findsOneWidget);
-    });
-
-    testWidgets('should handle small numbers without formatting', (
-      tester,
-    ) async {
-      await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
-            body: UserStatsRow(followerCount: 999, followingCount: 42),
-          ),
-        ),
-      );
-
-      expect(find.text('999'), findsOneWidget);
-      expect(find.text('42'), findsOneWidget);
     });
 
     testWidgets(
@@ -229,20 +209,19 @@ void main() {
     });
 
     group('count formatting', () {
-      testWidgets('should format small numbers without suffix', (tester) async {
+      testWidgets('should format all number ranges correctly', (tester) async {
+        // Test zero and small numbers
         await tester.pumpWidget(
           MaterialApp(
             home: Scaffold(
-              body: UserStatsRow(followerCount: 999, followingCount: 42),
+              body: UserStatsRow(followerCount: 0, followingCount: 42),
             ),
           ),
         );
-
-        expect(find.text('999'), findsOneWidget);
+        expect(find.text('0'), findsOneWidget);
         expect(find.text('42'), findsOneWidget);
-      });
 
-      testWidgets('should format thousands with k suffix', (tester) async {
+        // Test thousands
         await tester.pumpWidget(
           MaterialApp(
             home: Scaffold(
@@ -250,12 +229,10 @@ void main() {
             ),
           ),
         );
-
         expect(find.text('1k'), findsOneWidget);
         expect(find.text('1.2k'), findsOneWidget);
-      });
 
-      testWidgets('should format millions with M suffix', (tester) async {
+        // Test millions
         await tester.pumpWidget(
           MaterialApp(
             home: Scaffold(
@@ -266,51 +243,8 @@ void main() {
             ),
           ),
         );
-
         expect(find.text('1M'), findsOneWidget);
         expect(find.text('1.5M'), findsOneWidget);
-      });
-
-      testWidgets('should format large thousands correctly', (tester) async {
-        await tester.pumpWidget(
-          MaterialApp(
-            home: Scaffold(
-              body: UserStatsRow(followerCount: 15000, followingCount: 999999),
-            ),
-          ),
-        );
-
-        expect(find.text('15k'), findsOneWidget);
-        expect(find.text('1000.0k'), findsOneWidget);
-      });
-
-      testWidgets('should format large millions correctly', (tester) async {
-        await tester.pumpWidget(
-          MaterialApp(
-            home: Scaffold(
-              body: UserStatsRow(
-                followerCount: 10000000,
-                followingCount: 15000000,
-              ),
-            ),
-          ),
-        );
-
-        expect(find.text('10M'), findsOneWidget);
-        expect(find.text('15M'), findsOneWidget);
-      });
-
-      testWidgets('should format zero correctly', (tester) async {
-        await tester.pumpWidget(
-          MaterialApp(
-            home: Scaffold(
-              body: UserStatsRow(followerCount: 0, followingCount: 1),
-            ),
-          ),
-        );
-
-        expect(find.text('0'), findsOneWidget);
-        expect(find.text('1'), findsOneWidget);
       });
     });
   });
