@@ -13,13 +13,101 @@ import '../example_screens/trending_example.dart';
 import '../example_screens/user_repositories_screen.dart';
 import '../example_screens/user_starred_screen.dart';
 import '../example_screens/user_organizations_screen.dart';
+import '../examples/uat_home_screen.dart';
+import '../examples/design_tokens_screen.dart';
+import '../examples/component_catalog_screen.dart';
+import '../examples/interactive_examples_screen.dart';
+import '../examples/interactive_component_demo_screen.dart';
+import '../examples/documentation_screen.dart';
+import '../examples/reference_patterns_guide.dart';
+import '../examples/developer_guide_screen.dart';
+import '../docs/stakeholder_presentation_guide.dart';
+import '../docs/ui_system_impact_summary.dart';
+import '../comparison/navigation_comparison_screen.dart';
+import '../comparison/spacing_comparison_screen.dart';
+import '../comparison/component_showcase_comparison_screen.dart';
+import '../tools/measurement_validation_screen.dart';
+import '../tools/standards_compliance_screen.dart';
+import '../tools/demo_readiness_checklist.dart';
 import 'example_routes.dart';
 
 /// Navigation service for the UI system example screens
 class NavigationService {
   static final GoRouter router = GoRouter(
-    initialLocation: ExampleRoutes.home,
+    initialLocation: '/',
     routes: [
+      // UAT Home Screen (main entry point)
+      GoRoute(path: '/', builder: (context, state) => _UATHomeWrapper()),
+
+      // Design System Showcase Routes
+      GoRoute(
+        path: '/tokens',
+        builder: (context, state) => const DesignTokensScreen(),
+      ),
+      GoRoute(
+        path: '/components',
+        builder: (context, state) => const ComponentCatalogScreen(),
+      ),
+      GoRoute(
+        path: '/interactive',
+        builder: (context, state) => const InteractiveExamplesScreen(),
+      ),
+      GoRoute(
+        path: '/interactive-demo',
+        builder: (context, state) => const InteractiveComponentDemoScreen(),
+      ),
+
+      // Comparison Routes
+      GoRoute(
+        path: '/comparison/navigation',
+        builder: (context, state) => const NavigationComparisonScreen(),
+      ),
+      GoRoute(
+        path: '/comparison/spacing',
+        builder: (context, state) => const SpacingComparisonScreen(),
+      ),
+      GoRoute(
+        path: '/comparison/components',
+        builder: (context, state) => const ComponentShowcaseComparisonScreen(),
+      ),
+
+      // Developer Tools Routes
+      GoRoute(
+        path: '/tools/measurement',
+        builder: (context, state) => const MeasurementValidationScreen(),
+      ),
+      GoRoute(
+        path: '/tools/compliance',
+        builder: (context, state) => const StandardsComplianceScreen(),
+      ),
+      GoRoute(
+        path: '/tools/demo-checklist',
+        builder: (context, state) => const DemoReadinessChecklist(),
+      ),
+
+      // Documentation Routes
+      GoRoute(
+        path: '/documentation',
+        builder: (context, state) => const DocumentationScreen(),
+      ),
+      GoRoute(
+        path: '/reference',
+        builder: (context, state) => const ReferencePatternsGuide(),
+      ),
+      GoRoute(
+        path: '/developer-guide',
+        builder: (context, state) => const DeveloperGuideScreen(),
+      ),
+      GoRoute(
+        path: '/stakeholder-guide',
+        builder: (context, state) => const StakeholderPresentationGuide(),
+      ),
+      GoRoute(
+        path: '/impact-summary',
+        builder: (context, state) => const UISystemImpactSummary(),
+      ),
+
+      // Example Screens Routes
       GoRoute(
         path: ExampleRoutes.home,
         builder: (context, state) => const HomeScreenExample(),
@@ -242,5 +330,28 @@ class NavigationService {
         ),
       ),
     );
+  }
+}
+
+/// Theme-aware wrapper for UAT Home Screen
+class _UATHomeWrapper extends StatefulWidget {
+  @override
+  State<_UATHomeWrapper> createState() => _UATHomeWrapperState();
+}
+
+class _UATHomeWrapperState extends State<_UATHomeWrapper> {
+  ThemeMode _themeMode = ThemeMode.system;
+
+  void _toggleTheme() {
+    setState(() {
+      _themeMode = _themeMode == ThemeMode.light
+          ? ThemeMode.dark
+          : ThemeMode.light;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return UATHomeScreen(onThemeToggle: _toggleTheme);
   }
 }

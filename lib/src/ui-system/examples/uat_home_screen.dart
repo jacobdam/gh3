@@ -50,7 +50,56 @@ class UATHomeScreen extends StatelessWidget {
               ),
               textAlign: TextAlign.center,
             ),
-            const SizedBox(height: GHTokens.spacing32),
+            const SizedBox(height: GHTokens.spacing24),
+
+            // Stakeholder presentation guide - prominent placement
+            Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [
+                    Theme.of(
+                      context,
+                    ).colorScheme.primary.withValues(alpha: 0.1),
+                    Theme.of(
+                      context,
+                    ).colorScheme.primaryContainer.withValues(alpha: 0.2),
+                  ],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+                borderRadius: BorderRadius.circular(GHTokens.radius12),
+                border: Border.all(
+                  color: Theme.of(
+                    context,
+                  ).colorScheme.primary.withValues(alpha: 0.3),
+                  width: 1,
+                ),
+              ),
+              child: _buildNavigationCard(
+                context,
+                title: '🎯 Stakeholder Presentation Guide',
+                description:
+                    'Complete presentation flow with talking points, key metrics, and navigation guidance. '
+                    'Essential for stakeholder demonstrations - includes 30-45 minute structured presentation with measurable impact metrics.',
+                icon: Icons.present_to_all,
+                route: '/stakeholder-guide',
+                isPrimary: true,
+              ),
+            ),
+            const SizedBox(height: GHTokens.spacing16),
+
+            // Impact summary - secondary prominent placement
+            _buildNavigationCard(
+              context,
+              title: '📊 UI System Impact Summary',
+              description:
+                  'Complete transformation results with measurable business impact, strategic value, '
+                  'and implementation success metrics. Essential for stakeholder approval and project validation.',
+              icon: Icons.summarize,
+              route: '/impact-summary',
+              isPrimary: true,
+            ),
+            const SizedBox(height: GHTokens.spacing24),
 
             // Navigation cards
             _buildNavigationCard(
@@ -186,6 +235,18 @@ class UATHomeScreen extends StatelessWidget {
               icon: Icons.assessment,
               route: '/tools/compliance',
               isPrimary: false,
+            ),
+            const SizedBox(height: GHTokens.spacing16),
+
+            _buildNavigationCard(
+              context,
+              title: 'Demo Readiness Checklist',
+              description:
+                  'Comprehensive validation checklist for stakeholder presentations with systematic '
+                  'verification of all demo components, performance quality, and presentation readiness',
+              icon: Icons.checklist,
+              route: '/tools/demo-checklist',
+              isPrimary: true,
             ),
 
             const SizedBox(height: GHTokens.spacing32),

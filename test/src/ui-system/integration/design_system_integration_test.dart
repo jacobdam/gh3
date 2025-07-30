@@ -80,9 +80,15 @@ void main() {
       await tester.pumpWidget(const DesignSystemUATApp());
 
       expect(find.text('Build Information'), findsOneWidget);
-      expect(find.text('Design System Foundation v1.0.0'), findsOneWidget);
       expect(
-        find.text('Built for cross-platform UAT and stakeholder review'),
+        find.text('GitHub Mobile Design System v1.0.0 - Phase 4 Demo'),
+        findsOneWidget,
+      );
+      expect(
+        find.text(
+          'Comprehensive stakeholder demonstration with before/after comparisons, '
+          'interactive components, and professional validation tools',
+        ),
         findsOneWidget,
       );
     });
@@ -91,10 +97,10 @@ void main() {
       await tester.pumpWidget(const DesignSystemUATApp());
       await tester.pump();
 
-      expect(find.text('Material Design 3 Integration'), findsOneWidget);
-      expect(find.text('Cross-Platform Compatibility'), findsOneWidget);
-      expect(find.text('Accessibility Compliant'), findsOneWidget);
-      expect(find.text('Interactive Components'), findsOneWidget);
+      expect(find.text('Material Design 3 Foundation'), findsOneWidget);
+      expect(find.text('Navigation Efficiency Improvements'), findsOneWidget);
+      expect(find.text('Visual Consistency Through 4dp Grid'), findsOneWidget);
+      expect(find.text('Enhanced State Management'), findsOneWidget);
     });
 
     // Fixed: Theme state navigation test has pumpAndSettle timeout issues - simplified
