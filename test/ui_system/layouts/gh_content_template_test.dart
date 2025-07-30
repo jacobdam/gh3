@@ -27,11 +27,9 @@ void main() {
     testWidgets('should display header when provided', (tester) async {
       await tester.pumpWidget(
         MaterialApp(
-          home: Scaffold(
-            body: GHContentTemplate(
-              header: const Text('Header'),
-              sections: [Container(height: 50, color: Colors.red)],
-            ),
+          home: GHContentTemplate(
+            header: const Text('Header'),
+            sections: [Container(height: 50, color: Colors.red)],
           ),
         ),
       );

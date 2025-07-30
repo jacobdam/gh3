@@ -412,25 +412,18 @@ void main() {
       expect(sizedBoxList[3].height, equals(GHTokens.spacing24));
     });
 
-    testWidgets('should use default padding from design tokens', (
-      tester,
-    ) async {
+    testWidgets('should use default padding from design tokens', (tester) async {
       await tester.pumpWidget(
-        const MaterialApp(
-          home: Scaffold(
-            body: GHEmptyState(
-              icon: Icons.folder_outlined,
-              title: 'Test Title',
-            ),
+        MaterialApp(
+          home: GHEmptyState(
+            icon: Icons.folder_outlined,
+            title: 'Test Title',
           ),
         ),
       );
 
       final paddingWidget = tester.widget<Padding>(find.byType(Padding));
-      expect(
-        paddingWidget.padding,
-        equals(const EdgeInsets.all(GHTokens.spacing24)),
-      );
+      expect(paddingWidget.padding, equals(const EdgeInsets.all(GHTokens.spacing24)));
     });
   });
 }

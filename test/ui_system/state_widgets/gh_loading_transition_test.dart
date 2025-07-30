@@ -310,29 +310,19 @@ void main() {
       expect(find.text('Loading...'), findsNothing);
     });
 
-    testWidgets('should use AnimatedOpacity for smooth transitions', (
-      tester,
-    ) async {
+    testWidgets('should use AnimatedOpacity for smooth transitions', (tester) async {
       await tester.pumpWidget(
         MaterialApp(
-          home: Scaffold(
-            body: SizedBox(
-              height: 200,
-              width: 200,
-              child: GHLoadingOverlay(
-                isLoading: true,
-                message: 'Loading...',
-                child: const Text('Background Content'),
-              ),
-            ),
+          home: GHLoadingOverlay(
+            isLoading: true,
+            message: 'Loading...',
+            child: const Text('Background Content'),
           ),
         ),
       );
 
       expect(find.byType(AnimatedOpacity), findsOneWidget);
-      final animatedOpacity = tester.widget<AnimatedOpacity>(
-        find.byType(AnimatedOpacity),
-      );
+      final animatedOpacity = tester.widget<AnimatedOpacity>(find.byType(AnimatedOpacity));
       expect(animatedOpacity.duration, const Duration(milliseconds: 200));
       expect(animatedOpacity.opacity, 1.0);
     });
