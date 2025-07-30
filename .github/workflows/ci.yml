@@ -33,5 +33,5 @@ jobs:
         run: flutter analyze
 
       - name: Run tests
-        run: flutter test test/ui_system test/integration test/routing test/screens test/services test/widgets test/src/ui-system.skip/utils test/src/ui-system.skip/accessibility test/src/ui-system.skip/components test/src/ui-system.skip/theme test/app_start_test.dart test/widget_test.dart --no-pub --coverage --timeout=30s
+        run: flutter test test/ui_system test/integration test/routing test/screens test/services test/widgets test/src/ui-system.skip/utils test/src/ui-system.skip/accessibility test/src/ui-system.skip/components test/src/ui-system.skip/theme test/src/ui-system.skip/state_widgets test/app_start_test.dart test/widget_test.dart --no-pub --coverage --timeout=30s
         timeout-minutes: 5
