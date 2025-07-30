@@ -107,8 +107,8 @@ void main() {
       // During transition, AnimatedSwitcher may show both or neither
       await tester.pump(const Duration(milliseconds: 50));
 
-      // After transition completes
-      await tester.pumpAndSettle();
+      // After transition completes (wait for animation duration)
+      await tester.pump(const Duration(milliseconds: 350));
       expect(find.byType(GHLoadingIndicator), findsNothing);
       expect(find.text('Content'), findsOneWidget);
     });
@@ -249,8 +249,8 @@ void main() {
       await tester.pump(const Duration(milliseconds: 10));
       await tester.tap(find.text('Toggle'));
 
-      // Should handle rapid changes gracefully
-      await tester.pumpAndSettle();
+      // Should handle rapid changes gracefully (wait for animation duration)
+      await tester.pump(const Duration(milliseconds: 350));
       expect(find.text('Content'), findsOneWidget);
     });
   });
@@ -304,8 +304,8 @@ void main() {
       // During transition
       await tester.pump(const Duration(milliseconds: 100));
 
-      // After transition
-      await tester.pumpAndSettle();
+      // After transition (wait for opacity animation duration)
+      await tester.pump(const Duration(milliseconds: 250));
       expect(find.text('Background Content'), findsOneWidget);
       expect(find.text('Loading...'), findsNothing);
     });
