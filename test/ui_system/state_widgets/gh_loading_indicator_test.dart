@@ -319,7 +319,10 @@ void main() {
       expect(callbackCalled, isTrue);
 
       // Wait for the async operation to complete
-      await tester.pumpAndSettle();
+      await tester.pump(const Duration(milliseconds: 20));
+      
+      expect(find.text('Submit'), findsOneWidget);
+      expect(find.byType(GHLoadingIndicator), findsNothing);
     });
 
     testWidgets('should support different button styles', (tester) async {
