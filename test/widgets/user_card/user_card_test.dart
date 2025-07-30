@@ -34,29 +34,30 @@ void main() {
     });
 
     testWidgets(
-      'should display avatar fallback with first letter of login if avatarUrl is empty',
+      'should display avatar fallback correctly for different scenarios',
       (tester) async {
-        final user = baseUser.rebuild((b) => b..avatarUrl.value = '');
         await mockNetworkImages(() async {
+          // Test fallback with first letter of login
+          final userWithEmptyAvatar = baseUser.rebuild(
+            (b) => b..avatarUrl.value = '',
+          );
           await tester.pumpWidget(
-            MaterialApp(home: Scaffold(body: UserCard.fromFragment(user))),
+            MaterialApp(
+              home: Scaffold(body: UserCard.fromFragment(userWithEmptyAvatar)),
+            ),
           );
           expect(find.text('T'), findsOneWidget); // 'T' from 'testuser'
-        });
-      },
-    );
 
-    testWidgets(
-      'should display avatar fallback with ? if avatarUrl and login are empty',
-      (tester) async {
-        final user = baseUser.rebuild(
-          (b) => b
-            ..avatarUrl.value = ''
-            ..login = '',
-        );
-        await mockNetworkImages(() async {
+          // Test fallback with ? when both avatarUrl and login are empty
+          final userWithEmptyBoth = baseUser.rebuild(
+            (b) => b
+              ..avatarUrl.value = ''
+              ..login = '',
+          );
           await tester.pumpWidget(
-            MaterialApp(home: Scaffold(body: UserCard.fromFragment(user))),
+            MaterialApp(
+              home: Scaffold(body: UserCard.fromFragment(userWithEmptyBoth)),
+            ),
           );
           expect(find.text('?'), findsOneWidget);
         });

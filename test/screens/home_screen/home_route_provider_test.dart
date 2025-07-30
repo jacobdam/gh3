@@ -74,6 +74,8 @@ void main() {
     test('should inject dependencies correctly into HomeScreen', () {
       // Arrange
       when(mockHomeViewModelFactory.create()).thenReturn(mockHomeViewModel);
+      // Mock loadCurrentUser to prevent network calls during widget initialization
+      when(mockHomeViewModel.loadCurrentUser()).thenAnswer((_) async {});
 
       // Act
       final route = homeRouteProvider.getRoute();
@@ -81,9 +83,12 @@ void main() {
       final widget =
           goRoute.builder!(mockBuildContext, mockGoRouterState) as HomeScreen;
 
-      // Assert
+      // Assert - verify dependencies are correctly injected
       expect(widget.authViewModel, equals(mockAuthViewModel));
       expect(widget.homeViewModel, equals(mockHomeViewModel));
+
+      // Verify factory was called
+      verify(mockHomeViewModelFactory.create()).called(1);
     });
   });
 }

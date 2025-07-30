@@ -517,9 +517,9 @@ void main() {
     testWidgets('should handle mixed content types appropriately', (
       tester,
     ) async {
-      const items = [
-        GHMetadataItem(label: 'Simple', value: 'Text value'),
-        GHMetadataItem(
+      final items = [
+        const GHMetadataItem(label: 'Simple', value: 'Text value'),
+        const GHMetadataItem(
           icon: Icons.star,
           label: 'With Icon',
           value: '123 stars',
@@ -528,27 +528,13 @@ void main() {
           label: 'Link',
           value: 'Click me',
           isLink: true,
-          onTap: null,
+          onTap: () {},
         ),
       ];
 
       await tester.pumpWidget(
         MaterialApp(
-          home: Scaffold(
-            body: GHContentMetadata(
-              items: items
-                  .map(
-                    (item) => GHMetadataItem(
-                      icon: item.icon,
-                      label: item.label,
-                      value: item.value,
-                      onTap: item.label == 'Link' ? () {} : null,
-                      isLink: item.isLink,
-                    ),
-                  )
-                  .toList(),
-            ),
-          ),
+          home: Scaffold(body: GHContentMetadata(items: items)),
         ),
       );
 

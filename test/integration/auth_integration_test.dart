@@ -10,7 +10,7 @@ import 'package:gh3/src/services/token_storage.dart';
 import 'package:gh3/src/services/scope_service.dart';
 import 'package:gh3/src/services/timer_service.dart';
 
-@GenerateMocks([http.Client])
+@GenerateMocks([http.Client, TimerService])
 import 'auth_integration_test.mocks.dart';
 
 void main() {
@@ -20,7 +20,7 @@ void main() {
     late GithubAuthClient authClient;
     late ITokenStorage tokenStorage;
     late IScopeService scopeService;
-    late TimerService timerService;
+    late MockTimerService mockTimerService;
 
     setUp(() async {
       SharedPreferences.setMockInitialValues({});
@@ -29,13 +29,16 @@ void main() {
       authClient = GithubAuthClient(mockHttpClient, 'test_client_id');
       tokenStorage = PrefsTokenStorage();
       scopeService = ScopeService(mockHttpClient);
-      timerService = DefaultTimerService();
+      mockTimerService = MockTimerService();
+
+      // Mock timer service to return immediately (no actual delays)
+      when(mockTimerService.delay(any)).thenAnswer((_) async {});
 
       authService = AuthService(
         authClient,
         tokenStorage,
         scopeService,
-        timerService,
+        mockTimerService,
       );
     });
 
@@ -112,7 +115,7 @@ void main() {
             authClient,
             tokenStorage,
             scopeService,
-            timerService,
+            mockTimerService,
           );
 
           await newAuthService.init();
@@ -174,14 +177,12 @@ void main() {
           ),
         );
 
-        final stopwatch = Stopwatch()..start();
         final token = await authService.login();
-        stopwatch.stop();
 
         expect(token, 'delayed_token');
         expect(authService.isLoggedIn, isTrue);
-        // Verify there was a delay (should be at least 5 seconds due to authorization pending)
-        expect(stopwatch.elapsedMilliseconds, greaterThan(4000));
+        // Verify that the timer service was called for authorization pending delay
+        verify(mockTimerService.delay(const Duration(seconds: 5))).called(1);
       });
 
       test('device flow with slow down then success', () async {
@@ -237,14 +238,12 @@ void main() {
           ),
         );
 
-        final stopwatch = Stopwatch()..start();
         final token = await authService.login();
-        stopwatch.stop();
 
         expect(token, 'slow_token');
         expect(authService.isLoggedIn, isTrue);
-        // Verify there was a longer delay (should be at least 10 seconds due to slow down)
-        expect(stopwatch.elapsedMilliseconds, greaterThan(9000));
+        // Verify that the timer service was called for slow down delay
+        verify(mockTimerService.delay(const Duration(seconds: 10))).called(1);
       });
     });
 
@@ -382,7 +381,7 @@ void main() {
           authClient,
           tokenStorage,
           scopeService,
-          timerService,
+          mockTimerService,
         );
         await newAuthService.init();
         expect(newAuthService.isLoggedIn, isFalse);
