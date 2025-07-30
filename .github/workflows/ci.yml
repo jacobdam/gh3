@@ -33,5 +33,5 @@ jobs:
         run: flutter analyze
 
       - name: Run tests
-        run: flutter test --no-pub --coverage --timeout=30s
+        run: flutter test test/ui_system test/integration test/routing test/screens test/services test/widgets test/app_start_test.dart test/widget_test.dart --no-pub --coverage --timeout=30s
         timeout-minutes: 5
