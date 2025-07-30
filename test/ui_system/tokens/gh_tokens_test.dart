@@ -66,24 +66,12 @@ void main() {
   });
 
   group('GHTokens Elevation Constants', () {
-    test('elevation constants should have correct values', () {
-      // Test elevation values
+    test('elevation constants should be valid and ordered', () {
       expect(GHTokens.elevation0, equals(0.0));
       expect(GHTokens.elevation1, equals(1.0));
       expect(GHTokens.elevation3, equals(3.0));
       expect(GHTokens.elevation8, equals(8.0));
-    });
 
-    test('elevation constants should be non-negative', () {
-      // Test that all elevation values are non-negative
-      expect(GHTokens.elevation0, greaterThanOrEqualTo(0.0));
-      expect(GHTokens.elevation1, greaterThanOrEqualTo(0.0));
-      expect(GHTokens.elevation3, greaterThanOrEqualTo(0.0));
-      expect(GHTokens.elevation8, greaterThanOrEqualTo(0.0));
-    });
-
-    test('elevation constants should be in ascending order', () {
-      // Test that elevation values increase in logical order
       expect(GHTokens.elevation0, lessThan(GHTokens.elevation1));
       expect(GHTokens.elevation1, lessThan(GHTokens.elevation3));
       expect(GHTokens.elevation3, lessThan(GHTokens.elevation8));

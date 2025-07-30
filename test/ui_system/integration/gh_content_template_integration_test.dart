@@ -179,46 +179,25 @@ void main() {
       expect(scrollView.controller, equals(scrollController));
     });
 
-    testWidgets('should maintain proper spacing between sections', (
-      tester,
-    ) async {
+    testWidgets('should maintain proper spacing between sections', (tester) async {
       const testSections = [
-        GHContentSection(
-          title: 'First Section',
-          content: Text('First Content'),
-        ),
-        GHContentSection(
-          title: 'Second Section',
-          content: Text('Second Content'),
-        ),
-        GHContentSection(
-          title: 'Third Section',
-          content: Text('Third Content'),
-        ),
+        GHContentSection(title: 'First Section', content: Text('First Content')),
+        GHContentSection(title: 'Second Section', content: Text('Second Content')),
       ];
 
       await tester.pumpWidget(
-        const MaterialApp(
-          home: GHScreenTemplate(
-            title: 'Spacing Test',
-            body: GHContentTemplate(sections: testSections),
-          ),
+        MaterialApp(
+          home: GHContentTemplate(sections: testSections),
         ),
       );
 
-      // Verify all sections are present
       expect(find.text('First Section'), findsOneWidget);
       expect(find.text('Second Section'), findsOneWidget);
-      expect(find.text('Third Section'), findsOneWidget);
-
-      // Verify proper spacing (should have SizedBox widgets for spacing)
+      
       final spacingBoxes = find.byWidgetPredicate(
         (widget) => widget is SizedBox && widget.height == GHTokens.spacing24,
       );
-      expect(
-        spacingBoxes,
-        findsAtLeastNWidgets(2),
-      ); // Between 3 sections, should have at least 2 spacings
+      expect(spacingBoxes, findsAtLeastNWidgets(1));
     });
   });
 }

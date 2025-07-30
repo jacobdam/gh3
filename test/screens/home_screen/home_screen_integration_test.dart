@@ -217,109 +217,72 @@ void main() {
       });
     });
 
-    testWidgets(
-      'should handle null currentUser gracefully when profile card area is tapped',
-      (tester) async {
-        // Setup mock with null currentUser
-        when(mockHomeViewModel.currentUser).thenReturn(null);
+    testWidgets('should handle null currentUser gracefully', (tester) async {
+      when(mockHomeViewModel.currentUser).thenReturn(null);
 
-        await mockNetworkImages(() async {
-          await tester.pumpWidget(
-            MaterialApp(
-              home: HomeScreen(
-                authViewModel: mockAuthViewModel,
-                homeViewModel: mockHomeViewModel,
-              ),
+      await mockNetworkImages(() async {
+        await tester.pumpWidget(
+          MaterialApp(
+            home: HomeScreen(
+              authViewModel: mockAuthViewModel,
+              homeViewModel: mockHomeViewModel,
             ),
-          );
+          ),
+        );
 
-          // Should display "No user data" card
-          expect(find.text('No user data'), findsOneWidget);
-          expect(find.text('Unable to load user information'), findsOneWidget);
-        });
-      },
-    );
+        // Should display "No user data" card
+        expect(find.text('No user data'), findsOneWidget);
+        expect(find.text('Unable to load user information'), findsOneWidget);
 
-    testWidgets(
-      'should navigate to repositories when repositories work item is tapped',
-      (tester) async {
-        await mockNetworkImages(() async {
-          await tester.pumpWidget(
-            MaterialApp.router(
-              routerConfig: GoRouter(
-                routes: [
-                  GoRoute(
-                    path: '/',
-                    builder: (context, state) => HomeScreen(
-                      authViewModel: mockAuthViewModel,
-                      homeViewModel: mockHomeViewModel,
-                    ),
+        // Should handle work item taps gracefully
+        await tester.drag(find.byType(CustomScrollView), const Offset(0, -300));
+        await tester.pump();
+
+        final repositoriesItem = find.text('Repositories');
+        expect(repositoriesItem, findsOneWidget);
+
+        await tester.tap(repositoriesItem);
+        await tester.pump();
+
+        // Should still be on home screen
+        expect(find.text('Home'), findsOneWidget);
+      });
+    });
+
+    testWidgets('should navigate to repositories when work item is tapped', (tester) async {
+      await mockNetworkImages(() async {
+        await tester.pumpWidget(
+          MaterialApp.router(
+            routerConfig: GoRouter(
+              routes: [
+                GoRoute(
+                  path: '/',
+                  builder: (context, state) => HomeScreen(
+                    authViewModel: mockAuthViewModel,
+                    homeViewModel: mockHomeViewModel,
                   ),
-                  GoRoute(
-                    path: '/:login/@repositories',
-                    builder: (context, state) =>
-                        const Scaffold(body: Text('User Repositories')),
-                  ),
-                ],
-              ),
+                ),
+                GoRoute(
+                  path: '/:login/@repositories',
+                  builder: (context, state) =>
+                      const Scaffold(body: Text('User Repositories')),
+                ),
+              ],
             ),
-          );
+          ),
+        );
 
-          // Scroll to make sure repositories item is visible
-          await tester.drag(
-            find.byType(CustomScrollView),
-            const Offset(0, -300),
-          );
-          await tester.pump();
+        await tester.drag(find.byType(CustomScrollView), const Offset(0, -300));
+        await tester.pump();
 
-          // Find and tap the repositories work item
-          final repositoriesItem = find.text('Repositories');
-          expect(repositoriesItem, findsOneWidget);
+        final repositoriesItem = find.text('Repositories');
+        expect(repositoriesItem, findsOneWidget);
 
-          await tester.tap(repositoriesItem);
-          await tester.pumpAndSettle();
+        await tester.tap(repositoriesItem);
+        await tester.pumpAndSettle();
 
-          // Verify navigation occurred by checking if we're on the repositories page
-          expect(find.text('User Repositories'), findsOneWidget);
-        });
-      },
-    );
-
-    testWidgets(
-      'should handle null currentUser gracefully when repositories work item is tapped',
-      (tester) async {
-        // Setup mock with null currentUser
-        when(mockHomeViewModel.currentUser).thenReturn(null);
-
-        await mockNetworkImages(() async {
-          await tester.pumpWidget(
-            MaterialApp(
-              home: HomeScreen(
-                authViewModel: mockAuthViewModel,
-                homeViewModel: mockHomeViewModel,
-              ),
-            ),
-          );
-
-          // Scroll to make sure repositories item is visible
-          await tester.drag(
-            find.byType(CustomScrollView),
-            const Offset(0, -300),
-          );
-          await tester.pump();
-
-          // Find and tap the repositories work item
-          final repositoriesItem = find.text('Repositories');
-          expect(repositoriesItem, findsOneWidget);
-
-          // Tapping should not cause any errors even with null user
-          await tester.tap(repositoriesItem);
-          await tester.pump();
-
-          // Should still be on the home screen since navigation didn't occur
-          expect(find.text('Home'), findsOneWidget);
-        });
-      },
-    );
+        expect(find.text('User Repositories'), findsOneWidget);
+      });
+    });
   });
 }

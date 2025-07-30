@@ -69,9 +69,7 @@ void main() {
       expect(find.text('Retry'), findsOneWidget);
     });
 
-    testWidgets('error state retry button should trigger reload', (
-      tester,
-    ) async {
+    testWidgets('error state retry button should trigger reload', (tester) async {
       await tester.pumpWidget(
         const MaterialApp(
           home: RepositoryDetailsExample(
@@ -81,24 +79,19 @@ void main() {
         ),
       );
 
-      // Wait for initial load and error
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 600));
 
-      // Verify error state is shown
       expect(find.byType(GHErrorState), findsOneWidget);
       expect(find.text('Retry'), findsOneWidget);
 
-      // Tap the retry button
       await tester.tap(find.text('Retry'));
-      await tester.pump();
-
-      // Should show loading state again after a short delay
       await tester.pump(const Duration(milliseconds: 100));
+      
       expect(find.byType(CircularProgressIndicator), findsOneWidget);
-
-      // Wait for the retry operation to complete to avoid pending timers
-      await tester.pump(const Duration(milliseconds: 600));
+      
+      // Wait for all async operations to complete
+      await tester.pumpAndSettle();
     });
   });
 }
