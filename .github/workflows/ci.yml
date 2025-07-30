@@ -11,6 +11,7 @@ on:
 jobs:
   lint_format_analyze_test:
     runs-on: ubuntu-latest
+    timeout-minutes: 20
 
     steps:
       - name: Checkout code
@@ -33,3 +34,4 @@ jobs:
 
       - name: Run tests
         run: flutter test --no-pub --coverage
+        timeout-minutes: 10
