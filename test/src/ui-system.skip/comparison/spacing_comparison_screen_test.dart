@@ -89,7 +89,7 @@ void main() {
 
       // Tap the After tab
       await tester.tap(find.text('After'));
-      await tester.pumpAndSettle();
+      await tester.pump(const Duration(milliseconds: 100));
 
       expect(
         find.text(
@@ -130,7 +130,7 @@ void main() {
 
       // Switch to After tab
       await tester.tap(find.text('After'));
-      await tester.pumpAndSettle();
+      await tester.pump(const Duration(milliseconds: 100));
 
       // Should show grid system explanation
       expect(find.text('4dp Grid System'), findsOneWidget);
@@ -159,7 +159,7 @@ void main() {
 
       // Switch to After tab
       await tester.tap(find.text('After'));
-      await tester.pumpAndSettle();
+      await tester.pump(const Duration(milliseconds: 100));
 
       // Should show user info in after view too
       expect(find.text('User Name'), findsOneWidget);
@@ -182,7 +182,7 @@ void main() {
 
       // Switch to After tab
       await tester.tap(find.text('After'));
-      await tester.pumpAndSettle();
+      await tester.pump(const Duration(milliseconds: 100));
 
       // Should show activity content in after view
       expect(find.text('Activity Item'), findsOneWidget);
@@ -201,7 +201,7 @@ void main() {
 
       // Switch to After tab
       await tester.tap(find.text('After'));
-      await tester.pumpAndSettle();
+      await tester.pump(const Duration(milliseconds: 100));
 
       // Should show spacing usage descriptions
       expect(find.text('Micro spacing (icon gaps)'), findsOneWidget);
