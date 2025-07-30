@@ -320,7 +320,7 @@ void main() {
 
       // Wait for the async operation to complete
       await tester.pump(const Duration(milliseconds: 20));
-      
+
       expect(find.text('Submit'), findsOneWidget);
       expect(find.byType(GHLoadingIndicator), findsNothing);
     });
