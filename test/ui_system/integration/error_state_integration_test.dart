@@ -69,7 +69,9 @@ void main() {
       expect(find.text('Retry'), findsOneWidget);
     });
 
-    testWidgets('error state retry button should trigger reload', (tester) async {
+    testWidgets('error state retry button should trigger reload', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         const MaterialApp(
           home: RepositoryDetailsExample(
@@ -87,9 +89,9 @@ void main() {
 
       await tester.tap(find.text('Retry'));
       await tester.pump(const Duration(milliseconds: 100));
-      
+
       expect(find.byType(CircularProgressIndicator), findsOneWidget);
-      
+
       // Wait for all async operations to complete
       await tester.pumpAndSettle();
     });

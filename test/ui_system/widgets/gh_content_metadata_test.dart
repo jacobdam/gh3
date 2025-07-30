@@ -514,10 +514,17 @@ void main() {
       expect(find.byIcon(Icons.open_in_new), findsOneWidget);
     });
 
-    testWidgets('should handle mixed content types appropriately', (tester) async {
+    testWidgets('should handle mixed content types appropriately', (
+      tester,
+    ) async {
       final items = [
         const GHMetadataItem(label: 'Simple', value: 'Text value'),
-        GHMetadataItem(label: 'Link', value: 'Click me', isLink: true, onTap: () {}),
+        GHMetadataItem(
+          label: 'Link',
+          value: 'Click me',
+          isLink: true,
+          onTap: () {},
+        ),
       ];
 
       await tester.pumpWidget(
