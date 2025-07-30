@@ -48,11 +48,11 @@ class TestTiming {
   });
 
   Map<String, dynamic> toJson() => {
-        'duration_seconds': duration,
-        'test_name': testName,
-        'file_path': filePath,
-        'description': description,
-      };
+    'duration_seconds': duration,
+    'test_name': testName,
+    'file_path': filePath,
+    'description': description,
+  };
 }
 
 class SlowTestAnalyzer {
@@ -74,7 +74,7 @@ class SlowTestAnalyzer {
 
   Future<void> analyze() async {
     print('🔍 Running Flutter tests (timeout: ${timeout}s)...');
-    
+
     final timingLines = await _runFlutterTests();
     if (timingLines.isEmpty) {
       print('❌ No timing data captured. Tests may have failed or timed out.');
@@ -93,7 +93,9 @@ class SlowTestAnalyzer {
 
     // Exit with appropriate code
     if (slowTests.isNotEmpty) {
-      print('⚠️  Found ${slowTests.length} tests exceeding ${threshold}s threshold');
+      print(
+        '⚠️  Found ${slowTests.length} tests exceeding ${threshold}s threshold',
+      );
       exit(slowTests.length > 5 ? 1 : 0);
     } else {
       print('✅ All tests are fast!');
@@ -112,7 +114,7 @@ class SlowTestAnalyzer {
     try {
       final process = await Process.start('flutter', args);
       final output = <String>[];
-      
+
       // Set up timeout
       Timer? timeoutTimer;
       if (timeout > 0) {
@@ -122,16 +124,20 @@ class SlowTestAnalyzer {
         });
       }
 
-      await for (final line in process.stdout.transform(utf8.decoder).transform(const LineSplitter())) {
+      await for (final line
+          in process.stdout
+              .transform(utf8.decoder)
+              .transform(const LineSplitter())) {
         // Filter for timing lines, excluding loading messages
-        if (RegExp(r'^\d{2}:\d{2} \+\d+:').hasMatch(line) && !line.contains('loading ')) {
+        if (RegExp(r'^\d{2}:\d{2} \+\d+:').hasMatch(line) &&
+            !line.contains('loading ')) {
           output.add(line.trim());
         }
       }
 
       timeoutTimer?.cancel();
       await process.exitCode;
-      
+
       print('✅ Captured ${output.length} test timing entries');
       return output;
     } catch (e) {
@@ -163,12 +169,14 @@ class SlowTestAnalyzer {
         }
 
         if (duration >= threshold) {
-          slowTests.add(TestTiming(
-            duration: duration.toDouble(),
-            testName: prevTestName,
-            filePath: _extractFilePath(prevTestName),
-            description: _extractTestDescription(prevTestName),
-          ));
+          slowTests.add(
+            TestTiming(
+              duration: duration.toDouble(),
+              testName: prevTestName,
+              filePath: _extractFilePath(prevTestName),
+              description: _extractTestDescription(prevTestName),
+            ),
+          );
         }
       }
 
@@ -208,10 +216,7 @@ class SlowTestAnalyzer {
     final results = topTests.asMap().entries.map((entry) {
       final index = entry.key;
       final test = entry.value;
-      return {
-        'rank': index + 1,
-        ...test.toJson(),
-      };
+      return {'rank': index + 1, ...test.toJson()};
     }).toList();
 
     final output = {
@@ -230,13 +235,18 @@ class SlowTestAnalyzer {
 
     for (int i = 0; i < topTests.length; i++) {
       final test = topTests[i];
-      buffer.writeln('${i + 1},${test.duration},"${test.testName}","${test.filePath}"');
+      buffer.writeln(
+        '${i + 1},${test.duration},"${test.testName}","${test.filePath}"',
+      );
     }
 
     return buffer.toString();
   }
 
-  String _formatTable(List<TestTiming> topTests, List<TestTiming> allSlowTests) {
+  String _formatTable(
+    List<TestTiming> topTests,
+    List<TestTiming> allSlowTests,
+  ) {
     if (topTests.isEmpty) {
       return '✅ No tests found taking longer than ${threshold}s threshold.';
     }
@@ -255,15 +265,26 @@ class SlowTestAnalyzer {
     }
 
     // Add summary statistics
-    final totalSlowTime = allSlowTests.fold<double>(0, (sum, test) => sum + test.duration);
-    final avgSlowTime = allSlowTests.isNotEmpty ? totalSlowTime / allSlowTests.length : 0;
+    final totalSlowTime = allSlowTests.fold<double>(
+      0,
+      (sum, test) => sum + test.duration,
+    );
+    final avgSlowTime = allSlowTests.isNotEmpty
+        ? totalSlowTime / allSlowTests.length
+        : 0;
 
     buffer.writeln('\n${'=' * 80}');
     buffer.writeln('📊 Summary:');
     buffer.writeln('   • Total slow tests: ${allSlowTests.length}');
-    buffer.writeln('   • Total slow time: ${totalSlowTime.toStringAsFixed(1)}s');
-    buffer.writeln('   • Average slow time: ${avgSlowTime.toStringAsFixed(1)}s');
-    buffer.writeln('   • Potential optimization target: ${(totalSlowTime * 0.7).toStringAsFixed(1)}s savings');
+    buffer.writeln(
+      '   • Total slow time: ${totalSlowTime.toStringAsFixed(1)}s',
+    );
+    buffer.writeln(
+      '   • Average slow time: ${avgSlowTime.toStringAsFixed(1)}s',
+    );
+    buffer.writeln(
+      '   • Potential optimization target: ${(totalSlowTime * 0.7).toStringAsFixed(1)}s savings',
+    );
 
     return buffer.toString();
   }
