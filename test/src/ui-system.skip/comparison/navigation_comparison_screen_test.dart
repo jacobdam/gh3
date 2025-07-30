@@ -86,7 +86,7 @@ void main() {
 
       // Tap the After tab
       await tester.tap(find.text('After'));
-      await tester.pumpAndSettle();
+      await tester.pump(const Duration(milliseconds: 100));
 
       expect(
         find.text(
@@ -125,7 +125,7 @@ void main() {
 
       // Switch to After tab
       await tester.tap(find.text('After'));
-      await tester.pumpAndSettle();
+      await tester.pump(const Duration(milliseconds: 100));
 
       // Should show navigation benefits
       expect(find.text('Navigation Benefits'), findsOneWidget);
@@ -149,7 +149,7 @@ void main() {
 
       // Switch to After tab
       await tester.tap(find.text('After'));
-      await tester.pumpAndSettle();
+      await tester.pump(const Duration(milliseconds: 100));
 
       // Should still show user info in after view
       expect(find.text('The Octocat'), findsWidgets);

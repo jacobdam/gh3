@@ -89,7 +89,7 @@ void main() {
 
       // Tap the After tab
       await tester.tap(find.text('After'));
-      await tester.pumpAndSettle();
+      await tester.pump(const Duration(milliseconds: 100));
 
       expect(
         find.text(
@@ -133,7 +133,7 @@ void main() {
 
       // Switch to After tab
       await tester.tap(find.text('After'));
-      await tester.pumpAndSettle();
+      await tester.pump(const Duration(milliseconds: 100));
 
       // Should show enhanced component sections
       expect(find.text('Enhanced GH Buttons'), findsOneWidget);
@@ -159,7 +159,7 @@ void main() {
 
       // Switch to After tab
       await tester.tap(find.text('After'));
-      await tester.pumpAndSettle();
+      await tester.pump(const Duration(milliseconds: 100));
 
       // Should show state control buttons
       expect(find.text('Show Loading'), findsOneWidget);
@@ -182,7 +182,7 @@ void main() {
 
       // Switch to After tab
       await tester.tap(find.text('After'));
-      await tester.pumpAndSettle();
+      await tester.pump(const Duration(milliseconds: 100));
 
       // Should show state management section
       expect(find.text('State Management Components'), findsOneWidget);
@@ -206,7 +206,7 @@ void main() {
 
       // Switch to After tab
       await tester.tap(find.text('After'));
-      await tester.pumpAndSettle();
+      await tester.pump(const Duration(milliseconds: 100));
 
       // Should show enhanced components in after view
       expect(find.text('Primary Action'), findsOneWidget);
@@ -226,7 +226,7 @@ void main() {
 
       // Switch to After tab
       await tester.tap(find.text('After'));
-      await tester.pumpAndSettle();
+      await tester.pump(const Duration(milliseconds: 100));
 
       // Should show enhanced component types
       expect(find.text('Primary Action'), findsOneWidget);

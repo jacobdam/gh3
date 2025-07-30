@@ -109,7 +109,7 @@ void main() {
 
       // Tap the After tab
       await tester.tap(find.text('After'));
-      await tester.pumpAndSettle();
+      await tester.pump(const Duration(milliseconds: 100));
 
       expect(find.text('After (New Implementation)'), findsOneWidget);
       expect(find.text('New implementation'), findsOneWidget);
