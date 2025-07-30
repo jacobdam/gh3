@@ -249,7 +249,9 @@ void main() {
       });
     });
 
-    testWidgets('should navigate to repositories when work item is tapped', (tester) async {
+    testWidgets('should navigate to repositories when work item is tapped', (
+      tester,
+    ) async {
       await mockNetworkImages(() async {
         await tester.pumpWidget(
           MaterialApp.router(

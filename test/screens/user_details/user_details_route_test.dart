@@ -14,7 +14,11 @@ void main() {
 
       for (final (username, expectedPath) in testCases) {
         final route = UserDetailsRoute(username);
-        expect(route.path, equals(expectedPath), reason: 'Failed for username: $username');
+        expect(
+          route.path,
+          equals(expectedPath),
+          reason: 'Failed for username: $username',
+        );
       }
     });
   });

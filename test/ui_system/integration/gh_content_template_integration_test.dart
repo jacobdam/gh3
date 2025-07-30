@@ -179,21 +179,27 @@ void main() {
       expect(scrollView.controller, equals(scrollController));
     });
 
-    testWidgets('should maintain proper spacing between sections', (tester) async {
+    testWidgets('should maintain proper spacing between sections', (
+      tester,
+    ) async {
       const testSections = [
-        GHContentSection(title: 'First Section', content: Text('First Content')),
-        GHContentSection(title: 'Second Section', content: Text('Second Content')),
+        GHContentSection(
+          title: 'First Section',
+          content: Text('First Content'),
+        ),
+        GHContentSection(
+          title: 'Second Section',
+          content: Text('Second Content'),
+        ),
       ];
 
       await tester.pumpWidget(
-        MaterialApp(
-          home: GHContentTemplate(sections: testSections),
-        ),
+        MaterialApp(home: GHContentTemplate(sections: testSections)),
       );
 
       expect(find.text('First Section'), findsOneWidget);
       expect(find.text('Second Section'), findsOneWidget);
-      
+
       final spacingBoxes = find.byWidgetPredicate(
         (widget) => widget is SizedBox && widget.height == GHTokens.spacing24,
       );

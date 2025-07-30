@@ -5,10 +5,10 @@ import 'package:gh3/src/ui-system/tokens/gh_tokens.dart';
 
 void main() {
   group('GHCard', () {
-    testWidgets('should create standard card with default padding', (tester) async {
-      await tester.pumpWidget(
-        MaterialApp(home: GHCard(child: Container())),
-      );
+    testWidgets('should create standard card with default padding', (
+      tester,
+    ) async {
+      await tester.pumpWidget(MaterialApp(home: GHCard(child: Container())));
 
       final card = tester.widget<GHCard>(find.byType(GHCard));
       expect(card.padding, isNull);
