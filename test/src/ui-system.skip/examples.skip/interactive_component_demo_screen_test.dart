@@ -54,7 +54,7 @@ void main() {
 
       // Switch to form demo
       await tester.tap(find.text('Form Components'));
-      await tester.pumpAndSettle();
+      await tester.pump(const Duration(milliseconds: 100));
 
       expect(find.text('Form Component Controls'), findsOneWidget);
       expect(find.text('Username'), findsOneWidget);
@@ -152,7 +152,7 @@ void main() {
 
       // Switch to interaction demo
       await tester.tap(find.text('User Interactions'));
-      await tester.pumpAndSettle();
+      await tester.pump(const Duration(milliseconds: 100));
 
       // Should show interactive elements
       expect(find.text('Interactive Elements'), findsOneWidget);
