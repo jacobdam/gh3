@@ -34,16 +34,34 @@ jobs:
 
       - name: Run tests
         run: |
-          # FIXME: ALL UI system tests cause segmentation faults in CI but pass locally.
-          # Excluding all UI system directories due to persistent crashes.
-          # These appear to be complex UI tests that may have issues with the CI environment.
+          # FIXME: The following UI system test files cause segmentation faults in CI but pass locally.
+          # These appear to be complex UI screen tests that have issues with the CI environment.
+          # Problematic files:
+          # - test/src/ui-system/examples/uat_home_screen_test.dart
+          # - test/src/ui-system/examples/developer_guide_screen_test.dart
+          # - test/src/ui-system/examples/documentation_screen_test.dart
+          # - test/src/ui-system/examples/reference_patterns_guide_test.dart
+          # - test/src/ui-system/examples/interactive_component_demo_screen_test.dart
+          # - test/src/ui-system/tools/standards_compliance_screen_test.dart
+          # - test/src/ui-system/tools/measurement_validation_screen_test.dart
+          # - test/src/ui-system/integration/design_system_integration_test.dart
+          # - test/src/ui-system/integration/screen_integration_test.dart
+          # - test/ui_system/state_widgets/gh_loading_transition_test.dart
           
-          # Find all test files except those in UI system directories
+          # Find all test files except the problematic ones
           TEST_FILES=$(find test -name "*_test.dart" \
-            ! -path "test/src/ui-system/*" \
-            ! -path "test/ui_system/*" \
+            ! -path "test/src/ui-system/examples/uat_home_screen_test.dart" \
+            ! -path "test/src/ui-system/examples/developer_guide_screen_test.dart" \
+            ! -path "test/src/ui-system/examples/documentation_screen_test.dart" \
+            ! -path "test/src/ui-system/examples/reference_patterns_guide_test.dart" \
+            ! -path "test/src/ui-system/examples/interactive_component_demo_screen_test.dart" \
+            ! -path "test/src/ui-system/tools/standards_compliance_screen_test.dart" \
+            ! -path "test/src/ui-system/tools/measurement_validation_screen_test.dart" \
+            ! -path "test/src/ui-system/integration/design_system_integration_test.dart" \
+            ! -path "test/src/ui-system/integration/screen_integration_test.dart" \
+            ! -path "test/ui_system/state_widgets/gh_loading_transition_test.dart" \
             | tr '\n' ' ')
           
-          # Run tests excluding problematic directories
+          # Run tests excluding problematic files
           flutter test --no-pub --coverage $TEST_FILES
         timeout-minutes: 3
