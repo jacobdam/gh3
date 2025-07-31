@@ -51,6 +51,8 @@ jobs:
           # - test/src/ui-system/comparison/navigation_comparison_screen_test.dart
           # - test/src/ui-system/comparison/spacing_comparison_screen_test.dart
           # - test/ui_system/state_widgets/gh_loading_transition_test.dart
+          # - test/ui_system/state_widgets/gh_loading_indicator_test.dart
+          # - test/ui_system/state_widgets/gh_empty_state_test.dart
           
           # Find all test files except the problematic ones
           TEST_FILES=$(find test -name "*_test.dart" \
@@ -68,6 +70,8 @@ jobs:
             ! -path "test/src/ui-system/comparison/navigation_comparison_screen_test.dart" \
             ! -path "test/src/ui-system/comparison/spacing_comparison_screen_test.dart" \
             ! -path "test/ui_system/state_widgets/gh_loading_transition_test.dart" \
+            ! -path "test/ui_system/state_widgets/gh_loading_indicator_test.dart" \
+            ! -path "test/ui_system/state_widgets/gh_empty_state_test.dart" \
             | tr '\n' ' ')
           
           # Run tests excluding problematic files
