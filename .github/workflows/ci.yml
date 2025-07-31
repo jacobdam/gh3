@@ -80,6 +80,6 @@ jobs:
             ! -path "test/ui_system/tokens/gh_tokens_test.dart" \
             | tr '\n' ' ')
           
-          # Run tests excluding problematic files
-          flutter test --no-pub --coverage $TEST_FILES
+          # Run tests excluding problematic files (without --coverage to reduce memory usage)
+          flutter test --no-pub $TEST_FILES
         timeout-minutes: 3
