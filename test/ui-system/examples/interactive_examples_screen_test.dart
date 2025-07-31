@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:gh3/src/ui-system/examples/interactive_examples_screen.dart';
-import 'package:gh3/src/ui-system/theme/gh_theme.dart';
+import 'package:gh3/src/ui_system/examples/interactive_examples_screen.dart';
+import 'package:gh3/src/ui_system/theme/gh_theme.dart';
 
 void main() {
   Widget createTestWidget(Widget child) {

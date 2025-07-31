@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:gh3/src/ui-system/state_widgets/gh_loading_indicator.dart';
+import 'package:gh3/src/ui_system/state_widgets/gh_loading_indicator.dart';
 
 void main() {
   group('GHLoadingTransition', () {

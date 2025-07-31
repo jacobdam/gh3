@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:gh3/src/ui-system/tokens/gh_tokens.dart';
+import 'package:gh3/src/ui_system/tokens/gh_tokens.dart';
 
 void main() {
   group('GHTokens Spacing Constants', () {

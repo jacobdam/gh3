@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:gh3/src/ui-system/layouts/gh_content_template.dart';
-import 'package:gh3/src/ui-system/tokens/gh_tokens.dart';
+import 'package:gh3/src/ui_system/layouts/gh_content_template.dart';
+import 'package:gh3/src/ui_system/tokens/gh_tokens.dart';
 
 void main() {
   group('GHContentTemplate', () {

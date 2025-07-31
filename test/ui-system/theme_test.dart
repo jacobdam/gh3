@@ -1,19 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:gh3/src/ui-system/theme/gh_theme.dart';
-import 'package:gh3/src/ui-system/tokens/gh_tokens.dart';
-import 'package:gh3/src/ui-system/components/gh_card.dart';
-import 'package:gh3/src/ui-system/components/gh_button.dart';
-import 'package:gh3/src/ui-system/components/gh_chip.dart';
-import 'package:gh3/src/ui-system/components/gh_list_tile.dart';
-import 'package:gh3/src/ui-system/components/gh_search_bar.dart';
-import 'package:gh3/src/ui-system/widgets/gh_status_badge.dart';
-import 'package:gh3/src/ui-system/components/gh_text_field.dart';
-import 'package:gh3/src/ui-system/state_widgets/gh_empty_state.dart';
-import 'package:gh3/src/ui-system/state_widgets/gh_error_state.dart';
-import 'package:gh3/src/ui-system/state_widgets/gh_loading_indicator.dart';
-import 'package:gh3/src/ui-system/layouts/gh_content_template.dart';
-import 'package:gh3/src/ui-system/widgets/gh_content_metadata.dart';
+import 'package:gh3/src/ui_system/theme/gh_theme.dart';
+import 'package:gh3/src/ui_system/tokens/gh_tokens.dart';
+import 'package:gh3/src/ui_system/components/gh_card.dart';
+import 'package:gh3/src/ui_system/components/gh_button.dart';
+import 'package:gh3/src/ui_system/components/gh_chip.dart';
+import 'package:gh3/src/ui_system/components/gh_list_tile.dart';
+import 'package:gh3/src/ui_system/components/gh_search_bar.dart';
+import 'package:gh3/src/ui_system/widgets/gh_status_badge.dart';
+import 'package:gh3/src/ui_system/components/gh_text_field.dart';
+import 'package:gh3/src/ui_system/state_widgets/gh_empty_state.dart';
+import 'package:gh3/src/ui_system/state_widgets/gh_error_state.dart';
+import 'package:gh3/src/ui_system/state_widgets/gh_loading_indicator.dart';
+import 'package:gh3/src/ui_system/layouts/gh_content_template.dart';
+import 'package:gh3/src/ui_system/widgets/gh_content_metadata.dart';
 
 void main() {
   group('Theme Compatibility Tests', () {

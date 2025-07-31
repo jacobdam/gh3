@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:gh3/src/ui-system/theme/gh_theme.dart';
-import 'package:gh3/src/ui-system/tokens/gh_tokens.dart';
-import 'package:gh3/src/ui-system/components/gh_card.dart';
-import 'package:gh3/src/ui-system/components/gh_button.dart';
-import 'package:gh3/src/ui-system/components/gh_chip.dart';
-import 'package:gh3/src/ui-system/widgets/gh_status_badge.dart';
+import 'package:gh3/src/ui_system/theme/gh_theme.dart';
+import 'package:gh3/src/ui_system/tokens/gh_tokens.dart';
+import 'package:gh3/src/ui_system/components/gh_card.dart';
+import 'package:gh3/src/ui_system/components/gh_button.dart';
+import 'package:gh3/src/ui_system/components/gh_chip.dart';
+import 'package:gh3/src/ui_system/widgets/gh_status_badge.dart';
 
 void main() {
   group('Design Token Compliance & Accessibility Tests', () {
