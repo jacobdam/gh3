@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import '../example_screens/home_screen_example.dart';
-import '../example_screens/user_profile_example.dart';
-import '../example_screens/repository_details_example.dart';
-import '../example_screens/repository_tree_example.dart';
-import '../example_screens/repository_file_example.dart';
-import '../example_screens/issues_list_example.dart';
-import '../example_screens/issue_detail_example.dart';
-import '../example_screens/pulls_list_example.dart';
-import '../example_screens/search_example.dart';
-import '../example_screens/trending_example.dart';
-import '../example_screens/user_repositories_screen.dart';
-import '../example_screens/user_starred_screen.dart';
-import '../example_screens/user_organizations_screen.dart';
+import '../examples/home_screen_example.dart';
+import '../examples/user_profile_example.dart';
+import '../examples/repository_details_example.dart';
+import '../examples/repository_tree_example.dart';
+import '../examples/repository_file_example.dart';
+import '../examples/issues_list_example.dart';
+import '../examples/issue_detail_example.dart';
+import '../examples/pulls_list_example.dart';
+import '../examples/search_example.dart';
+import '../examples/trending_example.dart';
+import '../examples/user_repositories_screen.dart';
+import '../examples/user_starred_screen.dart';
+import '../examples/user_organizations_screen.dart';
 import '../examples/uat_home_screen.dart';
 import '../examples/design_tokens_screen.dart';
 import '../examples/component_catalog_screen.dart';
@@ -23,9 +23,9 @@ import '../examples/reference_patterns_guide.dart';
 import '../examples/developer_guide_screen.dart';
 import '../docs/stakeholder_presentation_guide.dart';
 import '../docs/ui_system_impact_summary.dart';
-import '../comparison/navigation_comparison_screen.dart';
-import '../comparison/spacing_comparison_screen.dart';
-import '../comparison/component_showcase_comparison_screen.dart';
+import '../tools/comparison/navigation_comparison_screen.dart';
+// import '../tools/comparison/spacing_comparison_screen.dart'; // Temporarily disabled
+import '../tools/comparison/component_showcase_comparison_screen.dart';
 import '../tools/measurement_validation_screen.dart';
 import '../tools/standards_compliance_screen.dart';
 import '../tools/demo_readiness_checklist.dart';
@@ -58,17 +58,17 @@ class NavigationService {
         builder: (context, state) => const InteractiveComponentDemoScreen(),
       ),
 
-      // Comparison Routes
+      // Comparison Routes (updated paths to match UATHomeScreen)
       GoRoute(
-        path: '/comparison/navigation',
+        path: '/tools/comparison/navigation',
         builder: (context, state) => const NavigationComparisonScreen(),
       ),
+      // GoRoute(
+      //   path: '/tools/comparison/spacing',
+      //   builder: (context, state) => const SpacingComparisonScreen(),
+      // ), // Temporarily disabled
       GoRoute(
-        path: '/comparison/spacing',
-        builder: (context, state) => const SpacingComparisonScreen(),
-      ),
-      GoRoute(
-        path: '/comparison/components',
+        path: '/tools/comparison/components',
         builder: (context, state) => const ComponentShowcaseComparisonScreen(),
       ),
 

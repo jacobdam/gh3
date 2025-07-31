@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
-import '../tokens/gh_tokens.dart';
-import '../components/gh_card.dart';
-import '../components/gh_button.dart';
-import '../components/gh_chip.dart';
-import '../components/gh_text_field.dart';
-import '../state_widgets/gh_empty_state.dart';
-import '../state_widgets/gh_error_state.dart';
-import '../state_widgets/gh_loading_indicator.dart';
+import '../../tokens/gh_tokens.dart';
+import '../../components/gh_card.dart';
+import '../../components/gh_button.dart';
+import '../../components/gh_chip.dart';
+import '../../components/gh_text_field.dart';
+import '../../state_widgets/gh_empty_state.dart';
+import '../../state_widgets/gh_error_state.dart';
+import '../../state_widgets/gh_loading_indicator.dart';
 import 'comparison_screen.dart';
 import 'mock_screen.dart';
 
@@ -65,7 +65,7 @@ class _ComponentShowcaseComparisonScreenState
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Basic buttons section
+            /// Basic buttons section
             Text('Basic Buttons', style: GHTokens.titleMedium),
             const SizedBox(height: GHTokens.spacing12),
 
@@ -73,7 +73,7 @@ class _ComponentShowcaseComparisonScreenState
               spacing: GHTokens.spacing8,
               runSpacing: GHTokens.spacing8,
               children: [
-                // Old basic button (just ElevatedButton)
+                /// Old basic button (just ElevatedButton)
                 ElevatedButton(onPressed: () {}, child: const Text('Submit')),
                 ElevatedButton(onPressed: null, child: const Text('Disabled')),
                 OutlinedButton(onPressed: () {}, child: const Text('Cancel')),
@@ -82,11 +82,11 @@ class _ComponentShowcaseComparisonScreenState
 
             const SizedBox(height: GHTokens.spacing20),
 
-            // Basic form components
+            /// Basic form components
             Text('Basic Form Components', style: GHTokens.titleMedium),
             const SizedBox(height: GHTokens.spacing12),
 
-            // Old basic text field
+            /// Old basic text field
             const TextField(
               decoration: InputDecoration(
                 labelText: 'Username',
@@ -96,7 +96,7 @@ class _ComponentShowcaseComparisonScreenState
 
             const SizedBox(height: GHTokens.spacing12),
 
-            // Basic chips
+            /// Basic chips
             Wrap(
               spacing: GHTokens.spacing8,
               children: [
@@ -108,7 +108,7 @@ class _ComponentShowcaseComparisonScreenState
 
             const SizedBox(height: GHTokens.spacing20),
 
-            // Basic cards
+            /// Basic cards
             Text('Basic Cards', style: GHTokens.titleMedium),
             const SizedBox(height: GHTokens.spacing12),
 
@@ -131,7 +131,7 @@ class _ComponentShowcaseComparisonScreenState
 
             const SizedBox(height: GHTokens.spacing20),
 
-            // No state management
+            /// No state management
             Container(
               padding: const EdgeInsets.all(GHTokens.spacing16),
               decoration: BoxDecoration(
@@ -180,7 +180,7 @@ class _ComponentShowcaseComparisonScreenState
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Enhanced buttons section
+            /// Enhanced buttons section
             Text('Enhanced GH Buttons', style: GHTokens.titleMedium),
             const SizedBox(height: GHTokens.spacing12),
 
@@ -226,7 +226,7 @@ class _ComponentShowcaseComparisonScreenState
 
             const SizedBox(height: GHTokens.spacing20),
 
-            // Enhanced form components
+            /// Enhanced form components
             Text('Enhanced GH Form Components', style: GHTokens.titleMedium),
             const SizedBox(height: GHTokens.spacing12),
 
@@ -238,7 +238,7 @@ class _ComponentShowcaseComparisonScreenState
 
             const SizedBox(height: GHTokens.spacing12),
 
-            // Enhanced chips
+            /// Enhanced chips
             Wrap(
               spacing: GHTokens.spacing8,
               children: [
@@ -263,7 +263,7 @@ class _ComponentShowcaseComparisonScreenState
 
             const SizedBox(height: GHTokens.spacing20),
 
-            // Enhanced cards
+            /// Enhanced cards
             Text('Enhanced GH Cards', style: GHTokens.titleMedium),
             const SizedBox(height: GHTokens.spacing12),
 
@@ -284,7 +284,7 @@ class _ComponentShowcaseComparisonScreenState
 
             const SizedBox(height: GHTokens.spacing20),
 
-            // State management components
+            /// State management components
             Text('State Management Components', style: GHTokens.titleMedium),
             const SizedBox(height: GHTokens.spacing12),
 
@@ -336,12 +336,12 @@ class _ComponentShowcaseComparisonScreenState
 
             const SizedBox(height: GHTokens.spacing16),
 
-            // State demonstration
+            /// State demonstration
             SizedBox(height: 200, child: _buildStateDemo()),
 
             const SizedBox(height: GHTokens.spacing20),
 
-            // Benefits
+            /// Benefits
             Container(
               padding: const EdgeInsets.all(GHTokens.spacing16),
               decoration: BoxDecoration(

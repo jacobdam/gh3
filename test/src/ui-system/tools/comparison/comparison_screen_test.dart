@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:gh3/src/ui-system/comparison/comparison_screen.dart';
+import 'package:gh3/src/ui-system/tools/comparison/comparison_screen.dart';
 import 'package:gh3/src/ui-system/theme/gh_theme.dart';
 
 void main() {

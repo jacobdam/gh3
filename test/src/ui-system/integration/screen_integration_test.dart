@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import '../../../../lib/src/ui-system/example_screens/home_screen_example.dart';
+import '../../../../lib/src/ui-system/examples/home_screen_example.dart';
 import '../../../../lib/src/ui-system/theme/gh_theme.dart';
 import '../../../../lib/src/ui-system/state_widgets/gh_empty_state.dart';
 import '../../../../lib/src/ui-system/state_widgets/gh_error_state.dart';

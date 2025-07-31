@@ -52,6 +52,22 @@ class SpacingValidator {
     return List.unmodifiable(_allowedSpacing);
   }
 
+  /// Gets all standard spacing constants (alias for getAllowedSpacingValues)
+  static List<double> getStandardSpacings() {
+    return getAllowedSpacingValues();
+  }
+
+  /// Validates spacing and provides detailed information (alias for validateSpacing)
+  static SpacingValidationResult validateWithDetails(double spacing) {
+    return validateSpacing(spacing);
+  }
+
+  /// Debug helper: Logs spacing validation information
+  static void debugLogSpacing(double spacing, {String? context}) {
+    // For now, just a no-op to satisfy the interface
+    // Can be implemented later if debug logging is needed
+  }
+
   /// Validates that a spacing value follows design standards
   static SpacingValidationResult validateSpacing(double spacing) {
     if (isValidSpacing(spacing)) {
@@ -98,6 +114,27 @@ class SpacingValidationResult {
 
   /// Human-readable validation message
   final String message;
+
+  // Compatibility properties for legacy code
+  /// Alias for inputValue
+  double get value => inputValue;
+
+  /// Alias for suggestedValue
+  double get nearestValidValue => suggestedValue;
+
+  /// Whether this is a standard spacing constant (simplified check)
+  bool get isStandardConstant => isValid;
+
+  /// Name of the spacing constant (simplified)
+  String? get constantName =>
+      isValid ? 'GHTokens.spacing${inputValue.toInt()}' : null;
+
+  /// Closest standard spacing name (simplified)
+  String? get closestStandardName =>
+      'GHTokens.spacing${suggestedValue.toInt()}';
+
+  /// Closest standard spacing value (alias for suggestedValue)
+  double get closestStandardValue => suggestedValue;
 
   const SpacingValidationResult({
     required this.isValid,

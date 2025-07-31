@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import '../tokens/gh_tokens.dart';
-import '../components/gh_card.dart';
-import '../widgets/gh_navigation_grid.dart';
+import '../../tokens/gh_tokens.dart';
+import '../../components/gh_card.dart';
+import '../../widgets/gh_navigation_grid.dart';
 import 'comparison_screen.dart';
 import 'mock_screen.dart';
 
@@ -47,12 +47,12 @@ class NavigationComparisonScreen extends StatelessWidget {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            // User card with title (old way - title appears twice)
+            /// User card with title (old way - title appears twice)
             const MockUserCard(showTitle: true),
 
             const SizedBox(height: GHTokens.spacing16),
 
-            // Tab bar (the old way)
+            /// Tab bar (the old way)
             Container(
               decoration: BoxDecoration(
                 color: Theme.of(context).colorScheme.surfaceContainer,
@@ -79,7 +79,7 @@ class NavigationComparisonScreen extends StatelessWidget {
 
             const SizedBox(height: GHTokens.spacing16),
 
-            // Mock content area
+            /// Mock content area
             SizedBox(
               height: 200,
               child: GHCard(
@@ -123,14 +123,14 @@ class NavigationComparisonScreen extends StatelessWidget {
       backgroundColor: Theme.of(context).colorScheme.surface,
       body: CustomScrollView(
         slivers: [
-          // User card without title (new way - no duplicate)
+          /// User card without title (new way - no duplicate)
           SliverToBoxAdapter(
             child: Column(
               children: [
                 const MockUserCard(showTitle: false),
                 const SizedBox(height: GHTokens.spacing20),
 
-                // Action grid (new way)
+                /// Action grid (new way)
                 GHNavigationGrid.twoByThree(
                   items: [
                     GHNavigationItem(
@@ -177,7 +177,7 @@ class NavigationComparisonScreen extends StatelessWidget {
 
                 const SizedBox(height: GHTokens.spacing20),
 
-                // Benefits explanation
+                /// Benefits explanation
                 GHCard(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,

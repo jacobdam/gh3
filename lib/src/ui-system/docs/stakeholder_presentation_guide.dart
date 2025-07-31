@@ -192,7 +192,7 @@ class StakeholderPresentationGuide extends StatelessWidget {
             'Navigation Improvements Demo',
             '8 minutes',
             'Show before/after navigation with clear benefits',
-            '/comparison/navigation',
+            '/tools/comparison/navigation',
           ),
           _buildFlowStep(
             context,
@@ -200,7 +200,7 @@ class StakeholderPresentationGuide extends StatelessWidget {
             'Spacing Standardization',
             '6 minutes',
             'Visual measurement tools and 4dp grid compliance',
-            '/comparison/spacing',
+            '/tools/comparison/spacing',
           ),
           _buildFlowStep(
             context,
@@ -208,7 +208,7 @@ class StakeholderPresentationGuide extends StatelessWidget {
             'Component Showcase',
             '10 minutes',
             'Interactive components with state management',
-            '/comparison/components',
+            '/tools/comparison/components',
           ),
           _buildFlowStep(
             context,
@@ -546,17 +546,17 @@ class StakeholderPresentationGuide extends StatelessWidget {
               _buildQuickNavButton(
                 context,
                 'Navigation Demo',
-                '/comparison/navigation',
+                '/tools/comparison/navigation',
               ),
               _buildQuickNavButton(
                 context,
                 'Spacing Demo',
-                '/comparison/spacing',
+                '/tools/comparison/spacing',
               ),
               _buildQuickNavButton(
                 context,
                 'Components',
-                '/comparison/components',
+                '/tools/comparison/components',
               ),
               _buildQuickNavButton(
                 context,

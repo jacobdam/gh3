@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:gh3/src/ui-system/example_screens/repository_details_example.dart';
-import 'package:gh3/src/ui-system/example_screens/repository_tree_example.dart';
+import 'package:gh3/src/ui-system/examples/repository_details_example.dart';
+import 'package:gh3/src/ui-system/examples/repository_tree_example.dart';
 import 'package:gh3/src/ui-system/state_widgets/gh_error_state.dart';
 
 void main() {

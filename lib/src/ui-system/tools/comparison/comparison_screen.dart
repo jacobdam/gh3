@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import '../tokens/gh_tokens.dart';
-import '../components/gh_card.dart';
-import '../layouts/gh_screen_template.dart';
+import '../../tokens/gh_tokens.dart';
+import '../../components/gh_card.dart';
+import '../../layouts/gh_screen_template.dart';
 
 /// A reusable screen widget for displaying before/after comparisons.
 ///
@@ -63,11 +63,11 @@ class _ComparisonScreenState extends State<ComparisonScreen>
       title: widget.title,
       body: Column(
         children: [
-          // Improvement highlights section
+          /// Improvement highlights section
           _buildHighlightsSection(),
           const SizedBox(height: GHTokens.spacing20),
 
-          // Before/After tabs
+          /// Before/After tabs
           Container(
             decoration: BoxDecoration(
               color: Theme.of(context).colorScheme.surface,
@@ -92,7 +92,7 @@ class _ComparisonScreenState extends State<ComparisonScreen>
 
           const SizedBox(height: GHTokens.spacing16),
 
-          // Tab content
+          /// Tab content
           Expanded(
             child: TabBarView(
               controller: _tabController,
@@ -138,7 +138,7 @@ class _ComparisonScreenState extends State<ComparisonScreen>
   Widget _buildBeforeView() {
     return Column(
       children: [
-        // Description card
+        /// Description card
         GHCard(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -163,7 +163,7 @@ class _ComparisonScreenState extends State<ComparisonScreen>
 
         const SizedBox(height: GHTokens.spacing16),
 
-        // Before widget
+        /// Before widget
         Expanded(child: widget.beforeWidget),
       ],
     );
@@ -172,7 +172,7 @@ class _ComparisonScreenState extends State<ComparisonScreen>
   Widget _buildAfterView() {
     return Column(
       children: [
-        // Description card
+        /// Description card
         GHCard(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -197,7 +197,7 @@ class _ComparisonScreenState extends State<ComparisonScreen>
 
         const SizedBox(height: GHTokens.spacing16),
 
-        // After widget
+        /// After widget
         Expanded(child: widget.afterWidget),
       ],
     );

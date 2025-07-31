@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import '../tokens/gh_tokens.dart';
-import '../components/gh_card.dart';
-import '../widgets/gh_navigation_grid.dart';
+import '../../tokens/gh_tokens.dart';
+import '../../components/gh_card.dart';
+import '../../widgets/gh_navigation_grid.dart';
 import 'comparison_screen.dart';
 import 'mock_screen.dart';
 
@@ -50,11 +50,11 @@ class SpacingComparisonScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // User card with wrong spacing
+          /// User card with wrong spacing
             Container(
               padding: const EdgeInsets.all(
                 23,
-              ), // Wrong: 23dp instead of standard
+              )/// Wrong: 23dp instead of standard
               decoration: BoxDecoration(
                 color: Theme.of(context).colorScheme.surface,
                 border: Border.all(
@@ -78,7 +78,7 @@ class SpacingComparisonScreen extends StatelessWidget {
                   ),
                   const SizedBox(
                     width: 15,
-                  ), // Wrong: 15dp instead of 12dp or 16dp
+                  )/// Wrong: 15dp instead of 12dp or 16dp
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -86,7 +86,7 @@ class SpacingComparisonScreen extends StatelessWidget {
                         Text('User Name', style: GHTokens.titleLarge),
                         const SizedBox(
                           height: 7,
-                        ), // Wrong: 7dp instead of 4dp or 8dp
+                        )/// Wrong: 7dp instead of 4dp or 8dp
                         Text(
                           '@username',
                           style: GHTokens.bodyMedium.copyWith(
@@ -102,15 +102,15 @@ class SpacingComparisonScreen extends StatelessWidget {
               ),
             ),
 
-            const SizedBox(height: 31), // Wrong: 31dp instead of 20dp or 32dp
-            // Quick actions with wrong spacing
+            const SizedBox(height: 31)/// Wrong: 31dp instead of 20dp or 32dp
+          /// Quick actions with wrong spacing
             Text('Quick Actions', style: GHTokens.titleMedium),
-            const SizedBox(height: 14), // Wrong: 14dp instead of 12dp or 16dp
-            // Grid with inconsistent internal spacing
+            const SizedBox(height: 14)/// Wrong: 14dp instead of 12dp or 16dp
+          /// Grid with inconsistent internal spacing
             Container(
               padding: const EdgeInsets.all(
                 19,
-              ), // Wrong: 19dp instead of 16dp or 20dp
+              )/// Wrong: 19dp instead of 16dp or 20dp
               decoration: BoxDecoration(
                 color: Theme.of(context).colorScheme.surface,
                 border: Border.all(
@@ -134,7 +134,7 @@ class SpacingComparisonScreen extends StatelessWidget {
                       ),
                       const SizedBox(
                         width: 13,
-                      ), // Wrong: 13dp instead of 8dp or 12dp
+                      )/// Wrong: 13dp instead of 8dp or 12dp
                       Expanded(
                         child: _buildInconsistentActionCard(
                           context,
@@ -147,7 +147,7 @@ class SpacingComparisonScreen extends StatelessWidget {
                   ),
                   const SizedBox(
                     height: 9,
-                  ), // Wrong: 9dp instead of 8dp or 12dp
+                  )/// Wrong: 9dp instead of 8dp or 12dp
                   Row(
                     children: [
                       Expanded(
@@ -158,7 +158,7 @@ class SpacingComparisonScreen extends StatelessWidget {
                           '3',
                         ),
                       ),
-                      const SizedBox(width: 13), // Wrong: 13dp (inconsistent)
+                      const SizedBox(width: 13)/// Wrong: 13dp (inconsistent)
                       Expanded(
                         child: _buildInconsistentActionCard(
                           context,
@@ -173,11 +173,11 @@ class SpacingComparisonScreen extends StatelessWidget {
               ),
             ),
 
-            const SizedBox(height: 26), // Wrong: 26dp instead of 24dp or 32dp
-            // Activity section with double padding issue
+            const SizedBox(height: 26)/// Wrong: 26dp instead of 24dp or 32dp
+          /// Activity section with double padding issue
             Text('Recent Activity', style: GHTokens.titleMedium),
-            const SizedBox(height: 18), // Wrong: 18dp instead of 16dp or 20dp
-            // Card with double padding (common issue)
+            const SizedBox(height: 18)/// Wrong: 18dp instead of 16dp or 20dp
+          /// Card with double padding (common issue)
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
@@ -190,14 +190,14 @@ class SpacingComparisonScreen extends StatelessWidget {
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Container(
-                padding: const EdgeInsets.all(16), // Double padding issue!
+                padding: const EdgeInsets.all(16)/// Double padding issue!
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text('Activity Item', style: GHTokens.titleMedium),
                     const SizedBox(
                       height: 6,
-                    ), // Wrong: 6dp instead of 4dp or 8dp
+                    )/// Wrong: 6dp instead of 4dp or 8dp
                     Text(
                       'This demonstrates the double padding issue that was common in the old system.',
                       style: GHTokens.bodyMedium,
@@ -207,13 +207,13 @@ class SpacingComparisonScreen extends StatelessWidget {
               ),
             ),
 
-            const SizedBox(height: 22), // Wrong: 22dp instead of 20dp or 24dp
-            // Spacing issues label
+            const SizedBox(height: 22)/// Wrong: 22dp instead of 20dp or 24dp
+          /// Spacing issues label
             Container(
               padding: const EdgeInsets.symmetric(
                 horizontal: 11,
                 vertical: 5,
-              ), // Wrong values
+              )/// Wrong values
               decoration: BoxDecoration(
                 color: Theme.of(context).colorScheme.errorContainer,
                 borderRadius: BorderRadius.circular(8),
@@ -239,11 +239,11 @@ class SpacingComparisonScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // User card with correct spacing
+          /// User card with correct spacing
             Container(
               padding: const EdgeInsets.all(
                 GHTokens.spacing16,
-              ), // Correct: 16dp
+              )/// Correct: 16dp
               decoration: BoxDecoration(
                 color: Theme.of(context).colorScheme.surface,
                 border: Border.all(
@@ -265,7 +265,7 @@ class SpacingComparisonScreen extends StatelessWidget {
                       ),
                     ),
                   ),
-                  const SizedBox(width: GHTokens.spacing12), // Correct: 12dp
+                  const SizedBox(width: GHTokens.spacing12)/// Correct: 12dp
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -273,7 +273,7 @@ class SpacingComparisonScreen extends StatelessWidget {
                         Text('User Name', style: GHTokens.titleLarge),
                         const SizedBox(
                           height: GHTokens.spacing8,
-                        ), // Correct: 8dp
+                        )/// Correct: 8dp
                         Text(
                           '@username',
                           style: GHTokens.bodyMedium.copyWith(
@@ -289,11 +289,11 @@ class SpacingComparisonScreen extends StatelessWidget {
               ),
             ),
 
-            const SizedBox(height: GHTokens.spacing20), // Correct: 20dp
-            // Quick actions with correct spacing
+            const SizedBox(height: GHTokens.spacing20)/// Correct: 20dp
+          /// Quick actions with correct spacing
             Text('Quick Actions', style: GHTokens.titleMedium),
-            const SizedBox(height: GHTokens.spacing12), // Correct: 12dp
-            // Grid with consistent internal spacing
+            const SizedBox(height: GHTokens.spacing12)/// Correct: 12dp
+          /// Grid with consistent internal spacing
             GHNavigationGrid.twoByTwo(
               items: [
                 GHNavigationItem.withCount(
@@ -322,17 +322,17 @@ class SpacingComparisonScreen extends StatelessWidget {
               ],
             ),
 
-            const SizedBox(height: GHTokens.spacing20), // Correct: 20dp
-            // Activity section with proper spacing
+            const SizedBox(height: GHTokens.spacing20)/// Correct: 20dp
+          /// Activity section with proper spacing
             Text('Recent Activity', style: GHTokens.titleMedium),
-            const SizedBox(height: GHTokens.spacing12), // Correct: 12dp
-            // Card with single, correct padding
+            const SizedBox(height: GHTokens.spacing12)/// Correct: 12dp
+          /// Card with single, correct padding
             GHCard(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text('Activity Item', style: GHTokens.titleMedium),
-                  const SizedBox(height: GHTokens.spacing8), // Correct: 8dp
+                  const SizedBox(height: GHTokens.spacing8)/// Correct: 8dp
                   Text(
                     'This demonstrates proper spacing using the standardized 4dp grid system.',
                     style: GHTokens.bodyMedium,
@@ -341,8 +341,8 @@ class SpacingComparisonScreen extends StatelessWidget {
               ),
             ),
 
-            const SizedBox(height: GHTokens.spacing20), // Correct: 20dp
-            // Grid system explanation
+            const SizedBox(height: GHTokens.spacing20)/// Correct: 20dp
+          /// Grid system explanation
             Container(
               padding: const EdgeInsets.all(GHTokens.spacing16),
               decoration: BoxDecoration(
@@ -423,18 +423,18 @@ class SpacingComparisonScreen extends StatelessWidget {
     String count,
   ) {
     return Container(
-      padding: const EdgeInsets.all(17), // Wrong: 17dp instead of 16dp
+      padding: const EdgeInsets.all(17)/// Wrong: 17dp instead of 16dp
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surfaceContainer,
         borderRadius: BorderRadius.circular(8),
       ),
       child: Column(
         children: [
-          Icon(icon, size: 26), // Wrong: 26dp instead of 24dp
-          const SizedBox(height: 11), // Wrong: 11dp instead of 8dp or 12dp
+          Icon(icon, size: 26)/// Wrong: 26dp instead of 24dp
+          const SizedBox(height: 11)/// Wrong: 11dp instead of 8dp or 12dp
           Text(title, style: GHTokens.labelLarge),
           if (count.isNotEmpty) ...[
-            const SizedBox(height: 5), // Wrong: 5dp instead of 4dp or 8dp
+            const SizedBox(height: 5)/// Wrong: 5dp instead of 4dp or 8dp
             Text(count, style: GHTokens.titleMedium),
           ],
         ],

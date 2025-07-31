@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../tokens/gh_tokens.dart';
+import '../../tokens/gh_tokens.dart';
 
 /// A mock screen widget used to demonstrate UI patterns in comparisons.
 ///
@@ -42,7 +42,7 @@ class MockScreen extends StatelessWidget {
       ),
       child: Column(
         children: [
-          // Mock app bar
+          /// Mock app bar
           Container(
             height: 56,
             decoration: BoxDecoration(
@@ -65,7 +65,9 @@ class MockScreen extends StatelessWidget {
                   const SizedBox(width: GHTokens.spacing4),
                   IconButton(
                     icon: const Icon(Icons.arrow_back),
-                    onPressed: null, // Disabled for demo
+                    onPressed: null,
+
+                    /// Disabled for demo
                   ),
                 ] else
                   const SizedBox(width: GHTokens.spacing16),
@@ -82,7 +84,7 @@ class MockScreen extends StatelessWidget {
             ),
           ),
 
-          // Mock body
+          /// Mock body
           Expanded(
             child: Padding(
               padding: const EdgeInsets.all(GHTokens.spacing16),

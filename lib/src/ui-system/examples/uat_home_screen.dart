@@ -172,7 +172,7 @@ class UATHomeScreen extends StatelessWidget {
                   'Streamlined navigation: tab-based → push-based patterns with '
                   'scrolling app bars, eliminating duplicate titles and improving user flow efficiency',
               icon: Icons.navigation,
-              route: '/comparison/navigation',
+              route: '/tools/comparison/navigation',
               isPrimary: true,
             ),
             const SizedBox(height: GHTokens.spacing16),
@@ -184,7 +184,7 @@ class UATHomeScreen extends StatelessWidget {
                   'Visual measurement tools showing 4dp grid system compliance, '
                   'with before/after spacing analysis and consistency improvements across all components',
               icon: Icons.grid_4x4,
-              route: '/comparison/spacing',
+              route: '/tools/comparison/spacing',
               isPrimary: false,
             ),
             const SizedBox(height: GHTokens.spacing16),
@@ -196,7 +196,7 @@ class UATHomeScreen extends StatelessWidget {
                   'State-aware components: loading, empty, and error states with '
                   'enhanced card variants, demonstrating improved user feedback and interaction patterns',
               icon: Icons.view_module,
-              route: '/comparison/components',
+              route: '/tools/comparison/components',
               isPrimary: false,
             ),
 
