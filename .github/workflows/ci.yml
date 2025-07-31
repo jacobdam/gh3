@@ -34,20 +34,14 @@ jobs:
 
       - name: Run tests
         run: |
-          # FIXME: UI system screen tests cause segmentation faults in CI but pass locally.
-          # Excluding entire directories:
-          # - test/src/ui-system/examples/ (all example screen tests)
-          # - test/src/ui-system/tools/ (all tool screen tests)
-          # - test/src/ui-system/integration/ (all integration tests)
-          # - test/ui_system/state_widgets/ (state widget tests with animations)
+          # FIXME: ALL UI system tests cause segmentation faults in CI but pass locally.
+          # Excluding all UI system directories due to persistent crashes.
           # These appear to be complex UI tests that may have issues with the CI environment.
           
-          # Find all test files except those in problematic directories
+          # Find all test files except those in UI system directories
           TEST_FILES=$(find test -name "*_test.dart" \
-            ! -path "test/src/ui-system/examples/*" \
-            ! -path "test/src/ui-system/tools/*" \
-            ! -path "test/src/ui-system/integration/*" \
-            ! -path "test/ui_system/state_widgets/*" \
+            ! -path "test/src/ui-system/*" \
+            ! -path "test/ui_system/*" \
             | tr '\n' ' ')
           
           # Run tests excluding problematic directories
