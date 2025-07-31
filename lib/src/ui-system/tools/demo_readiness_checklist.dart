@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import '../tokens/gh_tokens.dart';
 import '../components/gh_card.dart';
 import '../components/gh_button.dart';
@@ -418,7 +419,7 @@ class _DemoReadinessChecklistState extends State<DemoReadinessChecklist> {
             GHButton(
               label: 'Test',
               style: GHButtonStyle.secondary,
-              onPressed: () => Navigator.pushNamed(context, item.route!),
+              onPressed: () => context.push(item.route!),
             ),
           ],
         ],
@@ -464,7 +465,7 @@ class _DemoReadinessChecklistState extends State<DemoReadinessChecklist> {
             label: 'Open Stakeholder Guide',
             style: GHButtonStyle.primary,
             icon: Icons.launch,
-            onPressed: () => Navigator.pushNamed(context, '/stakeholder-guide'),
+            onPressed: () => context.push('/stakeholder-guide'),
           ),
         ],
       ),

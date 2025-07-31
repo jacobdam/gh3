@@ -53,7 +53,7 @@ import '../layouts/gh_screen_template.dart';
 /// 7. **Navigation Pattern:**
 ///    - Use push navigation instead of tab navigation
 ///    - Implement proper back button handling
-///    - Use Navigator.pushNamed for route navigation
+///    - Use context.push for route navigation
 ///
 /// **COPY-PASTE READY PATTERNS:**
 class ReferencePatternGuide {

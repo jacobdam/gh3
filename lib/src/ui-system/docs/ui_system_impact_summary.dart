@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import '../tokens/gh_tokens.dart';
 import '../components/gh_card.dart';
 import '../components/gh_button.dart';
@@ -372,7 +373,7 @@ class UISystemImpactSummary extends StatelessWidget {
             children: [
               Icon(icon, color: color, size: GHTokens.iconSize18),
               const SizedBox(width: GHTokens.spacing8),
-              Text(title, style: GHTokens.titleMedium),
+              Expanded(child: Text(title, style: GHTokens.titleMedium)),
             ],
           ),
           const SizedBox(height: GHTokens.spacing12),
@@ -523,9 +524,13 @@ class UISystemImpactSummary extends StatelessWidget {
                       size: 24,
                     ),
                     const SizedBox(width: GHTokens.spacing8),
-                    Text(
-                      'All Requirements Successfully Delivered',
-                      style: GHTokens.titleMedium.copyWith(color: Colors.green),
+                    Expanded(
+                      child: Text(
+                        'All Requirements Successfully Delivered',
+                        style: GHTokens.titleMedium.copyWith(
+                          color: Colors.green,
+                        ),
+                      ),
                     ),
                   ],
                 ),
@@ -625,7 +630,7 @@ class UISystemImpactSummary extends StatelessWidget {
           GHButton(
             label: 'View Stakeholder Presentation Guide',
             icon: Icons.present_to_all,
-            onPressed: () => Navigator.pushNamed(context, '/stakeholder-guide'),
+            onPressed: () => context.push('/stakeholder-guide'),
           ),
         ],
       ),

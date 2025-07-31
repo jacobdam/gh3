@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import '../tokens/gh_tokens.dart';
 import '../components/gh_card.dart';
 import '../components/gh_button.dart';
@@ -321,7 +322,7 @@ class UATHomeScreen extends StatelessWidget {
     required bool isPrimary,
   }) {
     return GHCard(
-      onTap: () => Navigator.pushNamed(context, route),
+      onTap: () => context.push(route),
       child: Padding(
         padding: const EdgeInsets.all(GHTokens.spacing4),
         child: Row(
@@ -481,7 +482,7 @@ class UATHomeScreen extends StatelessWidget {
               child: GHButton(
                 label: 'View Tokens',
                 icon: Icons.palette,
-                onPressed: () => Navigator.pushNamed(context, '/tokens'),
+                onPressed: () => context.push('/tokens'),
               ),
             ),
             const SizedBox(width: GHTokens.spacing12),
@@ -490,7 +491,7 @@ class UATHomeScreen extends StatelessWidget {
                 label: 'View Components',
                 style: GHButtonStyle.secondary,
                 icon: Icons.widgets,
-                onPressed: () => Navigator.pushNamed(context, '/components'),
+                onPressed: () => context.push('/components'),
               ),
             ),
           ],

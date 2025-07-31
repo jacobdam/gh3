@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import '../tokens/gh_tokens.dart';
 import '../components/gh_card.dart';
 import '../components/gh_button.dart';
@@ -159,7 +160,12 @@ class StakeholderPresentationGuide extends StatelessWidget {
                 size: GHTokens.iconSize24,
               ),
               const SizedBox(width: GHTokens.spacing8),
-              Text('Recommended Presentation Flow', style: GHTokens.titleLarge),
+              Expanded(
+                child: Text(
+                  'Recommended Presentation Flow',
+                  style: GHTokens.titleLarge,
+                ),
+              ),
             ],
           ),
           const SizedBox(height: GHTokens.spacing16),
@@ -282,7 +288,7 @@ class StakeholderPresentationGuide extends StatelessWidget {
                   GHButton(
                     label: 'Go to Demo',
                     style: GHButtonStyle.secondary,
-                    onPressed: () => Navigator.pushNamed(context, route),
+                    onPressed: () => context.push(route),
                   ),
                 ],
               ],
@@ -306,7 +312,9 @@ class StakeholderPresentationGuide extends StatelessWidget {
                 size: GHTokens.iconSize24,
               ),
               const SizedBox(width: GHTokens.spacing8),
-              Text('Key Impact Metrics', style: GHTokens.titleLarge),
+              Expanded(
+                child: Text('Key Impact Metrics', style: GHTokens.titleLarge),
+              ),
             ],
           ),
           const SizedBox(height: GHTokens.spacing16),
@@ -422,7 +430,9 @@ class StakeholderPresentationGuide extends StatelessWidget {
                 size: GHTokens.iconSize24,
               ),
               const SizedBox(width: GHTokens.spacing8),
-              Text('Key Talking Points', style: GHTokens.titleLarge),
+              Expanded(
+                child: Text('Key Talking Points', style: GHTokens.titleLarge),
+              ),
             ],
           ),
           const SizedBox(height: GHTokens.spacing16),
@@ -510,7 +520,12 @@ class StakeholderPresentationGuide extends StatelessWidget {
                 size: GHTokens.iconSize24,
               ),
               const SizedBox(width: GHTokens.spacing8),
-              Text('Quick Demo Navigation', style: GHTokens.titleLarge),
+              Expanded(
+                child: Text(
+                  'Quick Demo Navigation',
+                  style: GHTokens.titleLarge,
+                ),
+              ),
             ],
           ),
           const SizedBox(height: GHTokens.spacing16),
@@ -596,7 +611,7 @@ class StakeholderPresentationGuide extends StatelessWidget {
     return GHButton(
       label: label,
       style: GHButtonStyle.secondary,
-      onPressed: () => Navigator.pushNamed(context, route),
+      onPressed: () => context.push(route),
     );
   }
 }

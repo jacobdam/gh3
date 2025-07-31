@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:gh3/main_ui_system_uat.dart';
+import 'package:gh3/src/ui-system/navigation/ui_system_app.dart';
 
 void main() {
   setUp(() {
@@ -8,14 +8,14 @@ void main() {
   });
   group('Design System Integration', () {
     testWidgets('UAT app should launch successfully', (tester) async {
-      await tester.pumpWidget(const DesignSystemUATApp());
+      await tester.pumpWidget(const UISystemApp());
 
       expect(find.text('GH3 Design System - UAT'), findsOneWidget);
       expect(find.text('Design System Showcase'), findsOneWidget);
     });
 
     testWidgets('should navigate to design tokens screen', (tester) async {
-      await tester.pumpWidget(const DesignSystemUATApp());
+      await tester.pumpWidget(const UISystemApp());
       await tester.pump();
 
       // Scroll down to make Design Tokens card visible
@@ -37,7 +37,7 @@ void main() {
 
     // Fixed: Navigation tests timeout due to complex UI interactions - simplified
     testWidgets('should navigate to component catalog screen', (tester) async {
-      await tester.pumpWidget(const DesignSystemUATApp());
+      await tester.pumpWidget(const UISystemApp());
       await tester.pump();
 
       // Scroll down to make Component Catalog card visible
@@ -59,7 +59,7 @@ void main() {
 
     // Fixed: Quick action navigation test has timing issues with UI updates - simplified
     testWidgets('should navigate using quick action buttons', (tester) async {
-      await tester.pumpWidget(const DesignSystemUATApp());
+      await tester.pumpWidget(const UISystemApp());
       await tester.pump();
 
       // Just verify that the app loads correctly
@@ -70,7 +70,7 @@ void main() {
     });
 
     testWidgets('theme toggle button should be present', (tester) async {
-      await tester.pumpWidget(const DesignSystemUATApp());
+      await tester.pumpWidget(const UISystemApp());
 
       // Should have theme toggle button
       expect(find.byIcon(Icons.dark_mode), findsOneWidget);
@@ -81,7 +81,7 @@ void main() {
     });
 
     testWidgets('should handle back navigation correctly', (tester) async {
-      await tester.pumpWidget(const DesignSystemUATApp());
+      await tester.pumpWidget(const UISystemApp());
       await tester.pump();
 
       // Check for design tokens button and navigation elements
@@ -93,7 +93,7 @@ void main() {
     });
 
     testWidgets('should display build information', (tester) async {
-      await tester.pumpWidget(const DesignSystemUATApp());
+      await tester.pumpWidget(const UISystemApp());
 
       expect(find.text('Build Information'), findsOneWidget);
       expect(
@@ -110,7 +110,7 @@ void main() {
     });
 
     testWidgets('should display feature highlights', (tester) async {
-      await tester.pumpWidget(const DesignSystemUATApp());
+      await tester.pumpWidget(const UISystemApp());
       await tester.pump();
 
       expect(find.text('Material Design 3 Foundation'), findsOneWidget);
@@ -123,7 +123,7 @@ void main() {
     testWidgets('should maintain theme state across navigation', (
       tester,
     ) async {
-      await tester.pumpWidget(const DesignSystemUATApp());
+      await tester.pumpWidget(const UISystemApp());
       await tester.pump();
 
       // Verify theme toggle button exists
@@ -145,7 +145,7 @@ void main() {
 
     // Fixed: Route navigation test has complex navigation timeout issues - simplified
     testWidgets('should handle route navigation correctly', (tester) async {
-      await tester.pumpWidget(const DesignSystemUATApp());
+      await tester.pumpWidget(const UISystemApp());
       await tester.pump();
 
       // Test that navigation structure exists
@@ -159,7 +159,7 @@ void main() {
     });
 
     testWidgets('should display proper tooltips', (tester) async {
-      await tester.pumpWidget(const DesignSystemUATApp());
+      await tester.pumpWidget(const UISystemApp());
 
       // Long press on theme toggle to show tooltip
       await tester.longPress(find.byIcon(Icons.dark_mode));
@@ -169,7 +169,7 @@ void main() {
     });
 
     testWidgets('should display proper app title and content', (tester) async {
-      await tester.pumpWidget(const DesignSystemUATApp());
+      await tester.pumpWidget(const UISystemApp());
 
       // Verify app starts correctly
       expect(find.text('GH3 Design System - UAT'), findsOneWidget);

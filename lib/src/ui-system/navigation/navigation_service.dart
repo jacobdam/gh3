@@ -30,6 +30,7 @@ import '../tools/measurement_validation_screen.dart';
 import '../tools/standards_compliance_screen.dart';
 import '../tools/demo_readiness_checklist.dart';
 import 'example_routes.dart';
+import 'ui_system_app.dart';
 
 /// Navigation service for the UI system example screens
 class NavigationService {
@@ -334,24 +335,10 @@ class NavigationService {
 }
 
 /// Theme-aware wrapper for UAT Home Screen
-class _UATHomeWrapper extends StatefulWidget {
-  @override
-  State<_UATHomeWrapper> createState() => _UATHomeWrapperState();
-}
-
-class _UATHomeWrapperState extends State<_UATHomeWrapper> {
-  ThemeMode _themeMode = ThemeMode.system;
-
-  void _toggleTheme() {
-    setState(() {
-      _themeMode = _themeMode == ThemeMode.light
-          ? ThemeMode.dark
-          : ThemeMode.light;
-    });
-  }
-
+class _UATHomeWrapper extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return UATHomeScreen(onThemeToggle: _toggleTheme);
+    final themeProvider = ThemeProvider.of(context);
+    return UATHomeScreen(onThemeToggle: themeProvider.onThemeToggle);
   }
 }

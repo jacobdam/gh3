@@ -13,6 +13,7 @@ import '../state_widgets/gh_loading_indicator.dart';
 import '../layouts/gh_content_template.dart';
 import '../layouts/gh_screen_template.dart';
 import '../widgets/gh_content_metadata.dart';
+import '../widgets/theme_toggle_button.dart';
 import '../utils/color_utils.dart';
 
 /// **REFERENCE IMPLEMENTATION** - Component Catalog Screen
@@ -53,6 +54,7 @@ class _ComponentCatalogScreenState extends State<ComponentCatalogScreen> {
     // REFERENCE PATTERN: Always use GHScreenTemplate for consistent screen structure
     return GHScreenTemplate(
       title: 'Component Catalog',
+      actions: const [ThemeToggleButton()],
       body: SingleChildScrollView(
         // REFERENCE PATTERN: Use GHTokens spacing constants for all padding/margins
         padding: const EdgeInsets.all(GHTokens.spacing16),
