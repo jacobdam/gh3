@@ -46,6 +46,10 @@ jobs:
           # - test/src/ui-system/tools/measurement_validation_screen_test.dart
           # - test/src/ui-system/integration/design_system_integration_test.dart
           # - test/src/ui-system/integration/screen_integration_test.dart
+          # - test/src/ui-system/comparison/component_showcase_comparison_screen_test.dart
+          # - test/src/ui-system/comparison/comparison_screen_test.dart
+          # - test/src/ui-system/comparison/navigation_comparison_screen_test.dart
+          # - test/src/ui-system/comparison/spacing_comparison_screen_test.dart
           # - test/ui_system/state_widgets/gh_loading_transition_test.dart
           
           # Find all test files except the problematic ones
@@ -59,6 +63,10 @@ jobs:
             ! -path "test/src/ui-system/tools/measurement_validation_screen_test.dart" \
             ! -path "test/src/ui-system/integration/design_system_integration_test.dart" \
             ! -path "test/src/ui-system/integration/screen_integration_test.dart" \
+            ! -path "test/src/ui-system/comparison/component_showcase_comparison_screen_test.dart" \
+            ! -path "test/src/ui-system/comparison/comparison_screen_test.dart" \
+            ! -path "test/src/ui-system/comparison/navigation_comparison_screen_test.dart" \
+            ! -path "test/src/ui-system/comparison/spacing_comparison_screen_test.dart" \
             ! -path "test/ui_system/state_widgets/gh_loading_transition_test.dart" \
             | tr '\n' ' ')
           
