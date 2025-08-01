@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'src/ui_system/examples/github_widgets_screen.dart';
+import 'src/ui-system/examples/github_widgets_screen.dart';
 
 /// Main entry point for the UI widgets demo application.
 ///
