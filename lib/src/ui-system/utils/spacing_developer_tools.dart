@@ -28,18 +28,20 @@ class SpacingDeveloperTools {
     debugPrint('🔍 Spacing Compliance Analysis');
     debugPrint('================================');
 
-    final spacings = SpacingValidator.getStandardSpacings();
+    final spacings = SpacingValidator.getAllowedSpacingValues();
     int validCount = 0;
     int invalidCount = 0;
 
     for (final spacing in spacings) {
-      final result = SpacingValidator.validateWithDetails(spacing);
+      final result = SpacingValidator.validateSpacing(spacing);
       if (result.isValid) {
         validCount++;
-        debugPrint('✅ ${result.constantName}: ${result.value}dp - VALID');
+        debugPrint(
+          '✅ GHTokens.spacing${spacing.toInt()}: ${spacing}dp - VALID',
+        );
       } else {
         invalidCount++;
-        debugPrint('❌ Spacing ${result.value}dp - INVALID (not 4dp aligned)');
+        debugPrint('❌ Spacing ${spacing}dp - INVALID (not 4dp aligned)');
       }
     }
 
@@ -88,27 +90,22 @@ class SpacingDeveloperTools {
   static void validateCustomSpacing(double spacing, {String? context}) {
     if (!kDebugMode) return;
 
-    final result = SpacingValidator.validateWithDetails(spacing);
+    final result = SpacingValidator.validateSpacing(spacing);
     final contextStr = context != null ? '[$context] ' : '';
 
     debugPrint('${contextStr}Custom Spacing Validation');
     debugPrint('$contextStr${"=" * 30}');
-    debugPrint('${contextStr}Input value: ${result.value}dp');
+    debugPrint('${contextStr}Input value: ${result.inputValue}dp');
     debugPrint('${contextStr}Valid: ${result.isValid ? "YES" : "NO"}');
 
     if (!result.isValid) {
       debugPrint('$contextStr❌ Not aligned to 4dp grid');
-      debugPrint('${contextStr}Recommended: ${result.nearestValidValue}dp');
+      debugPrint('${contextStr}Recommended: ${result.suggestedValue}dp');
     }
 
-    if (!result.isStandardConstant && result.isValid) {
-      debugPrint('$contextStr⚠️  Valid but non-standard spacing');
-      debugPrint('${contextStr}Consider using: ${result.closestStandardName}');
-    }
-
-    if (result.isStandardConstant) {
+    if (result.isValid) {
       debugPrint(
-        '$contextStr✅ Using standard constant: ${result.constantName}',
+        '$contextStr✅ Using standard constant: GHTokens.spacing${result.inputValue.toInt()}',
       );
     }
   }
@@ -275,7 +272,7 @@ class _SpacingDebugPanelState extends State<_SpacingDebugPanel> {
   }
 
   Widget _buildValidationResult() {
-    final result = SpacingValidator.validateWithDetails(_customSpacing);
+    final result = SpacingValidator.validateSpacing(_customSpacing);
 
     return Card(
       child: Padding(
@@ -298,13 +295,15 @@ class _SpacingDebugPanelState extends State<_SpacingDebugPanel> {
             ),
             const SizedBox(height: GHTokens.spacing4),
             if (!result.isValid) ...[
-              Text('Nearest valid: ${result.nearestValidValue}dp'),
+              Text('Nearest valid: ${result.suggestedValue}dp'),
             ],
-            if (result.isStandardConstant) ...[
-              Text('Standard constant: ${result.constantName}'),
+            if (result.isValid) ...[
+              Text(
+                'Standard constant: GHTokens.spacing${result.inputValue.toInt()}',
+              ),
             ] else ...[
               Text(
-                'Closest standard: ${result.closestStandardName} (${result.closestStandardValue}dp)',
+                'Closest standard: GHTokens.spacing${result.suggestedValue.toInt()} (${result.suggestedValue}dp)',
               ),
             ],
           ],
