@@ -8,13 +8,13 @@ A comprehensive Material Design 3 UI system for the GitHub mobile application, p
 
 ```bash
 # Run on web (recommended for stakeholder review)
-flutter run -d chrome --target=lib/main_ui_system_uat.dart
+flutter run -d chrome --target=lib/demo/main_ui_system.dart
 
 # Run on iOS
-flutter run -d ios --target=lib/main_ui_system_uat.dart
+flutter run -d ios --target=lib/demo/main_ui_system.dart
 
 # Run on Android
-flutter run -d android --target=lib/main_ui_system_uat.dart
+flutter run -d android --target=lib/demo/main_ui_system.dart
 ```
 
 ## Architecture

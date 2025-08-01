@@ -27,10 +27,10 @@ This workstream tracks the migration of the gh3 application to the new UI system
 
 ## Quick Links
 
-- [UI System Demo](../../../lib/main_ui_system_uat.dart) - Run with `flutter run -d chrome --target=lib/main_ui_system_uat.dart`
+- [UI System Demo](../../../lib/demo/main_ui_system.dart) - Run with `flutter run -d chrome --target=lib/demo/main_ui_system.dart`
 - [Design Tokens](../../../lib/src/ui-system/tokens/gh_tokens.dart)
 - [Components](../../../lib/src/ui-system/components/)
-- [Example Screens](../../../lib/src/ui-system/example_screens/)
+- [Example Screens](../../../lib/src/ui-system/examples/)
 
 ## Summary of Standards
 

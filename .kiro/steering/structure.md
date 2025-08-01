@@ -35,8 +35,9 @@ Business logic layer - registered with dependency injection:
 - `auth_service.dart` - Authentication state management
 - `github_auth_client.dart` - GitHub OAuth client
 - `token_storage.dart` - Secure token persistence
-- `ferry_client_service.dart` - GraphQL client configuration
-- `ferry_module.dart` - Ferry GraphQL module setup
+- `ferry_module.dart` - Ferry GraphQL module setup and client configuration
+- `graphql_error_handler.dart` - Centralized GraphQL error handling
+- `graphql_errors.dart` - GraphQL error type definitions
 - `scope_service.dart` - Application scope management
 - `timer_service.dart` - Timer utilities
 
