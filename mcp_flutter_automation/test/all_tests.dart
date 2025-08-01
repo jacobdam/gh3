@@ -11,7 +11,7 @@ void main() {
       group('FlutterApp Model Tests', flutter_app_tests.main);
       group('FlutterController Tests', flutter_controller_tests.main);
     });
-    
+
     group('Integration Tests', () {
       group('MCP Server Tests', mcp_server_tests.main);
     });

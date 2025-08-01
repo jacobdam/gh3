@@ -12,13 +12,13 @@ void main(List<String> arguments) async {
   });
 
   final server = FlutterAutomationMCPServer();
-  
+
   // Handle graceful shutdown
   ProcessSignal.sigint.watch().listen((_) async {
     await server.stop();
     exit(0);
   });
-  
+
   ProcessSignal.sigterm.watch().listen((_) async {
     await server.stop();
     exit(0);

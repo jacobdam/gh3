@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/services.dart';
 import 'package:gh3/src/init.dart';
 import 'package:gh3/src/screens/app/gh3_app.dart';
 import 'package:gh3/src/screens/app/auth_viewmodel.dart';
@@ -16,7 +15,7 @@ Future<void> main() async {
       if (kDebugMode) {
         enableFlutterDriverExtension();
       }
-      
+
       WidgetsFlutterBinding.ensureInitialized();
 
       configureDependencies();
