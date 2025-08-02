@@ -631,11 +631,13 @@ class FlutterController {
       // Check if inspector extensions are available
       final isolate = await app.vmService!.getIsolate(app.isolateId!);
       final extensions = isolate.extensionRPCs ?? [];
-      
-      final hasInspector = extensions.any((ext) => ext.startsWith('ext.flutter.inspector'));
-      
+
+      final hasInspector =
+          extensions.any((ext) => ext.startsWith('ext.flutter.inspector'));
+
       if (!hasInspector) {
-        throw Exception('Flutter Inspector extensions not available. Available extensions: $extensions');
+        throw Exception(
+            'Flutter Inspector extensions not available. Available extensions: $extensions');
       }
 
       // Try to initialize/enable the inspector if needed
@@ -655,7 +657,8 @@ class FlutterController {
   }
 
   /// Get widget tree via root widget (most basic approach)
-  Future<Map<String, dynamic>> _getWidgetTreeViaRootWidget(FlutterApp app) async {
+  Future<Map<String, dynamic>> _getWidgetTreeViaRootWidget(
+      FlutterApp app) async {
     final response = await app.vmService!.callServiceExtension(
       'ext.flutter.inspector.getRootWidget',
       isolateId: app.isolateId,
@@ -665,7 +668,8 @@ class FlutterController {
   }
 
   /// Get widget tree via summary tree
-  Future<Map<String, dynamic>> _getWidgetTreeViaSummaryTree(FlutterApp app) async {
+  Future<Map<String, dynamic>> _getWidgetTreeViaSummaryTree(
+      FlutterApp app) async {
     final response = await app.vmService!.callServiceExtension(
       'ext.flutter.inspector.getRootWidgetTree',
       isolateId: app.isolateId,
@@ -679,7 +683,8 @@ class FlutterController {
   }
 
   /// Get widget tree via selected widget
-  Future<Map<String, dynamic>> _getWidgetTreeViaSelectedWidget(FlutterApp app) async {
+  Future<Map<String, dynamic>> _getWidgetTreeViaSelectedWidget(
+      FlutterApp app) async {
     final response = await app.vmService!.callServiceExtension(
       'ext.flutter.inspector.getSelectedSummaryWidget',
       isolateId: app.isolateId,
