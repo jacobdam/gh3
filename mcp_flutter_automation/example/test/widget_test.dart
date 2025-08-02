@@ -14,7 +14,8 @@ void main() {
   testWidgets('Text toggle test', (WidgetTester tester) async {
     // Build our app and trigger a frame.
     final GlobalKey repaintBoundaryKey = GlobalKey();
-    await tester.pumpWidget(MCPFlutterExample(repaintBoundaryKey: repaintBoundaryKey));
+    await tester
+        .pumpWidget(MCPFlutterExample(repaintBoundaryKey: repaintBoundaryKey));
 
     // Verify that our text starts with 'Hello MCP!'.
     expect(find.text('Hello MCP!'), findsOneWidget);

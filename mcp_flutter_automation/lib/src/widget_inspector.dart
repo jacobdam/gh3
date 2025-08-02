@@ -74,7 +74,7 @@ class WidgetInspector {
 
       // Extract widget information from the widget tree data
       final widgets = <WidgetInfo>[];
-      await _processWidgetTreeData(widgetTreeData, widgets);
+      await _processWidgetTreeDataWithBounds(appId, widgetTreeData, widgets);
 
       return widgets;
     } catch (e) {
@@ -83,33 +83,35 @@ class WidgetInspector {
     }
   }
 
-  /// Processes widget tree data to extract widget information
-  Future<void> _processWidgetTreeData(
+  /// Processes widget tree data with bounds extraction using Flutter Inspector
+  Future<void> _processWidgetTreeDataWithBounds(
+    String appId,
     Map<String, dynamic> widgetTreeData,
     List<WidgetInfo> widgets,
   ) async {
     try {
-      // Process the root widget tree data
+      // Process widget tree and get render object bounds via Flutter Inspector
       if (widgetTreeData.containsKey('children')) {
         final children = widgetTreeData['children'] as List?;
         if (children != null) {
           for (final child in children) {
             if (child is Map<String, dynamic>) {
-              await _processWidgetTreeNode(child, widgets);
+              await _processWidgetTreeNodeWithBounds(appId, child, widgets);
             }
           }
         }
       } else {
         // Process single widget node
-        await _processWidgetTreeNode(widgetTreeData, widgets);
+        await _processWidgetTreeNodeWithBounds(appId, widgetTreeData, widgets);
       }
     } catch (e) {
-      _logger.fine('Error processing widget tree data: $e');
+      _logger.fine('Error processing widget tree data with bounds: $e');
     }
   }
 
-  /// Recursively processes individual widget tree nodes
-  Future<void> _processWidgetTreeNode(
+  /// Recursively processes individual widget tree nodes with bounds extraction
+  Future<void> _processWidgetTreeNodeWithBounds(
+    String appId,
     Map<String, dynamic> node,
     List<WidgetInfo> widgets,
   ) async {
@@ -120,12 +122,15 @@ class WidgetInspector {
           node['description'] as String? ?? node['name'] as String?;
 
       if (widgetId != null && widgetType != null) {
-        // Create widget info with available data
+        // Get render object bounds using Flutter Inspector API
+        final renderBox = await _getRenderObjectBounds(appId, widgetId);
+
+        // Create widget info with bounds data
         final widgetInfo = WidgetInfo(
           id: widgetId,
           type: widgetType,
           properties: _extractPropertiesFromNode(node),
-          renderBox: _extractRenderBoxFromNode(node),
+          renderBox: renderBox,
         );
 
         widgets.add(widgetInfo);
@@ -136,12 +141,12 @@ class WidgetInspector {
       if (children != null) {
         for (final child in children) {
           if (child is Map<String, dynamic>) {
-            await _processWidgetTreeNode(child, widgets);
+            await _processWidgetTreeNodeWithBounds(appId, child, widgets);
           }
         }
       }
     } catch (e) {
-      _logger.fine('Error processing widget tree node: $e');
+      _logger.fine('Error processing widget tree node with bounds: $e');
     }
   }
 
@@ -167,35 +172,62 @@ class WidgetInspector {
     return properties;
   }
 
-  /// Extracts render box information from a widget tree node
-  RenderBoxInfo? _extractRenderBoxFromNode(Map<String, dynamic> node) {
+  /// Gets render object bounds using Flutter Inspector API
+  Future<RenderBoxInfo?> _getRenderObjectBounds(
+      String appId, String widgetId) async {
     try {
-      // Look for render box data in various possible locations
-      final renderData = node['renderObject'] ?? node['size'] ?? node['bounds'];
+      // Get app instance to access VM service
+      final app = _controller.getAppInstance(appId);
+      if (app?.vmService == null || app?.isolateId == null) {
+        return null;
+      }
 
-      if (renderData is Map<String, dynamic>) {
-        // Try to extract size and position
-        final size = renderData['size'] ?? renderData;
-        final offset = renderData['offset'] ?? renderData;
+      // Use Flutter Inspector to get render object details
+      final response = await app!.vmService!.callServiceExtension(
+        'ext.flutter.inspector.getDetailsSubtree',
+        isolateId: app.isolateId,
+        args: {
+          'objectId': widgetId,
+          'objectGroup': 'inspector',
+        },
+      );
 
-        final x = (offset['dx'] as num?)?.toDouble() ??
-            (offset['x'] as num?)?.toDouble() ??
-            0.0;
-        final y = (offset['dy'] as num?)?.toDouble() ??
-            (offset['y'] as num?)?.toDouble() ??
-            0.0;
-        final width = (size['width'] as num?)?.toDouble() ?? 0.0;
-        final height = (size['height'] as num?)?.toDouble() ?? 0.0;
+      final details = response.json;
+      if (details != null) {
+        // Extract bounds from render object properties
+        final renderObject = details['renderObject'] as Map<String, dynamic>?;
+        if (renderObject != null) {
+          final size = renderObject['size'] as Map<String, dynamic>?;
 
-        if (width > 0 || height > 0) {
-          return RenderBoxInfo(x: x, y: y, width: width, height: height);
+          if (size != null) {
+            final width = (size['width'] as num?)?.toDouble() ?? 0.0;
+            final height = (size['height'] as num?)?.toDouble() ?? 0.0;
+
+            // Try to get position from global position
+            final globalPosition =
+                await _getWidgetGlobalPosition(appId, widgetId);
+            final x = globalPosition?['x'] ?? 0.0;
+            final y = globalPosition?['y'] ?? 0.0;
+
+            if (width > 0 || height > 0) {
+              return RenderBoxInfo(x: x, y: y, width: width, height: height);
+            }
+          }
         }
       }
     } catch (e) {
-      _logger.fine('Failed to extract render box from node: $e');
+      _logger.fine('Failed to get render object bounds for $widgetId: $e');
     }
 
     return null;
+  }
+
+  /// Gets widget global position using Flutter Inspector
+  Future<Map<String, double>?> _getWidgetGlobalPosition(
+      String appId, String widgetId) async {
+    // For now, return default position until we can properly implement
+    // the Flutter Inspector coordinate mapping
+    return {'x': 0.0, 'y': 0.0};
   }
 
   /// Saves inspection data to files for analysis

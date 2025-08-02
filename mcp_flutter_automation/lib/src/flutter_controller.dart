@@ -739,6 +739,11 @@ class FlutterController {
         .toList();
   }
 
+  /// Gets Flutter app instance for internal use by widget inspector
+  FlutterApp? getAppInstance(String appId) {
+    return _apps[appId];
+  }
+
   Future<void> dispose() async {
     for (final appId in _apps.keys.toList()) {
       try {

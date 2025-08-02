@@ -1,8 +1,8 @@
 {
   "mcpServers": {
     "flutter-automation": {
-      "command": "/path/to/project/mcp_flutter_automation/run_mcp_server.sh",
-      "args": [],
+      "command": "../mcp_dev_proxy/mcp_dev_proxy_binary",
+      "args": ["./mcp_flutter_automation_binary"],
       "env": {
         "LOG_LEVEL": "INFO"
       }

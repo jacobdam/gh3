@@ -2,6 +2,26 @@
 
 A Model Context Protocol (MCP) server for automating Flutter app operations with advanced screenshot capabilities and widget inspection. Features child process management for reliable Flutter app lifecycle control.
 
+## Development Goals
+
+This project serves as a **development platform for MCP Flutter automation capabilities**, with the primary goal of creating a robust toolset for AI code agents to interact with Flutter applications. The server enables:
+
+- **AI-Driven Flutter Testing**: Automated widget inspection, screenshot analysis, and UI testing
+- **Code Agent Integration**: Seamless integration with Claude Code and other AI development tools
+- **Flutter Development Automation**: Hot reload/restart, build management, and deployment workflows
+- **Advanced Widget Analysis**: Deep inspection of Flutter widget trees with coordinate mapping and visual analysis
+
+### Code Agent Proxy Integration
+
+The project includes a **development proxy tool** (`mcp_dev_proxy`) that provides crash recovery and enhanced debugging capabilities for MCP server development:
+
+- **Crash Recovery**: Automatically restarts the MCP server if it crashes during development
+- **Enhanced Logging**: Detailed logging of MCP protocol messages and tool calls
+- **Development Stability**: Prevents connection drops during long-running operations
+- **Tool Call Debugging**: Real-time monitoring of MCP tool invocations and responses
+
+The proxy is configured in `.mcp.json` and acts as an intermediary between Claude Code and the Flutter automation server.
+
 ## Features
 
 - **🚀 Flutter App Lifecycle**: Launch, hot reload/restart, and stop Flutter apps as managed child processes
@@ -53,6 +73,30 @@ Add to your Claude Desktop config (`~/Library/Application Support/Claude/claude_
   }
 }
 ```
+
+#### Development Proxy Setup (Recommended)
+
+For enhanced development stability and crash recovery, use the MCP development proxy. Update your local `.mcp.json`:
+
+```json
+{
+  "mcpServers": {
+    "flutter-automation": {
+      "command": "../mcp_dev_proxy/mcp_dev_proxy_binary",
+      "args": ["./mcp_flutter_automation_binary"],
+      "env": {
+        "LOG_LEVEL": "INFO"
+      }
+    }
+  }
+}
+```
+
+The proxy provides:
+- **Automatic restart** if the MCP server crashes
+- **Enhanced logging** for debugging MCP protocol issues
+- **Connection stability** during long-running operations
+- **Development-focused error handling** and recovery
 
 #### Project Configuration
 
