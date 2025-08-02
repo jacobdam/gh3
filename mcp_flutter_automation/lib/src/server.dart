@@ -165,11 +165,71 @@ class FlutterAutomationMCPServer extends MCPBase {
             filename: filename,
           );
 
-          return {
+          // Return compact response to avoid token limits
+          final compactResponse = {
             'success': true,
-            'inspection': result.toJson(),
+            'appId': result.appId,
+            'timestamp': result.timestamp.toIso8601String(),
             'widgetCount': result.widgets.length,
+            'screenshotSaved': filename != null,
           };
+
+          // Only include screenshot in response if no filename (not saving to file)
+          // Screenshot base64 is very large (~40K+ tokens), so exclude when saving to file
+          if (filename == null) {
+            // Even when not saving, check size and warn about potential token limits
+            final screenshotSize = result.screenshotBase64.length;
+            if (screenshotSize > 50000) {
+              // ~50KB base64 ≈ 25K tokens
+              compactResponse['screenshotWarning'] =
+                  'Screenshot too large for response, use filename parameter';
+              compactResponse['screenshotSize'] = screenshotSize;
+            } else {
+              compactResponse['screenshotBase64'] = result.screenshotBase64;
+            }
+          } else {
+            compactResponse['screenshotPath'] =
+                '/path/to/project/$filename.png';
+            compactResponse['screenshotSize'] = result.screenshotBase64.length;
+          }
+
+          // Include widget summary (limited to avoid token overflow)
+          if (includeWidgetBounds && result.widgets.isNotEmpty) {
+            compactResponse['widgetSummary'] = result.widgets
+                .take(10)
+                .map((w) => {
+                      'type': w.type,
+                      'id': w.id,
+                      'bounds': w.renderBox != null
+                          ? {
+                              'x': w.renderBox!.x,
+                              'y': w.renderBox!.y,
+                              'width': w.renderBox!.width,
+                              'height': w.renderBox!.height,
+                            }
+                          : null,
+                    })
+                .toList();
+          }
+
+          // Include minimal widget tree info to avoid token overflow
+          if (includeWidgetTree && result.widgetTree.isNotEmpty) {
+            final tree = result.widgetTree;
+            final resultData = tree['result'];
+            if (resultData is Map<String, dynamic>) {
+              compactResponse['widgetTreeSummary'] = {
+                'rootType': resultData['widgetRuntimeType'] ?? 'Unknown',
+                'hasChildren': resultData['hasChildren'] ?? false,
+                'childCount': resultData['children']?.length ?? 0,
+              };
+            } else {
+              compactResponse['widgetTreeSummary'] = {
+                'error': 'Unexpected tree structure'
+              };
+            }
+          }
+
+          return compactResponse;
 
         case 'get_widgets_at_position':
           final appId = params['appId'] as String;
