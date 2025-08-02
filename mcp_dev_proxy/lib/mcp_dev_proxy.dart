@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:convert';
 import 'dart:io';
 import 'package:logging/logging.dart';
 import 'package:meta/meta.dart';
@@ -27,36 +26,27 @@ class MCPDevProxy {
 
   bool _restartPending = false;
   String? _lastRestartReason;
+  String? _startupError; // Track startup failures
   final Map<dynamic, MCPMessage> _pendingRequests = {};
 
   MCPDevProxy({
     required this.targetBinary,
     this.arguments = const [],
-    Stream<String>? stdinStream,
-    IOSink? stdoutSink,
-  })  : stdinStream = stdinStream ?? _createDefaultStdinStream(),
-        stdoutSink = stdoutSink ?? stdout;
-
-  static Stream<String> _createDefaultStdinStream() {
-    try {
-      return stdin.transform(utf8.decoder).transform(const LineSplitter());
-    } catch (e) {
-      // In test environments or when stdin is unavailable, return empty stream
-      return const Stream.empty();
-    }
+    required this.stdinStream,
+    required this.stdoutSink,
+  }) {
+    // Initialize components in constructor
+    _processManager = ProcessManager(
+      targetBinary: targetBinary,
+      arguments: arguments,
+    );
+    _fileWatcher = FileWatcher(filePath: targetBinary);
   }
 
   Future<void> start() async {
     _logger.info('Starting MCP Dev Proxy');
     _logger.info('Target binary: $targetBinary');
     _logger.info('Arguments: ${arguments.join(' ')}');
-
-    _processManager = ProcessManager(
-      targetBinary: targetBinary,
-      arguments: arguments,
-    );
-
-    _fileWatcher = FileWatcher(filePath: targetBinary);
 
     await _startFileWatcher();
     await _startTargetProcess();
@@ -78,6 +68,8 @@ class MCPDevProxy {
   }
 
   Future<void> _startTargetProcess() async {
+    _startupError = null; // Reset startup error
+
     try {
       await _processManager.start();
 
@@ -93,9 +85,21 @@ class MCPDevProxy {
           _handleProcessCrash(exitCode);
         }
       });
+
+      _logger.info('Target process started successfully');
     } catch (e) {
       _logger.severe('Failed to start target process: $e');
-      rethrow;
+
+      // Capture startup error details for better error messages
+      if (e is ProcessStartupException) {
+        _startupError = e.message;
+      } else {
+        _startupError = 'Failed to start: $e';
+      }
+
+      // Don't rethrow - let proxy continue running but with startup error set
+      _logger.warning(
+          'Proxy will continue running but target process failed to start');
     }
   }
 
@@ -130,15 +134,19 @@ class MCPDevProxy {
       if (_processManager.isRunning) {
         _processManager.sendMessage(line);
       } else {
-        // Process not running, return error
+        // Process not running, return error with details
         if (message.isRequest && message.id != null) {
-          _sendErrorToClient(message.id, MCPError.serverUnavailable());
+          final errorDetails = _buildServerUnavailableDetails();
+          _sendErrorToClient(
+              message.id, MCPError.serverUnavailable(errorDetails));
         }
       }
     } catch (e) {
       _logger.warning('Failed to forward message to target: $e');
       if (message.isRequest && message.id != null) {
-        _sendErrorToClient(message.id, MCPError.serverUnavailable());
+        final errorDetails = _buildServerUnavailableDetails();
+        _sendErrorToClient(
+            message.id, MCPError.serverUnavailable(errorDetails));
       }
     }
   }
@@ -207,6 +215,33 @@ class MCPDevProxy {
     _processManager.restart().catchError((error) {
       _logger.severe('Failed to restart target process: $error');
     });
+  }
+
+  Map<String, dynamic> _buildServerUnavailableDetails() {
+    final details = <String, dynamic>{
+      'proxy': 'mcp_dev_proxy',
+      'target_binary': targetBinary,
+    };
+
+    // Include startup error if we have one
+    if (_startupError != null) {
+      details['startup_error'] = _startupError;
+      details['message'] = 'Target MCP server failed to start: $_startupError';
+    } else if (_processManager.isStarting) {
+      details['message'] = 'Target MCP server is still starting up';
+      details['status'] = 'starting';
+    } else {
+      details['message'] = 'Target MCP server is not running';
+      details['status'] = 'stopped';
+    }
+
+    // Include stderr if available
+    final stderr = _processManager.lastStderr;
+    if (stderr.isNotEmpty) {
+      details['stderr'] = stderr;
+    }
+
+    return details;
   }
 
   void _sendErrorToClient(dynamic id, MCPError error) {

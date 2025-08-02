@@ -47,6 +47,8 @@ void main() async {
       final proxy = MCPDevProxy(
         targetBinary: 'dart',
         arguments: [mockServerScript.path],
+        stdinStream: const Stream.empty(),
+        stdoutSink: _MockIOSink([]),
       );
 
       expect(proxy.targetBinary, equals('dart'));
@@ -57,6 +59,8 @@ void main() async {
       final proxy = MCPDevProxy(
         targetBinary: 'dart',
         arguments: [mockServerScript.path],
+        stdinStream: const Stream.empty(),
+        stdoutSink: _MockIOSink([]),
       );
 
       // Test parsing a valid JSON-RPC message
@@ -77,6 +81,8 @@ void main() async {
       final proxy = MCPDevProxy(
         targetBinary: mockServerScript.path,
         arguments: [],
+        stdinStream: const Stream.empty(),
+        stdoutSink: _MockIOSink([]),
       );
 
       expect(proxy.targetBinary, equals(mockServerScript.path));
@@ -89,14 +95,15 @@ void main() async {
       final proxy = MCPDevProxy(
         targetBinary: 'dart',
         arguments: [mockServerScript.path],
-        stdinStream: const Stream.empty(), // Empty stream for testing
-        stdoutSink: _MockIOSink([]), // Mock sink for testing
+        stdinStream: const Stream.empty(),
+        stdoutSink: _MockIOSink([]),
       );
 
-      // Process manager is not initialized until start() is called
-      expect(() => proxy.processManager, throwsA(anything));
+      // Process manager is now initialized in constructor
+      expect(() => proxy.processManager, returnsNormally);
+      expect(proxy.processManager, isNotNull);
 
-      // After start, should be accessible
+      // After start, should still be accessible and running
       await proxy.start();
       expect(() => proxy.processManager, returnsNormally);
       expect(proxy.processManager, isNotNull);

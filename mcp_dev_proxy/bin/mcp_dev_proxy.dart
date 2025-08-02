@@ -1,5 +1,6 @@
 #!/usr/bin/env dart
 
+import 'dart:convert';
 import 'dart:io';
 import 'package:logging/logging.dart';
 import 'package:mcp_dev_proxy/mcp_dev_proxy.dart';
@@ -32,10 +33,21 @@ void main(List<String> arguments) async {
     exit(1);
   }
 
+  // Create stdin stream with proper error handling
+  Stream<String> createStdinStream() {
+    try {
+      return stdin.transform(utf8.decoder).transform(const LineSplitter());
+    } catch (e) {
+      stderr.writeln('Warning: Failed to create stdin stream: $e');
+      return const Stream.empty();
+    }
+  }
+
   final proxy = MCPDevProxy(
     targetBinary: targetBinary,
     arguments: targetArgs,
-    // Uses default stdin/stdout automatically
+    stdinStream: createStdinStream(),
+    stdoutSink: stdout,
   );
 
   // Handle graceful shutdown

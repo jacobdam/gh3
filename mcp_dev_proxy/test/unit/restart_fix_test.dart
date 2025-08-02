@@ -19,8 +19,8 @@ void main() {
 
       proxy = MCPDevProxy(
         targetBinary: testBinary.path,
-        stdinStream: const Stream.empty(), // Empty stream for testing
-        stdoutSink: _MockIOSink([]), // Mock sink for testing
+        stdinStream: const Stream.empty(),
+        stdoutSink: _MockIOSink([]),
       );
     });
 
@@ -42,6 +42,7 @@ void main() {
       // Create proxy with mock stdout
       final testProxy = MCPDevProxy(
         targetBinary: testBinary.path,
+        stdinStream: const Stream.empty(),
         stdoutSink: mockStdout,
       );
 

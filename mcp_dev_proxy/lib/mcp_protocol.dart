@@ -123,13 +123,14 @@ class MCPError {
     );
   }
 
-  static MCPError serverUnavailable() {
+  static MCPError serverUnavailable([Map<String, dynamic>? details]) {
     return MCPError(
       code: -32603,
       message: 'MCP server unavailable',
-      data: {
-        'proxy': 'mcp_dev_proxy',
-      },
+      data: details ??
+          {
+            'proxy': 'mcp_dev_proxy',
+          },
     );
   }
 

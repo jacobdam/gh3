@@ -3,6 +3,14 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:logging/logging.dart';
 
+class ProcessStartupException implements Exception {
+  final String message;
+  ProcessStartupException(this.message);
+
+  @override
+  String toString() => 'ProcessStartupException: $message';
+}
+
 class ProcessManager {
   final Logger _logger = Logger('ProcessManager');
   final String targetBinary;
@@ -25,6 +33,7 @@ class ProcessManager {
       _stderrController?.stream ?? const Stream.empty();
 
   bool get isRunning => _process != null && !_isStarting;
+  bool get isStarting => _isStarting;
 
   String get lastStderr => _stderrBuffer;
 
@@ -118,7 +127,13 @@ class ProcessManager {
 
   void sendMessage(String message) {
     if (_process?.stdin != null) {
-      _process!.stdin.writeln(message);
+      try {
+        _process!.stdin.writeln(message);
+      } catch (e) {
+        // Handle broken pipe or closed stdin gracefully
+        _logger.warning('Failed to send message to process: $e');
+        throw StateError('Process stdin unavailable: $e');
+      }
     } else {
       throw StateError('Process is not running');
     }

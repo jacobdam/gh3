@@ -23,8 +23,8 @@ void main() {
     test('should work with empty streams (headless mode)', () async {
       final proxy = MCPDevProxy(
         targetBinary: testBinary.path,
-        stdinStream: const Stream.empty(), // Empty stream
-        stdoutSink: _MockIOSink([]), // Mock sink
+        stdinStream: const Stream.empty(),
+        stdoutSink: _MockIOSink([]),
       );
 
       await proxy.start();
@@ -69,6 +69,7 @@ void main() {
 
       final proxy = MCPDevProxy(
         targetBinary: testBinary.path,
+        stdinStream: const Stream.empty(),
         stdoutSink: mockStdout,
       );
 
@@ -84,22 +85,20 @@ void main() {
       expect(outputBuffer.first, contains('MCP server'));
     });
 
-    test('should use default streams when none provided', () {
-      // This test just verifies the constructor defaults work
+    test('should use provided streams directly', () {
+      // This test verifies the streams are used as provided
+      final testStdin = const Stream<String>.empty();
+      final testStdout = _MockIOSink([]);
+
       final proxy = MCPDevProxy(
         targetBinary: testBinary.path,
-        // No streams provided - should use defaults
+        stdinStream: testStdin,
+        stdoutSink: testStdout,
       );
 
-      // Should not throw and should have default streams
-      expect(proxy.stdinStream, isNotNull);
-      expect(proxy.stdoutSink, isNotNull);
-
-      // Default stdout should be the system stdout
-      expect(proxy.stdoutSink, equals(stdout));
-
-      // Default stdin in test environment will be empty stream (since stdin is unavailable)
-      // In production, it would be the transformed stdin
+      // Should use the exact streams provided
+      expect(proxy.stdinStream, equals(testStdin));
+      expect(proxy.stdoutSink, equals(testStdout));
     });
   });
 }
