@@ -596,50 +596,100 @@ class FlutterController {
     }
 
     try {
-      // First, try to get widget summary tree which is more reliable
-      try {
-        final response = await app.vmService!.callServiceExtension(
-          'ext.flutter.inspector.getSelectedSummaryWidget',
-          isolateId: app.isolateId,
-          args: {
-            'previousSelectionId': null,
-            'isAlive': true,
-          },
-        );
+      // First check if Flutter Inspector is available and initialize if needed
+      await _ensureFlutterInspectorEnabled(app);
 
-        if (response.json != null && response.json!.isNotEmpty) {
-          return response.json!;
+      // Try multiple approaches in order of preference
+      final approaches = [
+        () => _getWidgetTreeViaRootWidget(app),
+        () => _getWidgetTreeViaSummaryTree(app),
+        () => _getWidgetTreeViaSelectedWidget(app),
+      ];
+
+      for (final approach in approaches) {
+        try {
+          final result = await approach();
+          if (result.isNotEmpty) {
+            return result;
+          }
+        } catch (e) {
+          _logger.fine('Widget tree approach failed: $e');
+          continue;
         }
-      } catch (e) {
-        _logger.fine('Selected summary widget not available: $e');
       }
 
-      // Fallback to root widget tree
-      final response = await app.vmService!.callServiceExtension(
-        'ext.flutter.inspector.getRootWidgetTree',
-        isolateId: app.isolateId,
-        args: {
-          'isSummaryTree': true,
-          'withPreviews': false,
-        },
-      );
-
-      return response.json ?? {};
+      throw Exception('All widget tree methods failed');
     } catch (e) {
       _logger.warning('Failed to get widget tree: $e');
-
-      // Try a simpler approach - get basic widget info
-      try {
-        final response = await app.vmService!.callServiceExtension(
-          'ext.flutter.inspector.getRootWidget',
-          isolateId: app.isolateId,
-        );
-        return response.json ?? {};
-      } catch (e2) {
-        _logger.warning('All widget tree methods failed: $e2');
-        throw Exception('Failed to get widget tree: $e');
-      }
+      throw Exception('Failed to get widget tree: $e');
     }
+  }
+
+  /// Ensures Flutter Inspector is enabled and ready
+  Future<void> _ensureFlutterInspectorEnabled(FlutterApp app) async {
+    try {
+      // Check if inspector extensions are available
+      final isolate = await app.vmService!.getIsolate(app.isolateId!);
+      final extensions = isolate.extensionRPCs ?? [];
+      
+      final hasInspector = extensions.any((ext) => ext.startsWith('ext.flutter.inspector'));
+      
+      if (!hasInspector) {
+        throw Exception('Flutter Inspector extensions not available. Available extensions: $extensions');
+      }
+
+      // Try to initialize/enable the inspector if needed
+      try {
+        await app.vmService!.callServiceExtension(
+          'ext.flutter.inspector.setSelectionById',
+          isolateId: app.isolateId,
+          args: {'arg': null, 'objectGroup': 'inspector'},
+        );
+      } catch (e) {
+        _logger.fine('Inspector initialization attempt: $e');
+      }
+    } catch (e) {
+      _logger.warning('Flutter Inspector check failed: $e');
+      rethrow;
+    }
+  }
+
+  /// Get widget tree via root widget (most basic approach)
+  Future<Map<String, dynamic>> _getWidgetTreeViaRootWidget(FlutterApp app) async {
+    final response = await app.vmService!.callServiceExtension(
+      'ext.flutter.inspector.getRootWidget',
+      isolateId: app.isolateId,
+      args: {'objectGroup': 'inspector'},
+    );
+    return response.json ?? {};
+  }
+
+  /// Get widget tree via summary tree
+  Future<Map<String, dynamic>> _getWidgetTreeViaSummaryTree(FlutterApp app) async {
+    final response = await app.vmService!.callServiceExtension(
+      'ext.flutter.inspector.getRootWidgetTree',
+      isolateId: app.isolateId,
+      args: {
+        'isSummaryTree': true,
+        'withPreviews': false,
+        'objectGroup': 'inspector',
+      },
+    );
+    return response.json ?? {};
+  }
+
+  /// Get widget tree via selected widget
+  Future<Map<String, dynamic>> _getWidgetTreeViaSelectedWidget(FlutterApp app) async {
+    final response = await app.vmService!.callServiceExtension(
+      'ext.flutter.inspector.getSelectedSummaryWidget',
+      isolateId: app.isolateId,
+      args: {
+        'previousSelectionId': null,
+        'isAlive': true,
+        'objectGroup': 'inspector',
+      },
+    );
+    return response.json ?? {};
   }
 
   List<String> getLogs(String appId, {int? count}) {
