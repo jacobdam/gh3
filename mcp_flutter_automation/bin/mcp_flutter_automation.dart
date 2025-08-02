@@ -5,8 +5,8 @@ import 'package:mcp_flutter_automation/mcp_flutter_automation.dart';
 import 'package:logging/logging.dart';
 
 void main(List<String> arguments) async {
-  // Setup logging
-  Logger.root.level = Level.ALL;
+  // Setup minimal logging for MCP compatibility
+  Logger.root.level = Level.WARNING;
   Logger.root.onRecord.listen((record) {
     stderr.writeln('[${record.level.name}] ${record.time}: ${record.message}');
   });
