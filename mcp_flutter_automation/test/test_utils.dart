@@ -2,8 +2,6 @@ import 'dart:io';
 import 'dart:convert';
 import 'dart:async';
 import 'package:test/test.dart';
-import 'package:vm_service/vm_service.dart';
-import 'package:web_socket_channel/web_socket_channel.dart';
 
 /// Test utilities for Flutter Automation MCP Server
 class TestUtils {

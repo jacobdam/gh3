@@ -65,7 +65,6 @@ void main() {
       });
 
       test('should handle large number of logs efficiently', () async {
-        const logCount = 10000;
         final projectDir = TestUtils.createMockFlutterProject();
 
         try {
