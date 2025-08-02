@@ -165,6 +165,17 @@ void main() {
       expect(error.data['proxy'], equals('mcp_dev_proxy'));
     });
 
+    test('should create server restart error', () {
+      final error = MCPError.serverRestart('binary_updated');
+
+      expect(error.code, equals(-32603));
+      expect(error.message, equals('MCP server restarting'));
+      expect(error.data['reason'], equals('binary_updated'));
+      expect(error.data['proxy'], equals('mcp_dev_proxy'));
+      expect(error.data['message'],
+          contains('Server is restarting due to binary_updated'));
+    });
+
     test('should convert to JSON', () {
       final error = MCPError(
         code: -32603,

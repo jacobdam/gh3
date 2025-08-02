@@ -1,0 +1,117 @@
+import 'dart:async';
+import 'dart:convert';
+import 'dart:io';
+import 'package:test/test.dart';
+import '../../lib/mcp_dev_proxy.dart';
+import '../../lib/mcp_protocol.dart';
+
+void main() {
+  group('Restart Fix Tests', () {
+    late Directory tempDir;
+    late File testBinary;
+    late MCPDevProxy proxy;
+
+    setUp(() async {
+      tempDir = await Directory.systemTemp.createTemp('mcp_proxy_test_');
+      testBinary = File('${tempDir.path}/test_binary');
+      await testBinary.writeAsString('#!/bin/bash\necho "test"');
+      await Process.run('chmod', ['+x', testBinary.path]);
+
+      proxy = MCPDevProxy(
+        targetBinary: testBinary.path,
+        stdinStream: const Stream.empty(), // Empty stream for testing
+        stdoutSink: _MockIOSink([]), // Mock sink for testing
+      );
+    });
+
+    tearDown(() async {
+      try {
+        await proxy.stop();
+      } catch (e) {
+        // Ignore errors if proxy wasn't started
+      }
+      await tempDir.delete(recursive: true);
+    });
+
+    test('should send error responses for pending requests during restart',
+        () async {
+      // Create a mock stdout to capture responses
+      final stdoutBuffer = <String>[];
+      final mockStdout = _MockIOSink(stdoutBuffer);
+
+      // Create proxy with mock stdout
+      final testProxy = MCPDevProxy(
+        targetBinary: testBinary.path,
+        stdoutSink: mockStdout,
+      );
+
+      await testProxy.start();
+
+      // Simulate pending requests
+      testProxy.handleClientInput(
+          '{"jsonrpc":"2.0","id":123,"method":"tools/list"}');
+      testProxy.handleClientInput(
+          '{"jsonrpc":"2.0","id":456,"method":"resources/list"}');
+
+      // Trigger file change (this will call _scheduleRestart)
+      await testBinary.writeAsString('#!/bin/bash\necho "updated"');
+
+      // Give time for file watcher to detect change
+      await Future.delayed(Duration(milliseconds: 600));
+
+      await testProxy.stop();
+
+      // Verify error responses were sent (should be in stdoutBuffer)
+      expect(stdoutBuffer.length, greaterThan(0));
+      expect(stdoutBuffer.any((line) => line.contains('MCP server')), isTrue);
+    });
+
+    test('should handle restart reason in error response', () {
+      // Test that MCPError.serverRestart creates proper error
+      final testError = MCPError.serverRestart('binary_updated');
+
+      expect(testError.code, equals(-32603));
+      expect(testError.message, equals('MCP server restarting'));
+      expect(testError.data['reason'], equals('binary_updated'));
+      expect(testError.data['proxy'], equals('mcp_dev_proxy'));
+    });
+  });
+}
+
+class _MockIOSink implements IOSink {
+  final List<String> buffer;
+
+  _MockIOSink(this.buffer);
+
+  @override
+  void writeln([Object? obj = ""]) {
+    buffer.add(obj.toString());
+  }
+
+  @override
+  void write(Object? obj) {
+    buffer.add(obj.toString());
+  }
+
+  // Minimal implementation for other IOSink methods
+  @override
+  Encoding get encoding => utf8;
+  @override
+  set encoding(Encoding _encoding) {}
+  @override
+  void add(List<int> data) {}
+  @override
+  void addError(Object error, [StackTrace? stackTrace]) {}
+  @override
+  Future addStream(Stream<List<int>> stream) async {}
+  @override
+  Future close() async {}
+  @override
+  Future get done => Future.value();
+  @override
+  Future flush() async {}
+  @override
+  void writeAll(Iterable objects, [String sep = ""]) {}
+  @override
+  void writeCharCode(int charCode) {}
+}

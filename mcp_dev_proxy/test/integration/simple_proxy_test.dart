@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 import 'package:test/test.dart';
 import 'package:mcp_dev_proxy/mcp_dev_proxy.dart';
@@ -88,6 +89,8 @@ void main() async {
       final proxy = MCPDevProxy(
         targetBinary: 'dart',
         arguments: [mockServerScript.path],
+        stdinStream: const Stream.empty(), // Empty stream for testing
+        stdoutSink: _MockIOSink([]), // Mock sink for testing
       );
 
       // Process manager is not initialized until start() is called
@@ -128,4 +131,42 @@ void main() async {
       expect(enhanced.result['tools'], equals([]));
     });
   });
+}
+
+class _MockIOSink implements IOSink {
+  final List<String> buffer;
+
+  _MockIOSink(this.buffer);
+
+  @override
+  void writeln([Object? obj = ""]) {
+    buffer.add(obj.toString());
+  }
+
+  @override
+  void write(Object? obj) {
+    buffer.add(obj.toString());
+  }
+
+  // Minimal implementation for other IOSink methods
+  @override
+  Encoding get encoding => utf8;
+  @override
+  set encoding(Encoding _encoding) {}
+  @override
+  void add(List<int> data) {}
+  @override
+  void addError(Object error, [StackTrace? stackTrace]) {}
+  @override
+  Future addStream(Stream<List<int>> stream) async {}
+  @override
+  Future close() async {}
+  @override
+  Future get done => Future.value();
+  @override
+  Future flush() async {}
+  @override
+  void writeAll(Iterable objects, [String sep = ""]) {}
+  @override
+  void writeCharCode(int charCode) {}
 }

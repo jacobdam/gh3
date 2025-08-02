@@ -1,8 +1,0 @@
-{
-  "mcpServers": {
-    "flutter-automation": {
-      "command": "./mcp_dev_proxy_binary",
-      "args": ["../mcp_flutter_automation/mcp_flutter_automation_binary"]
-    }
-  }
-}

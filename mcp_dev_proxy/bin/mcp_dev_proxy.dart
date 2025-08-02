@@ -35,6 +35,7 @@ void main(List<String> arguments) async {
   final proxy = MCPDevProxy(
     targetBinary: targetBinary,
     arguments: targetArgs,
+    // Uses default stdin/stdout automatically
   );
 
   // Handle graceful shutdown

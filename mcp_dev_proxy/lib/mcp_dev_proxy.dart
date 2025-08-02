@@ -12,6 +12,8 @@ class MCPDevProxy {
   final Logger _logger = Logger('MCPDevProxy');
   final String targetBinary;
   final List<String> arguments;
+  final Stream<String> stdinStream;
+  final IOSink stdoutSink;
 
   late ProcessManager _processManager;
 
@@ -30,7 +32,19 @@ class MCPDevProxy {
   MCPDevProxy({
     required this.targetBinary,
     this.arguments = const [],
-  });
+    Stream<String>? stdinStream,
+    IOSink? stdoutSink,
+  })  : stdinStream = stdinStream ?? _createDefaultStdinStream(),
+        stdoutSink = stdoutSink ?? stdout;
+
+  static Stream<String> _createDefaultStdinStream() {
+    try {
+      return stdin.transform(utf8.decoder).transform(const LineSplitter());
+    } catch (e) {
+      // In test environments or when stdin is unavailable, return empty stream
+      return const Stream.empty();
+    }
+  }
 
   Future<void> start() async {
     _logger.info('Starting MCP Dev Proxy');
@@ -86,15 +100,14 @@ class MCPDevProxy {
   }
 
   void _startStdinListener() {
-    _stdinSubscription =
-        stdin.transform(utf8.decoder).transform(const LineSplitter()).listen(
-              handleClientInput,
-              onError: (error) => _logger.warning('Stdin error: $error'),
-              onDone: () {
-                _logger.info('Stdin closed, shutting down proxy');
-                stop();
-              },
-            );
+    _stdinSubscription = stdinStream.listen(
+      handleClientInput,
+      onError: (error) => _logger.warning('Stdin error: $error'),
+      onDone: () {
+        _logger.info('Stdin closed, shutting down proxy');
+        stop();
+      },
+    );
   }
 
   @visibleForTesting
@@ -177,11 +190,20 @@ class MCPDevProxy {
   }
 
   void _scheduleRestart(String reason) {
-    if (!_processManager.isRunning) return;
+    _logger.info('Scheduling restart due to: $reason');
 
     _restartPending = true;
     _lastRestartReason = reason;
 
+    // First, send error responses for all pending requests
+    // This prevents client hanging when process is restarted
+    final restartError = MCPError.serverRestart(reason);
+    for (final entry in _pendingRequests.entries) {
+      _sendErrorToClient(entry.key, restartError);
+    }
+    _pendingRequests.clear();
+
+    // Then restart the process
     _processManager.restart().catchError((error) {
       _logger.severe('Failed to restart target process: $error');
     });
@@ -194,7 +216,7 @@ class MCPDevProxy {
 
   void _sendToClient(MCPMessage message) {
     final line = MCPProtocol.formatMessage(message);
-    stdout.writeln(line);
+    stdoutSink.writeln(line);
   }
 
   Future<void> stop() async {

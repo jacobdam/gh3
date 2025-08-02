@@ -132,6 +132,19 @@ class MCPError {
       },
     );
   }
+
+  static MCPError serverRestart(String reason) {
+    return MCPError(
+      code: -32603,
+      message: 'MCP server restarting',
+      data: {
+        'reason': reason,
+        'proxy': 'mcp_dev_proxy',
+        'message':
+            'Server is restarting due to $reason. Please retry your request.',
+      },
+    );
+  }
 }
 
 class MCPProtocol {
