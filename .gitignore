@@ -50,3 +50,7 @@ app.*.map.json
 /.env.*
 
 /.claude/settings.local.json
+
+# MCP Flutter Automation
+**/build/
+*_binary
