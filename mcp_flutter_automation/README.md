@@ -340,3 +340,72 @@ sequenceDiagram
 - **Multiple instances**: Check `ps aux | grep flutter` for existing processes before starting
 
 For additional support, check the logs for detailed error messages and stack traces.
+
+## Known Issues & Remaining Work
+
+### High Priority Issues
+
+#### 1. Widget Boundary Detection Failure
+- **Issue**: `inspect_widget_tree` returns `widgetCount: 0` despite widgets existing in tree
+- **Root Cause**: `_extractWidgetRenderInfo()` method not successfully extracting render box coordinates
+- **Impact**: Widget inspector can't map screen coordinates to widgets
+- **Status**: Widget tree access works, but render box information extraction fails
+- **Location**: `lib/src/widget_inspector.dart:_extractWidgetRenderInfo()`
+- **Next Steps**: Debug Flutter Inspector render object access and coordinate mapping
+
+#### 2. Widget Inspector Workflow Incomplete  
+- **Dependencies**: Requires widget boundary detection fix (#1)
+- **Missing Features**:
+  - Widget boundary overlays on screenshots
+  - Position-based widget lookup (`get_widgets_at_position`)
+  - Annotated screenshot generation (`create_annotated_screenshot`)
+- **Status**: Infrastructure ready, awaiting boundary detection fix
+
+### Medium Priority Issues
+
+#### 3. MCP Connection Instability
+- **Issue**: Connections drop during long operations (20+ seconds)
+- **Impact**: 
+  - Prevents reliable testing of web builds
+  - Interrupts widget inspector operations
+  - Causes "Not connected" errors mid-operation
+- **Workaround**: iPhone builds are faster and more stable than web
+- **Root Cause**: MCP server process management during lengthy Flutter builds
+- **Next Steps**: Investigate timeout handling and consider chunked responses
+
+#### 4. Web Platform Widget Inspector Support
+- **Issue**: Chrome/web builds don't establish proper VM service connections
+- **Root Cause**: 
+  - Web platform has limited Flutter Inspector support
+  - Build timeouts (20+ seconds) cause MCP connection drops
+  - Browser security restrictions may block VM service operations
+- **Status**: iPhone testing works reliably, web needs separate investigation
+- **Priority**: Low (iPhone workflow is primary use case)
+
+### Development Status Summary
+
+**✅ Completed:**
+- Flutter app lifecycle management (launch, stop, hot reload/restart)
+- Screenshot capture system with VM service extensions
+- Widget tree API with robust error handling and fallback methods
+- Token limit resolution for MCP responses (46K+ → 200 tokens)
+- Child process management with automatic cleanup
+- iPhone device testing pipeline
+
+**🔄 In Progress:**
+- Widget boundary detection and coordinate mapping
+- Complete widget inspector workflow validation
+
+**📋 Planned:**
+- MCP connection stability improvements
+- Web platform compatibility investigation
+- Additional device platform testing
+
+### Testing Status
+
+- **iPhone (iOS)**: ✅ Stable and functional
+- **Chrome (Web)**: ⚠️ Limited by connection timeouts and platform constraints  
+- **Android**: 🔲 Not yet tested
+- **Desktop (macOS/Windows/Linux)**: 🔲 Not yet tested
+
+Last Updated: August 2, 2025
