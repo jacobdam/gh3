@@ -196,7 +196,7 @@ class FlutterAutomationMCPServer extends MCPBase {
           // Include widget summary (limited to avoid token overflow)
           if (includeWidgetBounds && result.widgets.isNotEmpty) {
             compactResponse['widgetSummary'] = result.widgets
-                .take(10)
+                .take(20)
                 .map((w) => {
                       'type': w.type,
                       'id': w.id,

@@ -120,11 +120,15 @@ class WidgetInspector {
       if (widgetTreeData.containsKey('result')) {
         final result = widgetTreeData['result'] as Map<String, dynamic>?;
         if (result != null) {
+          _logger.info('Processing widget tree from result wrapper');
           await _processSimpleWidgetNode(appId, result, widgets);
         }
       } else {
+        _logger.info('Processing widget tree directly');
         await _processSimpleWidgetNode(appId, widgetTreeData, widgets);
       }
+      
+      _logger.info('Completed widget tree processing. Total widgets found: ${widgets.length}');
     } catch (e) {
       _logger.warning('Error processing widget tree with simple bounds: $e');
     }
@@ -147,8 +151,11 @@ class WidgetInspector {
           node['name'] as String? ??
           'UnknownWidget';
 
-      _logger.fine(
-          'Processing simple widget node: id=$widgetId, type=$widgetType');
+      // Check if this is an app-specific widget (created by local project)
+      final isLocalWidget = node['createdByLocalProject'] == true;
+      final logLevel = isLocalWidget ? 'INFO' : 'FINE';
+      
+      _logger.info('[$logLevel] Processing widget #${widgets.length + 1}: $widgetType (ID: $widgetId) ${isLocalWidget ? '[LOCAL APP WIDGET]' : '[FRAMEWORK WIDGET]'}');
 
       // Always create widget info, even without render box bounds
       final widgetInfo = WidgetInfo(
@@ -159,20 +166,96 @@ class WidgetInspector {
       );
 
       widgets.add(widgetInfo);
-      _logger.info('Added widget to list: $widgetType (ID: $widgetId)');
+      _logger.info('Added widget to list: $widgetType (ID: $widgetId) - Total widgets: ${widgets.length}');
 
       // Process children recursively
       final children = node['children'] as List?;
+      final hasChildren = node['hasChildren'] as bool? ?? false;
+      
       if (children != null) {
-        _logger.fine('Processing ${children.length} child nodes');
+        _logger.info('Widget $widgetType has ${children.length} child nodes - continuing traversal');
         for (final child in children) {
           if (child is Map<String, dynamic>) {
             await _processSimpleWidgetNode(appId, child, widgets);
           }
         }
+      } else if (hasChildren) {
+        // Widget has children but they're not in the tree - try to get them separately
+        _logger.info('Widget $widgetType has children but they are not loaded - attempting deep traversal');
+        await _getChildrenForWidget(appId, widgetId, widgets);
+      } else {
+        _logger.info('Widget $widgetType has no children - end of branch');
       }
     } catch (e) {
       _logger.warning('Error processing simple widget node: $e');
+    }
+  }
+
+  /// Attempts to get children of a specific widget using Flutter Inspector
+  Future<void> _getChildrenForWidget(String appId, String widgetId, List<WidgetInfo> widgets) async {
+    try {
+      _logger.info('Attempting to get children for widget: $widgetId');
+      
+      final app = _controller.getAppInstance(appId);
+      if (app?.vmService == null || app?.isolateId == null) {
+        _logger.warning('No VM service available for child widget lookup');
+        return;
+      }
+
+      // Try different Flutter Inspector methods to get widget children
+      final methods = [
+        'ext.flutter.inspector.getDetailsSubtree',
+        'ext.flutter.inspector.getProperties', 
+        'ext.flutter.inspector.getChildrenDetailsSubtree',
+      ];
+
+      for (final method in methods) {
+        try {
+          _logger.info('Trying $method to get children of $widgetId');
+          
+          final response = await app!.vmService!.callServiceExtension(
+            method,
+            isolateId: app.isolateId,
+            args: {
+              'objectId': widgetId,
+              'objectGroup': 'inspector',
+            },
+          );
+
+          final result = response.json;
+          if (result != null) {
+            _logger.info('Got result from $method, processing children...');
+            
+            // Look for children in the response
+            final children = result['children'] as List?;
+            if (children != null && children.isNotEmpty) {
+              _logger.info('Found ${children.length} children using $method');
+              for (final child in children) {
+                if (child is Map<String, dynamic>) {
+                  await _processSimpleWidgetNode(appId, child, widgets);
+                }
+              }
+              return; // Success - stop trying other methods
+            }
+            
+            // If no direct children, check if this is a subtree response
+            if (result.containsKey('children') || result.containsKey('result')) {
+              final subtree = result['result'] ?? result;
+              if (subtree is Map<String, dynamic>) {
+                await _processSimpleWidgetNode(appId, subtree, widgets);
+                return; // Success
+              }
+            }
+          }
+        } catch (e) {
+          _logger.fine('Method $method failed for widget $widgetId: $e');
+          continue;
+        }
+      }
+      
+      _logger.warning('Could not get children for widget $widgetId using any method');
+    } catch (e) {
+      _logger.warning('Error getting children for widget $widgetId: $e');
     }
   }
 
@@ -203,152 +286,6 @@ class WidgetInspector {
     return properties;
   }
 
-  /// Gets render object bounds using Flutter Inspector API
-  Future<RenderBoxInfo?> _getRenderObjectBounds(
-      String appId, String widgetId) async {
-    try {
-      _logger.info('Getting render object bounds for widget: $widgetId');
-
-      // Get app instance to access VM service
-      final app = _controller.getAppInstance(appId);
-      if (app?.vmService == null || app?.isolateId == null) {
-        _logger
-            .warning('No VM service or isolate ID available for app: $appId');
-        return null;
-      }
-
-      // Skip processing for display-only inspector IDs
-      if (widgetId.startsWith('inspector-')) {
-        _logger.fine('Skipping display-only inspector ID: $widgetId');
-        return null;
-      }
-
-      _logger.info('VM service available, trying multiple inspector methods');
-
-      // Try multiple Flutter Inspector extension methods for getting widget bounds
-      final extensionMethods = [
-        'ext.flutter.inspector.getDetailsSubtree',
-        'ext.flutter.inspector.getProperties',
-        'ext.flutter.inspector.getRenderObject',
-      ];
-
-      for (final methodName in extensionMethods) {
-        try {
-          _logger.info('Trying extension method: $methodName');
-
-          final response = await app!.vmService!.callServiceExtension(
-            methodName,
-            isolateId: app.isolateId,
-            args: {
-              'objectId': widgetId,
-              'objectGroup': 'inspector',
-            },
-          );
-
-          _logger.info('Extension $methodName response received');
-          final details = response.json;
-
-          if (details == null) {
-            _logger.warning(
-                'No details returned from $methodName for widget: $widgetId');
-            continue;
-          }
-
-          _logger.fine('$methodName response: ${details.toString()}');
-
-          // Try to extract bounds from different response structures
-          final renderBox = _extractRenderBoxFromResponse(details, widgetId);
-          if (renderBox != null) {
-            _logger.info('Successfully extracted bounds using $methodName');
-            return renderBox;
-          }
-        } catch (e) {
-          _logger.warning('Extension method $methodName failed: $e');
-          continue;
-        }
-      }
-
-      _logger.warning('All extension methods failed for widget: $widgetId');
-    } catch (e) {
-      _logger.warning('Failed to get render object bounds for $widgetId: $e');
-    }
-
-    return null;
-  }
-
-  /// Extracts render box information from Flutter Inspector response
-  RenderBoxInfo? _extractRenderBoxFromResponse(
-      Map<String, dynamic> details, String widgetId) {
-    try {
-      // Method 1: Look for renderObject in details
-      final renderObject = details['renderObject'] as Map<String, dynamic>?;
-      if (renderObject != null) {
-        final size = renderObject['size'] as Map<String, dynamic>?;
-        if (size != null) {
-          final width = (size['width'] as num?)?.toDouble() ?? 0.0;
-          final height = (size['height'] as num?)?.toDouble() ?? 0.0;
-
-          if (width > 0 || height > 0) {
-            _logger.info(
-                'Widget $widgetId size from renderObject: ${width}x$height');
-            return RenderBoxInfo(x: 0.0, y: 0.0, width: width, height: height);
-          }
-        }
-      }
-
-      // Method 2: Look for size directly in details
-      final directSize = details['size'] as Map<String, dynamic>?;
-      if (directSize != null) {
-        final width = (directSize['width'] as num?)?.toDouble() ?? 0.0;
-        final height = (directSize['height'] as num?)?.toDouble() ?? 0.0;
-
-        if (width > 0 || height > 0) {
-          _logger
-              .info('Widget $widgetId size from direct size: ${width}x$height');
-          return RenderBoxInfo(x: 0.0, y: 0.0, width: width, height: height);
-        }
-      }
-
-      // Method 3: Look in properties array for size/bounds information
-      final properties = details['properties'] as List?;
-      if (properties != null) {
-        for (final prop in properties) {
-          if (prop is Map<String, dynamic>) {
-            final name = prop['name'] as String?;
-            final value = prop['value'];
-
-            if (name != null &&
-                (name.contains('size') || name.contains('Size'))) {
-              _logger.info('Found size property: $name = $value');
-
-              // Try to parse size values from string
-              if (value is String) {
-                final sizeMatch =
-                    RegExp(r'Size\(([^,]+),\s*([^)]+)\)').firstMatch(value);
-                if (sizeMatch != null) {
-                  final width = double.tryParse(sizeMatch.group(1)!) ?? 0.0;
-                  final height = double.tryParse(sizeMatch.group(2)!) ?? 0.0;
-
-                  if (width > 0 || height > 0) {
-                    _logger
-                        .info('Widget $widgetId parsed size: ${width}x$height');
-                    return RenderBoxInfo(
-                        x: 0.0, y: 0.0, width: width, height: height);
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-
-      _logger.fine('No size information found in response structure');
-      return null;
-    } catch (e) {
-      _logger.warning('Error extracting render box from response: $e');
-      return null;
-    }
-  }
 
   /// Saves inspection data to files for analysis
   Future<void> _saveInspectionData(
