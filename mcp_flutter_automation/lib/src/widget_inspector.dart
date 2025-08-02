@@ -62,19 +62,41 @@ class WidgetInspector {
 
   /// Extracts detailed widget render information including bounds and properties
   Future<List<WidgetInfo>> _extractWidgetRenderInfo(String appId) async {
+    _logger.info('Starting widget render info extraction for app: $appId');
+
     // Get app info to check connection status
     final appInfo = _controller.getAppInfo(appId);
     if (!appInfo['hasVmService']) {
+      _logger.warning('VM Service not connected for app $appId');
       throw Exception('VM Service not connected for app $appId');
     }
 
+    _logger.info('VM service confirmed available, proceeding with extraction');
+
     try {
       // Use the existing getWidgetTree method to get widget data
+      _logger.info('Fetching widget tree data...');
       final widgetTreeData = await _controller.getWidgetTree(appId);
+
+      _logger.info('Widget tree data received, processing for bounds...');
+      _logger.fine('Widget tree structure: ${widgetTreeData.toString()}');
 
       // Extract widget information from the widget tree data
       final widgets = <WidgetInfo>[];
       await _processWidgetTreeDataWithBounds(appId, widgetTreeData, widgets);
+
+      _logger.info(
+          'Widget extraction completed. Found ${widgets.length} widgets with render info');
+
+      // Log details about extracted widgets
+      for (final widget in widgets) {
+        if (widget.renderBox != null) {
+          _logger.fine(
+              'Widget ${widget.id} (${widget.type}): bounds=${widget.renderBox!.x},${widget.renderBox!.y},${widget.renderBox!.width},${widget.renderBox!.height}');
+        } else {
+          _logger.fine('Widget ${widget.id} (${widget.type}): no render box');
+        }
+      }
 
       return widgets;
     } catch (e) {
@@ -121,7 +143,11 @@ class WidgetInspector {
       final widgetType =
           node['description'] as String? ?? node['name'] as String?;
 
+      _logger.fine('Processing widget node: id=$widgetId, type=$widgetType');
+
       if (widgetId != null && widgetType != null) {
+        _logger.info('Processing widget: $widgetType (ID: $widgetId)');
+
         // Get render object bounds using Flutter Inspector API
         final renderBox = await _getRenderObjectBounds(appId, widgetId);
 
@@ -134,11 +160,16 @@ class WidgetInspector {
         );
 
         widgets.add(widgetInfo);
+        _logger.info(
+            'Added widget to list: $widgetType (render box: ${renderBox != null ? 'found' : 'null'})');
+      } else {
+        _logger.fine('Skipping node: missing widgetId or widgetType');
       }
 
       // Process children recursively
       final children = node['children'] as List?;
       if (children != null) {
+        _logger.fine('Processing ${children.length} child nodes');
         for (final child in children) {
           if (child is Map<String, dynamic>) {
             await _processWidgetTreeNodeWithBounds(appId, child, widgets);
@@ -146,7 +177,7 @@ class WidgetInspector {
         }
       }
     } catch (e) {
-      _logger.fine('Error processing widget tree node with bounds: $e');
+      _logger.warning('Error processing widget tree node with bounds: $e');
     }
   }
 
@@ -176,58 +207,141 @@ class WidgetInspector {
   Future<RenderBoxInfo?> _getRenderObjectBounds(
       String appId, String widgetId) async {
     try {
+      _logger.info('Getting render object bounds for widget: $widgetId');
+
       // Get app instance to access VM service
       final app = _controller.getAppInstance(appId);
       if (app?.vmService == null || app?.isolateId == null) {
+        _logger
+            .warning('No VM service or isolate ID available for app: $appId');
         return null;
       }
 
-      // Use Flutter Inspector to get render object details
-      final response = await app!.vmService!.callServiceExtension(
+      _logger.info('VM service available, trying multiple inspector methods');
+
+      // Try multiple Flutter Inspector extension methods for getting widget bounds
+      final extensionMethods = [
         'ext.flutter.inspector.getDetailsSubtree',
-        isolateId: app.isolateId,
-        args: {
-          'objectId': widgetId,
-          'objectGroup': 'inspector',
-        },
-      );
+        'ext.flutter.inspector.getProperties',
+        'ext.flutter.inspector.getRenderObject',
+      ];
 
-      final details = response.json;
-      if (details != null) {
-        // Extract bounds from render object properties
-        final renderObject = details['renderObject'] as Map<String, dynamic>?;
-        if (renderObject != null) {
-          final size = renderObject['size'] as Map<String, dynamic>?;
+      for (final methodName in extensionMethods) {
+        try {
+          _logger.info('Trying extension method: $methodName');
 
-          if (size != null) {
-            final width = (size['width'] as num?)?.toDouble() ?? 0.0;
-            final height = (size['height'] as num?)?.toDouble() ?? 0.0;
+          final response = await app!.vmService!.callServiceExtension(
+            methodName,
+            isolateId: app.isolateId,
+            args: {
+              'objectId': widgetId,
+              'objectGroup': 'inspector',
+            },
+          );
 
-            // Try to get position from global position
-            final globalPosition =
-                await _getWidgetGlobalPosition(appId, widgetId);
-            final x = globalPosition?['x'] ?? 0.0;
-            final y = globalPosition?['y'] ?? 0.0;
+          _logger.info('Extension $methodName response received');
+          final details = response.json;
 
-            if (width > 0 || height > 0) {
-              return RenderBoxInfo(x: x, y: y, width: width, height: height);
-            }
+          if (details == null) {
+            _logger.warning(
+                'No details returned from $methodName for widget: $widgetId');
+            continue;
           }
+
+          _logger.fine('$methodName response: ${details.toString()}');
+
+          // Try to extract bounds from different response structures
+          final renderBox = _extractRenderBoxFromResponse(details, widgetId);
+          if (renderBox != null) {
+            _logger.info('Successfully extracted bounds using $methodName');
+            return renderBox;
+          }
+        } catch (e) {
+          _logger.warning('Extension method $methodName failed: $e');
+          continue;
         }
       }
+
+      _logger.warning('All extension methods failed for widget: $widgetId');
     } catch (e) {
-      _logger.fine('Failed to get render object bounds for $widgetId: $e');
+      _logger.warning('Failed to get render object bounds for $widgetId: $e');
     }
 
     return null;
   }
 
-  /// Gets widget global position using Flutter Inspector
-  Future<Map<String, double>?> _getWidgetGlobalPosition(
-      String appId, String widgetId) async {
-    // For now, return default position until we can properly implement
-    // the Flutter Inspector coordinate mapping
-    return {'x': 0.0, 'y': 0.0};
+  /// Extracts render box information from Flutter Inspector response
+  RenderBoxInfo? _extractRenderBoxFromResponse(
+      Map<String, dynamic> details, String widgetId) {
+    try {
+      // Method 1: Look for renderObject in details
+      final renderObject = details['renderObject'] as Map<String, dynamic>?;
+      if (renderObject != null) {
+        final size = renderObject['size'] as Map<String, dynamic>?;
+        if (size != null) {
+          final width = (size['width'] as num?)?.toDouble() ?? 0.0;
+          final height = (size['height'] as num?)?.toDouble() ?? 0.0;
+
+          if (width > 0 || height > 0) {
+            _logger.info(
+                'Widget $widgetId size from renderObject: ${width}x$height');
+            return RenderBoxInfo(x: 0.0, y: 0.0, width: width, height: height);
+          }
+        }
+      }
+
+      // Method 2: Look for size directly in details
+      final directSize = details['size'] as Map<String, dynamic>?;
+      if (directSize != null) {
+        final width = (directSize['width'] as num?)?.toDouble() ?? 0.0;
+        final height = (directSize['height'] as num?)?.toDouble() ?? 0.0;
+
+        if (width > 0 || height > 0) {
+          _logger
+              .info('Widget $widgetId size from direct size: ${width}x$height');
+          return RenderBoxInfo(x: 0.0, y: 0.0, width: width, height: height);
+        }
+      }
+
+      // Method 3: Look in properties array for size/bounds information
+      final properties = details['properties'] as List?;
+      if (properties != null) {
+        for (final prop in properties) {
+          if (prop is Map<String, dynamic>) {
+            final name = prop['name'] as String?;
+            final value = prop['value'];
+
+            if (name != null &&
+                (name.contains('size') || name.contains('Size'))) {
+              _logger.info('Found size property: $name = $value');
+
+              // Try to parse size values from string
+              if (value is String) {
+                final sizeMatch =
+                    RegExp(r'Size\(([^,]+),\s*([^)]+)\)').firstMatch(value);
+                if (sizeMatch != null) {
+                  final width = double.tryParse(sizeMatch.group(1)!) ?? 0.0;
+                  final height = double.tryParse(sizeMatch.group(2)!) ?? 0.0;
+
+                  if (width > 0 || height > 0) {
+                    _logger
+                        .info('Widget $widgetId parsed size: ${width}x$height');
+                    return RenderBoxInfo(
+                        x: 0.0, y: 0.0, width: width, height: height);
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+
+      _logger.fine('No size information found in response structure');
+      return null;
+    } catch (e) {
+      _logger.warning('Error extracting render box from response: $e');
+      return null;
+    }
   }
 
   /// Saves inspection data to files for analysis
