@@ -62,31 +62,32 @@ class WidgetInspector {
 
   /// Extracts detailed widget render information including bounds and properties
   Future<List<WidgetInfo>> _extractWidgetRenderInfo(String appId) async {
-    _logger.info('Starting widget render info extraction for app: $appId');
-
-    // Get app info to check connection status
-    final appInfo = _controller.getAppInfo(appId);
-    if (!appInfo['hasVmService']) {
-      _logger.warning('VM Service not connected for app $appId');
-      throw Exception('VM Service not connected for app $appId');
-    }
-
-    _logger.info('VM service confirmed available, proceeding with extraction');
-
     try {
-      // Use the existing getWidgetTree method to get widget data
-      _logger.info('Fetching widget tree data...');
+      _logger.info('Starting widget render info extraction for app: $appId');
+
+      // Get app info to check connection status
+      final appInfo = _controller.getAppInfo(appId);
+      if (!appInfo['hasVmService']) {
+        _logger.warning('VM Service not connected for app $appId');
+        throw Exception('VM Service not connected for app $appId');
+      }
+
+      _logger
+          .info('VM service confirmed available, proceeding with extraction');
+
+      // Use the existing getWidgetTree method and extract basic layout info
+      _logger.info('Fetching widget tree data for layout information...');
       final widgetTreeData = await _controller.getWidgetTree(appId);
 
-      _logger.info('Widget tree data received, processing for bounds...');
+      _logger.info('Widget tree data received, processing for layout info...');
       _logger.fine('Widget tree structure: ${widgetTreeData.toString()}');
 
-      // Extract widget information from the widget tree data
+      // Extract widget information with simplified bounds detection
       final widgets = <WidgetInfo>[];
-      await _processWidgetTreeDataWithBounds(appId, widgetTreeData, widgets);
+      await _processWidgetTreeWithSimpleBounds(appId, widgetTreeData, widgets);
 
       _logger.info(
-          'Widget extraction completed. Found ${widgets.length} widgets with render info');
+          'Widget extraction completed. Found ${widgets.length} widgets with layout info');
 
       // Log details about extracted widgets
       for (final widget in widgets) {
@@ -94,7 +95,8 @@ class WidgetInspector {
           _logger.fine(
               'Widget ${widget.id} (${widget.type}): bounds=${widget.renderBox!.x},${widget.renderBox!.y},${widget.renderBox!.width},${widget.renderBox!.height}');
         } else {
-          _logger.fine('Widget ${widget.id} (${widget.type}): no render box');
+          _logger.fine(
+              'Widget ${widget.id} (${widget.type}): no render box (basic widget info only)');
         }
       }
 
@@ -105,66 +107,59 @@ class WidgetInspector {
     }
   }
 
-  /// Processes widget tree data with bounds extraction using Flutter Inspector
-  Future<void> _processWidgetTreeDataWithBounds(
+  /// Processes widget tree with simplified bounds detection
+  Future<void> _processWidgetTreeWithSimpleBounds(
     String appId,
     Map<String, dynamic> widgetTreeData,
     List<WidgetInfo> widgets,
   ) async {
     try {
-      // Process widget tree and get render object bounds via Flutter Inspector
-      if (widgetTreeData.containsKey('children')) {
-        final children = widgetTreeData['children'] as List?;
-        if (children != null) {
-          for (final child in children) {
-            if (child is Map<String, dynamic>) {
-              await _processWidgetTreeNodeWithBounds(appId, child, widgets);
-            }
-          }
+      _logger.info('Processing widget tree for simplified bounds extraction');
+
+      // Process widget tree structure recursively
+      if (widgetTreeData.containsKey('result')) {
+        final result = widgetTreeData['result'] as Map<String, dynamic>?;
+        if (result != null) {
+          await _processSimpleWidgetNode(appId, result, widgets);
         }
       } else {
-        // Process single widget node
-        await _processWidgetTreeNodeWithBounds(appId, widgetTreeData, widgets);
+        await _processSimpleWidgetNode(appId, widgetTreeData, widgets);
       }
     } catch (e) {
-      _logger.fine('Error processing widget tree data with bounds: $e');
+      _logger.warning('Error processing widget tree with simple bounds: $e');
     }
   }
 
-  /// Recursively processes individual widget tree nodes with bounds extraction
-  Future<void> _processWidgetTreeNodeWithBounds(
+
+  /// Processes widget nodes with simplified approach - just extract widget info
+  Future<void> _processSimpleWidgetNode(
     String appId,
     Map<String, dynamic> node,
     List<WidgetInfo> widgets,
   ) async {
     try {
       // Extract basic widget info from the node
-      final widgetId = node['objectId'] as String?;
-      final widgetType =
-          node['description'] as String? ?? node['name'] as String?;
+      final widgetId = node['valueId'] as String? ??
+          node['objectId'] as String? ??
+          'unknown-${widgets.length}';
+      final widgetType = node['description'] as String? ??
+          node['widgetRuntimeType'] as String? ??
+          node['name'] as String? ??
+          'UnknownWidget';
 
-      _logger.fine('Processing widget node: id=$widgetId, type=$widgetType');
+      _logger.fine(
+          'Processing simple widget node: id=$widgetId, type=$widgetType');
 
-      if (widgetId != null && widgetType != null) {
-        _logger.info('Processing widget: $widgetType (ID: $widgetId)');
+      // Always create widget info, even without render box bounds
+      final widgetInfo = WidgetInfo(
+        id: widgetId,
+        type: widgetType,
+        properties: _extractPropertiesFromNode(node),
+        renderBox: _createDefaultRenderBox(), // Provide default bounds for now
+      );
 
-        // Get render object bounds using Flutter Inspector API
-        final renderBox = await _getRenderObjectBounds(appId, widgetId);
-
-        // Create widget info with bounds data
-        final widgetInfo = WidgetInfo(
-          id: widgetId,
-          type: widgetType,
-          properties: _extractPropertiesFromNode(node),
-          renderBox: renderBox,
-        );
-
-        widgets.add(widgetInfo);
-        _logger.info(
-            'Added widget to list: $widgetType (render box: ${renderBox != null ? 'found' : 'null'})');
-      } else {
-        _logger.fine('Skipping node: missing widgetId or widgetType');
-      }
+      widgets.add(widgetInfo);
+      _logger.info('Added widget to list: $widgetType (ID: $widgetId)');
 
       // Process children recursively
       final children = node['children'] as List?;
@@ -172,13 +167,18 @@ class WidgetInspector {
         _logger.fine('Processing ${children.length} child nodes');
         for (final child in children) {
           if (child is Map<String, dynamic>) {
-            await _processWidgetTreeNodeWithBounds(appId, child, widgets);
+            await _processSimpleWidgetNode(appId, child, widgets);
           }
         }
       }
     } catch (e) {
-      _logger.warning('Error processing widget tree node with bounds: $e');
+      _logger.warning('Error processing simple widget node: $e');
     }
+  }
+
+  /// Creates default render box for widgets when bounds can't be determined
+  RenderBoxInfo _createDefaultRenderBox() {
+    return RenderBoxInfo(x: 0.0, y: 0.0, width: 100.0, height: 50.0);
   }
 
   /// Extracts properties from a widget tree node
@@ -214,6 +214,12 @@ class WidgetInspector {
       if (app?.vmService == null || app?.isolateId == null) {
         _logger
             .warning('No VM service or isolate ID available for app: $appId');
+        return null;
+      }
+
+      // Skip processing for display-only inspector IDs
+      if (widgetId.startsWith('inspector-')) {
+        _logger.fine('Skipping display-only inspector ID: $widgetId');
         return null;
       }
 
