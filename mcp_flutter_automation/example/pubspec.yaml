@@ -1,0 +1,25 @@
+name: mcp_flutter_example
+description: Example macOS Flutter app demonstrating MCP server integration and widget inspection capabilities.
+version: 1.0.0+1
+publish_to: 'none'
+
+environment:
+  sdk: ^3.5.0
+  flutter: ">=3.24.0"
+
+# Platform support - macOS only for initial version
+platforms:
+  macos:
+
+dependencies:
+  flutter:
+    sdk: flutter
+  cupertino_icons: ^1.0.8
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^4.0.0
+
+flutter:
+  uses-material-design: true
