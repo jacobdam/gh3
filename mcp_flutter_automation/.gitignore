@@ -3,3 +3,20 @@
 
 # Binaries
 mcp_flutter_automation_binary
+mcp_flutter_automation
+bin/mcp_flutter_automation
+
+# Development artifacts (temporary files from development sessions)
+screenshot_*.png
+*_inspection.json
+*_screenshot.png
+latest_screenshot.png
+debug_*
+test_screenshot_*
+*_test_output/
+*_debug_*
+final_test_*
+recursive_test_*
+proof_with_*
+breakthrough_test_*
+interactive_expansion_*
