@@ -188,3 +188,102 @@ This can cause:
 ''';
   }
 }
+
+/// Handler for initialize requests when target is unavailable
+class InitializeHandler extends RequestHandler {
+  final dynamic _proxy;
+
+  InitializeHandler(this._proxy);
+
+  @override
+  Future<Map<String, dynamic>> handle(
+    Map<String, dynamic> params,
+    RequestContext context,
+  ) async {
+    final unavailableDetails = _buildServerUnavailableDetails();
+    final instructionsText = '''
+Target MCP server is not available.
+
+Expected Binary: ${unavailableDetails['expected_binary']}
+Status: ${unavailableDetails['status']}
+Action Needed: ${unavailableDetails['action_needed']}
+
+Proxy Capabilities:
+- Crash Recovery: Auto-restart on crashes  
+- Hot Reload: Detect binary changes and restart
+- Error Buffering: Handle pending requests during restarts
+- Debug Info: Enhanced error messages with context
+
+Use the 'proxy_status' tool for detailed information and 'proxy_help' for guidance.
+''';
+
+    return {
+      'protocolVersion': '2024-11-05',
+      'capabilities': {
+        'tools': {},
+        'resources': {},
+        'prompts': {},
+      },
+      'serverInfo': {
+        'name': 'mcp_dev_proxy',
+        'version': '1.0.0',
+      },
+      'instructions': instructionsText,
+    };
+  }
+
+  Map<String, String> _buildServerUnavailableDetails() {
+    final targetBinary = _proxy.targetBinary as String;
+    final binaryExists = File(targetBinary).existsSync();
+    
+    return {
+      'expected_binary': targetBinary,
+      'status': binaryExists 
+          ? 'Binary exists but process failed to start'
+          : 'Binary not found',
+      'action_needed': binaryExists
+          ? 'Check if binary is executable and implements MCP protocol'
+          : 'Compile your MCP server binary: dart compile exe bin/your_server.dart -o ${targetBinary.split('/').last}',
+    };
+  }
+}
+
+/// Handler for tools/list requests when target is unavailable
+class ToolsListHandler extends RequestHandler {
+  ToolsListHandler(dynamic proxy);
+
+  @override
+  Future<Map<String, dynamic>> handle(
+    Map<String, dynamic> params,
+    RequestContext context,
+  ) async {
+    return {
+      'tools': [
+        {
+          'name': 'proxy_status',
+          'description': 'Get current proxy status and target binary information',
+          'inputSchema': {
+            'type': 'object',
+            'properties': {},
+          },
+        },
+        {
+          'name': 'proxy_help',
+          'description': 'Get help on how to work with the MCP dev proxy',
+          'inputSchema': {
+            'type': 'object',
+            'properties': {},
+          },
+        },
+        {
+          'name': 'proxy_check_tool_cycles',
+          'description': 'Check for incomplete tool_use cycles that may cause API errors',
+          'inputSchema': {
+            'type': 'object',
+            'properties': {},
+          },
+        },
+      ],
+    };
+  }
+}

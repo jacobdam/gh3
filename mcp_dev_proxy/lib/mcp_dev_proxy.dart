@@ -161,7 +161,7 @@ class MCPDevProxy {
   }
 
   @visibleForTesting
-  void handleClientInput(String line) {
+  Future<void> handleClientInput(String line) async {
     final message = MCPProtocol.parseMessage(line);
     if (message == null) {
       _logger.warning('Failed to parse client message: $line');
@@ -190,91 +190,7 @@ class MCPDevProxy {
     // Handle special cases when target is not available
     if (!_processManager.isRunning) {
       if (message.isRequest && message.id != null) {
-        // For initialize requests, provide a minimal successful response to keep connection alive
-        if (message.method == 'initialize') {
-          final unavailableDetails = _buildServerUnavailableDetails();
-          final instructionsText = '''
-Target MCP server is not available.
-
-Expected Binary: ${unavailableDetails['expected_binary']}
-Status: ${unavailableDetails['status']}
-Action Needed: ${unavailableDetails['action_needed']}
-
-Proxy Capabilities:
-- Crash Recovery: Auto-restart on crashes  
-- Hot Reload: Detect binary changes and restart
-- Error Buffering: Handle pending requests during restarts
-- Debug Info: Enhanced error messages with context
-
-Use the 'proxy_status' tool for detailed information and 'proxy_help' for guidance.
-''';
-
-          final initResponse = {
-            'protocolVersion': '2024-11-05',
-            'capabilities': {
-              'tools': {},
-              'resources': {},
-              'prompts': {},
-            },
-            'serverInfo': {
-              'name': 'mcp_dev_proxy',
-              'version': '1.0.0',
-            },
-            'instructions': instructionsText,
-          };
-          final response = MCPMessage(
-            jsonrpc: '2.0',
-            id: message.id,
-            result: initResponse,
-          );
-          _sendToClient(response);
-        } else if (message.method == 'tools/list') {
-          // Provide proxy management tools when target is unavailable
-          final toolsResponse = {
-            'tools': [
-              {
-                'name': 'proxy_status',
-                'description':
-                    'Get current proxy status and target binary information',
-                'inputSchema': {
-                  'type': 'object',
-                  'properties': {},
-                },
-              },
-              {
-                'name': 'proxy_help',
-                'description': 'Get help on how to work with the MCP dev proxy',
-                'inputSchema': {
-                  'type': 'object',
-                  'properties': {},
-                },
-              },
-              {
-                'name': 'proxy_check_tool_cycles',
-                'description':
-                    'Check for incomplete tool_use cycles that may cause API errors',
-                'inputSchema': {
-                  'type': 'object',
-                  'properties': {},
-                },
-              },
-            ],
-          };
-          final response = MCPMessage(
-            jsonrpc: '2.0',
-            id: message.id,
-            result: toolsResponse,
-          );
-          _sendToClient(response);
-        } else if (message.method == 'tools/call') {
-          // Handle proxy tool calls via router
-          _routeProxyToolCall(message);
-        } else {
-          // For other requests, standard unavailable error
-          final errorDetails = _buildServerUnavailableDetails();
-          _sendErrorToClient(
-              message.id, MCPError.serverUnavailable(errorDetails));
-        }
+        await _routeRequestWhenUnavailable(message);
       }
       return;
     }
@@ -447,53 +363,81 @@ Use the 'proxy_status' tool for detailed information and 'proxy_help' for guidan
     _requestRouter.registerRoute('proxy_help', ProxyHelpHandler(this));
     _requestRouter.registerRoute(
         'proxy_check_tool_cycles', ProxyToolCycleHandler(this));
+    
+    // Register handlers for when target server is unavailable
+    _requestRouter.registerRoute('initialize', InitializeHandler(this));
+    _requestRouter.registerRoute('tools/list', ToolsListHandler(this));
   }
 
-  /// Route proxy tool calls through the request router
-  Future<void> _routeProxyToolCall(MCPMessage message) async {
-    final params = message.params as Map<String, dynamic>?;
-    final toolName = params?['name'] as String?;
-
-    if (toolName == null) {
-      _sendErrorToClient(
-          message.id,
-          MCPError(
-            code: -32602,
-            message: 'Missing tool name in request',
-          ));
-      return;
-    }
-
-    try {
-      final context =
-          RequestContext(toolName, params ?? {}, message.id.toString());
-      final result =
-          await _requestRouter.routeRequest(toolName, params ?? {}, context);
-
-      final response = MCPMessage(
-        jsonrpc: '2.0',
-        id: message.id,
-        result: result,
-      );
-      _sendToClient(response);
-    } catch (e) {
-      if (e is RouteNotFoundException) {
-        _sendErrorToClient(
-            message.id,
-            MCPError(
-              code: -32601,
-              message: 'Unknown tool: $toolName',
-            ));
-      } else {
-        _sendErrorToClient(
-            message.id,
-            MCPError(
-              code: -32603,
-              message: 'Internal error: $e',
-            ));
+  /// Route requests through request router when target is unavailable
+  Future<void> _routeRequestWhenUnavailable(MCPMessage message) async {
+    final method = message.method;
+    
+    if (method != null && _requestRouter.canHandle(method)) {
+      try {
+        final context = RequestContext(method, message.params ?? {}, message.id?.toString() ?? '');
+        final result = await _requestRouter.routeRequest(method, message.params ?? {}, context);
+        
+        final response = MCPMessage(
+          jsonrpc: '2.0',
+          id: message.id,
+          result: result,
+        );
+        _sendToClient(response);
+      } catch (e) {
+        _logger.warning('Failed to route request through RequestRouter: $e');
+        final errorDetails = _buildServerUnavailableDetails();
+        _sendErrorToClient(message.id, MCPError.serverUnavailable(errorDetails));
       }
+    } else if (method == 'tools/call') {
+      // Handle proxy tool calls 
+      final params = message.params as Map<String, dynamic>?;
+      final toolName = params?['name'] as String?;
+
+      if (toolName == null) {
+        _sendErrorToClient(
+            message.id,
+            MCPError(
+              code: -32602,
+              message: 'Missing tool name in request',
+            ));
+        return;
+      }
+
+      try {
+        final context = RequestContext(toolName, params ?? {}, message.id?.toString() ?? '');
+        final result = await _requestRouter.routeRequest(toolName, params ?? {}, context);
+
+        final response = MCPMessage(
+          jsonrpc: '2.0',
+          id: message.id,
+          result: result,
+        );
+        _sendToClient(response);
+      } catch (e) {
+        if (e is RouteNotFoundException) {
+          _sendErrorToClient(
+              message.id,
+              MCPError(
+                code: -32601,
+                message: 'Unknown tool: $toolName',
+              ));
+        } else {
+          _sendErrorToClient(
+              message.id,
+              MCPError(
+                code: -32603,
+                message: 'Internal error: $e',
+              ));
+        }
+      }
+    } else {
+      // For unhandled methods, send standard unavailable error
+      final errorDetails = _buildServerUnavailableDetails();
+      _sendErrorToClient(message.id, MCPError.serverUnavailable(errorDetails));
     }
   }
+
 
   void _sendToClient(MCPMessage message) {
     final line = MCPProtocol.formatMessage(message);
