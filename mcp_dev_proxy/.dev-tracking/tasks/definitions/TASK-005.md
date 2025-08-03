@@ -159,7 +159,7 @@ try {
 ## Structured Log Format
 ```json
 {
-  "timestamp": "2025-01-27T10:30:00Z",
+  "timestamp": "2025-08-03T10:30:00Z",
   "severity": "error",
   "category": "network", 
   "operation": "server_connect",
