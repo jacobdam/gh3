@@ -106,13 +106,17 @@ class ErrorCoordinator {
     );
 
     sendErrorToClient(
-        requestId, timeoutErrorData["error"] as Map<String, dynamic>);
+      requestId,
+      timeoutErrorData["error"] as Map<String, dynamic>,
+    );
     _proxyState.removePendingRequest(requestId);
   }
 
   /// Handles server unavailable scenario by creating appropriate error.
-  Map<String, dynamic> createServerUnavailableError(MCPMessage message,
-      [Exception? exception]) {
+  Map<String, dynamic> createServerUnavailableError(
+    MCPMessage message, [
+    Exception? exception,
+  ]) {
     final context = ErrorContext(
       targetCommand: _targetBinary,
       lastOutput: _proxyState.startupError,

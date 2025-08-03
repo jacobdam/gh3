@@ -45,7 +45,8 @@ class ProxyLifecycleManager {
 
   /// Sets callback for process crash handling.
   void setProcessCrashHandler(
-      void Function(int exitCode, String? stderr) handler) {
+    void Function(int exitCode, String? stderr) handler,
+  ) {
     _onProcessCrash = handler;
   }
 
