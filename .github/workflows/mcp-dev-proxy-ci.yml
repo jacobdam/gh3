@@ -34,6 +34,10 @@ jobs:
       working-directory: mcp_dev_proxy
       run: dart analyze --fatal-infos --fatal-warnings
       
+    - name: Compile binary for tests
+      working-directory: mcp_dev_proxy
+      run: dart compile exe bin/mcp_dev_proxy.dart -o mcp_dev_proxy_binary
+      
     - name: Run tests
       working-directory: mcp_dev_proxy
       run: dart test
