@@ -110,6 +110,7 @@ Development proxy for MCP servers with crash reporting and hot-reload capabiliti
 #### **Pre-Commit Checklist Template (CRITICAL)**
 
 - 🚫 BLOCKING: Verify ALL acceptance criteria met from task definition (MANDATORY - CLAUDE.md #149, #157)
+- 🚫 BLOCKING: Run static checks - dart analyze must show zero issues (MANDATORY - CLAUDE.md #165)
 - 🚫 BLOCKING: Update sprint tracking BEFORE committing feature (MANDATORY - CLAUDE.md #153)
 - Update task definition file to mark acceptance criteria completed (MANDATORY - CLAUDE.md #154)
 - Run tests and code analysis - all must pass (MANDATORY - CLAUDE.md #93)
