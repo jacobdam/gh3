@@ -26,12 +26,7 @@ void main(List<String> arguments) async {
   final targetBinary = arguments.first;
   final targetArgs = arguments.length > 1 ? arguments.sublist(1) : <String>[];
 
-  // Verify target binary exists
-  final file = File(targetBinary);
-  if (!await file.exists()) {
-    stderr.writeln('Error: Target binary does not exist: $targetBinary');
-    exit(1);
-  }
+  // Note: We don't check binary existence here anymore - let the proxy handle it gracefully
 
   // Create stdin stream with proper error handling
   Stream<String> createStdinStream() {

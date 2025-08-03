@@ -1,0 +1,28 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(dart pub:*)",
+      "Bash(dart compile:*)",
+      "Bash(dart test:*)",
+      "Bash(dart run:*)",
+      "Bash(rm:*)",
+      "Bash(./mcp_dev_proxy_binary:*)",
+      "Bash(dart format:*)",
+      "Bash(dart analyze:*)",
+      "Bash(git add:*)",
+      "Bash(git rm:*)",
+      "Bash(git commit:*)",
+      "Bash(ls:*)",
+      "Bash(find:*)",
+      "Bash(flutter analyze:*)",
+      "Bash(flutter test:*)",
+      "Bash(chmod:*)",
+      "Bash(timeout 30 dart test:*)",
+      "Bash(mkdir:*)",
+      "Bash(mv:*)"
+    ]
+  },
+  "disabledMcpjsonServers": [
+    "flutter-automation"
+  ]
+}

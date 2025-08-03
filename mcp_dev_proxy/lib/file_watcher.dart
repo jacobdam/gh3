@@ -25,10 +25,6 @@ class FileWatcher {
     if (_watcher != null) return;
 
     final file = File(filePath);
-    if (!await file.exists()) {
-      throw FileSystemException('File does not exist', filePath);
-    }
-
     final directory = file.parent;
     final fileName = file.uri.pathSegments.last;
 

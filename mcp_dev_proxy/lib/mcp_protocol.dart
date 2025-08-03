@@ -119,18 +119,29 @@ class MCPError {
         'stderr': stderr,
         'exit_code': exitCode,
         'proxy': 'mcp_dev_proxy',
+        'proxy_capabilities': [
+          'crash_recovery',
+          'hot_reload',
+          'error_buffering',
+          'debug_info'
+        ],
       },
     );
   }
 
   static MCPError serverUnavailable([Map<String, dynamic>? details]) {
+    final data = details ?? {};
+    data['proxy_capabilities'] = [
+      'crash_recovery',
+      'hot_reload',
+      'error_buffering',
+      'debug_info'
+    ];
+
     return MCPError(
       code: -32603,
       message: 'MCP server unavailable',
-      data: details ??
-          {
-            'proxy': 'mcp_dev_proxy',
-          },
+      data: data,
     );
   }
 
@@ -143,6 +154,12 @@ class MCPError {
         'proxy': 'mcp_dev_proxy',
         'message':
             'Server is restarting due to $reason. Please retry your request.',
+        'proxy_capabilities': [
+          'crash_recovery',
+          'hot_reload',
+          'error_buffering',
+          'debug_info'
+        ],
       },
     );
   }
