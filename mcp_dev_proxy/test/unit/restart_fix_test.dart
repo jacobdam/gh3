@@ -36,7 +36,9 @@ void main() {
     test('should send error responses for pending requests during restart',
         () async {
       // SKIP: CI environment socket issues - low priority until sprint revamp completed
-    }, skip: 'CI environment socket issues - SocketException: Write failed (Broken pipe)');
+    },
+        skip:
+            'CI environment socket issues - SocketException: Write failed (Broken pipe)');
 
     test('should handle restart reason in error response', () {
       // Test that MCPError.serverRestart creates proper error
