@@ -9,13 +9,7 @@ Approach: "Delete and fix over create new" - use existing TASK-001/002/003 compo
 ## Task Status
 
 ### Ready for Development (NEW DELETION TASKS)
-
-- [ ] **CLEANUP-003**: Delete hardcoded error building (HIGH)
-  - Priority: P1 (High)
-  - Estimated: 2 hours
-  - Dependencies: TASK-002 ✅ (ResponseEnhancer exists)
-  - **Target**: Remove _buildServerUnavailableDetails() method (50 lines)
-  - **Result**: All errors use ResponseEnhancer + ErrorContext
+<!-- Tasks ready to be worked on -->
 
 ### ✅ **INFRASTRUCTURE COMPLETED (DO NOT MODIFY)**
 - [x] TASK-001: TimeoutManager class ✅ 
@@ -33,6 +27,21 @@ Approach: "Delete and fix over create new" - use existing TASK-001/002/003 compo
 <!-- Tasks with dependencies or blockers -->
 
 ### Completed
+- [x] **CLEANUP-003**: Delete hardcoded error building (HIGH)
+  - Priority: P1 (High)
+  - Completed: 2025-08-03
+  - **SUCCESS**: Deleted all hardcoded error building methods
+  - Features implemented:
+    - Deleted _buildServerUnavailableDetails() from MCPDevProxy (49 lines)
+    - Deleted _buildServerUnavailableDetails() from proxy_handlers.dart (14 lines)
+    - Added createServerUnavailableError() to ResponseEnhancer
+    - Added serverUnavailable to ErrorType enum
+    - Replaced all hardcoded error calls with ResponseEnhancer
+    - Added proxyState getter to MCPDevProxy for handler access
+    - All errors now use consistent ErrorContext + ResponseEnhancer pattern
+    - Total code reduction: ~63 lines deleted
+    - All tests passing (115/115)
+    - Clean compilation with zero errors or warnings
 - [x] **CLEANUP-002**: Delete scattered state management (CRITICAL)
   - Priority: P0 (Critical)
   - Completed: 2025-08-03

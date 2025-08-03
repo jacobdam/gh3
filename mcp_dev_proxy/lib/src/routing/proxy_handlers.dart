@@ -200,13 +200,34 @@ class InitializeHandler extends RequestHandler {
     Map<String, dynamic> params,
     RequestContext context,
   ) async {
-    final unavailableDetails = _buildServerUnavailableDetails();
+    final targetBinary = _proxy.targetBinary as String;
+    final binaryExists = File(targetBinary).existsSync();
+    final processManager = _proxy.processManager;
+    final proxyState = _proxy.proxyState;
+    
+    String status;
+    String actionNeeded;
+    
+    if (!binaryExists) {
+      status = 'Binary not found';
+      actionNeeded = 'Compile your MCP server binary: dart compile exe bin/your_server.dart -o ${targetBinary.split('/').last}';
+    } else if (proxyState.startupError != null) {
+      status = 'Binary exists but failed to start: ${proxyState.startupError}';
+      actionNeeded = 'Check if binary is executable and implements MCP protocol';
+    } else if (processManager.isStarting) {
+      status = 'Target MCP server is starting up';
+      actionNeeded = 'Please wait for the server to start';
+    } else {
+      status = 'Target MCP server is not running';
+      actionNeeded = 'Check if your MCP server process crashed';
+    }
+    
     final instructionsText = '''
 Target MCP server is not available.
 
-Expected Binary: ${unavailableDetails['expected_binary']}
-Status: ${unavailableDetails['status']}
-Action Needed: ${unavailableDetails['action_needed']}
+Expected Binary: $targetBinary
+Status: $status
+Action Needed: $actionNeeded
 
 Proxy Capabilities:
 - Crash Recovery: Auto-restart on crashes  
@@ -229,21 +250,6 @@ Use the 'proxy_status' tool for detailed information and 'proxy_help' for guidan
         'version': '1.0.0',
       },
       'instructions': instructionsText,
-    };
-  }
-
-  Map<String, String> _buildServerUnavailableDetails() {
-    final targetBinary = _proxy.targetBinary as String;
-    final binaryExists = File(targetBinary).existsSync();
-    
-    return {
-      'expected_binary': targetBinary,
-      'status': binaryExists 
-          ? 'Binary exists but process failed to start'
-          : 'Binary not found',
-      'action_needed': binaryExists
-          ? 'Check if binary is executable and implements MCP protocol'
-          : 'Compile your MCP server binary: dart compile exe bin/your_server.dart -o ${targetBinary.split('/').last}',
     };
   }
 }

@@ -16,6 +16,7 @@ enum ErrorType {
   connectionFailed,
   invalidResponse,
   toolInterrupted,
+  serverUnavailable,
 }
 
 class ResponseEnhancer {
@@ -101,12 +102,60 @@ class ResponseEnhancer {
     );
   }
 
+  MCPError createServerUnavailableError(ErrorContext context, {Map<String, dynamic>? additionalData}) {
+    final binaryExists = context.environment?['binaryExists'] == 'true';
+    final startupError = context.lastOutput;
+    
+    String message;
+    String actionNeeded;
+    
+    if (!binaryExists) {
+      message = 'MCP server binary not found';
+      actionNeeded = 'Compile your MCP server binary and the proxy will handle the rest';
+    } else if (startupError != null && startupError.isNotEmpty) {
+      message = 'Target MCP server failed to start';
+      actionNeeded = 'Check if binary is executable and implements MCP protocol';
+    } else {
+      message = 'Target MCP server is not running';
+      actionNeeded = 'Check if your MCP server process crashed';
+    }
+    
+    final data = <String, dynamic>{
+      'proxy': 'mcp_dev_proxy',
+      'target_binary': context.targetCommand ?? 'unknown',
+      'message': message,
+      'action_needed': actionNeeded,
+      'status': binaryExists ? 'binary_exists' : 'binary_missing',
+      'proxy_capabilities': [
+        'crash_recovery',
+        'hot_reload',
+        'error_buffering',
+        'debug_info'
+      ],
+    };
+    
+    if (startupError != null && startupError.isNotEmpty) {
+      data['startup_error'] = startupError;
+    }
+    
+    if (additionalData != null) {
+      data.addAll(additionalData);
+    }
+    
+    return MCPError(
+      code: -32603,
+      message: message,
+      data: data,
+    );
+  }
+
   int _getDefaultCode(ErrorType errorType) {
     switch (errorType) {
       case ErrorType.serverCrash:
       case ErrorType.serverRestart:
       case ErrorType.timeout:
       case ErrorType.toolInterrupted:
+      case ErrorType.serverUnavailable:
         return -32603; // Internal error
       case ErrorType.connectionFailed:
         return -32002; // Invalid params (connection not available)

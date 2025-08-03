@@ -8,6 +8,7 @@ import 'mcp_protocol.dart';
 import 'process_manager.dart';
 import 'src/managers/timeout_manager.dart';
 import 'src/enhancers/response_enhancer.dart';
+import 'src/enhancers/error_context.dart';
 import 'src/routing/request_router.dart';
 import 'src/routing/proxy_handlers.dart';
 import 'src/core/proxy_state.dart';
@@ -65,6 +66,7 @@ class MCPDevProxy {
   String? get startupError => _proxyState.startupError;
   Timer? get binaryMonitorTimer => _binaryMonitorTimer;
   Set<String> get pendingToolUses => _proxyState.pendingToolUses;
+  ProxyState get proxyState => _proxyState;
 
   Future<void> start() async {
     _logger.info('Starting MCP Dev Proxy');
@@ -193,9 +195,22 @@ class MCPDevProxy {
     } catch (e) {
       _logger.warning('Failed to forward message to target: $e');
       if (message.isRequest && message.id != null) {
-        final errorDetails = _buildServerUnavailableDetails();
-        _sendErrorToClient(
-            message.id, MCPError.serverUnavailable(errorDetails));
+        final context = ErrorContext(
+          targetCommand: targetBinary,
+          lastOutput: _proxyState.startupError ?? _processManager.lastStderr,
+          workingDirectory: Directory.current.path,
+          environment: {
+            'binaryExists': File(targetBinary).existsSync().toString(),
+          },
+        );
+        final error = _responseEnhancer.createServerUnavailableError(
+          context,
+          additionalData: {
+            'error': e.toString(),
+            'method': message.method,
+          },
+        );
+        _sendErrorToClient(message.id, error);
       }
     }
   }
@@ -286,56 +301,6 @@ class MCPDevProxy {
     });
   }
 
-  Map<String, dynamic> _buildServerUnavailableDetails() {
-    final details = <String, dynamic>{
-      'proxy': 'mcp_dev_proxy',
-      'target_binary': targetBinary,
-      'proxy_capabilities': [
-        'crash_recovery',
-        'hot_reload',
-        'error_buffering',
-        'debug_info'
-      ],
-    };
-
-    // Check if binary exists
-    final binaryFile = File(targetBinary);
-    if (!binaryFile.existsSync()) {
-      details['message'] = 'MCP server binary not found';
-      details['expected_binary'] = targetBinary;
-      details['action_needed'] =
-          'Compile your MCP server binary and I\'ll handle the rest';
-      details['status'] = 'binary_missing';
-      details['integration_info'] = {
-        'how_to_work_with_proxy': [
-          'Provide a compiled binary at the expected path',
-          'Update your binary when code changes - I\'ll detect and restart',
-          'Check my error messages for specific issues',
-          'Don\'t worry about crashes - I\'ll restart and notify clients'
-        ]
-      };
-    } else if (_proxyState.startupError != null) {
-      details['startup_error'] = _proxyState.startupError;
-      details['message'] = 'Target MCP server failed to start: ${_proxyState.startupError}';
-      details['status'] = 'startup_failed';
-      details['action_needed'] = 'Check your MCP server implementation';
-    } else if (_processManager.isStarting) {
-      details['message'] = 'Target MCP server is still starting up';
-      details['status'] = 'starting';
-    } else {
-      details['message'] = 'Target MCP server is not running';
-      details['status'] = 'stopped';
-      details['action_needed'] = 'Check if your MCP server process crashed';
-    }
-
-    // Include stderr if available
-    final stderr = _processManager.lastStderr;
-    if (stderr.isNotEmpty) {
-      details['stderr'] = stderr;
-    }
-
-    return details;
-  }
 
   void _sendErrorToClient(dynamic id, MCPError error) {
     final errorResponse = MCPMessage.createErrorResponse(id, error);
@@ -371,8 +336,22 @@ class MCPDevProxy {
         _sendToClient(response);
       } catch (e) {
         _logger.warning('Failed to route request through RequestRouter: $e');
-        final errorDetails = _buildServerUnavailableDetails();
-        _sendErrorToClient(message.id, MCPError.serverUnavailable(errorDetails));
+        final context = ErrorContext(
+          targetCommand: targetBinary,
+          lastOutput: _proxyState.startupError ?? _processManager.lastStderr,
+          workingDirectory: Directory.current.path,
+          environment: {
+            'binaryExists': File(targetBinary).existsSync().toString(),
+          },
+        );
+        final error = _responseEnhancer.createServerUnavailableError(
+          context,
+          additionalData: {
+            'error': e.toString(),
+            'method': method,
+          },
+        );
+        _sendErrorToClient(message.id, error);
       }
     } else if (method == 'tools/call') {
       // Handle proxy tool calls 
@@ -418,8 +397,22 @@ class MCPDevProxy {
       }
     } else {
       // For unhandled methods, send standard unavailable error
-      final errorDetails = _buildServerUnavailableDetails();
-      _sendErrorToClient(message.id, MCPError.serverUnavailable(errorDetails));
+      final context = ErrorContext(
+        targetCommand: targetBinary,
+        lastOutput: _proxyState.startupError ?? _processManager.lastStderr,
+        workingDirectory: Directory.current.path,
+        environment: {
+          'binaryExists': File(targetBinary).existsSync().toString(),
+        },
+      );
+      final error = _responseEnhancer.createServerUnavailableError(
+        context,
+        additionalData: {
+          'method': method,
+          'message': 'Target server unavailable for unhandled method',
+        },
+      );
+      _sendErrorToClient(message.id, error);
     }
   }
 
