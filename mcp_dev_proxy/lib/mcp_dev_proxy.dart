@@ -8,6 +8,7 @@ import "file_watcher.dart";
 import "mcp_protocol.dart";
 import "process_manager.dart";
 import "src/core/proxy_state.dart";
+import "src/core/tool_cycle_tracker.dart";
 import "src/enhancers/error_context.dart";
 import "src/enhancers/response_enhancer.dart";
 import "src/managers/timeout_manager.dart";
