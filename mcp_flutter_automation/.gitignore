@@ -1,22 +1,38 @@
+# =============================================================================
+# FLUTTER & DART
+# =============================================================================
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+build/
+coverage/
+*.lock
+
+# =============================================================================
+# COMMON PLATFORMS & TOOLS
+# =============================================================================
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.log
+*~
+
+# =============================================================================
+# PROJECT SPECIFIC
+# =============================================================================
 # Claude Code local configuration
 .claude/
 
-# Binaries
-mcp_flutter_automation_binary
-mcp_flutter_automation
+# Binaries (generated, not committed)
+mcp_flutter_automation*
 bin/mcp_flutter_automation
 
-# Development artifacts (temporary files from development sessions)
+# AI Development artifacts (prevents session pollution)
 screenshot_*.png
 *_inspection.json
-*_screenshot.png
-latest_screenshot.png
-debug_*
+*_debug_*
 test_screenshot_*
 *_test_output/
-*_debug_*
-final_test_*
-recursive_test_*
-proof_with_*
-breakthrough_test_*
-interactive_expansion_*
+*.tmp
