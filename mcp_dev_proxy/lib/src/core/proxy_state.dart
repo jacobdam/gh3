@@ -3,7 +3,7 @@
 /// Replaces scattered state variables with a unified source of truth.
 library;
 
-import '../../mcp_protocol.dart';
+import "../../mcp_protocol.dart";
 
 /// Unified state management for the MCP Dev Proxy
 class ProxyState {
@@ -134,13 +134,13 @@ class ProxyState {
   // Diagnostic information
   Map<String, dynamic> getDiagnosticInfo() {
     return {
-      'restart_pending': _restartPending,
-      'last_restart_reason': _lastRestartReason,
-      'startup_error': _startupError,
-      'pending_requests_count': _pendingRequests.length,
-      'pending_tool_uses_count': _pendingToolUses.length,
-      'pending_request_ids': _pendingRequests.keys.toList(),
-      'pending_tool_use_ids': _pendingToolUses.toList(),
+      "restart_pending": _restartPending,
+      "last_restart_reason": _lastRestartReason,
+      "startup_error": _startupError,
+      "pending_requests_count": _pendingRequests.length,
+      "pending_tool_uses_count": _pendingToolUses.length,
+      "pending_request_ids": _pendingRequests.keys.toList(),
+      "pending_tool_use_ids": _pendingToolUses.toList(),
     };
   }
 }

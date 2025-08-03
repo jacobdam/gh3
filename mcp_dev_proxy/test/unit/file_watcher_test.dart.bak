@@ -1,18 +1,18 @@
-import "dart:async";
-import "dart:io";
-import "package:test/test.dart";
-import "package:mcp_dev_proxy/file_watcher.dart";
+import 'dart:async';
+import 'dart:io';
+import 'package:test/test.dart';
+import 'package:mcp_dev_proxy/file_watcher.dart';
 
 void main() {
-  group("FileWatcher", () {
+  group('FileWatcher', () {
     late Directory tempDir;
     late File testFile;
     late FileWatcher fileWatcher;
 
     setUp(() async {
-      tempDir = await Directory.systemTemp.createTemp("file_watcher_test");
-      testFile = File("${tempDir.path}/test_file.txt");
-      await testFile.writeAsString("initial content");
+      tempDir = await Directory.systemTemp.createTemp('file_watcher_test');
+      testFile = File('${tempDir.path}/test_file.txt');
+      await testFile.writeAsString('initial content');
 
       fileWatcher = FileWatcher(
         filePath: testFile.path,
@@ -25,7 +25,7 @@ void main() {
       await tempDir.delete(recursive: true);
     });
 
-    test("should start and stop watcher", () async {
+    test('should start and stop watcher', () async {
       expect(fileWatcher.isWatching, isFalse);
 
       await fileWatcher.start();
@@ -35,7 +35,7 @@ void main() {
       expect(fileWatcher.isWatching, isFalse);
     });
 
-    test("should detect file changes", () async {
+    test('should detect file changes', () async {
       final changeCompleter = Completer<void>();
 
       fileWatcher.onChange.listen((_) {
@@ -47,7 +47,7 @@ void main() {
       await fileWatcher.start();
 
       // Modify the file
-      await testFile.writeAsString("modified content");
+      await testFile.writeAsString('modified content');
 
       // Wait for change detection with graceful handling
       try {
@@ -57,12 +57,12 @@ void main() {
         expect(changeCompleter.isCompleted, isTrue);
       } catch (e) {
         // File change detection can be flaky on some file systems
-        // This is a peripheral feature that doesn"t affect core proxy functionality
-        print("File change test skipped - file system dependent behavior");
+        // This is a peripheral feature that doesn't affect core proxy functionality
+        print('File change test skipped - file system dependent behavior');
       }
     });
 
-    test("should debounce multiple rapid changes", () async {
+    test('should debounce multiple rapid changes', () async {
       var changeCount = 0;
 
       fileWatcher.onChange.listen((_) {
@@ -73,7 +73,7 @@ void main() {
 
       // Make multiple rapid changes
       for (int i = 0; i < 5; i++) {
-        await testFile.writeAsString("content $i");
+        await testFile.writeAsString('content $i');
         await Future<void>.delayed(const Duration(milliseconds: 20));
       }
 
@@ -81,9 +81,9 @@ void main() {
       await Future<void>.delayed(const Duration(milliseconds: 300));
 
       // Debouncing behavior can be system-dependent
-      // The important thing is that it doesn"t crash and provides some debouncing
+      // The important thing is that it doesn't crash and provides some debouncing
       if (changeCount == 0) {
-        print("Debounce test skipped - file system dependent behavior");
+        print('Debounce test skipped - file system dependent behavior');
       } else {
         expect(
             changeCount, lessThanOrEqualTo(5)); // At most the number of changes
@@ -91,15 +91,15 @@ void main() {
       }
     });
 
-    test("should throw when file does not exist", () async {
-      final nonExistentDir = "${tempDir.path}/nonexistent/file.txt";
+    test('should throw when file does not exist', () async {
+      final nonExistentDir = '${tempDir.path}/nonexistent/file.txt';
       final badWatcher = FileWatcher(filePath: nonExistentDir);
 
       expect(() async => await badWatcher.start(),
           throwsA(isA<FileSystemException>()));
     });
 
-    test("should handle multiple start calls", () async {
+    test('should handle multiple start calls', () async {
       await fileWatcher.start();
       expect(fileWatcher.isWatching, isTrue);
 
@@ -108,12 +108,12 @@ void main() {
       expect(fileWatcher.isWatching, isTrue);
     });
 
-    test("should handle stop on non-started watcher", () async {
+    test('should handle stop on non-started watcher', () async {
       await fileWatcher.stop();
       expect(fileWatcher.isWatching, isFalse);
     });
 
-    test("should not detect changes on different files", () async {
+    test('should not detect changes on different files', () async {
       var changeDetected = false;
 
       fileWatcher.onChange.listen((_) {
@@ -123,8 +123,8 @@ void main() {
       await fileWatcher.start();
 
       // Create and modify a different file
-      final otherFile = File("${tempDir.path}/other_file.txt");
-      await otherFile.writeAsString("other content");
+      final otherFile = File('${tempDir.path}/other_file.txt');
+      await otherFile.writeAsString('other content');
 
       // Wait a bit
       await Future<void>.delayed(const Duration(milliseconds: 200));
@@ -132,7 +132,7 @@ void main() {
       expect(changeDetected, isFalse);
     });
 
-    test("should handle file recreation", () async {
+    test('should handle file recreation', () async {
       final changeCompleter = Completer<void>();
 
       fileWatcher.onChange.listen((_) {
@@ -146,7 +146,7 @@ void main() {
       // Delete and recreate the file with a delay
       await testFile.delete();
       await Future<void>.delayed(const Duration(milliseconds: 100));
-      await testFile.writeAsString("recreated content");
+      await testFile.writeAsString('recreated content');
 
       // Wait for change detection with more lenient timeout
       try {
@@ -158,11 +158,11 @@ void main() {
         // File recreation detection can be flaky on some systems
         // This is acceptable for a development proxy
         print(
-            "File recreation test timed out - this is acceptable for some file systems");
+            'File recreation test timed out - this is acceptable for some file systems');
       }
     });
 
-    test("should use custom debounce delay", () async {
+    test('should use custom debounce delay', () async {
       final customWatcher = FileWatcher(
         filePath: testFile.path,
         debounceDelay: const Duration(milliseconds: 50),
@@ -181,9 +181,9 @@ void main() {
       await customWatcher.start();
 
       // Make rapid changes
-      await testFile.writeAsString("content 1");
+      await testFile.writeAsString('content 1');
       await Future<void>.delayed(const Duration(milliseconds: 25));
-      await testFile.writeAsString("content 2");
+      await testFile.writeAsString('content 2');
 
       // Wait for custom debounce period
       try {
@@ -192,7 +192,7 @@ void main() {
       } catch (e) {
         // Debounce timing can be sensitive to system load
         print(
-            "Custom debounce test timed out - this is acceptable on loaded systems");
+            'Custom debounce test timed out - this is acceptable on loaded systems');
       }
 
       await customWatcher.stop();

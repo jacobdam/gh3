@@ -1,10 +1,10 @@
-import "dart:async";
-import "dart:convert";
-import "dart:io";
-import "package:test/test.dart";
+import 'dart:async';
+import 'dart:convert';
+import 'dart:io';
+import 'package:test/test.dart';
 
 void main() {
-  group("MCP Dev Proxy Integration Tests", () {
+  group('MCP Dev Proxy Integration Tests', () {
     late Process proxyProcess;
     late Stream<String> proxyOutput;
     late IOSink proxyInput;
@@ -12,8 +12,8 @@ void main() {
     setUp(() async {
       // Start the proxy with a non-existent target
       proxyProcess = await Process.start(
-        "./mcp_dev_proxy_binary",
-        ["./test_target_binary"],
+        './mcp_dev_proxy_binary',
+        ['./test_target_binary'],
         mode: ProcessStartMode.normal,
       );
 
@@ -32,15 +32,15 @@ void main() {
       await proxyProcess.exitCode;
     });
 
-    test("proxy responds to initialize request", () async {
+    test('proxy responds to initialize request', () async {
       final initRequest = {
-        "jsonrpc": "2.0",
-        "id": 1,
-        "method": "initialize",
-        "params": {
-          "protocolVersion": "2024-11-05",
-          "capabilities": <String, dynamic>{},
-          "clientInfo": {"name": "integration_test", "version": "1.0"}
+        'jsonrpc': '2.0',
+        'id': 1,
+        'method': 'initialize',
+        'params': {
+          'protocolVersion': '2024-11-05',
+          'capabilities': <String, dynamic>{},
+          'clientInfo': {'name': 'integration_test', 'version': '1.0'}
         }
       };
 
@@ -52,7 +52,7 @@ void main() {
       subscription = proxyOutput.listen((line) {
         try {
           final response = jsonDecode(line) as Map<String, dynamic>;
-          if (response["id"] == 1) {
+          if (response['id'] == 1) {
             responseCompleter.complete(response);
             subscription.cancel();
           }
@@ -64,21 +64,21 @@ void main() {
       final response =
           await responseCompleter.future.timeout(Duration(seconds: 5));
 
-      expect(response["jsonrpc"], equals("2.0"));
-      expect(response["id"], equals(1));
-      expect(response["result"], isNotNull);
-      expect(response["result"]["serverInfo"]["name"], equals("mcp_dev_proxy"));
-      expect(response["result"]["instructions"], isA<String>());
-      expect(response["result"]["instructions"],
-          contains("Target MCP server is not available"));
+      expect(response['jsonrpc'], equals('2.0'));
+      expect(response['id'], equals(1));
+      expect(response['result'], isNotNull);
+      expect(response['result']['serverInfo']['name'], equals('mcp_dev_proxy'));
+      expect(response['result']['instructions'], isA<String>());
+      expect(response['result']['instructions'],
+          contains('Target MCP server is not available'));
     });
 
-    test("proxy provides tools when target unavailable", () async {
+    test('proxy provides tools when target unavailable', () async {
       final toolsRequest = {
-        "jsonrpc": "2.0",
-        "id": 2,
-        "method": "tools/list",
-        "params": <String, dynamic>{}
+        'jsonrpc': '2.0',
+        'id': 2,
+        'method': 'tools/list',
+        'params': <String, dynamic>{}
       };
 
       proxyInput.writeln(jsonEncode(toolsRequest));
@@ -89,7 +89,7 @@ void main() {
       subscription = proxyOutput.listen((line) {
         try {
           final response = jsonDecode(line) as Map<String, dynamic>;
-          if (response["id"] == 2) {
+          if (response['id'] == 2) {
             responseCompleter.complete(response);
             subscription.cancel();
           }
@@ -101,20 +101,20 @@ void main() {
       final response =
           await responseCompleter.future.timeout(Duration(seconds: 5));
 
-      expect(response["result"]["tools"], isA<List<dynamic>>());
-      final tools = response["result"]["tools"] as List<dynamic>;
-      final toolNames = tools.map((t) => t["name"]).toList();
-      expect(toolNames, contains("proxy_status"));
-      expect(toolNames, contains("proxy_help"));
-      expect(toolNames, contains("proxy_check_tool_cycles"));
+      expect(response['result']['tools'], isA<List<dynamic>>());
+      final tools = response['result']['tools'] as List<dynamic>;
+      final toolNames = tools.map((t) => t['name']).toList();
+      expect(toolNames, contains('proxy_status'));
+      expect(toolNames, contains('proxy_help'));
+      expect(toolNames, contains('proxy_check_tool_cycles'));
     });
 
-    test("proxy_status tool returns detailed information", () async {
+    test('proxy_status tool returns detailed information', () async {
       final toolCallRequest = {
-        "jsonrpc": "2.0",
-        "id": 3,
-        "method": "tools/call",
-        "params": {"name": "proxy_status", "arguments": <String, dynamic>{}}
+        'jsonrpc': '2.0',
+        'id': 3,
+        'method': 'tools/call',
+        'params': {'name': 'proxy_status', 'arguments': <String, dynamic>{}}
       };
 
       proxyInput.writeln(jsonEncode(toolCallRequest));
@@ -125,7 +125,7 @@ void main() {
       subscription = proxyOutput.listen((line) {
         try {
           final response = jsonDecode(line) as Map<String, dynamic>;
-          if (response["id"] == 3) {
+          if (response['id'] == 3) {
             responseCompleter.complete(response);
             subscription.cancel();
           }
@@ -138,27 +138,27 @@ void main() {
           await responseCompleter.future.timeout(Duration(seconds: 5));
 
       // Check if response has result or error
-      if (response.containsKey("result") && response["result"] != null) {
-        expect(response["result"]["content"], isA<List<dynamic>>());
-        final content = response["result"]["content"][0]["text"] as String;
-        expect(content, contains("MCP Dev Proxy Status"));
-        expect(content, contains("Target Binary:"));
-        expect(content, contains("Binary not found"));
-        expect(content, contains("Proxy Capabilities"));
-      } else if (response.containsKey("error")) {
-        // If there"s an error, log it but don"t fail the test completely
-        print("Proxy status tool returned error: ${response["error"]}");
-        expect(response["error"]["message"], isA<String>());
+      if (response.containsKey('result') && response['result'] != null) {
+        expect(response['result']['content'], isA<List<dynamic>>());
+        final content = response['result']['content'][0]['text'] as String;
+        expect(content, contains('MCP Dev Proxy Status'));
+        expect(content, contains('Target Binary:'));
+        expect(content, contains('Binary not found'));
+        expect(content, contains('Proxy Capabilities'));
+      } else if (response.containsKey('error')) {
+        // If there's an error, log it but don't fail the test completely
+        print('Proxy status tool returned error: ${response['error']}');
+        expect(response['error']['message'], isA<String>());
       } else {
-        fail("Unexpected response structure: $response");
+        fail('Unexpected response structure: $response');
       }
     });
 
-    test("proxy detects binary creation and attempts restart", () async {
+    test('proxy detects binary creation and attempts restart', () async {
       // Create a simple executable file
-      final testBinary = File("./test_target_binary");
+      final testBinary = File('./test_target_binary');
       await testBinary.writeAsString('#!/bin/bash\necho "test binary"\n');
-      await Process.run("chmod", ["+x", "./test_target_binary"]);
+      await Process.run('chmod', ['+x', './test_target_binary']);
 
       // Monitor proxy logs for restart activity
       final logCompleter = Completer<bool>();
@@ -168,8 +168,8 @@ void main() {
           .transform(utf8.decoder)
           .transform(const LineSplitter())
           .listen((line) {
-        if (line.contains("Binary now available") ||
-            line.contains("attempting to start target process")) {
+        if (line.contains('Binary now available') ||
+            line.contains('attempting to start target process')) {
           logCompleter.complete(true);
           subscription.cancel();
         }
@@ -184,56 +184,56 @@ void main() {
     });
   });
 
-  group("End-to-End with Mock MCP Server", () {
-    test("proxy forwards requests to working target server", () async {
+  group('End-to-End with Mock MCP Server', () {
+    test('proxy forwards requests to working target server', () async {
       // Create a simple mock MCP server
-      final mockServerFile = File("./mock_mcp_server.dart");
-      await mockServerFile.writeAsString("""
-import "dart:convert";
-import "dart:io";
+      final mockServerFile = File('./mock_mcp_server.dart');
+      await mockServerFile.writeAsString('''
+import 'dart:convert';
+import 'dart:io';
 
 void main() async {
   await for (final line in stdin.transform(utf8.decoder).transform(const LineSplitter())) {
     final message = jsonDecode(line);
     
-    if (message["method"] == "initialize") {
+    if (message['method'] == 'initialize') {
       final response = {
-        "jsonrpc": "2.0",
-        "id": message["id"],
-        "result": {
-          "protocolVersion": "2024-11-05",
-          "capabilities": {"tools": <String, dynamic>{}},"
-          "serverInfo": {"name": "mock_server", "version": "1.0.0"}
+        'jsonrpc': '2.0',
+        'id': message['id'],
+        'result': {
+          'protocolVersion': '2024-11-05',
+          'capabilities': {'tools': <String, dynamic>{}},'
+          'serverInfo': {'name': 'mock_server', 'version': '1.0.0'}
         }
       };
       print(jsonEncode(response));
-    } else if (message["method"] == "tools/list") {
+    } else if (message['method'] == 'tools/list') {
       final response = {
-        "jsonrpc": "2.0",
-        "id": message["id"],
-        "result": {"tools": []}
+        'jsonrpc': '2.0',
+        'id': message['id'],
+        'result': {'tools': []}
       };
       print(jsonEncode(response));
     }
   }
 }
-""");
+''');
 
       // Compile the mock server
-      final compileResult = await Process.run("dart", [
-        "compile",
-        "exe",
-        "./mock_mcp_server.dart",
-        "-o",
-        "./mock_mcp_server_binary"
+      final compileResult = await Process.run('dart', [
+        'compile',
+        'exe',
+        './mock_mcp_server.dart',
+        '-o',
+        './mock_mcp_server_binary'
       ]);
 
       expect(compileResult.exitCode, equals(0));
 
       // Start proxy with the mock server
       final proxyProcess = await Process.start(
-        "./mcp_dev_proxy_binary",
-        ["./mock_mcp_server_binary"],
+        './mcp_dev_proxy_binary',
+        ['./mock_mcp_server_binary'],
         mode: ProcessStartMode.normal,
       );
 
@@ -248,13 +248,13 @@ void main() async {
       try {
         // Send initialize request through proxy
         final initRequest = {
-          "jsonrpc": "2.0",
-          "id": 1,
-          "method": "initialize",
-          "params": {
-            "protocolVersion": "2024-11-05",
-            "capabilities": <String, dynamic>{},
-            "clientInfo": {"name": "e2e_test", "version": "1.0"}
+          'jsonrpc': '2.0',
+          'id': 1,
+          'method': 'initialize',
+          'params': {
+            'protocolVersion': '2024-11-05',
+            'capabilities': <String, dynamic>{},
+            'clientInfo': {'name': 'e2e_test', 'version': '1.0'}
           }
         };
 
@@ -266,7 +266,7 @@ void main() async {
         subscription = proxyOutput.listen((line) {
           try {
             final response = jsonDecode(line) as Map<String, dynamic>;
-            if (response["id"] == 1) {
+            if (response['id'] == 1) {
               responseCompleter.complete(response);
               subscription.cancel();
             }
@@ -279,15 +279,15 @@ void main() async {
             await responseCompleter.future.timeout(Duration(seconds: 10));
 
         // Should get response from mock server (not proxy fallback)
-        expect(response["result"]["serverInfo"]["name"], equals("mock_server"));
+        expect(response['result']['serverInfo']['name'], equals('mock_server'));
       } finally {
         proxyInput.close();
         proxyProcess.kill();
         await proxyProcess.exitCode;
 
         // Clean up files
-        await File("./mock_mcp_server.dart").delete();
-        await File("./mock_mcp_server_binary").delete();
+        await File('./mock_mcp_server.dart').delete();
+        await File('./mock_mcp_server_binary').delete();
       }
     });
   });

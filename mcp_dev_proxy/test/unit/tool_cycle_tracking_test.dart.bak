@@ -1,7 +1,7 @@
-import "package:test/test.dart";
+import 'package:test/test.dart';
 
 void main() {
-  group("Tool Cycle Tracking (T6.1-T6.3)", () {
+  group('Tool Cycle Tracking (T6.1-T6.3)', () {
     late ToolCycleTracker tracker;
 
     setUp(() {
@@ -12,8 +12,8 @@ void main() {
       tracker.dispose();
     });
 
-    test("should track tool_use requests (T6.1)", () {
-      final toolCallId = "tool-call-123";
+    test('should track tool_use requests (T6.1)', () {
+      final toolCallId = 'tool-call-123';
       final timestamp = DateTime.now();
 
       // Start tracking a tool cycle
@@ -27,8 +27,8 @@ void main() {
       expect(pendingCycles.first.status, equals(ToolCycleStatus.pending));
     });
 
-    test("should complete tool cycles when tool_result received (T6.2)", () {
-      final toolCallId = "tool-call-456";
+    test('should complete tool cycles when tool_result received (T6.2)', () {
+      final toolCallId = 'tool-call-456';
 
       // Start and complete cycle
       tracker.startToolCycle(toolCallId, DateTime.now());
@@ -44,9 +44,9 @@ void main() {
       expect(completedCycles.first.status, equals(ToolCycleStatus.completed));
     });
 
-    test("should handle interrupted cycles during restart (T6.3)", () {
-      final toolCallId1 = "tool-call-789";
-      final toolCallId2 = "tool-call-012";
+    test('should handle interrupted cycles during restart (T6.3)', () {
+      final toolCallId1 = 'tool-call-789';
+      final toolCallId2 = 'tool-call-012';
       final errorResponses = <Map<String, dynamic>>[];
 
       // Start multiple tool cycles
@@ -55,7 +55,7 @@ void main() {
 
       // Simulate server restart interruption
       tracker.sendErrorsForPendingCycles(
-        "Server restarted during tool execution",
+        'Server restarted during tool execution',
         (response) => errorResponses.add(response),
       );
 
@@ -63,11 +63,11 @@ void main() {
       expect(errorResponses.length, equals(2));
 
       for (final response in errorResponses) {
-        expect(response["error"], isNotNull);
-        expect(response["error"]["message"], contains("interrupted"));
-        expect(response["error"]["data"]["problem"], contains("restart"));
-        expect(response["error"]["data"]["guidance"], contains("recover"));
-        expect(response["error"]["data"]["next_steps"], contains("resume"));
+        expect(response['error'], isNotNull);
+        expect(response['error']['message'], contains('interrupted'));
+        expect(response['error']['data']['problem'], contains('restart'));
+        expect(response['error']['data']['guidance'], contains('recover'));
+        expect(response['error']['data']['next_steps'], contains('resume'));
       }
 
       // Verify all cycles marked as interrupted
@@ -75,9 +75,9 @@ void main() {
       expect(pendingCycles.length, equals(0));
     });
 
-    test("should generate tool cycle diagnostic report", () {
-      final toolCallId1 = "diagnostic-1";
-      final toolCallId2 = "diagnostic-2";
+    test('should generate tool cycle diagnostic report', () {
+      final toolCallId1 = 'diagnostic-1';
+      final toolCallId2 = 'diagnostic-2';
 
       // Create mix of pending and completed cycles
       tracker.startToolCycle(
@@ -91,13 +91,13 @@ void main() {
       expect(report.totalPending, equals(1));
       expect(report.pendingIds, contains(toolCallId2));
       expect(report.hasApiRisk, isTrue,
-          reason: "Pending cycles create API validation risk");
-      expect(report.recoveryGuidance, contains("/resume"));
-      expect(report.recoveryGuidance, contains("Claude session"));
+          reason: 'Pending cycles create API validation risk');
+      expect(report.recoveryGuidance, contains('/resume'));
+      expect(report.recoveryGuidance, contains('Claude session'));
     });
 
-    test("should detect stale tool cycles", () {
-      final staleId = "stale-cycle";
+    test('should detect stale tool cycles', () {
+      final staleId = 'stale-cycle';
       final staleTime = DateTime.now().subtract(Duration(minutes: 10));
 
       tracker.startToolCycle(staleId, staleTime);
@@ -144,16 +144,16 @@ class ToolCycleTracker {
       String reason, Function(Map<String, dynamic>) onError) {
     for (final cycle in _pendingCycles.values) {
       onError({
-        "jsonrpc": "2.0",
-        "id": cycle.id,
-        "error": {
-          "code": -32603,
-          "message": "Tool execution interrupted by $reason",
-          "data": {
-            "problem": "Tool cycle interrupted during server restart",
-            "guidance": "Use /resume command to recover Claude session",
-            "next_steps": ["resume", "retry_operation"],
-            "proxy_tools": ["proxy_status", "proxy_check_tool_cycles"]
+        'jsonrpc': '2.0',
+        'id': cycle.id,
+        'error': {
+          'code': -32603,
+          'message': 'Tool execution interrupted by $reason',
+          'data': {
+            'problem': 'Tool cycle interrupted during server restart',
+            'guidance': 'Use /resume command to recover Claude session',
+            'next_steps': ['resume', 'retry_operation'],
+            'proxy_tools': ['proxy_status', 'proxy_check_tool_cycles']
           }
         }
       });
@@ -167,8 +167,8 @@ class ToolCycleTracker {
       pendingIds: _pendingCycles.keys.toList(),
       hasApiRisk: _pendingCycles.isNotEmpty,
       recoveryGuidance: _pendingCycles.isNotEmpty
-          ? "Use /resume command to recover Claude session after incomplete tool cycles"
-          : "No pending tool cycles detected",
+          ? 'Use /resume command to recover Claude session after incomplete tool cycles'
+          : 'No pending tool cycles detected',
     );
   }
 

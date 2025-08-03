@@ -1,4 +1,4 @@
-import 'dart:convert';
+import "dart:convert";
 
 class MCPMessage {
   final String jsonrpc;
@@ -19,27 +19,27 @@ class MCPMessage {
 
   factory MCPMessage.fromJson(Map<String, dynamic> json) {
     return MCPMessage(
-      jsonrpc: json['jsonrpc'] is String ? json['jsonrpc'] as String : '2.0',
-      id: json['id'],
-      method: json['method'] is String ? json['method'] as String? : null,
-      params: json['params'],
-      result: json['result'],
-      error: json['error'] != null && json['error'] is Map<String, dynamic>
-          ? MCPError.fromJson(json['error'] as Map<String, dynamic>)
+      jsonrpc: json["jsonrpc"] is String ? json["jsonrpc"] as String : "2.0",
+      id: json["id"],
+      method: json["method"] is String ? json["method"] as String? : null,
+      params: json["params"],
+      result: json["result"],
+      error: json["error"] != null && json["error"] is Map<String, dynamic>
+          ? MCPError.fromJson(json["error"] as Map<String, dynamic>)
           : null,
     );
   }
 
   Map<String, dynamic> toJson() {
     final json = <String, dynamic>{
-      'jsonrpc': jsonrpc,
+      "jsonrpc": jsonrpc,
     };
 
-    if (id != null) json['id'] = id;
-    if (method != null) json['method'] = method;
-    if (params != null) json['params'] = params;
-    if (result != null) json['result'] = result;
-    if (error != null) json['error'] = error!.toJson();
+    if (id != null) json["id"] = id;
+    if (method != null) json["method"] = method;
+    if (params != null) json["params"] = params;
+    if (result != null) json["result"] = result;
+    if (error != null) json["error"] = error!.toJson();
 
     return json;
   }
@@ -52,21 +52,21 @@ class MCPMessage {
     if (!isResponse) return this;
 
     final proxyData = <String, dynamic>{
-      'name': 'mcp_dev_proxy',
-      'version': '1.0.0',
-      'target': 'mcp_flutter_automation',
+      "name": "mcp_dev_proxy",
+      "version": "1.0.0",
+      "target": "mcp_flutter_automation",
     };
 
-    if (proxyEvent != null) proxyData['event'] = proxyEvent;
-    if (reason != null) proxyData['reason'] = reason;
+    if (proxyEvent != null) proxyData["event"] = proxyEvent;
+    if (reason != null) proxyData["reason"] = reason;
 
     if (result != null) {
       final Map<String, dynamic> resultMap;
       if (result is Map<String, dynamic>) {
         resultMap = Map<String, dynamic>.from(result as Map<String, dynamic>);
-        resultMap['proxy'] = proxyData;
+        resultMap["proxy"] = proxyData;
       } else {
-        resultMap = {'original_result': result, 'proxy': proxyData};
+        resultMap = {"original_result": result, "proxy": proxyData};
       }
 
       return MCPMessage(
@@ -81,7 +81,7 @@ class MCPMessage {
 
   static MCPMessage createErrorResponse(dynamic id, MCPError error) {
     return MCPMessage(
-      jsonrpc: '2.0',
+      jsonrpc: "2.0",
       id: id,
       error: error,
     );
@@ -101,21 +101,21 @@ class MCPError {
 
   factory MCPError.fromJson(Map<String, dynamic> json) {
     return MCPError(
-      code: json['code'] is int ? json['code'] as int : -32603,
-      message: json['message'] is String
-          ? json['message'] as String
-          : 'Unknown error',
-      data: json['data'],
+      code: json["code"] is int ? json["code"] as int : -32603,
+      message: json["message"] is String
+          ? json["message"] as String
+          : "Unknown error",
+      data: json["data"],
     );
   }
 
   Map<String, dynamic> toJson() {
     final json = <String, dynamic>{
-      'code': code,
-      'message': message,
+      "code": code,
+      "message": message,
     };
 
-    if (data != null) json['data'] = data;
+    if (data != null) json["data"] = data;
 
     return json;
   }
@@ -123,16 +123,16 @@ class MCPError {
   static MCPError serverCrash(int exitCode, String stderr) {
     return MCPError(
       code: -32603,
-      message: 'MCP server crashed (exit code: $exitCode)',
+      message: "MCP server crashed (exit code: $exitCode)",
       data: {
-        'stderr': stderr,
-        'exit_code': exitCode,
-        'proxy': 'mcp_dev_proxy',
-        'proxy_capabilities': [
-          'crash_recovery',
-          'hot_reload',
-          'error_buffering',
-          'debug_info'
+        "stderr": stderr,
+        "exit_code": exitCode,
+        "proxy": "mcp_dev_proxy",
+        "proxy_capabilities": [
+          "crash_recovery",
+          "hot_reload",
+          "error_buffering",
+          "debug_info"
         ],
       },
     );
@@ -140,17 +140,17 @@ class MCPError {
 
   static MCPError serverUnavailable([Map<String, dynamic>? details]) {
     final data = details ?? {};
-    data['proxy'] = 'mcp_dev_proxy';
-    data['proxy_capabilities'] = [
-      'crash_recovery',
-      'hot_reload',
-      'error_buffering',
-      'debug_info'
+    data["proxy"] = "mcp_dev_proxy";
+    data["proxy_capabilities"] = [
+      "crash_recovery",
+      "hot_reload",
+      "error_buffering",
+      "debug_info"
     ];
 
     return MCPError(
       code: -32603,
-      message: 'MCP server unavailable',
+      message: "MCP server unavailable",
       data: data,
     );
   }
@@ -158,17 +158,17 @@ class MCPError {
   static MCPError serverRestart(String reason) {
     return MCPError(
       code: -32603,
-      message: 'MCP server restarting',
+      message: "MCP server restarting",
       data: {
-        'reason': reason,
-        'proxy': 'mcp_dev_proxy',
-        'message':
-            'Server is restarting due to $reason. Please retry your request.',
-        'proxy_capabilities': [
-          'crash_recovery',
-          'hot_reload',
-          'error_buffering',
-          'debug_info'
+        "reason": reason,
+        "proxy": "mcp_dev_proxy",
+        "message":
+            "Server is restarting due to $reason. Please retry your request.",
+        "proxy_capabilities": [
+          "crash_recovery",
+          "hot_reload",
+          "error_buffering",
+          "debug_info"
         ],
       },
     );

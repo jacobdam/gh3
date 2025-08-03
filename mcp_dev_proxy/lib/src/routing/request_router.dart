@@ -10,7 +10,7 @@ class RouteNotFoundException implements Exception {
   const RouteNotFoundException(this.method);
 
   @override
-  String toString() => 'Route not found for method: $method';
+  String toString() => "Route not found for method: $method";
 }
 
 /// Context object passed through request handling pipeline
@@ -122,7 +122,7 @@ class RequestRouter {
 
       return result;
     } catch (e) {
-      // Still run after middleware on error, but don't catch their exceptions
+      // Still run after middleware on error, but don"t catch their exceptions
       for (final middleware in _middleware.reversed) {
         await middleware.afterRequest(context);
       }

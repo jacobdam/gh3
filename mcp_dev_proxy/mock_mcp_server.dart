@@ -1,26 +1,40 @@
-import 'dart:convert';
-import 'dart:io';
+import "dart:convert";
+import "dart:io";
 
 void main() async {
-  await for (final line in stdin.transform(utf8.decoder).transform(const LineSplitter())) {
-    final message = jsonDecode(line);
-    
-    if (message['method'] == 'initialize') {
-      final response = {
-        'jsonrpc': '2.0',
-        'id': message['id'],
-        'result': {
-          'protocolVersion': '2024-11-05',
-          'capabilities': {'tools': <String, dynamic>{}},
-          'serverInfo': {'name': 'mock_server', 'version': '1.0.0'}
-        }
+  await for (final String line
+      in stdin.transform(utf8.decoder).transform(const LineSplitter())) {
+    final dynamic decoded = jsonDecode(line);
+
+    if (decoded is! Map<String, dynamic>) {
+      continue;
+    }
+
+    final Map<String, dynamic> message = decoded;
+
+    if (message["method"] == "initialize") {
+      final Map<String, dynamic> response = <String, dynamic>{
+        "jsonrpc": "2.0",
+        "id": message["id"],
+        "result": <String, dynamic>{
+          "protocolVersion": "2024-11-05",
+          "capabilities": <String, dynamic>{
+            "tools": <String, dynamic>{},
+          },
+          "serverInfo": <String, dynamic>{
+            "name": "mock_server",
+            "version": "1.0.0",
+          },
+        },
       };
       print(jsonEncode(response));
-    } else if (message['method'] == 'tools/list') {
-      final response = {
-        'jsonrpc': '2.0',
-        'id': message['id'],
-        'result': {'tools': <Map<String, dynamic>>[]}
+    } else if (message["method"] == "tools/list") {
+      final Map<String, dynamic> response = <String, dynamic>{
+        "jsonrpc": "2.0",
+        "id": message["id"],
+        "result": <String, dynamic>{
+          "tools": <Map<String, dynamic>>[],
+        },
       };
       print(jsonEncode(response));
     }

@@ -1,44 +1,44 @@
-import "dart:async";
-import "dart:convert";
-import "dart:io";
-import "package:test/test.dart";
-import "../../lib/mcp_dev_proxy.dart";
+import 'dart:async';
+import 'dart:convert';
+import 'dart:io';
+import 'package:test/test.dart';
+import '../../lib/mcp_dev_proxy.dart';
 
 void main() {
-  group("Stdio Injection Tests", () {
+  group('Stdio Injection Tests', () {
     late Directory tempDir;
     late File testBinary;
 
     setUp(() async {
-      tempDir = await Directory.systemTemp.createTemp("stdio_test_");
-      testBinary = File("${tempDir.path}/test_binary");
+      tempDir = await Directory.systemTemp.createTemp('stdio_test_');
+      testBinary = File('${tempDir.path}/test_binary');
       await testBinary.writeAsString('#!/bin/bash\necho "test"');
-      await Process.run("chmod", ["+x", testBinary.path]);
+      await Process.run('chmod', ['+x', testBinary.path]);
     });
 
     tearDown(() async {
       await tempDir.delete(recursive: true);
     });
 
-    test("should work with empty streams (headless mode)", () async {
+    test('should work with empty streams (headless mode)', () async {
       // SKIP: CI environment socket issues - low priority until sprint revamp completed
     },
         skip:
-            "CI environment socket issues - SocketException: Write failed (Broken pipe)");
+            'CI environment socket issues - SocketException: Write failed (Broken pipe)');
 
-    test("should work with custom stdin stream", () async {
+    test('should work with custom stdin stream', () async {
       // SKIP: CI environment socket issues - low priority until sprint revamp completed
     },
         skip:
-            "CI environment socket issues - SocketException: Write failed (Broken pipe)");
+            'CI environment socket issues - SocketException: Write failed (Broken pipe)');
 
-    test("should work with custom stdout sink", () async {
+    test('should work with custom stdout sink', () async {
       // SKIP: CI environment socket issues - low priority until sprint revamp completed
     },
         skip:
-            "CI environment socket issues - SocketException: Write failed (Broken pipe)");
+            'CI environment socket issues - SocketException: Write failed (Broken pipe)');
 
-    test("should use provided streams directly", () {
+    test('should use provided streams directly', () {
       // This test verifies the streams are used as provided
       final testStdin = const Stream<String>.empty();
       final testStdout = _MockIOSink([]);

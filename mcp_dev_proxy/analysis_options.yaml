@@ -80,7 +80,7 @@ linter:
     - prefer_function_declarations_over_variables
     - prefer_if_elements_to_conditional_expressions
     - prefer_int_literals
-    - prefer_single_quotes
+    - prefer_double_quotes
     - sort_constructors_first
     - sort_unnamed_constructors_first
     - use_colored_box

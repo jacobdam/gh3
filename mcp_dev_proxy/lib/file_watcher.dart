@@ -1,10 +1,10 @@
-import 'dart:async';
-import 'dart:io';
-import 'package:logging/logging.dart';
-import 'package:watcher/watcher.dart';
+import "dart:async";
+import "dart:io";
+import "package:logging/logging.dart";
+import "package:watcher/watcher.dart";
 
 class FileWatcher {
-  final Logger _logger = Logger('FileWatcher');
+  final Logger _logger = Logger("FileWatcher");
   final String filePath;
   final Duration debounceDelay;
 
@@ -30,10 +30,10 @@ class FileWatcher {
 
     // Check if directory exists before starting watcher
     if (!directory.existsSync()) {
-      throw FileSystemException('Directory does not exist', directory.path);
+      throw FileSystemException("Directory does not exist", directory.path);
     }
 
-    _logger.info('Starting file watcher for: $filePath');
+    _logger.info("Starting file watcher for: $filePath");
 
     _changeController = StreamController<void>.broadcast();
     _watcher = DirectoryWatcher(directory.path);
@@ -41,18 +41,18 @@ class FileWatcher {
     _watcherSubscription = _watcher!.events.listen((event) {
       if (event.path.endsWith(fileName) &&
           (event.type == ChangeType.MODIFY || event.type == ChangeType.ADD)) {
-        _logger.fine('File change detected: ${event.path} (${event.type})');
+        _logger.fine("File change detected: ${event.path} (${event.type})");
         _debounceChange();
       }
     }, onError: (Object error) {
-      _logger.warning('File watcher error: $error');
+      _logger.warning("File watcher error: $error");
     });
   }
 
   void _debounceChange() {
     _debounceTimer?.cancel();
     _debounceTimer = Timer(debounceDelay, () {
-      _logger.info('File change confirmed after debounce: $filePath');
+      _logger.info("File change confirmed after debounce: $filePath");
       _changeController?.add(null);
     });
   }
@@ -60,7 +60,7 @@ class FileWatcher {
   Future<void> stop() async {
     if (_watcher == null) return;
 
-    _logger.info('Stopping file watcher');
+    _logger.info("Stopping file watcher");
 
     _debounceTimer?.cancel();
     _debounceTimer = null;

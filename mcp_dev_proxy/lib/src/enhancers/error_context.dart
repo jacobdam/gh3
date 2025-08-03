@@ -35,23 +35,23 @@ class ErrorContext {
 
   Map<String, dynamic> toJson() {
     return {
-      'detectedRuntime': detectedRuntime,
-      'targetCommand': targetCommand,
-      'environment': environment,
-      'workingDirectory': workingDirectory,
-      'lastOutput': lastOutput,
-      'timestamp': timestamp.toIso8601String(),
+      "detectedRuntime": detectedRuntime,
+      "targetCommand": targetCommand,
+      "environment": environment,
+      "workingDirectory": workingDirectory,
+      "lastOutput": lastOutput,
+      "timestamp": timestamp.toIso8601String(),
     };
   }
 
   factory ErrorContext.fromJson(Map<String, dynamic> json) {
     return ErrorContext(
-      detectedRuntime: json['detectedRuntime'] as String?,
-      targetCommand: json['targetCommand'] as String?,
-      environment: json['environment'] as Map<String, String>?,
-      workingDirectory: json['workingDirectory'] as String?,
-      lastOutput: json['lastOutput'] as String?,
-      timestamp: DateTime.parse(json['timestamp'] as String),
+      detectedRuntime: json["detectedRuntime"] as String?,
+      targetCommand: json["targetCommand"] as String?,
+      environment: json["environment"] as Map<String, String>?,
+      workingDirectory: json["workingDirectory"] as String?,
+      lastOutput: json["lastOutput"] as String?,
+      timestamp: DateTime.parse(json["timestamp"] as String),
     );
   }
 }

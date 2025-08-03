@@ -1,5 +1,5 @@
-import '../../mcp_protocol.dart';
-import 'error_context.dart';
+import "../../mcp_protocol.dart";
+import "error_context.dart";
 
 abstract class ErrorEnhancer {
   bool canHandle(ErrorType errorType, ErrorContext context);
@@ -50,12 +50,12 @@ class ResponseEnhancer {
     for (final enhancer in _enhancers) {
       if (enhancer.canHandle(errorType, context)) {
         final enhanced = enhancer.enhance({
-          'code': code ?? _getDefaultCode(errorType),
-          'message': message,
-          'data': errorData,
+          "code": code ?? _getDefaultCode(errorType),
+          "message": message,
+          "data": errorData,
         }, context);
 
-        errorData = enhanced['data'] as Map<String, dynamic>? ?? errorData;
+        errorData = enhanced["data"] as Map<String, dynamic>? ?? errorData;
       }
     }
 
@@ -67,7 +67,7 @@ class ResponseEnhancer {
   }
 
   MCPError createServerCrashError(int exitCode, String? stderr) {
-    return MCPError.serverCrash(exitCode, stderr ?? '');
+    return MCPError.serverCrash(exitCode, stderr ?? "");
   }
 
   MCPError createServerRestartError(String reason) {
@@ -77,13 +77,13 @@ class ResponseEnhancer {
   MCPError createTimeoutError(String operation, Duration timeout) {
     return MCPError(
       code: -32603,
-      message: 'Operation timed out',
+      message: "Operation timed out",
       data: {
-        'operation': operation,
-        'timeout_ms': timeout.inMilliseconds,
-        'proxy': 'mcp_dev_proxy',
-        'recovery_hint':
-            'Check if the target server is responding or increase timeout',
+        "operation": operation,
+        "timeout_ms": timeout.inMilliseconds,
+        "proxy": "mcp_dev_proxy",
+        "recovery_hint":
+            "Check if the target server is responding or increase timeout",
       },
     );
   }
@@ -91,54 +91,54 @@ class ResponseEnhancer {
   MCPError createToolInterruptedError(String toolUseId, String reason) {
     return MCPError(
       code: -32603,
-      message: 'Tool execution interrupted by server restart',
+      message: "Tool execution interrupted by server restart",
       data: {
-        'tool_use_id': toolUseId,
-        'reason': reason,
-        'proxy': 'mcp_dev_proxy',
-        'recovery_hint':
-            'Use /resume command to start a fresh session without incomplete tool cycles',
+        "tool_use_id": toolUseId,
+        "reason": reason,
+        "proxy": "mcp_dev_proxy",
+        "recovery_hint":
+            "Use /resume command to start a fresh session without incomplete tool cycles",
       },
     );
   }
 
   MCPError createServerUnavailableError(ErrorContext context,
       {Map<String, dynamic>? additionalData}) {
-    final binaryExists = context.environment?['binaryExists'] == 'true';
+    final binaryExists = context.environment?["binaryExists"] == "true";
     final startupError = context.lastOutput;
 
     String message;
     String actionNeeded;
 
     if (!binaryExists) {
-      message = 'MCP server binary not found';
+      message = "MCP server binary not found";
       actionNeeded =
-          'Compile your MCP server binary and the proxy will handle the rest';
+          "Compile your MCP server binary and the proxy will handle the rest";
     } else if (startupError != null && startupError.isNotEmpty) {
-      message = 'Target MCP server failed to start';
+      message = "Target MCP server failed to start";
       actionNeeded =
-          'Check if binary is executable and implements MCP protocol';
+          "Check if binary is executable and implements MCP protocol";
     } else {
-      message = 'Target MCP server is not running';
-      actionNeeded = 'Check if your MCP server process crashed';
+      message = "Target MCP server is not running";
+      actionNeeded = "Check if your MCP server process crashed";
     }
 
     final data = <String, dynamic>{
-      'proxy': 'mcp_dev_proxy',
-      'target_binary': context.targetCommand ?? 'unknown',
-      'message': message,
-      'action_needed': actionNeeded,
-      'status': binaryExists ? 'binary_exists' : 'binary_missing',
-      'proxy_capabilities': [
-        'crash_recovery',
-        'hot_reload',
-        'error_buffering',
-        'debug_info'
+      "proxy": "mcp_dev_proxy",
+      "target_binary": context.targetCommand ?? "unknown",
+      "message": message,
+      "action_needed": actionNeeded,
+      "status": binaryExists ? "binary_exists" : "binary_missing",
+      "proxy_capabilities": [
+        "crash_recovery",
+        "hot_reload",
+        "error_buffering",
+        "debug_info"
       ],
     };
 
     if (startupError != null && startupError.isNotEmpty) {
-      data['startup_error'] = startupError;
+      data["startup_error"] = startupError;
     }
 
     if (additionalData != null) {

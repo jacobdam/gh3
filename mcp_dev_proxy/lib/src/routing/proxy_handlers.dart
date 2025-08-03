@@ -1,9 +1,9 @@
 /// Request handlers for proxy tool calls
 library;
 
-import 'dart:io';
-import 'request_router.dart';
-import '../../mcp_dev_proxy.dart';
+import "dart:io";
+import "request_router.dart";
+import "../../mcp_dev_proxy.dart";
 
 /// Handler for proxy_status tool calls
 class ProxyStatusHandler extends RequestHandler {
@@ -17,10 +17,10 @@ class ProxyStatusHandler extends RequestHandler {
     RequestContext context,
   ) async {
     return {
-      'content': [
+      "content": [
         {
-          'type': 'text',
-          'text': _buildProxyStatusReport(),
+          "type": "text",
+          "text": _buildProxyStatusReport(),
         }
       ]
     };
@@ -33,10 +33,10 @@ class ProxyStatusHandler extends RequestHandler {
 
     final binaryExists = File(targetBinary).existsSync();
     final status = binaryExists
-        ? 'Binary exists but process failed to start'
-        : 'Binary not found';
+        ? "Binary exists but process failed to start"
+        : "Binary not found";
 
-    return '''
+    return """
 # MCP Dev Proxy Status
 
 **Target Binary:** `$targetBinary`
@@ -45,17 +45,17 @@ class ProxyStatusHandler extends RequestHandler {
 **Monitoring Active:** ${binaryMonitorTimer != null}
 
 ## Current State
-${startupError != null ? '⚠️ Startup Error: $startupError' : '✅ Proxy running normally'}
+${startupError != null ? "⚠️ Startup Error: $startupError" : "✅ Proxy running normally"}
 
 ## Next Steps
-${binaryExists ? 'Binary exists but failed to start. Check if it\'s executable and implements MCP protocol.' : 'Compile your MCP server binary: `dart compile exe bin/your_server.dart -o ${targetBinary.split('/').last}`'}
+${binaryExists ? "Binary exists but failed to start. Check if it\"s executable and implements MCP protocol." : "Compile your MCP server binary: `dart compile exe bin/your_server.dart -o ${targetBinary.split("/").last}`"}
 
 ## Proxy Capabilities
 - 🔄 Crash Recovery: Auto-restart on crashes
 - 🔥 Hot Reload: Detect binary changes and restart  
 - 📦 Error Buffering: Handle pending requests during restarts
 - 🔍 Debug Info: Enhanced error messages with context
-''';
+""";
   }
 }
 
@@ -69,17 +69,17 @@ class ProxyHelpHandler extends RequestHandler {
     RequestContext context,
   ) async {
     return {
-      'content': [
+      "content": [
         {
-          'type': 'text',
-          'text': _buildProxyHelpText(),
+          "type": "text",
+          "text": _buildProxyHelpText(),
         }
       ]
     };
   }
 
   String _buildProxyHelpText() {
-    return '''
+    return """
 # MCP Development Proxy Help
 
 The MCP Development Proxy helps with MCP server development by providing:
@@ -120,7 +120,7 @@ The MCP Development Proxy helps with MCP server development by providing:
 5. Test your changes through the MCP client
 
 For more details, check the proxy logs and use `proxy_status` for current state.
-''';
+""";
   }
 }
 
@@ -136,10 +136,10 @@ class ProxyToolCycleHandler extends RequestHandler {
     RequestContext context,
   ) async {
     return {
-      'content': [
+      "content": [
         {
-          'type': 'text',
-          'text': _buildToolCycleReport(),
+          "type": "text",
+          "text": _buildToolCycleReport(),
         }
       ]
     };
@@ -149,18 +149,18 @@ class ProxyToolCycleHandler extends RequestHandler {
     final pendingToolUses = _proxy.pendingToolUses;
 
     if (pendingToolUses.isEmpty) {
-      return '''
+      return """
 # Tool Cycle Check
 
 ✅ **No incomplete tool cycles detected**
 
 All tool_use requests have been properly completed with tool_result responses.
-''';
+""";
     }
 
-    final pendingList = pendingToolUses.map((id) => '- `$id`').join('\n');
+    final pendingList = pendingToolUses.map((id) => "- `$id`").join("\n");
 
-    return '''
+    return """
 # Tool Cycle Check
 
 ⚠️ **${pendingToolUses.length} incomplete tool cycle(s) detected**
@@ -185,7 +185,7 @@ This can cause:
 - Always send tool_result for every tool_use
 - Implement proper exception handling in tool code
 - Use timeouts for long-running tool operations
-''';
+""";
   }
 }
 
@@ -208,22 +208,22 @@ class InitializeHandler extends RequestHandler {
     String actionNeeded;
 
     if (!binaryExists) {
-      status = 'Binary not found';
+      status = "Binary not found";
       actionNeeded =
-          'Compile your MCP server binary: dart compile exe bin/your_server.dart -o ${targetBinary.split('/').last}';
+          "Compile your MCP server binary: dart compile exe bin/your_server.dart -o ${targetBinary.split("/").last}";
     } else if (proxyState.startupError != null) {
-      status = 'Binary exists but failed to start: ${proxyState.startupError}';
+      status = "Binary exists but failed to start: ${proxyState.startupError}";
       actionNeeded =
-          'Check if binary is executable and implements MCP protocol';
+          "Check if binary is executable and implements MCP protocol";
     } else if (_proxy.isProcessStarting) {
-      status = 'Target MCP server is starting up';
-      actionNeeded = 'Please wait for the server to start';
+      status = "Target MCP server is starting up";
+      actionNeeded = "Please wait for the server to start";
     } else {
-      status = 'Target MCP server is not running';
-      actionNeeded = 'Check if your MCP server process crashed';
+      status = "Target MCP server is not running";
+      actionNeeded = "Check if your MCP server process crashed";
     }
 
-    final instructionsText = '''
+    final instructionsText = """
 Target MCP server is not available.
 
 Expected Binary: $targetBinary
@@ -236,21 +236,21 @@ Proxy Capabilities:
 - Error Buffering: Handle pending requests during restarts
 - Debug Info: Enhanced error messages with context
 
-Use the 'proxy_status' tool for detailed information and 'proxy_help' for guidance.
-''';
+Use the "proxy_status" tool for detailed information and "proxy_help" for guidance.
+""";
 
     return {
-      'protocolVersion': '2024-11-05',
-      'capabilities': {
-        'tools': <String, dynamic>{},
-        'resources': <String, dynamic>{},
-        'prompts': <String, dynamic>{},
+      "protocolVersion": "2024-11-05",
+      "capabilities": {
+        "tools": <String, dynamic>{},
+        "resources": <String, dynamic>{},
+        "prompts": <String, dynamic>{},
       },
-      'serverInfo': {
-        'name': 'mcp_dev_proxy',
-        'version': '1.0.0',
+      "serverInfo": {
+        "name": "mcp_dev_proxy",
+        "version": "1.0.0",
       },
-      'instructions': instructionsText,
+      "instructions": instructionsText,
     };
   }
 }
@@ -265,31 +265,31 @@ class ToolsListHandler extends RequestHandler {
     RequestContext context,
   ) async {
     return {
-      'tools': [
+      "tools": [
         {
-          'name': 'proxy_status',
-          'description':
-              'Get current proxy status and target binary information',
-          'inputSchema': {
-            'type': 'object',
-            'properties': <String, dynamic>{},
+          "name": "proxy_status",
+          "description":
+              "Get current proxy status and target binary information",
+          "inputSchema": {
+            "type": "object",
+            "properties": <String, dynamic>{},
           },
         },
         {
-          'name': 'proxy_help',
-          'description': 'Get help on how to work with the MCP dev proxy',
-          'inputSchema': {
-            'type': 'object',
-            'properties': <String, dynamic>{},
+          "name": "proxy_help",
+          "description": "Get help on how to work with the MCP dev proxy",
+          "inputSchema": {
+            "type": "object",
+            "properties": <String, dynamic>{},
           },
         },
         {
-          'name': 'proxy_check_tool_cycles',
-          'description':
-              'Check for incomplete tool_use cycles that may cause API errors',
-          'inputSchema': {
-            'type': 'object',
-            'properties': <String, dynamic>{},
+          "name": "proxy_check_tool_cycles",
+          "description":
+              "Check for incomplete tool_use cycles that may cause API errors",
+          "inputSchema": {
+            "type": "object",
+            "properties": <String, dynamic>{},
           },
         },
       ],

@@ -1,21 +1,21 @@
-import "dart:async";
-import "dart:convert";
-import "dart:io";
-import "package:test/test.dart";
-import "../../lib/mcp_dev_proxy.dart";
-import "../../lib/mcp_protocol.dart";
+import 'dart:async';
+import 'dart:convert';
+import 'dart:io';
+import 'package:test/test.dart';
+import '../../lib/mcp_dev_proxy.dart';
+import '../../lib/mcp_protocol.dart';
 
 void main() {
-  group("Restart Fix Tests", () {
+  group('Restart Fix Tests', () {
     late Directory tempDir;
     late File testBinary;
     late MCPDevProxy proxy;
 
     setUp(() async {
-      tempDir = await Directory.systemTemp.createTemp("mcp_proxy_test_");
-      testBinary = File("${tempDir.path}/test_binary");
+      tempDir = await Directory.systemTemp.createTemp('mcp_proxy_test_');
+      testBinary = File('${tempDir.path}/test_binary');
       await testBinary.writeAsString('#!/bin/bash\necho "test"');
-      await Process.run("chmod", ["+x", testBinary.path]);
+      await Process.run('chmod', ['+x', testBinary.path]);
 
       proxy = MCPDevProxy(
         targetBinary: testBinary.path,
@@ -28,26 +28,26 @@ void main() {
       try {
         await proxy.stop();
       } catch (e) {
-        // Ignore errors if proxy wasn"t started
+        // Ignore errors if proxy wasn't started
       }
       await tempDir.delete(recursive: true);
     });
 
-    test("should send error responses for pending requests during restart",
+    test('should send error responses for pending requests during restart',
         () async {
       // SKIP: CI environment socket issues - low priority until sprint revamp completed
     },
         skip:
-            "CI environment socket issues - SocketException: Write failed (Broken pipe)");
+            'CI environment socket issues - SocketException: Write failed (Broken pipe)');
 
-    test("should handle restart reason in error response", () {
+    test('should handle restart reason in error response', () {
       // Test that MCPError.serverRestart creates proper error
-      final testError = MCPError.serverRestart("binary_updated");
+      final testError = MCPError.serverRestart('binary_updated');
 
       expect(testError.code, equals(-32603));
-      expect(testError.message, equals("MCP server restarting"));
-      expect(testError.data["reason"], equals("binary_updated"));
-      expect(testError.data["proxy"], equals("mcp_dev_proxy"));
+      expect(testError.message, equals('MCP server restarting'));
+      expect(testError.data['reason'], equals('binary_updated'));
+      expect(testError.data['proxy'], equals('mcp_dev_proxy'));
     });
   });
 }
