@@ -1,41 +1,45 @@
-# Current Sprint Tasks
+# Current Sprint Tasks (REVISED - DELETION-FOCUSED)
 
 ## Overview
-Sprint Goal: Implement Phase 1 - Core Infrastructure Improvements
-Timeline: 2 weeks
-Start Date: [To be filled when sprint starts]
+Sprint Goal: **DELETE LEGACY CODE & LEVERAGE EXISTING COMPONENTS**
+Timeline: 1 week (reduced scope)
+Start Date: 2025-08-03
+Approach: "Delete and fix over create new" - use existing TASK-001/002/003 components
 
 ## Task Status
 
-### Ready for Development
-### Completed
-- [x] TASK-003: Extract and implement RequestRouter class (Phase 1.1)
-  - Priority: P0 (Critical)
-  - Completed: [Commit 5d82e99](https://github.com/user/repo/commit/5d82e99)
-  - Features implemented:
-    - RequestRouter class with method-based routing
-    - Middleware support for request preprocessing
-    - Comprehensive proxy tool handlers
-    - 15 unit tests covering all functionality
-    - Integration with MCPDevProxy replacing inline routing
-    - Memory leak fixes for unbounded collections
-    - Performance optimizations (<1ms routing)
-    - All existing functionality preserved
+### Ready for Development (NEW DELETION TASKS)
 
-### Ready for Development
-  - Priority: P0 (Critical)
-  - Estimated: 3 hours
-  - Dependencies: None
-
-- [ ] TASK-004: Implement configurable timeout system (Phase 1.2)
-  - Priority: P0 (Critical)
+- [ ] **CLEANUP-001**: Delete inline request handling from MCPDevProxy (CRITICAL)
+  - Priority: P0 (Critical) 
   - Estimated: 4 hours
-  - Dependencies: TASK-001 ✅
+  - Dependencies: TASK-003 ✅ (RequestRouter exists)
+  - **Target**: Remove 130+ lines from handleClientInput(), route ALL through RequestRouter
+  - **Result**: MCPDevProxy.handleClientInput() reduces from 130 to ~20 lines
 
-- [ ] TASK-005: Create ErrorContext and classification system (Phase 1.3)
+- [ ] **CLEANUP-002**: Delete scattered state management (CRITICAL)
   - Priority: P0 (Critical)
-  - Estimated: 3 hours
-  - Dependencies: TASK-002 ✅
+  - Estimated: 3 hours  
+  - Dependencies: None
+  - **Target**: Remove 7+ state variables, create single ProxyState class
+  - **Delete**: _pendingRequests, _requestTimestamps, _pendingToolUses, _toolUseTimestamps, _restartPending, etc.
+  - **Result**: MCPDevProxy constructor reduces from 15+ fields to 5-6 clean dependencies
+
+- [ ] **CLEANUP-003**: Delete hardcoded error building (HIGH)
+  - Priority: P1 (High)
+  - Estimated: 2 hours
+  - Dependencies: TASK-002 ✅ (ResponseEnhancer exists)
+  - **Target**: Remove _buildServerUnavailableDetails() method (50 lines)
+  - **Result**: All errors use ResponseEnhancer + ErrorContext
+
+### ✅ **INFRASTRUCTURE COMPLETED (DO NOT MODIFY)**
+- [x] TASK-001: TimeoutManager class ✅ 
+- [x] TASK-002: ResponseEnhancer class ✅
+- [x] TASK-003: RequestRouter class ✅
+
+### CANCELLED/DEFERRED (Not needed for core functionality)
+- ~~TASK-004: Configurable timeout system~~ - Basic TimeoutManager sufficient
+- ~~TASK-005: ErrorContext classification~~ - Basic ResponseEnhancer sufficient
 
 ### In Progress
 <!-- Tasks currently being worked on will be moved here -->

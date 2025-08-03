@@ -45,9 +45,9 @@ The MCP Development Proxy is designed as a **layered, event-driven system** that
 
 ## Core Components
 
-### 1. MCPDevProxy (Main Orchestrator)
+### 1. MCPDevProxy (Main Orchestrator) - SIMPLIFIED
 
-**Responsibility:** Central coordinator that manages all proxy functionality and component lifecycle.
+**Responsibility:** Lightweight coordinator that delegates to components. NO inline logic.
 
 ```dart
 class MCPDevProxy {
@@ -57,57 +57,83 @@ class MCPDevProxy {
   final FileWatcher _fileWatcher;
   final ToolCycleTracker _toolCycleTracker;
   final RequestRouter _requestRouter;
+  final ProxyState _state;
   
-  // Core lifecycle
+  // Core lifecycle (delegate to components)
   Future<void> start();
   Future<void> stop();
   
-  // Main message handling
-  Future<void> handleRequest(Map<String, dynamic> request);
+  // Main message handling (DELEGATE ONLY)
+  Future<void> handleClientInput(String line) {
+    final message = MCPProtocol.parseMessage(line);
+    if (message == null) return;
+    
+    // Route through RequestRouter - NO inline logic
+    await _requestRouter.routeRequest(message);
+  }
   
   // State access for diagnostics
-  ProxyState get currentState;
+  ProxyState get currentState => _state;
 }
 ```
 
-**Key Features:**
-- Coordinates all component interactions
-- Provides unified error handling
-- Manages proxy lifecycle and cleanup
-- Exposes diagnostic state information
+**Key Features (REDUCED SCOPE):**
+- **Delegates all work to components** - NO business logic
+- **Routes all requests through RequestRouter** - NO inline handling
+- **Provides ProxyState access** - Single source of truth
+- **Manages component lifecycle only** - start/stop coordination
 
-### 2. RequestRouter
+### 2. RequestRouter - EXPANDED RESPONSIBILITY
 
-**Responsibility:** Route incoming requests to appropriate handlers (target server vs proxy tools).
+**Responsibility:** Handle ALL request routing and server unavailable scenarios.
 
 ```dart
 class RequestRouter {
-  // Determine request destination
-  RouteDecision route(Map<String, dynamic> request);
+  final ProcessManager _processManager;
+  final TimeoutManager _timeoutManager;
+  final ResponseEnhancer _responseEnhancer;
+  final ToolCycleTracker _toolCycleTracker;
+  final ProxyState _state;
   
-  // Handle proxy-specific tools
-  Future<Map<String, dynamic>> handleProxyTool(
-    String toolName, 
-    Map<String, dynamic> arguments
-  );
+  // Main routing method - handles ALL scenarios
+  Future<void> routeRequest(MCPMessage message) async {
+    // Track tool cycles
+    if (message.method == 'tools/call') {
+      _toolCycleTracker.startToolCycle(message.id.toString());
+    }
+    
+    // Start timeout for all requests
+    if (message.isRequest) {
+      _timeoutManager.startTimeout(message.id.toString(), message.method, 
+        () => _handleTimeout(message));
+    }
+    
+    // Route based on server availability and request type
+    if (!_processManager.isRunning) {
+      await _handleServerUnavailable(message);
+    } else if (_isProxyTool(message)) {
+      await _handleProxyTool(message);
+    } else {
+      await _forwardToTarget(message);
+    }
+  }
   
-  // Forward to target server
-  Future<Map<String, dynamic>> forwardToTarget(
-    Map<String, dynamic> request
-  );
-}
-
-enum RouteDecision {
-  forwardToTarget,   // Send to target server
-  handleByProxy,     // Handle as proxy tool
-  errorResponse      // Return immediate error
+  // Handle all server unavailable scenarios (moved from MCPDevProxy)
+  Future<void> _handleServerUnavailable(MCPMessage message);
+  
+  // Handle proxy tools
+  Future<void> _handleProxyTool(MCPMessage message);
+  
+  // Forward to target with timeout management
+  Future<void> _forwardToTarget(MCPMessage message);
 }
 ```
 
-**Key Features:**
-- Identifies proxy tools (`proxy_status`, `proxy_help`, etc.)
-- Handles requests when target server unavailable
-- Provides immediate error responses for invalid requests
+**Key Features (EXPANDED):**
+- **Handles ALL request scenarios** - Server available/unavailable, proxy tools, forwarding
+- **Integrates timeout management** - No separate timeout handling in MCPDevProxy
+- **Integrates tool cycle tracking** - Automatic tracking for all tools/call requests
+- **Uses ErrorContext for all errors** - No hardcoded error building
 
 ### 3. TimeoutManager
 

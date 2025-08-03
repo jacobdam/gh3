@@ -1,227 +1,228 @@
-# MCP Development Proxy - Implementation Plan
+# MCP Development Proxy - Implementation Plan (REVISED)
 
 ## Overview
 
-This implementation plan outlines the necessary changes to transform the current MCP proxy into a production-ready system that aligns with the technical design and requirements.
+This implementation plan prioritizes deletion of legacy code and architectural cleanup over new feature development. Based on analysis of docs vs source code misalignments, the focus is **"delete and fix over create new"**.
 
 ## Current State Analysis
 
-Based on the existing codebase:
-- ✅ Basic proxy functionality implemented
-- ✅ Process management with restart capability
-- ✅ File watching with hot reload
-- ✅ Basic timeout handling
-- ❌ Missing comprehensive error enhancement
-- ❌ Missing tool cycle tracking
-- ❌ Limited runtime detection
-- ❌ No configurable timeouts
-- ❌ Limited diagnostic tools
+### ✅ **Completed Infrastructure (DO NOT MODIFY)**
+- **TASK-001**: TimeoutManager class extraction ✅ 
+- **TASK-002**: ResponseEnhancer class extraction ✅
+- **TASK-003**: RequestRouter class extraction ✅
 
-## Implementation Phases
+### ❌ **Critical Legacy Code Preventing Efficiency**
+- **644-line monolithic MCPDevProxy class** - violates SRP, untestable
+- **130+ lines of inline request handling** - duplicates RequestRouter functionality
+- **Scattered state management** - 7+ separate tracking variables
+- **Hardcoded error building** - prevents context-aware guidance
+- **Ad-hoc tool cycle tracking** - incomplete detection logic
 
-### Phase 1: Core Infrastructure Improvements (P0)
-**Timeline: 1-2 weeks**
+## Implementation Phases (REVISED)
 
-#### 1.1 Refactor Component Architecture
-- [ ] Extract components into separate classes following SRP
-  - [ ] Create `RequestRouter` class
-  - [ ] Create `TimeoutManager` class
-  - [ ] Create `ResponseEnhancer` class
-  - [ ] Create `ToolCycleTracker` class
-- [ ] Implement dependency injection for testability
-- [ ] Add proper abstractions/interfaces
-
-#### 1.2 Enhanced Timeout Management
-- [ ] Implement configurable timeout system
-  - [ ] Add operation detection for long-running tasks
-  - [ ] Support custom timeout configuration
-  - [ ] Improve timeout error messages with context
-- [ ] Add proper timeout cancellation for late responses
-- [ ] Implement timeout accuracy within ±100ms
-
-#### 1.3 Comprehensive Error Enhancement
-- [ ] Create `ErrorContext` class with runtime detection
-- [ ] Implement error classification system (`ErrorType` enum)
-- [ ] Build guidance template system
-- [ ] Add runtime-specific error enhancers
-- [ ] Ensure all errors are actionable for AI agents
-
-### Phase 2: Session Management & Recovery (P0)
-**Timeline: 1 week**
-
-#### 2.1 Tool Cycle Tracking
-- [ ] Implement `ToolCycleTracker` class
-  - [ ] Track all tool_use requests
-  - [ ] Detect incomplete cycles
-  - [ ] Generate recovery guidance
-- [ ] Add cleanup for interrupted cycles during restart
-- [ ] Implement diagnostic reporting for cycles
-
-#### 2.2 Graceful Restart Handling
-- [ ] Improve restart process to handle pending requests
-- [ ] Send proper error responses before restart
-- [ ] Preserve operation context across restarts
-- [ ] Add restart debouncing logic
-
-### Phase 3: Multi-Runtime Support (P1)
-**Timeline: 1 week**
-
-#### 3.1 Runtime Detection
-- [ ] Implement `RuntimeDetector` class
-  - [ ] Detect Node.js, Python, Dart runtimes
-  - [ ] Check file extensions and shebangs
-  - [ ] Validate runtime environments
-- [ ] Add runtime context to error messages
-
-#### 3.2 Runtime-Specific Features
-- [ ] Create runtime-specific error enhancers
-- [ ] Add compilation guidance per runtime
-- [ ] Implement environment validation
-- [ ] Adjust timeout defaults by runtime
-
-### Phase 4: Enhanced Diagnostic Tools (P1)
+### Phase 1: Critical Legacy Code Deletion (P0 - BREAKING CHANGES OK)
 **Timeline: 3-4 days**
+**Note: Breaking changes acceptable - no real customers**
 
-#### 4.1 Proxy Tools Implementation
-- [ ] Enhance `proxy_status` tool
-  - [ ] Add runtime detection info
-  - [ ] Include environment details
-  - [ ] Provide actionable next steps
-- [ ] Implement `proxy_help` tool
-- [ ] Add `proxy_check_tool_cycles` tool
-- [ ] Ensure tools work when target unavailable
+#### 1.1 Delete Inline Request Handling (Priority: CRITICAL)
+**Target: Remove 130+ lines from MCPDevProxy.handleClientInput()**
+- [ ] **DELETE**: Inline `initialize` request handling (lines 194-230)
+- [ ] **DELETE**: Inline `tools/list` handling (lines 231-268) 
+- [ ] **DELETE**: Inline `tools/call` routing (lines 269-272)
+- [ ] **DELETE**: Inline server unavailable logic (lines 273-277)
+- [ ] **REPLACE**: Route ALL requests through existing RequestRouter
+- [ ] **RESULT**: MCPDevProxy.handleClientInput() reduces from 130 to ~20 lines
 
-#### 4.2 Diagnostic Improvements
-- [ ] Add comprehensive logging system
-- [ ] Implement health check monitoring
-- [ ] Create detailed state reporting
-- [ ] Add performance metrics collection
+#### 1.2 Delete Scattered State Management (Priority: CRITICAL)
+**Target: Remove 7+ state tracking variables**
+- [ ] **DELETE**: `_pendingRequests` Map (line 36)
+- [ ] **DELETE**: `_requestTimestamps` Map (line 37-38)
+- [ ] **DELETE**: `_pendingToolUses` Set (line 41)
+- [ ] **DELETE**: `_toolUseTimestamps` Map (line 42-43)
+- [ ] **DELETE**: `_restartPending` bool (line 33)
+- [ ] **DELETE**: `_lastRestartReason` String? (line 34)
+- [ ] **DELETE**: `_startupError` String? (line 35)
+- [ ] **CREATE**: Single `ProxyState` class to replace all of above
+- [ ] **RESULT**: MCPDevProxy constructor reduces from 15+ fields to 5-6 clean dependencies
 
-### Phase 5: Testing & Quality (P1)
-**Timeline: 1 week**
+#### 1.3 Delete Hardcoded Error Building (Priority: HIGH)
+**Target: Remove hardcoded error logic**
+- [ ] **DELETE**: `_buildServerUnavailableDetails()` method (50 lines)
+- [ ] **DELETE**: Hardcoded error details throughout handleClientInput
+- [ ] **REPLACE**: Use ErrorContext + ResponseEnhancer for all errors
+- [ ] **RESULT**: Consistent, context-aware error responses
 
-#### 5.1 Unit Testing
-- [ ] Test each component in isolation
-- [ ] Mock dependencies properly
-- [ ] Achieve >90% code coverage
-- [ ] Test all error scenarios
+### Phase 2: Replace Ad-hoc Tool Cycle Logic (P0)
+**Timeline: 2 days**
 
-#### 5.2 Integration Testing
-- [ ] Test end-to-end workflows
-- [ ] Verify timeout accuracy
-- [ ] Test crash recovery scenarios
-- [ ] Validate MCP protocol compliance
+#### 2.1 Delete Ad-hoc Tool Tracking 
+**Target: Remove scattered tool cycle management**
+- [ ] **DELETE**: Manual `_pendingToolUses` Set tracking (lines 174-179)
+- [ ] **DELETE**: Manual `_toolUseTimestamps` Map tracking (lines 42-43)
+- [ ] **DELETE**: Manual cleanup in `_scheduleRestart()` (lines 368-375)
+- [ ] **DELETE**: Manual cleanup in `_cleanupStaleEntries()` (lines 625-643)
+- [ ] **CREATE**: Dedicated `ToolCycleTracker` class
+- [ ] **INTEGRATE**: ToolCycleTracker with existing restart/timeout flows
+- [ ] **RESULT**: Structured cycle reporting, proper recovery guidance
 
-#### 5.3 Performance Testing
-- [ ] Benchmark request forwarding latency
-- [ ] Test memory usage under load
-- [ ] Verify file watching efficiency
-- [ ] Ensure <1ms overhead for forwarding
+### Phase 3: Delete Redundant Binary Monitoring (P1)  
+**Timeline: 1 day**
 
-### Phase 6: Documentation & Polish (P2)
-**Timeline: 2-3 days**
+#### 3.1 Remove Duplicate File Monitoring
+**Target: FileWatcher already exists, remove redundant monitoring**
+- [ ] **DELETE**: `_startBinaryMonitoring()` method (lines 503-521)
+- [ ] **DELETE**: `_stopBinaryMonitoring()` method (lines 518-521) 
+- [ ] **DELETE**: `_binaryMonitorTimer` field and related logic
+- [ ] **INTEGRATE**: Binary availability checking into existing FileWatcher
+- [ ] **RESULT**: Single file monitoring system, no duplication
 
-#### 6.1 Code Documentation
-- [ ] Add comprehensive inline documentation
-- [ ] Create API documentation
-- [ ] Document extension points
-- [ ] Add usage examples
+### Phase 4: Delete Manual Cleanup Logic (P1)
+**Timeline: 1 day**
 
-#### 6.2 User Documentation
-- [ ] Update README with examples
-- [ ] Create troubleshooting guide
-- [ ] Document configuration options
-- [ ] Add integration guides
+#### 4.1 Remove Manual Lifecycle Management  
+**Target: Components should manage their own cleanup**
+- [ ] **DELETE**: `_startPeriodicCleanup()` method (lines 594-598)
+- [ ] **DELETE**: `_stopPeriodicCleanup()` method (lines 601-604)
+- [ ] **DELETE**: `_cleanupStaleEntries()` method (lines 607-643)
+- [ ] **DELETE**: Manual TTL constants (lines 47-49)
+- [ ] **INTEGRATE**: Cleanup into component lifecycle (TimeoutManager, ToolCycleTracker)
+- [ ] **RESULT**: Components responsible for their own state management
 
-## Technical Debt to Address
+### Phase 5: Architecture Validation (P1)
+**Timeline: 1 day**
 
-### Immediate Fixes
-1. **Error Response Structure**: Standardize all error responses to include structured guidance
-2. **State Management**: Implement proper state tracking with `ProxyState` class
-3. **Process Monitoring**: Add health checks and crash detection improvements
-4. **Memory Management**: Implement bounded collections and TTL cleanup
+#### 5.1 Verify Component Integration
+**Target: Ensure all components work together properly**
+- [ ] **VERIFY**: RequestRouter handles all request types
+- [ ] **VERIFY**: TimeoutManager integrated for all timeouts  
+- [ ] **VERIFY**: ResponseEnhancer used for all error responses
+- [ ] **VERIFY**: ProxyState provides unified state access
+- [ ] **TEST**: End-to-end workflows still function
+- [ ] **RESULT**: Clean architecture with proper separation of concerns
 
-### Code Quality Improvements
-1. **Naming Conventions**: Ensure all classes/methods follow clean code principles
-2. **Error Handling**: Replace generic catches with specific error handling
-3. **Async/Await**: Ensure consistent use of async patterns
-4. **Type Safety**: Add proper type annotations throughout
+## ⚠️ **DELETED PHASES** (No longer needed)
 
-## Implementation Guidelines
+~~**Phase 3: Multi-Runtime Support**~~ - Can be added later incrementally
+~~**Phase 4: Enhanced Diagnostic Tools**~~ - Existing tools sufficient for now  
+~~**Phase 5: Testing & Quality**~~ - Focus on component testing only
+~~**Phase 6: Documentation & Polish**~~ - Lower priority
 
-### Development Principles
-1. **Test-Driven Development**: Write tests before implementation
-2. **Incremental Changes**: Small, reviewable pull requests
-3. **Backward Compatibility**: Maintain existing CLI interface
-4. **Performance First**: Profile and optimize critical paths
+## Critical Success Metrics (REVISED)
 
-### Code Review Checklist
-- [ ] Follows clean code principles
-- [ ] Includes appropriate tests
-- [ ] Updates documentation
-- [ ] Handles errors gracefully
-- [ ] Maintains backward compatibility
+### **Before vs After Comparison**
+- **MCPDevProxy class**: 644 lines → ~200 lines (70% reduction)
+- **handleClientInput method**: 130 lines → ~20 lines (85% reduction)
+- **State management**: 7+ scattered fields → 1 ProxyState class
+- **Error handling**: Hardcoded strings → Context-aware guidance
+- **Component coupling**: Tight → Loose (dependency injection)
+- **Testability**: Monolithic → Component isolation
 
-## Risk Mitigation
+### **Architecture Quality Goals**
+- **Single Responsibility**: Each class has one clear purpose
+- **Dependency Inversion**: MCPDevProxy orchestrates, doesn't implement
+- **Open/Closed**: New features via component extension, not modification
+- **Testability**: Each component can be unit tested in isolation
 
-### Technical Risks
-1. **Breaking Changes**: Mitigate with comprehensive testing
-2. **Performance Regression**: Continuous benchmarking
-3. **Platform Differences**: Test on macOS, Linux, Windows
+## Implementation Guidelines (REVISED)
 
-### Implementation Risks
-1. **Scope Creep**: Stick to phased approach
-2. **Complex Refactoring**: Use feature flags for gradual rollout
-3. **Integration Issues**: Maintain compatibility layer
+### **DELETION-FIRST Development Principles**
+1. **Delete Before Create**: Remove legacy code before building new features
+2. **Break Things Confidently**: No real customers = acceptable breaking changes
+3. **Component Isolation**: Each class should be testable in isolation
+4. **Zero Duplication**: If functionality exists in a component, delete inline versions
 
-## Success Metrics
+### **Implementation Order (CRITICAL)**
+1. **Phase 1.1 FIRST**: Delete inline request handling → MCPDevProxy becomes orchestrator only
+2. **Phase 1.2 NEXT**: Delete scattered state → ProxyState becomes single source of truth  
+3. **Phase 1.3 THEN**: Delete hardcoded errors → ResponseEnhancer handles all errors
+4. **Verify after each deletion**: Ensure functionality preserved through components
 
-### Quantitative Goals
-- **0% hanging operations**: All requests complete or timeout
-- **<1ms latency overhead**: Minimal proxy performance impact
-- **90% test coverage**: Comprehensive testing
-- **100% actionable errors**: Every error includes next steps
+### **Anti-Patterns to Eliminate**
+- ❌ **God Class**: MCPDevProxy doing everything
+- ❌ **Inline Logic**: Request handling inside main class
+- ❌ **Scattered State**: Multiple tracking variables
+- ❌ **Hardcoded Strings**: Error messages without context
+- ❌ **Manual Lifecycle**: Components not managing themselves
 
-### Qualitative Goals
-- **AI Agent Success**: Agents can develop autonomously
-- **Developer Experience**: Zero manual intervention
-- **Code Quality**: Clean, maintainable codebase
-- **Documentation**: Clear, comprehensive guides
+## **Files to be DELETED/HEAVILY MODIFIED**
 
-## Next Steps
+### **PRIMARY TARGET: `lib/mcp_dev_proxy.dart`**
+**Current**: 644 lines of monolithic code  
+**Target**: ~200 lines of clean orchestration
 
-1. **Review and approve** implementation plan
-2. **Set up CI/CD** for automated testing
-3. **Create tracking issues** for each phase
-4. **Begin Phase 1** implementation
-5. **Weekly progress reviews** to adjust plan
+#### **Methods to DELETE entirely:**
+- `_buildServerUnavailableDetails()` (50 lines) - Replace with ErrorContext
+- `_startBinaryMonitoring()` (18 lines) - Duplicate of FileWatcher  
+- `_stopBinaryMonitoring()` (3 lines) - Duplicate of FileWatcher
+- `_startPeriodicCleanup()` (4 lines) - Components manage themselves
+- `_stopPeriodicCleanup()` (3 lines) - Components manage themselves  
+- `_cleanupStaleEntries()` (36 lines) - Components manage themselves
 
-## Appendix: File Structure
+#### **Methods to DRASTICALLY REDUCE:**
+- `handleClientInput()`: 130 lines → ~20 lines (route everything through RequestRouter)
+- `_scheduleRestart()`: Remove manual cleanup logic, use component cleanup
+- `constructor`: Remove 7+ state fields, inject ProxyState
 
-Proposed file organization:
+## **Expected File Structure After Cleanup**
+
 ```
 lib/
 ├── src/
 │   ├── core/
-│   │   ├── mcp_dev_proxy.dart
-│   │   ├── request_router.dart
-│   │   └── proxy_state.dart
-│   ├── managers/
-│   │   ├── process_manager.dart
-│   │   ├── timeout_manager.dart
-│   │   └── file_watcher.dart
-│   ├── enhancers/
-│   │   ├── response_enhancer.dart
-│   │   ├── error_context.dart
-│   │   └── runtime_enhancers/
-│   ├── tracking/
-│   │   └── tool_cycle_tracker.dart
-│   ├── tools/
-│   │   ├── proxy_tool.dart
-│   │   ├── proxy_status_tool.dart
-│   │   └── proxy_help_tool.dart
-│   └── utils/
-│       ├── runtime_detector.dart
-│       └── constants.dart
-└── mcp_dev_proxy.dart
+│   │   ├── proxy_state.dart          [NEW - replaces 7+ scattered fields]
+│   │   └── tool_cycle_tracker.dart   [NEW - replaces manual Sets/Maps]
+│   ├── managers/                     [EXISTING - already good]
+│   │   ├── process_manager.dart      
+│   │   ├── timeout_manager.dart      
+│   │   └── file_watcher.dart         
+│   ├── enhancers/                    [EXISTING - expand usage]
+│   │   ├── response_enhancer.dart    
+│   │   └── error_context.dart        [NEW - for context-aware errors]
+│   └── routing/                      [EXISTING - use more extensively]
+│       ├── request_router.dart       
+│       └── proxy_handlers.dart       
+├── mcp_dev_proxy.dart               [HEAVILY MODIFIED - from 644 to ~200 lines]
+└── [other existing files unchanged]
 ```
+
+## **Success Criteria**
+
+### **Immediate Success (After Phase 1)**
+- [ ] MCPDevProxy class under 250 lines (from 644)
+- [ ] No inline request handling in MCPDevProxy  
+- [ ] No scattered state variables (7+ → 1 ProxyState)
+- [ ] All errors use ResponseEnhancer + ErrorContext
+- [ ] All requests route through RequestRouter
+
+### **Final Success (After Phase 5)**  
+- [ ] MCPDevProxy is pure orchestrator (~200 lines)
+- [ ] Each component has single responsibility
+- [ ] Zero code duplication between components
+- [ ] All state managed by appropriate component
+- [ ] End-to-end functionality preserved
+
+## **Risk Mitigation (REVISED)**
+
+### **Acceptable Risks (No customers = break things OK)**
+- ✅ **Breaking CLI interface temporarily** - Can fix before anyone notices
+- ✅ **Temporary test failures** - Focus on architecture first
+- ✅ **Performance regressions** - Clean architecture enables optimization later
+
+### **Unacceptable Risks**  
+- ❌ **Lost core functionality** - Must preserve P0 requirements from requirements.md and user-acceptance-tests.md
+- ❌ **Infinite development** - Stick to deletion-focused phases only
+- ❌ **New technical debt** - No shortcuts in component design
+
+### **Acceptable Functionality Loss**
+- ✅ **Complex runtime detection** - Basic detection sufficient initially
+- ✅ **Extensive diagnostics** - Core proxy tools (status, help) sufficient
+- ✅ **Performance optimization** - Clean architecture enables later optimization
+- ✅ **Advanced error enhancement** - Basic ErrorContext sufficient initially
+
+## **Next Actions (IMMEDIATE)**
+
+1. **START Phase 1.1**: Delete inline request handling from MCPDevProxy
+2. **Create ProxyState class**: Consolidate scattered state management  
+3. **Route everything through RequestRouter**: No more inline handling
+4. **Verify RequestRouter handles all cases**: initialize, tools/list, tools/call, errors
+5. **Delete hardcoded error building**: Use ResponseEnhancer exclusively
