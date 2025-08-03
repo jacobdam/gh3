@@ -14,34 +14,45 @@ Development proxy for MCP servers with crash reporting and hot-reload capabiliti
 
 ## Development Workflow
 
-### Starting a New Session
-1. **Check Current Status**
+### Agent Session Startup (MANDATORY - 5 minutes)
+
+**Every new code agent session MUST follow this protocol for consistency and scalability:**
+
+1. **Project Health Assessment** (2 minutes)
    ```bash
-   # Review current tasks
+   # Check current status
    cat .dev-tracking/tasks/current-sprint.md
-   
-   # Check latest handoff notes
-   cat .dev-tracking/sessions/latest-handoff.md
-   
-   # Verify build status
-   dart test && dart analyze --fatal-infos --fatal-warnings
+   cat .dev-tracking/sessions/latest-handoff.md  
+   git status
    ```
 
-2. **Select a Task**
+2. **Improvement Analysis** (3 minutes)
+   Analyze codebase and propose 1-3 improvements from these categories:
+   - **System**: Performance bottlenecks, architecture issues, technical debt
+   - **Design**: Component extraction opportunities, SOLID principle violations  
+   - **Process**: Documentation gaps, workflow inefficiencies, missing tooling
+
+3. **Session Planning** (TodoWrite)
+   Create todos for selected focus:
+   - Task from backlog OR improvement work
+   - Break work into 10-15 minute chunks
+   - Include verification and handoff steps
+
+### Task Selection Priority
    - Continue "In Progress" tasks first
+   - Address critical system/design issues
    - Pick from "Ready for Development" queue
    - **MANDATORY**: Check task definition in `.dev-tracking/tasks/definitions/TASK-XXX.md`
    - If task definition doesn't exist, create it before starting implementation
-   - Verify all requirements and acceptance criteria are understood
 
-3. **Development Process**
-   - Create feature branch: `feature/[task-id]-description`
+### Development Process
+   - Create feature branch: `feature/[task-id]-description` or `improvement/[component]-[description]`
    - Follow TDD: Write tests → Implement → Refactor
-   - Make regular commits with task progress
+   - Make regular commits with task progress (every 10-15 minutes)
    - Update task status in sprint tracking during development
    - **Check against task definition file** throughout implementation
 
-4. **Task Completion Process (CRITICAL)**
+### Task Completion Process (CRITICAL)
    - **Verify all acceptance criteria from task definition file are met**
    - **BEFORE committing feature**: Update sprint tracking to mark task as completed
    - Include task completion details (commit hash, features implemented)
@@ -50,14 +61,14 @@ Development proxy for MCP servers with crash reporting and hot-reload capabiliti
    - Commit feature implementation AND sprint tracking updates together
    - Run final tests and code analysis
 
-5. **Before Ending Session**
+### Session Handoff Protocol (MANDATORY)
    - Review all uncommitted files: `git status`
    - Clean up any temporary files or experiments
-   - Ensure all relevant changes are committed
+   - Ensure all meaningful changes are committed
    - Create handoff note in `.dev-tracking/sessions/[date]-[session]-handoff.md`
    - Update overall session progress in `.dev-tracking/tasks/current-sprint.md`
    - Commit all changes with clear messages
-   - Verify no unintended files are left uncommitted
+   - **Leave clear next steps** for subsequent agent sessions
 
 ### Key Implementation Details
 - **Restart Fix**: `_scheduleRestart()` sends error responses to pending requests before restart to prevent hanging
@@ -109,19 +120,28 @@ dart analyze --fatal-infos --fatal-warnings
 dart format .
 ```
 
-### Create PR
+### Git Workflow
 ```bash
-gh pr create --title "feat: [component] description" \
-  --body "$(cat .dev-tracking/templates/pr-template.md)"
+# Quick branch for improvements
+git checkout -b improvement/[component]-[description]
+
+# Standard commit message format
+git commit -m "feat: [component] description
+
+🤖 Generated with [Claude Code](https://claude.ai/code)
+
+Co-Authored-By: Claude <noreply@anthropic.com>"
 ```
 
 ## Current Priority
-Focus on Phase 1 (Core Infrastructure) tasks:
-1. TimeoutManager implementation
-2. ResponseEnhancer for structured errors
-3. Component extraction following SRP
+**Phase 1 Core Infrastructure**: Extract remaining components following SRP
+- TASK-003: RequestRouter class
+- TASK-004: Configurable timeout system  
+- TASK-005: ErrorContext classification
 
-See `.dev-tracking/tasks/current-sprint.md` for specific task assignments.
+**System Improvements Needed**: Performance, architecture, process optimizations
+
+See `.dev-tracking/tasks/current-sprint.md` for current status and task assignments.
 
 ## CRITICAL WORKFLOW REQUIREMENTS
 ⚠️ **MANDATORY PROCESS** - Failure to follow will result in project management issues:
