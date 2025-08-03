@@ -4,6 +4,11 @@ import "package:logging/logging.dart";
 import "package:watcher/watcher.dart";
 
 class FileWatcher {
+
+  FileWatcher({
+    required this.filePath,
+    this.debounceDelay = const Duration(milliseconds: 500),
+  });
   final Logger _logger = Logger("FileWatcher");
   final String filePath;
   final Duration debounceDelay;
@@ -12,11 +17,6 @@ class FileWatcher {
   StreamSubscription<WatchEvent>? _watcherSubscription;
   Timer? _debounceTimer;
   StreamController<void>? _changeController;
-
-  FileWatcher({
-    required this.filePath,
-    this.debounceDelay = const Duration(milliseconds: 500),
-  });
 
   Stream<void> get onChange =>
       _changeController?.stream ?? const Stream.empty();
@@ -46,7 +46,7 @@ class FileWatcher {
       }
     }, onError: (Object error) {
       _logger.warning("File watcher error: $error");
-    });
+    },);
   }
 
   void _debounceChange() {

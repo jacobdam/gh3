@@ -1,6 +1,7 @@
-import "package:test/test.dart";
 import "dart:async";
-import "../../lib/src/managers/timeout_manager.dart";
+
+import "package:mcp_dev_proxy/src/managers/timeout_manager.dart";
+import "package:test/test.dart";
 
 void main() {
   group("Late Response Filtering (T1.2)", () {
@@ -16,7 +17,7 @@ void main() {
 
     test("should track active timeouts and prevent duplicates", () async {
       final responses = <Map<String, dynamic>>[];
-      final requestId = "test-timeout-tracking";
+      const requestId = "test-timeout-tracking";
 
       // Start timeout
       timeoutManager.startTimeout(
@@ -26,9 +27,9 @@ void main() {
           responses.add(timeoutManager.createTimeoutError(
             requestId,
             "tools/list",
-            Duration(seconds: 10),
+            const Duration(seconds: 10),
             null,
-          ));
+          ),);
         },
       );
 
@@ -43,13 +44,13 @@ void main() {
       expect(timeoutManager.hasActiveTimeout(requestId), isFalse);
       expect(timeoutManager.getActiveTimeoutCount(), equals(0));
       expect(responses.length, equals(0),
-          reason: "No timeout should occur after cancellation");
+          reason: "No timeout should occur after cancellation",);
     });
 
     test("should create structured timeout errors", () {
-      final requestId = "test-timeout-error";
-      final method = "tools/call";
-      final timeout = Duration(seconds: 90);
+      const requestId = "test-timeout-error";
+      const method = "tools/call";
+      const timeout = Duration(seconds: 90);
 
       final timeoutError = timeoutManager.createTimeoutError(
         requestId,
@@ -74,11 +75,11 @@ void main() {
 
     test("should prevent duplicate timeouts for same request", () async {
       final responses = <Map<String, dynamic>>[];
-      final requestId = "test-duplicate-prevention";
+      const requestId = "test-duplicate-prevention";
       var timeoutCount = 0;
 
       // Set short timeout for testing
-      timeoutManager.setCustomTimeout("initialize", Duration(milliseconds: 50));
+      timeoutManager.setCustomTimeout("initialize", const Duration(milliseconds: 50));
 
       // Start first timeout
       timeoutManager.startTimeout(
@@ -107,35 +108,35 @@ void main() {
       expect(timeoutManager.hasActiveTimeout(requestId), isTrue);
 
       // Wait for timeout to trigger
-      await Future<void>.delayed(Duration(milliseconds: 100));
+      await Future<void>.delayed(const Duration(milliseconds: 100));
 
       // Only the second timeout should have triggered
       expect(timeoutCount, equals(1), reason: "Only one timeout should occur");
       expect(responses.length, equals(1),
-          reason: "Only one response should be sent");
+          reason: "Only one response should be sent",);
       expect(responses.first["error"], equals("second_timeout"));
     });
 
     test("should handle timeout configuration correctly", () {
       // Test default timeouts
       expect(timeoutManager.getTimeout("initialize", null),
-          equals(Duration(seconds: 15)));
+          equals(const Duration(seconds: 15)),);
       expect(timeoutManager.getTimeout("tools/list", null),
-          equals(Duration(seconds: 10)));
+          equals(const Duration(seconds: 10)),);
       expect(timeoutManager.getTimeout("tools/call", null),
-          equals(Duration(seconds: 90)));
+          equals(const Duration(seconds: 90)),);
       expect(timeoutManager.getTimeout("unknown/method", null),
-          equals(Duration(seconds: 30)));
+          equals(const Duration(seconds: 30)),);
 
       // Test custom timeout configuration
-      timeoutManager.setCustomTimeout("custom/method", Duration(seconds: 45));
+      timeoutManager.setCustomTimeout("custom/method", const Duration(seconds: 45));
       expect(timeoutManager.getTimeout("custom/method", null),
-          equals(Duration(seconds: 45)));
+          equals(const Duration(seconds: 45)),);
 
       // Test parameter-based timeout
       final longRunningParams = {"timeout_seconds": 300};
       expect(timeoutManager.getTimeout("tools/call", longRunningParams),
-          equals(Duration(seconds: 300)));
+          equals(const Duration(seconds: 300)),);
     });
   });
 }

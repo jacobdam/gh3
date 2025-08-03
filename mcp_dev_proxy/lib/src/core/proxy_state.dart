@@ -51,7 +51,7 @@ class ProxyState {
     _lastRestartReason = null;
   }
 
-  // Startup state management
+  // Startup state management  
   void setStartupError(String? error) {
     _startupError = error;
   }
@@ -120,15 +120,11 @@ class ProxyState {
   }
 
   void removeStaleRequests(List<dynamic> staleIds) {
-    for (final id in staleIds) {
-      removePendingRequest(id);
-    }
+    staleIds.forEach(removePendingRequest);
   }
 
   void removeStaleToolUses(List<String> staleIds) {
-    for (final id in staleIds) {
-      removePendingToolUse(id);
-    }
+    staleIds.forEach(removePendingToolUse);
   }
 
   // Diagnostic information

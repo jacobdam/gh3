@@ -1,8 +1,9 @@
 import "dart:convert";
 import "dart:io";
-import "package:test/test.dart";
+
 import "package:mcp_dev_proxy/mcp_dev_proxy.dart";
 import "package:mcp_dev_proxy/mcp_protocol.dart";
+import "package:test/test.dart";
 
 void main() {
   group("MCPDevProxy Basic Integration", () {
@@ -88,7 +89,7 @@ void main() async {
       expect(proxy.targetBinary, equals(mockServerScript.path));
 
       // Verify file exists
-      expect(await File(proxy.targetBinary).exists(), isTrue);
+      expect(File(proxy.targetBinary).existsSync(), isTrue);
     });
 
     test("should handle process manager access after start", () async {
@@ -141,9 +142,9 @@ void main() async {
 }
 
 class _MockIOSink implements IOSink {
-  final List<String> buffer;
 
   _MockIOSink(this.buffer);
+  final List<String> buffer;
 
   @override
   void writeln([Object? obj = ""]) {
@@ -159,7 +160,7 @@ class _MockIOSink implements IOSink {
   @override
   Encoding get encoding => utf8;
   @override
-  set encoding(Encoding _encoding) {}
+  set encoding(Encoding encoding) {}
   @override
   void add(List<int> data) {}
   @override

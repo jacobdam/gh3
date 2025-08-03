@@ -53,7 +53,7 @@ class ResponseEnhancer {
           "code": code ?? _getDefaultCode(errorType),
           "message": message,
           "data": errorData,
-        }, context);
+        }, context,);
 
         errorData = enhanced["data"] as Map<String, dynamic>? ?? errorData;
       }
@@ -103,7 +103,7 @@ class ResponseEnhancer {
   }
 
   MCPError createServerUnavailableError(ErrorContext context,
-      {Map<String, dynamic>? additionalData}) {
+      {Map<String, dynamic>? additionalData,}) {
     final binaryExists = context.environment?["binaryExists"] == "true";
     final startupError = context.lastOutput;
 
@@ -133,7 +133,7 @@ class ResponseEnhancer {
         "crash_recovery",
         "hot_reload",
         "error_buffering",
-        "debug_info"
+        "debug_info",
       ],
     };
 

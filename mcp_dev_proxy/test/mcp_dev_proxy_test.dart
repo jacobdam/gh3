@@ -1,9 +1,10 @@
 import "dart:async";
 import "dart:convert";
 import "dart:io";
-import "package:test/test.dart";
+
 import "package:mcp_dev_proxy/mcp_dev_proxy.dart";
 import "package:mcp_dev_proxy/mcp_protocol.dart";
+import "package:test/test.dart";
 
 void main() {
   group("MCPDevProxy Unit Tests", () {
@@ -28,6 +29,7 @@ void main() {
     tearDown(() async {
       await proxy.stop();
       await inputController.close();
+      await mockOutputSink.close();
     });
 
     test("proxy starts successfully with missing binary", () async {
@@ -46,14 +48,14 @@ void main() {
         "params": {
           "protocolVersion": "2024-11-05",
           "capabilities": <String, dynamic>{},
-          "clientInfo": {"name": "test", "version": "1.0"}
-        }
+          "clientInfo": {"name": "test", "version": "1.0"},
+        },
       };
 
       inputController.add(jsonEncode(initMessage));
 
       // Give some time for processing
-      await Future<void>.delayed(Duration(milliseconds: 100));
+      await Future<void>.delayed(const Duration(milliseconds: 100));
 
       expect(outputLines.length, greaterThan(0));
       final response = jsonDecode(outputLines.first);
@@ -70,12 +72,12 @@ void main() {
         "jsonrpc": "2.0",
         "id": 2,
         "method": "tools/list",
-        "params": <String, dynamic>{}
+        "params": <String, dynamic>{},
       };
 
       inputController.add(jsonEncode(toolsListMessage));
 
-      await Future<void>.delayed(Duration(milliseconds: 100));
+      await Future<void>.delayed(const Duration(milliseconds: 100));
 
       expect(outputLines.length, greaterThan(0));
       final response = jsonDecode(outputLines.last);
@@ -95,19 +97,19 @@ void main() {
         "jsonrpc": "2.0",
         "id": 3,
         "method": "tools/call",
-        "params": {"name": "proxy_status", "arguments": <String, dynamic>{}}
+        "params": {"name": "proxy_status", "arguments": <String, dynamic>{}},
       };
 
       inputController.add(jsonEncode(toolCallMessage));
 
-      await Future<void>.delayed(Duration(milliseconds: 100));
+      await Future<void>.delayed(const Duration(milliseconds: 100));
 
       expect(outputLines.length, greaterThan(0));
       final response = jsonDecode(outputLines.last);
       if (response["result"] != null && response["result"]["content"] != null) {
         expect(response["result"]["content"], isA<List<dynamic>>());
         expect(response["result"]["content"][0]["text"],
-            contains("MCP Dev Proxy Status"));
+            contains("MCP Dev Proxy Status"),);
       } else {
         // Handle error response
         expect(response["error"], isNotNull);
@@ -123,19 +125,19 @@ void main() {
         "method": "tools/call",
         "params": {
           "name": "proxy_check_tool_cycles",
-          "arguments": <String, dynamic>{}
-        }
+          "arguments": <String, dynamic>{},
+        },
       };
 
       inputController.add(jsonEncode(toolCallMessage));
 
-      await Future<void>.delayed(Duration(milliseconds: 100));
+      await Future<void>.delayed(const Duration(milliseconds: 100));
 
       expect(outputLines.length, greaterThan(0));
       final response = jsonDecode(outputLines.last);
       if (response["result"] != null && response["result"]["content"] != null) {
         expect(response["result"]["content"][0]["text"],
-            contains("Tool Cycle Check"));
+            contains("Tool Cycle Check"),);
       } else {
         // Handle error response
         expect(response["error"], isNotNull);
@@ -149,12 +151,12 @@ void main() {
         "jsonrpc": "2.0",
         "id": 5,
         "method": "tools/call",
-        "params": {"name": "unknown_tool", "arguments": <String, dynamic>{}}
+        "params": {"name": "unknown_tool", "arguments": <String, dynamic>{}},
       };
 
       inputController.add(jsonEncode(toolCallMessage));
 
-      await Future<void>.delayed(Duration(milliseconds: 100));
+      await Future<void>.delayed(const Duration(milliseconds: 100));
 
       expect(outputLines.length, greaterThan(0));
       final response = jsonDecode(outputLines.last);
@@ -167,7 +169,7 @@ void main() {
 
       inputController.add("invalid json");
 
-      await Future<void>.delayed(Duration(milliseconds: 100));
+      await Future<void>.delayed(const Duration(milliseconds: 100));
 
       // Should not crash, just log warning
       expect(true, isTrue);
@@ -180,7 +182,7 @@ void main() {
         "jsonrpc": "2.0",
         "id": 1,
         "method": "test",
-        "params": {"key": "value"}
+        "params": {"key": "value"},
       };
 
       final message = MCPProtocol.parseMessage(jsonEncode(json));
@@ -197,7 +199,7 @@ void main() {
 
     test("formats message correctly", () {
       final message = MCPMessage(
-          jsonrpc: "2.0", id: 1, method: "test", params: {"key": "value"});
+          jsonrpc: "2.0", id: 1, method: "test", params: {"key": "value"},);
 
       final formatted = MCPProtocol.formatMessage(message);
       final parsed = jsonDecode(formatted);
@@ -226,9 +228,9 @@ void main() {
 }
 
 class _MockIOSink implements IOSink {
-  final List<String> lines;
 
   _MockIOSink(this.lines);
+  final List<String> lines;
 
   @override
   void writeln([Object? obj = ""]) {

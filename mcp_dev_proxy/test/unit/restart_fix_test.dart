@@ -1,9 +1,10 @@
 import "dart:async";
 import "dart:convert";
 import "dart:io";
+
+import "package:mcp_dev_proxy/mcp_dev_proxy.dart";
+import "package:mcp_dev_proxy/mcp_protocol.dart";
 import "package:test/test.dart";
-import "../../lib/mcp_dev_proxy.dart";
-import "../../lib/mcp_protocol.dart";
 
 void main() {
   group("Restart Fix Tests", () {
@@ -27,7 +28,7 @@ void main() {
     tearDown(() async {
       try {
         await proxy.stop();
-      } catch (e) {
+      } on Exception {
         // Ignore errors if proxy wasn"t started
       }
       await tempDir.delete(recursive: true);
@@ -38,7 +39,7 @@ void main() {
       // SKIP: CI environment socket issues - low priority until sprint revamp completed
     },
         skip:
-            "CI environment socket issues - SocketException: Write failed (Broken pipe)");
+            "CI environment socket issues - SocketException: Write failed (Broken pipe)",);
 
     test("should handle restart reason in error response", () {
       // Test that MCPError.serverRestart creates proper error
@@ -53,9 +54,9 @@ void main() {
 }
 
 class _MockIOSink implements IOSink {
-  final List<String> buffer;
 
   _MockIOSink(this.buffer);
+  final List<String> buffer;
 
   @override
   void writeln([Object? obj = ""]) {
@@ -71,7 +72,7 @@ class _MockIOSink implements IOSink {
   @override
   Encoding get encoding => utf8;
   @override
-  set encoding(Encoding _encoding) {}
+  set encoding(Encoding encoding) {}
   @override
   void add(List<int> data) {}
   @override

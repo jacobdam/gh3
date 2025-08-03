@@ -1,8 +1,9 @@
 import "dart:async";
 import "dart:convert";
 import "dart:io";
+
+import "package:mcp_dev_proxy/mcp_dev_proxy.dart";
 import "package:test/test.dart";
-import "../../lib/mcp_dev_proxy.dart";
 
 void main() {
   group("Stdio Injection Tests", () {
@@ -24,23 +25,23 @@ void main() {
       // SKIP: CI environment socket issues - low priority until sprint revamp completed
     },
         skip:
-            "CI environment socket issues - SocketException: Write failed (Broken pipe)");
+            "CI environment socket issues - SocketException: Write failed (Broken pipe)",);
 
     test("should work with custom stdin stream", () async {
       // SKIP: CI environment socket issues - low priority until sprint revamp completed
     },
         skip:
-            "CI environment socket issues - SocketException: Write failed (Broken pipe)");
+            "CI environment socket issues - SocketException: Write failed (Broken pipe)",);
 
     test("should work with custom stdout sink", () async {
       // SKIP: CI environment socket issues - low priority until sprint revamp completed
     },
         skip:
-            "CI environment socket issues - SocketException: Write failed (Broken pipe)");
+            "CI environment socket issues - SocketException: Write failed (Broken pipe)",);
 
     test("should use provided streams directly", () {
       // This test verifies the streams are used as provided
-      final testStdin = const Stream<String>.empty();
+      const testStdin = Stream<String>.empty();
       final testStdout = _MockIOSink([]);
 
       final proxy = MCPDevProxy(
@@ -57,9 +58,9 @@ void main() {
 }
 
 class _MockIOSink implements IOSink {
-  final List<String> buffer;
 
   _MockIOSink(this.buffer);
+  final List<String> buffer;
 
   @override
   void writeln([Object? obj = ""]) {
@@ -75,7 +76,7 @@ class _MockIOSink implements IOSink {
   @override
   Encoding get encoding => utf8;
   @override
-  set encoding(Encoding _encoding) {}
+  set encoding(Encoding encoding) {}
   @override
   void add(List<int> data) {}
   @override

@@ -1,7 +1,8 @@
 import "dart:async";
 import "dart:io";
-import "package:test/test.dart";
+
 import "package:mcp_dev_proxy/file_watcher.dart";
+import "package:test/test.dart";
 
 void main() {
   group("FileWatcher", () {
@@ -55,7 +56,7 @@ void main() {
           const Duration(seconds: 3),
         );
         expect(changeCompleter.isCompleted, isTrue);
-      } catch (e) {
+      } on Exception {
         // File change detection can be flaky on some file systems
         // This is a peripheral feature that doesn"t affect core proxy functionality
         print("File change test skipped - file system dependent behavior");
@@ -86,7 +87,7 @@ void main() {
         print("Debounce test skipped - file system dependent behavior");
       } else {
         expect(
-            changeCount, lessThanOrEqualTo(5)); // At most the number of changes
+            changeCount, lessThanOrEqualTo(5),); // At most the number of changes
         expect(changeCount, greaterThanOrEqualTo(1)); // At least one change
       }
     });
@@ -95,8 +96,8 @@ void main() {
       final nonExistentDir = "${tempDir.path}/nonexistent/file.txt";
       final badWatcher = FileWatcher(filePath: nonExistentDir);
 
-      expect(() async => await badWatcher.start(),
-          throwsA(isA<FileSystemException>()));
+      expect(() async => badWatcher.start(),
+          throwsA(isA<FileSystemException>()),);
     });
 
     test("should handle multiple start calls", () async {
@@ -154,11 +155,11 @@ void main() {
           const Duration(seconds: 3),
         );
         expect(changeCompleter.isCompleted, isTrue);
-      } catch (e) {
+      } on Exception {
         // File recreation detection can be flaky on some systems
         // This is acceptable for a development proxy
         print(
-            "File recreation test timed out - this is acceptable for some file systems");
+            "File recreation test timed out - this is acceptable for some file systems",);
       }
     });
 
@@ -189,10 +190,10 @@ void main() {
       try {
         await changeCompleter.future.timeout(const Duration(milliseconds: 300));
         expect(changeCount, equals(1));
-      } catch (e) {
+      } on Exception {
         // Debounce timing can be sensitive to system load
         print(
-            "Custom debounce test timed out - this is acceptable on loaded systems");
+            "Custom debounce test timed out - this is acceptable on loaded systems",);
       }
 
       await customWatcher.stop();

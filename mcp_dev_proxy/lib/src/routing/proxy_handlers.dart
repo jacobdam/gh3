@@ -2,14 +2,15 @@
 library;
 
 import "dart:io";
-import "request_router.dart";
+
 import "../../mcp_dev_proxy.dart";
+import "request_router.dart";
 
 /// Handler for proxy_status tool calls
 class ProxyStatusHandler extends RequestHandler {
-  final MCPDevProxy _proxy;
 
   ProxyStatusHandler(this._proxy);
+  final MCPDevProxy _proxy;
 
   @override
   Future<Map<String, dynamic>> handle(
@@ -22,7 +23,7 @@ class ProxyStatusHandler extends RequestHandler {
           "type": "text",
           "text": _buildProxyStatusReport(),
         }
-      ]
+      ],
     };
   }
 
@@ -61,7 +62,7 @@ ${binaryExists ? "Binary exists but failed to start. Check if it\"s executable a
 
 /// Handler for proxy_help tool calls
 class ProxyHelpHandler extends RequestHandler {
-  ProxyHelpHandler(MCPDevProxy proxy);
+  ProxyHelpHandler();
 
   @override
   Future<Map<String, dynamic>> handle(
@@ -74,7 +75,7 @@ class ProxyHelpHandler extends RequestHandler {
           "type": "text",
           "text": _buildProxyHelpText(),
         }
-      ]
+      ],
     };
   }
 
@@ -126,9 +127,9 @@ For more details, check the proxy logs and use `proxy_status` for current state.
 
 /// Handler for proxy_check_tool_cycles tool calls
 class ProxyToolCycleHandler extends RequestHandler {
-  final MCPDevProxy _proxy;
 
   ProxyToolCycleHandler(this._proxy);
+  final MCPDevProxy _proxy;
 
   @override
   Future<Map<String, dynamic>> handle(
@@ -141,7 +142,7 @@ class ProxyToolCycleHandler extends RequestHandler {
           "type": "text",
           "text": _buildToolCycleReport(),
         }
-      ]
+      ],
     };
   }
 
@@ -191,9 +192,9 @@ This can cause:
 
 /// Handler for initialize requests when target is unavailable
 class InitializeHandler extends RequestHandler {
-  final MCPDevProxy _proxy;
 
   InitializeHandler(this._proxy);
+  final MCPDevProxy _proxy;
 
   @override
   Future<Map<String, dynamic>> handle(
@@ -257,7 +258,7 @@ Use the "proxy_status" tool for detailed information and "proxy_help" for guidan
 
 /// Handler for tools/list requests when target is unavailable
 class ToolsListHandler extends RequestHandler {
-  ToolsListHandler(MCPDevProxy proxy);
+  ToolsListHandler();
 
   @override
   Future<Map<String, dynamic>> handle(

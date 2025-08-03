@@ -1,13 +1,13 @@
+import "package:mcp_dev_proxy/mcp_protocol.dart";
+import "package:mcp_dev_proxy/src/enhancers/error_context.dart";
+import "package:mcp_dev_proxy/src/enhancers/response_enhancer.dart";
 import "package:test/test.dart";
-import "../../lib/src/enhancers/response_enhancer.dart";
-import "../../lib/src/enhancers/error_context.dart";
-import "../../lib/mcp_protocol.dart";
 
 class MockErrorEnhancer extends ErrorEnhancer {
-  final ErrorType supportedType;
-  final Map<String, dynamic> enhancementData;
 
   MockErrorEnhancer(this.supportedType, this.enhancementData);
+  final ErrorType supportedType;
+  final Map<String, dynamic> enhancementData;
 
   @override
   bool canHandle(ErrorType errorType, ErrorContext context) {
@@ -20,7 +20,7 @@ class MockErrorEnhancer extends ErrorEnhancer {
     ErrorContext context,
   ) {
     final data = Map<String, dynamic>.from(
-        error["data"] as Map<dynamic, dynamic>? ?? <String, dynamic>{});
+        error["data"] as Map<dynamic, dynamic>? ?? <String, dynamic>{},);
     data.addAll(enhancementData);
     return {
       ...error,
@@ -195,7 +195,7 @@ void main() {
 
     group("createTimeoutError", () {
       test("should create timeout error", () {
-        final timeout = const Duration(seconds: 30);
+        const timeout = Duration(seconds: 30);
         final error = enhancer.createTimeoutError("test_operation", timeout);
 
         expect(error.code, equals(-32603));
@@ -204,7 +204,7 @@ void main() {
         expect(error.data["timeout_ms"], equals(30000));
         expect(error.data["proxy"], equals("mcp_dev_proxy"));
         expect(error.data["recovery_hint"],
-            contains("Check if the target server"));
+            contains("Check if the target server"),);
       });
     });
 
@@ -217,7 +217,7 @@ void main() {
 
         expect(error.code, equals(-32603));
         expect(error.message,
-            equals("Tool execution interrupted by server restart"));
+            equals("Tool execution interrupted by server restart"),);
         expect(error.data["tool_use_id"], equals("tool_123"));
         expect(error.data["reason"], equals("binary_updated"));
         expect(error.data["proxy"], equals("mcp_dev_proxy"));
@@ -236,7 +236,7 @@ void main() {
     });
 
     test("should create context with custom timestamp", () {
-      final customTime = DateTime(2023, 1, 1);
+      final customTime = DateTime(2023);
       final context = ErrorContext(
         detectedRuntime: "python",
         timestamp: customTime,
@@ -269,7 +269,7 @@ void main() {
         environment: {"PATH": "/usr/bin"},
         workingDirectory: "/test/path",
         lastOutput: "test output",
-        timestamp: DateTime(2023, 1, 1, 12, 0, 0),
+        timestamp: DateTime(2023, 1, 1, 12),
       );
 
       final json = original.toJson();

@@ -1,5 +1,5 @@
-import "package:test/test.dart";
 import "package:mcp_dev_proxy/mcp_protocol.dart";
+import "package:test/test.dart";
 
 void main() {
   group("MCPMessage", () {
@@ -8,7 +8,7 @@ void main() {
         "jsonrpc": "2.0",
         "id": 1,
         "method": "test_method",
-        "params": {"key": "value"}
+        "params": {"key": "value"},
       };
 
       final message = MCPMessage.fromJson(json);
@@ -26,7 +26,7 @@ void main() {
       final json = {
         "jsonrpc": "2.0",
         "id": 1,
-        "result": {"success": true}
+        "result": {"success": true},
       };
 
       final message = MCPMessage.fromJson(json);
@@ -43,7 +43,7 @@ void main() {
       final json = {
         "jsonrpc": "2.0",
         "method": "notification",
-        "params": {"data": "test"}
+        "params": {"data": "test"},
       };
 
       final message = MCPMessage.fromJson(json);
@@ -62,8 +62,8 @@ void main() {
         "error": {
           "code": -32603,
           "message": "Internal error",
-          "data": {"details": "test error"}
-        }
+          "data": {"details": "test error"},
+        },
       };
 
       final message = MCPMessage.fromJson(json);
@@ -104,7 +104,7 @@ void main() {
       expect(enhanced.result["proxy"]["name"], equals("mcp_dev_proxy"));
       expect(enhanced.result["proxy"]["version"], equals("1.0.0"));
       expect(
-          enhanced.result["proxy"]["target"], equals("mcp_flutter_automation"));
+          enhanced.result["proxy"]["target"], equals("mcp_flutter_automation"),);
       expect(enhanced.result["data"], equals("test"));
     });
 
@@ -173,7 +173,7 @@ void main() {
       expect(error.data["reason"], equals("binary_updated"));
       expect(error.data["proxy"], equals("mcp_dev_proxy"));
       expect(error.data["message"],
-          contains("Server is restarting due to binary_updated"));
+          contains("Server is restarting due to binary_updated"),);
     });
 
     test("should convert to JSON", () {

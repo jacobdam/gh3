@@ -1,7 +1,7 @@
 #!/usr/bin/env dart
 
-import "dart:io";
 import "dart:convert";
+import "dart:io";
 
 /// A simple fake MCP server for testing the proxy
 /// Responds predictably to various test scenarios
@@ -38,8 +38,8 @@ void main(List<String> args) async {
           "error": {
             "code": -32601,
             "message": "Method not found",
-            "data": "fake_error_for_testing"
-          }
+            "data": "fake_error_for_testing",
+          },
         };
         stdout.writeln(jsonEncode(errorResponse));
         return;
@@ -55,7 +55,7 @@ void main(List<String> args) async {
 
       stderr.writeln("[FAKE-MCP] Sending: ${jsonEncode(response)}");
       stdout.writeln(jsonEncode(response));
-    } catch (e) {
+    } on Exception catch (e) {
       stderr.writeln("[FAKE-MCP] Error parsing JSON: $e");
       // Invalid JSON - just ignore for testing
     }
@@ -76,12 +76,12 @@ Map<String, dynamic> _generateResponse(String? method, dynamic id) {
               "inputSchema": {
                 "type": "object",
                 "properties": {
-                  "test_param": {"type": "string"}
-                }
-              }
+                  "test_param": {"type": "string"},
+                },
+              },
             }
-          ]
-        }
+          ],
+        },
       };
 
     case "resources/list":
@@ -93,10 +93,10 @@ Map<String, dynamic> _generateResponse(String? method, dynamic id) {
             {
               "uri": "fake://test-resource",
               "name": "Test Resource",
-              "description": "A fake resource for testing"
+              "description": "A fake resource for testing",
             }
-          ]
-        }
+          ],
+        },
       };
 
     case "ping":
@@ -105,8 +105,8 @@ Map<String, dynamic> _generateResponse(String? method, dynamic id) {
         "id": id,
         "result": {
           "status": "pong",
-          "timestamp": DateTime.now().toIso8601String()
-        }
+          "timestamp": DateTime.now().toIso8601String(),
+        },
       };
 
     case "fake_tool":
@@ -116,15 +116,15 @@ Map<String, dynamic> _generateResponse(String? method, dynamic id) {
         "result": {
           "success": true,
           "message": "Fake tool executed successfully",
-          "test_data": "fake_response_data"
-        }
+          "test_data": "fake_response_data",
+        },
       };
 
     case "slow_test":
       return {
         "jsonrpc": "2.0",
         "id": id,
-        "result": {"message": "Slow response completed", "delay": "simulated"}
+        "result": {"message": "Slow response completed", "delay": "simulated"},
       };
 
     default:
@@ -134,8 +134,8 @@ Map<String, dynamic> _generateResponse(String? method, dynamic id) {
         "result": {
           "echo": method,
           "message": "Unknown method echoed back",
-          "fake_server": true
-        }
+          "fake_server": true,
+        },
       };
   }
 }

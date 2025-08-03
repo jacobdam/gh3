@@ -1,5 +1,5 @@
+import "package:mcp_dev_proxy/src/routing/request_router.dart";
 import "package:test/test.dart";
-import "../../lib/src/routing/request_router.dart";
 
 void main() {
   group("RequestRouter - MCP Proxy Usage", () {

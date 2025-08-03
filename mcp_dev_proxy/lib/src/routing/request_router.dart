@@ -5,9 +5,9 @@ library;
 
 /// Exception thrown when a route is not found for a given method
 class RouteNotFoundException implements Exception {
-  final String method;
 
   const RouteNotFoundException(this.method);
+  final String method;
 
   @override
   String toString() => "Route not found for method: $method";
@@ -15,12 +15,12 @@ class RouteNotFoundException implements Exception {
 
 /// Context object passed through request handling pipeline
 class RequestContext {
+
+  RequestContext(this.method, this.params, this.id);
   final String method;
   final Map<String, dynamic> params;
   final String id;
   final Map<String, dynamic> _metadata = {};
-
-  RequestContext(this.method, this.params, this.id);
 
   /// Store metadata for the request
   void setMetadata(String key, dynamic value) {
@@ -32,19 +32,15 @@ class RequestContext {
     return _metadata[key] as T?;
   }
 
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is RequestContext &&
-          runtimeType == other.runtimeType &&
-          method == other.method &&
-          id == other.id;
-
-  @override
-  int get hashCode => method.hashCode ^ id.hashCode;
 }
 
 /// Abstract base class for request handlers
+/// 
+/// This is kept as an abstract class (rather than a top-level function) to:
+/// 1. Provide type safety for the handler registry
+/// 2. Enable polymorphism across multiple handler implementations
+/// 3. Maintain consistent interface for all handlers
+// ignore: one_member_abstracts
 abstract class RequestHandler {
   /// Handle the request with given parameters and context
   Future<Map<String, dynamic>> handle(

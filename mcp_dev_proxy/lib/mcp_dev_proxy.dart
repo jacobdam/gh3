@@ -1,19 +1,40 @@
 import "dart:async";
 import "dart:io";
+
 import "package:logging/logging.dart";
 import "package:meta/meta.dart";
 
 import "file_watcher.dart";
 import "mcp_protocol.dart";
 import "process_manager.dart";
-import "src/managers/timeout_manager.dart";
-import "src/enhancers/response_enhancer.dart";
-import "src/enhancers/error_context.dart";
-import "src/routing/request_router.dart";
-import "src/routing/proxy_handlers.dart";
 import "src/core/proxy_state.dart";
+import "src/enhancers/error_context.dart";
+import "src/enhancers/response_enhancer.dart";
+import "src/managers/timeout_manager.dart";
+import "src/routing/proxy_handlers.dart";
+import "src/routing/request_router.dart";
 
 class MCPDevProxy {
+
+  MCPDevProxy({
+    required this.targetBinary,
+    required this.stdinStream,
+    required this.stdoutSink,
+    this.arguments = const [],
+  }) {
+    // Initialize components in constructor
+    _processManager = ProcessManager(
+      targetBinary: targetBinary,
+      arguments: arguments,
+    );
+    _fileWatcher = FileWatcher(filePath: targetBinary);
+    _timeoutManager = TimeoutManager();
+    _responseEnhancer = ResponseEnhancer();
+    _requestRouter = RequestRouter();
+    _proxyState = ProxyState();
+    _setupRequestRouter();
+    _startPeriodicCleanup();
+  }
   final Logger _logger = Logger("MCPDevProxy");
   final String targetBinary;
   final List<String> arguments;
@@ -24,9 +45,6 @@ class MCPDevProxy {
   late ResponseEnhancer _responseEnhancer;
   late RequestRouter _requestRouter;
   late ProxyState _proxyState;
-
-  @visibleForTesting
-  ProcessManager get processManager => _processManager;
   late FileWatcher _fileWatcher;
 
   StreamSubscription<String>? _stdoutSubscription;
@@ -42,25 +60,8 @@ class MCPDevProxy {
   static const Duration _maxToolUseAge = Duration(minutes: 5);
   static const Duration _cleanupInterval = Duration(minutes: 1);
 
-  MCPDevProxy({
-    required this.targetBinary,
-    this.arguments = const [],
-    required this.stdinStream,
-    required this.stdoutSink,
-  }) {
-    // Initialize components in constructor
-    _processManager = ProcessManager(
-      targetBinary: targetBinary,
-      arguments: arguments,
-    );
-    _fileWatcher = FileWatcher(filePath: targetBinary);
-    _timeoutManager = TimeoutManager();
-    _responseEnhancer = ResponseEnhancer();
-    _requestRouter = RequestRouter();
-    _proxyState = ProxyState();
-    _setupRequestRouter();
-    _startPeriodicCleanup();
-  }
+  @visibleForTesting
+  ProcessManager get processManager => _processManager;
 
   // Getters for proxy handlers
   String? get startupError => _proxyState.startupError;
@@ -96,7 +97,7 @@ class MCPDevProxy {
         _logger.info("Target binary changed, scheduling restart");
         _scheduleRestart("binary_updated");
       });
-    } catch (e) {
+    } on Exception catch (e) {
       _logger.warning("Failed to start file watcher: $e");
       // Don"t fail proxy startup if file watcher fails
       // This allows proxy to continue running and monitoring for binary creation
@@ -122,19 +123,19 @@ class MCPDevProxy {
         _handleTargetOutput,
         onError: (Object error) =>
             _logger.warning("Target stdout error: $error"),
-        onDone: () => _handleTargetExit(),
+        onDone: _handleTargetExit,
       );
 
       // Monitor process exit
-      _processManager.waitForExit().then((exitCode) {
+      unawaited(_processManager.waitForExit().then((exitCode) {
         if (exitCode != null) {
           _handleProcessCrash(exitCode);
         }
-      });
+      }),);
 
       _logger.info("Target process started successfully");
       _stopBinaryMonitoring(); // Stop monitoring once successfully started
-    } catch (e) {
+    } on Exception catch (e) {
       _logger.severe("Failed to start target process: $e");
 
       // Capture startup error details for better error messages
@@ -146,7 +147,7 @@ class MCPDevProxy {
 
       // Don"t rethrow - let proxy continue running but with startup error set
       _logger.warning(
-          "Proxy will continue running but target process failed to start");
+          "Proxy will continue running but target process failed to start",);
     }
   }
 
@@ -156,7 +157,7 @@ class MCPDevProxy {
       onError: (Object error) => _logger.warning("Stdin error: $error"),
       onDone: () {
         _logger.info("Stdin closed, shutting down proxy");
-        stop();
+        unawaited(stop());
       },
     );
   }
@@ -197,7 +198,7 @@ class MCPDevProxy {
     // Forward to target process
     try {
       _processManager.sendMessage(line);
-    } catch (e) {
+    } on Exception catch (e) {
       _logger.warning("Failed to forward message to target: $e");
       if (message.isRequest && message.id != null) {
         final context = ErrorContext(
@@ -301,9 +302,9 @@ class MCPDevProxy {
         TimeoutManager(); // Reinitialize for the restarted process
 
     // Then restart the process
-    _processManager.restart().catchError((Object error) {
+    unawaited(_processManager.restart().catchError((Object error) {
       _logger.severe("Failed to restart target process: $error");
-    });
+    }),);
   }
 
   void _sendErrorToClient(dynamic id, MCPError error) {
@@ -314,13 +315,13 @@ class MCPDevProxy {
   /// Setup request router with proxy tool handlers
   void _setupRequestRouter() {
     _requestRouter.registerRoute("proxy_status", ProxyStatusHandler(this));
-    _requestRouter.registerRoute("proxy_help", ProxyHelpHandler(this));
+    _requestRouter.registerRoute("proxy_help", ProxyHelpHandler());
     _requestRouter.registerRoute(
-        "proxy_check_tool_cycles", ProxyToolCycleHandler(this));
+        "proxy_check_tool_cycles", ProxyToolCycleHandler(this),);
 
     // Register handlers for when target server is unavailable
     _requestRouter.registerRoute("initialize", InitializeHandler(this));
-    _requestRouter.registerRoute("tools/list", ToolsListHandler(this));
+    _requestRouter.registerRoute("tools/list", ToolsListHandler());
   }
 
   /// Route requests through request router when target is unavailable
@@ -342,7 +343,7 @@ class MCPDevProxy {
           result: result,
         );
         _sendToClient(response);
-      } catch (e) {
+      } on Exception catch (e) {
         _logger.warning("Failed to route request through RequestRouter: $e");
         final context = ErrorContext(
           targetCommand: targetBinary,
@@ -372,7 +373,7 @@ class MCPDevProxy {
             MCPError(
               code: -32602,
               message: "Missing tool name in request",
-            ));
+            ),);
         return;
       }
 
@@ -389,21 +390,21 @@ class MCPDevProxy {
           result: result,
         );
         _sendToClient(response);
-      } catch (e) {
+      } on Exception catch (e) {
         if (e is RouteNotFoundException) {
           _sendErrorToClient(
               message.id,
               MCPError(
                 code: -32601,
                 message: "Unknown tool: $toolName",
-              ));
+              ),);
         } else {
           _sendErrorToClient(
               message.id,
               MCPError(
                 code: -32603,
                 message: "Internal error: $e",
-              ));
+              ),);
         }
       }
     } else {
@@ -436,13 +437,13 @@ class MCPDevProxy {
     _stopBinaryMonitoring(); // Stop any existing monitoring
 
     _logger.info("Starting binary availability monitoring");
-    _binaryMonitorTimer = Timer.periodic(Duration(seconds: 2), (_) {
+    _binaryMonitorTimer = Timer.periodic(const Duration(seconds: 2), (_) {
       final binaryFile = File(targetBinary);
       if (binaryFile.existsSync()) {
         _logger
             .info("Binary now available, attempting to start target process");
         _stopBinaryMonitoring();
-        _startTargetProcess();
+        unawaited(_startTargetProcess());
       }
     });
   }
@@ -456,13 +457,13 @@ class MCPDevProxy {
     if (message.id == null) return;
 
     final timeout = _timeoutManager.getTimeout(message.method ?? "",
-        message.params as Map<String, dynamic>? ?? <String, dynamic>{});
+        message.params as Map<String, dynamic>? ?? <String, dynamic>{},);
 
     _timeoutManager.startTimeout(message.id.toString(), message.method ?? "",
-        () => _handleRequestTimeout(message));
+        () => _handleRequestTimeout(message),);
 
     _logger.fine(
-        "Started ${timeout.inSeconds}s timeout for ${message.method} (id: ${message.id})");
+        "Started ${timeout.inSeconds}s timeout for ${message.method} (id: ${message.id})",);
   }
 
   void _cancelRequestTimeout(dynamic id) {
@@ -482,21 +483,21 @@ class MCPDevProxy {
 
     // Create timeout error using TimeoutManager
     final timeout = _timeoutManager.getTimeout(originalMessage.method ?? "",
-        originalMessage.params as Map<String, dynamic>? ?? <String, dynamic>{});
+        originalMessage.params as Map<String, dynamic>? ?? <String, dynamic>{},);
     final operationContext = {
       "proxy": "mcp_dev_proxy",
       "proxy_capabilities": [
         "crash_recovery",
         "hot_reload",
         "error_buffering",
-        "debug_info"
+        "debug_info",
       ],
       "recovery_hint":
           "The target MCP server may be unresponsive. Check server logs or restart the connection.",
     };
 
     final timeoutErrorData = _timeoutManager.createTimeoutError(
-        id.toString(), originalMessage.method ?? "", timeout, operationContext);
+        id.toString(), originalMessage.method ?? "", timeout, operationContext,);
 
     final timeoutError =
         MCPError.fromJson(timeoutErrorData["error"] as Map<String, dynamic>);
@@ -553,7 +554,7 @@ class MCPDevProxy {
 
     if (staleRequestIds.isNotEmpty || staleToolUseIds.isNotEmpty) {
       _logger.info(
-          "Cleaned up ${staleRequestIds.length} stale requests and ${staleToolUseIds.length} stale tool_uses");
+          "Cleaned up ${staleRequestIds.length} stale requests and ${staleToolUseIds.length} stale tool_uses",);
     }
   }
 }

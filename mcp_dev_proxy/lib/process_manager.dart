@@ -4,14 +4,19 @@ import "dart:io";
 import "package:logging/logging.dart";
 
 class ProcessStartupException implements Exception {
-  final String message;
   ProcessStartupException(this.message);
+  final String message;
 
   @override
   String toString() => "ProcessStartupException: $message";
 }
 
 class ProcessManager {
+
+  ProcessManager({
+    required this.targetBinary,
+    this.arguments = const [],
+  });
   final Logger _logger = Logger("ProcessManager");
   final String targetBinary;
   final List<String> arguments;
@@ -21,11 +26,6 @@ class ProcessManager {
   StreamController<String>? _stderrController;
   String _stderrBuffer = "";
   bool _isStarting = false;
-
-  ProcessManager({
-    required this.targetBinary,
-    this.arguments = const [],
-  });
 
   Stream<String> get stdout =>
       _stdoutController?.stream ?? const Stream.empty();
@@ -55,7 +55,6 @@ class ProcessManager {
       _process = await Process.start(
         targetBinary,
         arguments,
-        mode: ProcessStartMode.normal,
       );
 
       _process!.stdout
@@ -99,7 +98,7 @@ class ProcessManager {
     final process = _process!;
     _process = null;
 
-    process.kill(ProcessSignal.sigterm);
+    process.kill();
 
     final exitCode = await process.exitCode.timeout(
       const Duration(seconds: 5),

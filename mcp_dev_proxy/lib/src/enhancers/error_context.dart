@@ -1,10 +1,4 @@
 class ErrorContext {
-  final String? detectedRuntime;
-  final String? targetCommand;
-  final Map<String, String>? environment;
-  final String? workingDirectory;
-  final String? lastOutput;
-  final DateTime timestamp;
 
   ErrorContext({
     this.detectedRuntime,
@@ -14,6 +8,23 @@ class ErrorContext {
     this.lastOutput,
     DateTime? timestamp,
   }) : timestamp = timestamp ?? DateTime.now();
+
+  factory ErrorContext.fromJson(Map<String, dynamic> json) {
+    return ErrorContext(
+      detectedRuntime: json["detectedRuntime"] as String?,
+      targetCommand: json["targetCommand"] as String?,
+      environment: json["environment"] as Map<String, String>?,
+      workingDirectory: json["workingDirectory"] as String?,
+      lastOutput: json["lastOutput"] as String?,
+      timestamp: DateTime.parse(json["timestamp"] as String),
+    );
+  }
+  final String? detectedRuntime;
+  final String? targetCommand;
+  final Map<String, String>? environment;
+  final String? workingDirectory;
+  final String? lastOutput;
+  final DateTime timestamp;
 
   ErrorContext copyWith({
     String? detectedRuntime,
@@ -42,16 +53,5 @@ class ErrorContext {
       "lastOutput": lastOutput,
       "timestamp": timestamp.toIso8601String(),
     };
-  }
-
-  factory ErrorContext.fromJson(Map<String, dynamic> json) {
-    return ErrorContext(
-      detectedRuntime: json["detectedRuntime"] as String?,
-      targetCommand: json["targetCommand"] as String?,
-      environment: json["environment"] as Map<String, String>?,
-      workingDirectory: json["workingDirectory"] as String?,
-      lastOutput: json["lastOutput"] as String?,
-      timestamp: DateTime.parse(json["timestamp"] as String),
-    );
   }
 }

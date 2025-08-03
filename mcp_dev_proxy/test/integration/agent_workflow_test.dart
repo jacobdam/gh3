@@ -1,5 +1,6 @@
-import "package:test/test.dart";
 import "dart:io";
+
+import "package:test/test.dart";
 
 void main() {
   group("Agent Workflow Integration (AW1)", () {
@@ -23,7 +24,7 @@ void main() {
       workflowSteps.add("1. Missing binary detected");
 
       // Simulate proxy detecting missing binary
-      expect(await testBinary.exists(), isFalse);
+      expect(testBinary.existsSync(), isFalse);
 
       final missingBinaryError = {
         "jsonrpc": "2.0",
@@ -39,18 +40,18 @@ void main() {
             "next_steps": [
               "compile_binary",
               "verify_path",
-              "check_proxy_status"
+              "check_proxy_status",
             ],
-            "proxy_tools": ["proxy_status", "proxy_help"]
-          }
-        }
+            "proxy_tools": ["proxy_status", "proxy_help"],
+          },
+        },
       };
 
       responses.add(missingBinaryError);
       workflowSteps.add("2. Received compilation guidance");
 
       // Verify agent receives actionable guidance
-      final error = missingBinaryError["error"] as Map<String, dynamic>;
+      final error = missingBinaryError["error"]! as Map<String, dynamic>;
       final data = error["data"] as Map<String, dynamic>;
 
       expect(data["guidance"], contains("Compile"));
@@ -63,7 +64,7 @@ void main() {
       workflowSteps.add("3. Binary created");
 
       // Step 4: Proxy auto-connects to new binary
-      expect(await testBinary.exists(), isTrue);
+      expect(testBinary.existsSync(), isTrue);
       workflowSteps.add("4. Auto-connection triggered");
 
       // Step 5: Agent tests functionality
@@ -75,15 +76,15 @@ void main() {
           "tools": [
             {
               "name": "test_tool",
-              "description": "A test tool for agent development"
+              "description": "A test tool for agent development",
             }
           ],
           "proxy": {
             "name": "mcp_dev_proxy",
             "event": "connected",
-            "binary_path": testBinary.path
-          }
-        }
+            "binary_path": testBinary.path,
+          },
+        },
       };
 
       responses.add(toolsListResponse);
@@ -105,9 +106,9 @@ void main() {
             "context": "Binary no longer exists at ${testBinary.path}",
             "guidance": "Check server logs and recompile if necessary",
             "next_steps": ["check_logs", "recompile", "debug_crash"],
-            "proxy_tools": ["proxy_status", "proxy_restart"]
-          }
-        }
+            "proxy_tools": ["proxy_status", "proxy_restart"],
+          },
+        },
       };
 
       responses.add(crashError);
@@ -129,9 +130,9 @@ void main() {
             "name": "mcp_dev_proxy",
             "event": "restarted",
             "reason": "binary_updated",
-            "restart_count": 1
-          }
-        }
+            "restart_count": 1,
+          },
+        },
       };
 
       responses.add(restartNotification);
@@ -145,10 +146,10 @@ void main() {
           "tools": [
             {
               "name": "enhanced_tool",
-              "description": "Enhanced tool after modifications"
+              "description": "Enhanced tool after modifications",
             }
-          ]
-        }
+          ],
+        },
       };
 
       responses.add(continuedDevelopment);
@@ -161,13 +162,13 @@ void main() {
       // Verify no hanging operations throughout cycle
       for (final response in responses) {
         expect(response["id"], isNotNull,
-            reason: "All responses should have IDs");
+            reason: "All responses should have IDs",);
         if (response.containsKey("error")) {
           final error = response["error"] as Map<String, dynamic>;
           expect(error["data"]["guidance"], isA<String>(),
-              reason: "Errors should include guidance");
+              reason: "Errors should include guidance",);
           expect(error["data"]["next_steps"], isA<List<dynamic>>(),
-              reason: "Errors should include next steps");
+              reason: "Errors should include next steps",);
         }
       }
 
@@ -177,9 +178,9 @@ void main() {
       for (final errorResponse in errorResponses) {
         final data = errorResponse["error"]["data"] as Map<String, dynamic>;
         expect(data["next_steps"], isNotEmpty,
-            reason: "Should provide autonomous recovery steps");
+            reason: "Should provide autonomous recovery steps",);
         expect(data["proxy_tools"], isNotEmpty,
-            reason: "Should suggest diagnostic tools");
+            reason: "Should suggest diagnostic tools",);
       }
 
       print("Agent Workflow Steps Completed:");
@@ -198,18 +199,18 @@ void main() {
         "recovery_steps": [
           "Use /resume command in Claude",
           "Check proxy_check_tool_cycles for status",
-          "Restart proxy if needed with proxy_restart"
-        ]
+          "Restart proxy if needed with proxy_restart",
+        ],
       };
 
       expect(sessionRecoveryGuidance["guidance"], contains("/resume"));
       expect(
-          sessionRecoveryGuidance["explanation"], contains("API validation"));
-      final recoverySteps = sessionRecoveryGuidance["recovery_steps"] as List;
+          sessionRecoveryGuidance["explanation"], contains("API validation"),);
+      final recoverySteps = sessionRecoveryGuidance["recovery_steps"]! as List;
       expect(
           recoverySteps.any(
-              (step) => step.toString().contains("proxy_check_tool_cycles")),
-          isTrue);
+              (step) => step.toString().contains("proxy_check_tool_cycles"),),
+          isTrue,);
     });
 
     test("should handle various MCP server types", () {
@@ -218,19 +219,19 @@ void main() {
           "type": "dart",
           "compilation": "dart compile exe server.dart -o mcp_server",
           "environment_check": "dart --version",
-          "timeout_profile": "standard"
+          "timeout_profile": "standard",
         },
         {
           "type": "python",
           "compilation": "N/A (interpreted)",
           "environment_check": "python --version",
-          "timeout_profile": "extended"
+          "timeout_profile": "extended",
         },
         {
           "type": "flutter",
           "compilation": "dart compile exe",
           "environment_check": "flutter doctor",
-          "timeout_profile": "long_running" // For widget tests, builds
+          "timeout_profile": "long_running", // For widget tests, builds
         }
       ];
 

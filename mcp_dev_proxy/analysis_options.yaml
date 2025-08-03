@@ -17,7 +17,7 @@ linter:
   rules:
     # === TYPE SAFETY & CORRECTNESS ===
     - always_declare_return_types
-    - avoid_dynamic_calls
+    # - avoid_dynamic_calls  # Disabled - conflicts with JSON handling and test patterns
     - avoid_type_to_string
     - cast_nullable_to_non_nullable
     - deprecated_consistency
@@ -154,7 +154,6 @@ linter:
     - unnecessary_new
     - unnecessary_null_aware_assignments
     - unnecessary_null_in_if_null_operators
-    - unnecessary_nullable_for_final_variable_declarations
     - unnecessary_overrides
     - unnecessary_parenthesis
     - unnecessary_raw_strings
@@ -167,7 +166,7 @@ linter:
     - use_function_type_syntax_for_parameters
     - use_late_for_private_fields_and_variables
     - use_rethrow_when_possible
-    - use_setters_to_change_properties
+    # - use_setters_to_change_properties  # Conflicts with unnecessary_getters_setters
     - use_string_in_part_of_directives
     - use_to_and_as_if_applicable
     - valid_regexps

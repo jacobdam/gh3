@@ -14,7 +14,6 @@ void main() {
       proxyProcess = await Process.start(
         "./mcp_dev_proxy_binary",
         ["./test_target_binary"],
-        mode: ProcessStartMode.normal,
       );
 
       proxyOutput = proxyProcess.stdout
@@ -23,11 +22,11 @@ void main() {
       proxyInput = proxyProcess.stdin;
 
       // Give proxy time to start
-      await Future<void>.delayed(Duration(milliseconds: 500));
+      await Future<void>.delayed(const Duration(milliseconds: 500));
     });
 
     tearDown(() async {
-      proxyInput.close();
+      await proxyInput.close();
       proxyProcess.kill();
       await proxyProcess.exitCode;
     });
@@ -40,8 +39,8 @@ void main() {
         "params": {
           "protocolVersion": "2024-11-05",
           "capabilities": <String, dynamic>{},
-          "clientInfo": {"name": "integration_test", "version": "1.0"}
-        }
+          "clientInfo": {"name": "integration_test", "version": "1.0"},
+        },
       };
 
       proxyInput.writeln(jsonEncode(initRequest));
@@ -54,15 +53,15 @@ void main() {
           final response = jsonDecode(line) as Map<String, dynamic>;
           if (response["id"] == 1) {
             responseCompleter.complete(response);
-            subscription.cancel();
+            unawaited(subscription.cancel());
           }
-        } catch (e) {
+        } on Exception {
           // Ignore non-JSON lines (logs)
         }
       });
 
       final response =
-          await responseCompleter.future.timeout(Duration(seconds: 5));
+          await responseCompleter.future.timeout(const Duration(seconds: 5));
 
       expect(response["jsonrpc"], equals("2.0"));
       expect(response["id"], equals(1));
@@ -70,7 +69,7 @@ void main() {
       expect(response["result"]["serverInfo"]["name"], equals("mcp_dev_proxy"));
       expect(response["result"]["instructions"], isA<String>());
       expect(response["result"]["instructions"],
-          contains("Target MCP server is not available"));
+          contains("Target MCP server is not available"),);
     });
 
     test("proxy provides tools when target unavailable", () async {
@@ -78,7 +77,7 @@ void main() {
         "jsonrpc": "2.0",
         "id": 2,
         "method": "tools/list",
-        "params": <String, dynamic>{}
+        "params": <String, dynamic>{},
       };
 
       proxyInput.writeln(jsonEncode(toolsRequest));
@@ -91,15 +90,15 @@ void main() {
           final response = jsonDecode(line) as Map<String, dynamic>;
           if (response["id"] == 2) {
             responseCompleter.complete(response);
-            subscription.cancel();
+            unawaited(subscription.cancel());
           }
-        } catch (e) {
+        } on Exception {
           // Ignore non-JSON lines
         }
       });
 
       final response =
-          await responseCompleter.future.timeout(Duration(seconds: 5));
+          await responseCompleter.future.timeout(const Duration(seconds: 5));
 
       expect(response["result"]["tools"], isA<List<dynamic>>());
       final tools = response["result"]["tools"] as List<dynamic>;
@@ -114,7 +113,7 @@ void main() {
         "jsonrpc": "2.0",
         "id": 3,
         "method": "tools/call",
-        "params": {"name": "proxy_status", "arguments": <String, dynamic>{}}
+        "params": {"name": "proxy_status", "arguments": <String, dynamic>{}},
       };
 
       proxyInput.writeln(jsonEncode(toolCallRequest));
@@ -127,15 +126,15 @@ void main() {
           final response = jsonDecode(line) as Map<String, dynamic>;
           if (response["id"] == 3) {
             responseCompleter.complete(response);
-            subscription.cancel();
+            unawaited(subscription.cancel());
           }
-        } catch (e) {
+        } on Exception {
           // Ignore non-JSON lines
         }
       });
 
       final response =
-          await responseCompleter.future.timeout(Duration(seconds: 5));
+          await responseCompleter.future.timeout(const Duration(seconds: 5));
 
       // Check if response has result or error
       if (response.containsKey("result") && response["result"] != null) {
@@ -171,11 +170,11 @@ void main() {
         if (line.contains("Binary now available") ||
             line.contains("attempting to start target process")) {
           logCompleter.complete(true);
-          subscription.cancel();
+          unawaited(subscription.cancel());
         }
       });
 
-      final detected = await logCompleter.future.timeout(Duration(seconds: 10));
+      final detected = await logCompleter.future.timeout(const Duration(seconds: 10));
 
       expect(detected, isTrue);
 
@@ -225,7 +224,7 @@ void main() async {
         "exe",
         "./mock_mcp_server.dart",
         "-o",
-        "./mock_mcp_server_binary"
+        "./mock_mcp_server_binary",
       ]);
 
       expect(compileResult.exitCode, equals(0));
@@ -234,7 +233,6 @@ void main() async {
       final proxyProcess = await Process.start(
         "./mcp_dev_proxy_binary",
         ["./mock_mcp_server_binary"],
-        mode: ProcessStartMode.normal,
       );
 
       final proxyOutput = proxyProcess.stdout
@@ -243,7 +241,7 @@ void main() async {
       final proxyInput = proxyProcess.stdin;
 
       // Give time for both to start
-      await Future<void>.delayed(Duration(seconds: 2));
+      await Future<void>.delayed(const Duration(seconds: 2));
 
       try {
         // Send initialize request through proxy
@@ -254,8 +252,8 @@ void main() async {
           "params": {
             "protocolVersion": "2024-11-05",
             "capabilities": <String, dynamic>{},
-            "clientInfo": {"name": "e2e_test", "version": "1.0"}
-          }
+            "clientInfo": {"name": "e2e_test", "version": "1.0"},
+          },
         };
 
         proxyInput.writeln(jsonEncode(initRequest));
@@ -268,20 +266,20 @@ void main() async {
             final response = jsonDecode(line) as Map<String, dynamic>;
             if (response["id"] == 1) {
               responseCompleter.complete(response);
-              subscription.cancel();
+              unawaited(subscription.cancel());
             }
-          } catch (e) {
+          } on Exception {
             // Ignore non-JSON lines
           }
         });
 
         final response =
-            await responseCompleter.future.timeout(Duration(seconds: 10));
+            await responseCompleter.future.timeout(const Duration(seconds: 10));
 
         // Should get response from mock server (not proxy fallback)
         expect(response["result"]["serverInfo"]["name"], equals("mock_server"));
       } finally {
-        proxyInput.close();
+        await proxyInput.close();
         proxyProcess.kill();
         await proxyProcess.exitCode;
 

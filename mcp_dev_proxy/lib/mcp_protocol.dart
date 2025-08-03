@@ -1,12 +1,6 @@
 import "dart:convert";
 
 class MCPMessage {
-  final String jsonrpc;
-  final dynamic id;
-  final String? method;
-  final dynamic params;
-  final dynamic result;
-  final MCPError? error;
 
   MCPMessage({
     required this.jsonrpc,
@@ -29,6 +23,12 @@ class MCPMessage {
           : null,
     );
   }
+  final String jsonrpc;
+  final dynamic id;
+  final String? method;
+  final dynamic params;
+  final dynamic result;
+  final MCPError? error;
 
   Map<String, dynamic> toJson() {
     final json = <String, dynamic>{
@@ -89,9 +89,6 @@ class MCPMessage {
 }
 
 class MCPError {
-  final int code;
-  final String message;
-  final dynamic data;
 
   MCPError({
     required this.code,
@@ -108,6 +105,9 @@ class MCPError {
       data: json["data"],
     );
   }
+  final int code;
+  final String message;
+  final dynamic data;
 
   Map<String, dynamic> toJson() {
     final json = <String, dynamic>{
@@ -132,7 +132,7 @@ class MCPError {
           "crash_recovery",
           "hot_reload",
           "error_buffering",
-          "debug_info"
+          "debug_info",
         ],
       },
     );
@@ -145,7 +145,7 @@ class MCPError {
       "crash_recovery",
       "hot_reload",
       "error_buffering",
-      "debug_info"
+      "debug_info",
     ];
 
     return MCPError(
@@ -168,7 +168,7 @@ class MCPError {
           "crash_recovery",
           "hot_reload",
           "error_buffering",
-          "debug_info"
+          "debug_info",
         ],
       },
     );
@@ -183,7 +183,7 @@ class MCPProtocol {
         return null;
       }
       return MCPMessage.fromJson(decoded);
-    } catch (e) {
+    } on Exception {
       return null;
     }
   }

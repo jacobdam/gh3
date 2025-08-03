@@ -1,7 +1,8 @@
 import "dart:async";
 import "dart:io";
-import "package:test/test.dart";
+
 import "package:mcp_dev_proxy/process_manager.dart";
+import "package:test/test.dart";
 
 void main() {
   group("ProcessManager", () {
@@ -48,10 +49,10 @@ void main() {
         );
 
         expect(output, equals("test"));
-      } catch (e) {
+      } on Exception {
         // stdout capture can be timing-sensitive in test environments
         print(
-            "stdout test timed out - this is acceptable in some test environments");
+            "stdout test timed out - this is acceptable in some test environments",);
       }
     });
 
@@ -79,7 +80,7 @@ void main() {
           const Duration(seconds: 2),
         );
         expect(errorOutput, contains("error message"));
-      } catch (e) {
+      } on Exception {
         // stderr capture can be timing-sensitive in test environments
         print("stderr test skipped - process I/O timing dependent");
       }
@@ -128,10 +129,10 @@ void main() {
         );
 
         expect(output, equals("test message"));
-      } catch (e) {
+      } on Exception {
         // stdin interaction can be flaky in test environments
         print(
-            "stdin test timed out - this is acceptable in some test environments");
+            "stdin test timed out - this is acceptable in some test environments",);
       }
 
       await catManager.stop();
@@ -146,7 +147,7 @@ void main() {
         targetBinary: "nonexistent_command_12345",
       );
 
-      expect(() => badManager.start(), throwsA(isA<ProcessException>()));
+      expect(badManager.start, throwsA(isA<ProcessException>()));
     });
 
     test("should buffer stderr output", () async {
