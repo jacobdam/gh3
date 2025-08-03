@@ -2,44 +2,59 @@
 
 ## Architecture Overview
 
-The MCP Development Proxy is designed as a **layered, event-driven system** that provides intelligent intermediary capabilities between MCP clients and servers with a focus on **never blocking AI agents**.
+The MCP Development Proxy is designed as a **layered, event-driven system** that provides intelligent intermediary capabilities between MCP clients and servers with a focus on **never blocking AI agents** and **enabling autonomous problem resolution**.
+
+**Phase 2 Focus**: Agent Autonomy - The architecture supports agents that can diagnose and resolve 90% of development issues independently through enhanced diagnostic tools, graceful degradation, and advanced session recovery.
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
 │                        MCP Client                               │
-│                     (Claude Code)                               │
+│                  (AI Agent - Claude Code)                       │
 └─────────────────────┬───────────────────────────────────────────┘
                       │ JSON-RPC over stdin/stdout
                       ▼
 ┌─────────────────────────────────────────────────────────────────┐
 │                   MCP Development Proxy                         │
+│                    **ALWAYS AVAILABLE**                         │
 │  ┌─────────────────┬──────────────────┬──────────────────────┐  │
 │  │ Request Router  │ Timeout Manager  │  Response Enhancer   │  │
 │  │                 │                  │                      │  │
-│  │ • Route to      │ • Method-based   │ • Add proxy metadata │  │
-│  │   target/proxy  │   timeouts       │ • Enhance errors     │  │
-│  │ • Handle proxy  │ • Cancel late    │ • Structure guidance │  │
-│  │   tools         │   responses      │ • Add diagnostics    │  │
+│  │ • Route to      │ • Method-based   │ • Agent-optimized    │  │
+│  │   target/proxy  │   timeouts       │   error messages     │  │
+│  │ • Handle proxy  │ • Cancel late    │ • Autonomous guidance │  │
+│  │   diagnostic    │   responses      │ • Recovery workflows │  │
+│  │   tools         │ • Adaptive       │ • Session recovery   │  │
+│  │ • Graceful      │   behavior       │   instructions       │  │
+│  │   degradation   │                  │                      │  │
 │  └─────────────────┼──────────────────┼──────────────────────┘  │
 │  ┌─────────────────┴──────────────────┴──────────────────────┐  │
 │  │                Process Manager                            │  │
-│  │ • Start/stop target server                               │  │
-│  │ • Monitor process health                                 │  │
-│  │ • Capture crash details                                  │  │
-│  │ • Handle restart lifecycle                               │  │
+│  │ • Advanced health monitoring                             │  │
+│  │ • Intelligent restart strategies                         │  │
+│  │ • Context-aware crash analysis                           │  │
+│  │ • Environment diagnostics                                │  │
 │  └─────────────────┬──────────────────┬──────────────────────┘  │
 │  ┌─────────────────┴─────────┬────────┴──────────────────────┐  │
-│  │     File Watcher          │    Tool Cycle Tracker         │  │
-│  │ • Monitor binary changes  │ • Track tool_use requests     │  │
-│  │ • Trigger restart         │ • Detect incomplete cycles    │  │
-│  │ • Debounce changes        │ • Generate recovery guidance  │  │
-│  └───────────────────────────┴────────────────────────────────┘  │
+│  │     File Watcher          │   Enhanced Tool Cycle         │  │
+│  │ • Smart change detection  │        Tracker                │  │
+│  │ • Build-aware triggers    │ • Session recovery guidance   │  │
+│  │ • Development workflow    │ • /resume command generation  │  │
+│  │   optimization            │ • API validation prevention   │  │
+│  └───────────────────────────┼────────────────────────────────┘  │
+│  ┌───────────────────────────┴────────────────────────────────┐  │
+│  │              Diagnostic Tool Suite                          │  │
+│  │ • proxy_status - Comprehensive system state                │  │
+│  │ • proxy_help - Autonomous troubleshooting guide            │  │
+│  │ • proxy_restart - Controlled restart with validation       │  │
+│  │ • proxy_check_tool_cycles - Session recovery analysis      │  │
+│  └─────────────────────────────────────────────────────────────┘  │
 └─────────────────────┬───────────────────────────────────────────┘
                       │ JSON-RPC over stdin/stdout  
-                      ▼
+                      ▼ (Optional - Proxy works without target)
 ┌─────────────────────────────────────────────────────────────────┐
 │                    Target MCP Server                            │
 │                   (User's Server)                               │
+│                 **MAY BE UNAVAILABLE**                          │
 └─────────────────────────────────────────────────────────────────┘
 ```
 
@@ -310,91 +325,254 @@ class FileWatcher {
 - Detection of file creation when initially missing
 - Comprehensive error handling for file system issues
 
-### 7. ToolCycleTracker
+### 7. Enhanced ToolCycleTracker - PHASE 2 UPGRADE
 
-**Responsibility:** Track incomplete tool_use → tool_result cycles to prevent Claude session breaks.
+**Responsibility:** Advanced tool cycle management with session recovery and autonomous troubleshooting guidance.
 
 ```dart
-class ToolCycleTracker {
-  final Map<String, ToolCycleInfo> _pendingCycles = {};
+class EnhancedToolCycleTracker {
+  final Map<String, AdvancedToolCycleInfo> _pendingCycles = {};
+  final List<SessionRecoveryEvent> _recoveryHistory = [];
   Timer? _cleanupTimer;
   
-  // Cycle tracking
-  void startToolCycle(String toolCallId, DateTime timestamp);
+  // Enhanced cycle tracking
+  void startToolCycle(String toolCallId, DateTime timestamp, Map<String, dynamic>? context);
   void completeToolCycle(String toolCallId);
-  void markCycleInterrupted(String toolCallId, String reason);
+  void markCycleInterrupted(String toolCallId, String reason, ErrorContext context);
   
-  // Diagnostic reporting
-  ToolCycleReport getReport();
+  // Phase 2: Session recovery features
+  SessionRecoveryReport generateRecoveryReport();
+  String generateResumeCommandGuidance();
+  List<RecoveryAction> getAutonomousRecoveryActions();
   
-  // Cleanup
-  void sendErrorsForPendingCycles(String reason);
-  void clearAllCycles();
+  // Phase 2: Pattern analysis
+  void analyzeFailurePatterns();
+  Map<String, dynamic> getSessionHealthMetrics();
+  
+  // Enhanced diagnostic reporting
+  AdvancedToolCycleReport getDetailedReport();
+  
+  // Cleanup with context preservation
+  void sendErrorsForPendingCycles(String reason, ErrorContext context);
+  void preserveContextForRecovery(List<String> toolIds);
 }
 
-class ToolCycleInfo {
+class AdvancedToolCycleInfo {
   final String id;
   final DateTime startTime;
   final ToolCycleStatus status;
   final String? interruptionReason;
+  final Map<String, dynamic>? operationContext; // Tool name, params, etc.
+  final Duration? estimatedDuration;
+  final int retryCount;
 }
 
-class ToolCycleReport {
-  final int totalPending;
-  final List<String> pendingIds;
-  final String recoveryGuidance;
-  final bool hasApiRisk;
+class SessionRecoveryReport {
+  final int totalInterrupted;
+  final List<String> recoverableOperations;
+  final String resumeCommandText;
+  final bool requiresHumanIntervention;
+  final List<RecoveryAction> autonomousActions;
+}
+
+class RecoveryAction {
+  final String actionType; // 'restart', 'retry', 'skip', 'resume'
+  final String description;
+  final Map<String, dynamic> parameters;
+  final bool isAutonomous;
 }
 ```
 
-**Key Features:**
-- Automatic tracking of all tool_call requests
-- Detection of incomplete cycles during restart
-- Generation of recovery guidance including /resume command
-- Cleanup of stale tracking data
+**Phase 2 Key Features:**
+- **Session recovery guidance** with /resume command generation
+- **Pattern analysis** for failure prediction and prevention
+- **Context preservation** across interruptions
+- **Autonomous recovery actions** for common scenarios
+- **Advanced diagnostic reporting** with actionable insights
+- **API validation error prevention** through proactive cycle management
 
-## Data Flow Architecture
+### 8. Diagnostic Tool Suite - PHASE 2 NEW COMPONENT
 
-### 1. Normal Request Flow
-
-```
-Client Request → RequestRouter → TimeoutManager → Target Server
-                                      ↓
-Client ← ResponseEnhancer ← [Response] ← Target Server
-```
-
-### 2. Timeout Error Flow
-
-```
-Client Request → RequestRouter → TimeoutManager → Target Server
-                                      ↓ (timeout)
-Client ← ResponseEnhancer ← TimeoutError ← TimeoutManager
-```
-
-### 3. Proxy Tool Flow
-
-```
-Client Request → RequestRouter → ProxyToolHandler
-                      ↓
-Client ← ResponseEnhancer ← [Tool Result] ← ProxyToolHandler
-```
-
-### 4. Crash Recovery Flow
-
-```
-Target Server Crash → ProcessManager → ToolCycleTracker
-                           ↓               ↓
-                    Error Enhancement ← Pending Cycles Cleanup
-                           ↓
-                    Client ← Enhanced Error Response
-```
-
-## State Management
-
-### Proxy State Model
+**Responsibility:** Comprehensive autonomous troubleshooting and system diagnostics for AI agents.
 
 ```dart
-class ProxyState {
+class DiagnosticToolSuite {
+  final ProcessManager _processManager;
+  final ProxyState _state;
+  final EnhancedToolCycleTracker _toolCycleTracker;
+  final RuntimeDetector _runtimeDetector;
+  
+  // Core diagnostic tools
+  Future<Map<String, dynamic>> executeProxyStatus();
+  Future<Map<String, dynamic>> executeProxyHelp();
+  Future<Map<String, dynamic>> executeProxyRestart(Map<String, dynamic> params);
+  Future<Map<String, dynamic>> executeProxyCheckToolCycles();
+  
+  // Phase 2: Advanced diagnostics
+  Future<Map<String, dynamic>> executeEnvironmentAnalysis();
+  Future<Map<String, dynamic>> executeRecoveryGuidance(ErrorContext context);
+  Future<Map<String, dynamic>> executeSessionHealth();
+  
+  // Autonomous troubleshooting workflows
+  Future<List<DiagnosticAction>> generateTroubleshootingPlan(ErrorType errorType);
+  Future<Map<String, dynamic>> executeAutonomousRecovery(String recoveryPlan);
+  
+  // Tool registration and discovery
+  List<ProxyTool> getAvailableTools();
+  bool isToolAvailable(String toolName);
+}
+
+class ProxyStatusTool extends ProxyTool {
+  @override
+  String get name => 'proxy_status';
+  
+  @override
+  String get description => 'Comprehensive system state and autonomous guidance';
+  
+  @override
+  Future<Map<String, dynamic>> execute(
+    Map<String, dynamic> arguments,
+    ProxyState state
+  ) async {
+    return {
+      // Basic status
+      'binary_path': state.binaryPath,
+      'binary_status': _getBinaryStatus(state),
+      'process_state': state.processState.toString(),
+      
+      // Phase 2: Enhanced diagnostics
+      'environment': await _analyzeEnvironment(state),
+      'health_metrics': _calculateHealthMetrics(state),
+      'session_status': _getSessionStatus(state),
+      
+      // Autonomous guidance
+      'autonomous_actions': _generateAutonomousActions(state),
+      'recovery_options': _getRecoveryOptions(state),
+      'next_steps': _generateContextualNextSteps(state),
+      
+      // Learning and adaptation
+      'failure_patterns': _analyzeFailurePatterns(state),
+      'optimization_suggestions': _getOptimizationSuggestions(state),
+    };
+  }
+}
+
+class ProxyHelpTool extends ProxyTool {
+  @override
+  Future<Map<String, dynamic>> execute(
+    Map<String, dynamic> arguments,
+    ProxyState state
+  ) async {
+    return {
+      'usage_guide': _generateUsageGuide(),
+      'troubleshooting_workflows': _getTroubleshootingWorkflows(),
+      'autonomous_recovery_guide': _getAutonomousRecoveryGuide(),
+      'common_patterns': _getCommonPatterns(),
+      'environment_setup': _getEnvironmentSetupGuide(state),
+      'session_recovery': _getSessionRecoveryGuide(),
+    };
+  }
+}
+
+class ProxyCheckToolCyclesTool extends ProxyTool {
+  @override
+  Future<Map<String, dynamic>> execute(
+    Map<String, dynamic> arguments,
+    ProxyState state
+  ) async {
+    final report = _toolCycleTracker.generateRecoveryReport();
+    return {
+      'pending_cycles': report.totalInterrupted,
+      'recoverable_operations': report.recoverableOperations,
+      'resume_command': report.resumeCommandText,
+      'autonomous_recovery': report.autonomousActions,
+      'session_health': _getSessionHealthScore(),
+      'recovery_guidance': _generateStepByStepRecovery(report),
+    };
+  }
+}
+```
+
+**Phase 2 Key Features:**
+- **Comprehensive system diagnostics** for autonomous troubleshooting
+- **Environment analysis** with runtime-specific guidance
+- **Session health monitoring** and recovery recommendations
+- **Autonomous action generation** for common failure scenarios
+- **Pattern recognition** for predictive guidance
+- **Step-by-step recovery workflows** optimized for AI agents
+
+## Data Flow Architecture - PHASE 2 ENHANCED
+
+### 1. Normal Request Flow (Target Available)
+
+```
+Client Request → RequestRouter → TimeoutManager → Target Server
+                      ↓                ↓
+                 DiagnosticTools    Context Tracking
+                      ↓                ↓
+Client ← ResponseEnhancer ← [Enhanced Response] ← Target Server
+```
+
+### 2. Graceful Degradation Flow (Target Unavailable)
+
+```
+Client Request → RequestRouter → DiagnosticToolSuite
+                      ↓               ↓
+                 Always Available  Autonomous
+                 Proxy Response    Guidance
+                      ↓               ↓
+Client ← ResponseEnhancer ← [Diagnostic Response + Recovery Actions]
+```
+
+### 3. Autonomous Troubleshooting Flow
+
+```
+Error Detection → DiagnosticToolSuite → Environment Analysis
+       ↓                 ↓                      ↓
+Pattern Analysis → Recovery Planning → Autonomous Actions
+       ↓                 ↓                      ↓
+Client ← Enhanced Response ← [Structured Guidance + Next Steps]
+```
+
+### 4. Advanced Session Recovery Flow
+
+```
+Server Interruption → EnhancedToolCycleTracker → Context Preservation
+        ↓                       ↓                        ↓
+Pending Cycle Analysis → Recovery Planning → /resume Generation
+        ↓                       ↓                        ↓
+Client ← SessionRecoveryReport ← [Recovery Actions + Guidance]
+```
+
+### 5. Progressive Enhancement Flow
+
+```
+    Target Unavailable        Target Becomes Available
+           ↓                           ↓
+    Proxy-Only Mode  →  Seamless Transition  →  Full Proxy+Target Mode
+           ↓                           ↓                    ↓
+  Diagnostic Tools         State Sync           Enhanced Forwarding
+           ↓                           ↓                    ↓
+    Client ← Basic Proxy Response | Full Enhanced Response
+```
+
+### 6. Failure Pattern Learning Flow
+
+```
+Failure Event → Pattern Analysis → Learning Update → Guidance Enhancement
+      ↓               ↓                 ↓                  ↓
+Context Capture → Correlation → Knowledge Base → Improved Responses
+      ↓               ↓                 ↓                  ↓
+Client ← Immediate Response + Future Guidance Improvement
+```
+
+## State Management - PHASE 2 ENHANCED
+
+### Enhanced Proxy State Model
+
+```dart
+class EnhancedProxyState {
+  // Core state
   final ProcessState processState;
   final String binaryPath;
   final bool binaryExists;
@@ -404,26 +582,92 @@ class ProxyState {
   final String? lastError;
   final bool monitoringActive;
   final int pendingRequests;
-  final ToolCycleReport toolCycles;
+  
+  // Phase 2: Agent autonomy state
+  final AdvancedToolCycleReport toolCycles;
+  final AutonomyLevel currentAutonomyLevel;
+  final SessionHealth sessionHealth;
+  final Map<String, dynamic> environmentDiagnostics;
+  final List<RecoveryAction> availableRecoveryActions;
+  final FailurePatternAnalysis patternAnalysis;
+  
+  // Phase 2: Graceful degradation state
+  final OperationalMode operationalMode; // proxy_only, target_available, degraded
+  final List<String> availableProxyTools;
+  final DiagnosticCapabilities diagnosticCapabilities;
+  
+  // Phase 2: Learning and adaptation
+  final AdaptationMetrics adaptationMetrics;
+  final Map<String, double> successProbabilities;
+}
+
+enum OperationalMode {
+  proxyOnly,        // Target unavailable, proxy provides diagnostics
+  targetAvailable,  // Normal operation with target
+  degraded,         // Partial functionality due to issues
+  recovery,         // Actively recovering from failures
+}
+
+enum AutonomyLevel {
+  high,    // Agent can resolve 90%+ of issues independently
+  medium,  // Agent can resolve common issues with guidance
+  low,     // Agent requires significant guidance
+  blocked, // Agent cannot proceed without human intervention
+}
+
+class SessionHealth {
+  final double healthScore; // 0.0 - 1.0
+  final int consecutiveSuccesses;
+  final int recentFailures;
+  final Duration avgResponseTime;
+  final bool sessionContinuityRisk;
+  final List<String> healthWarnings;
+}
+
+class DiagnosticCapabilities {
+  final bool canAnalyzeEnvironment;
+  final bool canExecuteRecovery;
+  final bool canPreserveContext;
+  final bool canGenerateGuidance;
+  final List<String> availableAnalyses;
 }
 ```
 
-### State Transitions
+### Enhanced State Transitions
 
 ```
-[Missing Binary] → [Binary Created] → [Starting] → [Running]
-        ↑               ↓                ↓           ↓
-        └─── [Error] ←──┴────── [Crashed] ←─────────┘
-                ↓                    ↓
-            [Enhanced Error] → [Auto Restart]
+[Missing Binary] → [Environment Analysis] → [Autonomous Compilation]
+        ↑                    ↓                        ↓
+[Pattern Learning] ←─ [Enhanced Error] → [Binary Created] → [Starting]
+        ↑                    ↓                        ↓        ↓
+[Adaptation] ←───────── [Recovery] ←────────── [Crashed] ← [Running]
+        ↓                    ↓                        ↓        ↓
+[Improved Guidance] → [Auto Restart] → [Session Recovery] → [Enhanced Response]
+                           ↓                        ↓              ↓
+                    [Context Preservation] → [Continuity Maintained] → [Agent Success]
 ```
 
-## Error Enhancement Strategy
+### Graceful Degradation State Flow
 
-### Error Classification
+```
+    Target Available                    Target Unavailable
+           ↓                                   ↓
+    [Full Operation]  ←─ Transition ─→  [Proxy-Only Mode]
+           ↓                                   ↓
+    Enhanced Forwarding                 Diagnostic Tools
+           ↓                                   ↓
+    Full Tool Suite                     Recovery Guidance
+           ↓                                   ↓
+    Agent Development  ←─ Seamless ─→  Autonomous Troubleshooting
+```
+
+## Error Enhancement Strategy - PHASE 2 AGENT AUTONOMY
+
+### Enhanced Error Classification
 
 ```dart
 enum ErrorType {
+  // Core errors
   binaryMissing,        // Target binary not found
   binaryNotExecutable,  // Permission or format issues
   processStartFailed,   // Failed to start process
@@ -431,119 +675,454 @@ enum ErrorType {
   processTimeout,       // Request timeout
   processUnresponsive,  // Health check failed
   fileSystemError,      // File watching failed
-  protocolError         // MCP protocol issues
+  protocolError,        // MCP protocol issues
+  
+  // Phase 2: Agent-specific errors
+  sessionInterrupted,   // Tool cycle interrupted
+  environmentMismatch,  // Runtime/dependency issues
+  autonomousRecoveryFailed, // Self-healing attempt failed
+  contextLoss,          // Development context lost
+  workflowBlocked,      // Development flow interrupted
 }
 ```
 
-### Enhancement Pipeline
+### Agent-Optimized Enhancement Pipeline
 
-1. **Error Detection** - Identify error type and gather context
-2. **Context Analysis** - Examine process state, file system, history
-3. **Guidance Generation** - Create structured, actionable instructions
-4. **Format Enhancement** - Apply machine-readable structure
-5. **Delivery** - Send enhanced error to client
+1. **Smart Error Detection** - AI-aware error classification with context
+2. **Environment Analysis** - Runtime, dependencies, development state
+3. **Autonomous Action Planning** - Generate executable recovery steps
+4. **Pattern-Based Guidance** - Learn from previous failures
+5. **Session Context Preservation** - Maintain development continuity
+6. **Recovery Workflow Generation** - Step-by-step autonomous resolution
+7. **Structured Delivery** - Machine-readable format optimized for agents
 
-### Guidance Templates
+### Agent Autonomy Guidance Templates
 
 ```dart
-class GuidanceTemplates {
-  static const Map<ErrorType, GuidanceTemplate> templates = {
-    ErrorType.binaryMissing: GuidanceTemplate(
+class AgentAutonomyGuidanceTemplates {
+  static const Map<ErrorType, AgentGuidanceTemplate> templates = {
+    ErrorType.binaryMissing: AgentGuidanceTemplate(
       problem: "Target MCP server binary not found",
-      context: "Expected at: {binary_path}",
-      guidance: [
-        "Compile your MCP server (examples based on runtime):",
-        "  - Dart: dart compile exe {source_path} -o {binary_path}",
-        "  - Node.js: Ensure script is executable",
-        "  - Python: Ensure script has shebang and is executable",
-        "Verify the binary path in your .mcp.json configuration",
-        "Use proxy_status tool to check current binary status"
+      severity: "blocking",
+      autonomyLevel: "high", // Agent can resolve independently
+      context: {
+        "expected_path": "{binary_path}",
+        "detected_runtime": "{runtime}",
+        "environment_status": "{env_analysis}"
+      },
+      autonomousActions: [
+        {
+          "action": "detect_source_files",
+          "command": "find . -name '*.dart' -o -name '*.js' -o -name '*.py'",
+          "success_criteria": "source_files_found"
+        },
+        {
+          "action": "compile_binary",
+          "command": "dart compile exe {main_file} -o {binary_path}",
+          "runtime_specific": true,
+          "success_criteria": "binary_created"
+        },
+        {
+          "action": "verify_executable",
+          "command": "chmod +x {binary_path} && ls -la {binary_path}",
+          "success_criteria": "executable_verified"
+        }
       ],
-      nextSteps: ["compile_binary", "check_path", "verify_config"],
-      proxyTools: ["proxy_status", "proxy_help"]
+      fallbackActions: [
+        "use_proxy_status_for_diagnosis",
+        "check_environment_setup",
+        "request_human_intervention"
+      ],
+      recoveryWorkflow: {
+        "steps": [
+          "1. Execute source file detection",
+          "2. Compile using detected runtime",
+          "3. Verify binary permissions",
+          "4. Test proxy connection",
+          "5. Resume development workflow"
+        ],
+        "estimated_time": "30-60 seconds",
+        "success_probability": 0.95
+      },
+      nextSteps: ["execute_autonomous_recovery", "verify_resolution", "continue_development"],
+      proxyTools: ["proxy_status", "proxy_help", "proxy_restart"]
     ),
-    // ... more templates
+    
+    ErrorType.sessionInterrupted: AgentGuidanceTemplate(
+      problem: "Development session interrupted by server restart",
+      severity: "moderate",
+      autonomyLevel: "high",
+      context: {
+        "interrupted_cycles": "{cycle_count}",
+        "recoverable_operations": "{recoverable_list}",
+        "session_duration": "{session_time}"
+      },
+      autonomousActions: [
+        {
+          "action": "analyze_interrupted_cycles",
+          "tool": "proxy_check_tool_cycles",
+          "success_criteria": "cycles_analyzed"
+        },
+        {
+          "action": "execute_session_recovery",
+          "command": "/resume",
+          "context_preservation": true,
+          "success_criteria": "session_restored"
+        }
+      ],
+      recoveryWorkflow: {
+        "steps": [
+          "1. Check tool cycle status",
+          "2. Identify recoverable operations",
+          "3. Execute /resume command",
+          "4. Verify session continuity",
+          "5. Continue development from last stable state"
+        ],
+        "estimated_time": "5-10 seconds",
+        "success_probability": 0.98
+      }
+    )
   };
 }
+
+class AgentGuidanceTemplate {
+  final String problem;
+  final String severity; // blocking, moderate, minor
+  final String autonomyLevel; // high, medium, low
+  final Map<String, dynamic> context;
+  final List<Map<String, dynamic>> autonomousActions;
+  final List<String> fallbackActions;
+  final Map<String, dynamic> recoveryWorkflow;
+  final List<String> nextSteps;
+  final List<String> proxyTools;
+}
 ```
 
-## Extension Points
-
-### 1. Custom Error Enhancers
+### Autonomous Recovery Engine
 
 ```dart
-abstract class ErrorEnhancer {
+class AutonomousRecoveryEngine {
+  final DiagnosticToolSuite _diagnostics;
+  final Map<ErrorType, List<RecoveryStrategy>> _strategies;
+  
+  // Execute autonomous recovery
+  Future<RecoveryResult> executeRecovery(
+    ErrorType errorType,
+    ErrorContext context
+  ) async {
+    final strategies = _strategies[errorType] ?? [];
+    
+    for (final strategy in strategies) {
+      final result = await _attemptRecovery(strategy, context);
+      if (result.success) {
+        return result;
+      }
+    }
+    
+    return RecoveryResult.failed('All autonomous recovery attempts failed');
+  }
+  
+  // Generate recovery plan
+  Future<RecoveryPlan> generateRecoveryPlan(
+    ErrorType errorType,
+    ErrorContext context
+  ) async {
+    return RecoveryPlan(
+      steps: _generateRecoverySteps(errorType, context),
+      estimatedDuration: _estimateRecoveryTime(errorType),
+      successProbability: _calculateSuccessProbability(errorType, context),
+      fallbackOptions: _getFallbackOptions(errorType)
+    );
+  }
+}
+```
+
+## Extension Points - PHASE 2 ENHANCED
+
+### 1. Agent-Optimized Error Enhancers
+
+```dart
+abstract class AgentErrorEnhancer {
   bool canHandle(ErrorType errorType, ErrorContext context);
-  Map<String, dynamic> enhance(
+  Future<Map<String, dynamic>> enhance(
     Map<String, dynamic> error, 
+    ErrorContext context
+  );
+  
+  // Phase 2: Autonomous recovery capabilities
+  bool canProvideAutonomousRecovery(ErrorType errorType);
+  Future<List<RecoveryAction>> generateRecoveryActions(
+    ErrorType errorType, 
     ErrorContext context
   );
 }
 
-// Example: Runtime-specific enhancer
-class RuntimeSpecificEnhancer extends ErrorEnhancer {
+// Example: Flutter/Dart autonomous enhancer
+class FlutterAutonomousEnhancer extends AgentErrorEnhancer {
   @override
   bool canHandle(ErrorType errorType, ErrorContext context) {
-    return context.detectedRuntime != null;
+    return context.detectedRuntime == 'dart' || 
+           context.detectedRuntime == 'flutter';
   }
   
   @override
-  Map<String, dynamic> enhance(
+  Future<Map<String, dynamic>> enhance(
     Map<String, dynamic> error,
     ErrorContext context
-  ) {
-    // Add runtime-specific guidance
-    switch (context.detectedRuntime) {
-      case 'dart':
-        // Add Flutter/Dart specific guidance
-        return _enhanceForDart(error, context);
-      case 'python':
-        // Add Python specific guidance
-        return _enhanceForPython(error, context);
+  ) async {
+    final flutterDiagnostics = await _runFlutterDoctor();
+    final dartAnalysis = await _analyzeDartProject(context.binaryPath);
+    
+    return {
+      ...error,
+      'flutter_diagnostics': flutterDiagnostics,
+      'dart_analysis': dartAnalysis,
+      'autonomous_actions': await generateRecoveryActions(
+        context.errorType, 
+        context
+      ),
+      'build_guidance': _generateBuildGuidance(context),
+      'dependency_status': await _checkDependencies(context),
+    };
+  }
+  
+  @override
+  bool canProvideAutonomousRecovery(ErrorType errorType) {
+    return [ErrorType.binaryMissing, ErrorType.processStartFailed, 
+            ErrorType.processCrashed].contains(errorType);
+  }
+  
+  @override
+  Future<List<RecoveryAction>> generateRecoveryActions(
+    ErrorType errorType, 
+    ErrorContext context
+  ) async {
+    switch (errorType) {
+      case ErrorType.binaryMissing:
+        return [
+          RecoveryAction(
+            actionType: 'compile',
+            description: 'Compile Dart project to binary',
+            parameters: {
+              'command': 'dart compile exe bin/main.dart -o ${context.binaryPath}',
+              'working_directory': context.projectRoot,
+            },
+            isAutonomous: true,
+          ),
+          RecoveryAction(
+            actionType: 'verify',
+            description: 'Verify binary creation and permissions',
+            parameters: {
+              'command': 'ls -la ${context.binaryPath}',
+            },
+            isAutonomous: true,
+          ),
+        ];
       default:
-        return error;
+        return [];
     }
   }
 }
 ```
 
-### 2. Additional Proxy Tools
+### 2. Enhanced Diagnostic Tools
 
 ```dart
-abstract class ProxyTool {
-  String get name;
-  String get description;
-  Map<String, dynamic> get schema;
+abstract class AdvancedProxyTool extends ProxyTool {
+  // Phase 2: Autonomous execution capabilities
+  bool get supportsAutonomousExecution;
+  Future<bool> canExecuteAutonomously(Map<String, dynamic> context);
   
-  Future<Map<String, dynamic>> execute(
+  // Phase 2: Learning and adaptation
+  void recordExecutionOutcome(bool success, Map<String, dynamic> context);
+  double getSuccessProbability(Map<String, dynamic> context);
+  
+  // Phase 2: Progressive enhancement
+  Future<Map<String, dynamic>> executeWithFallback(
     Map<String, dynamic> arguments,
     ProxyState state
   );
 }
 
-// Built-in proxy tools
-class ProxyStatusTool extends ProxyTool {
+// Example: Autonomous environment analyzer
+class EnvironmentAnalyzerTool extends AdvancedProxyTool {
   @override
-  String get name => 'proxy_status';
+  String get name => 'proxy_analyze_environment';
   
   @override
-  String get description => 'Get current proxy and target server status';
+  bool get supportsAutonomousExecution => true;
   
   @override
   Future<Map<String, dynamic>> execute(
     Map<String, dynamic> arguments,
     ProxyState state
   ) async {
+    final analysis = await _performComprehensiveAnalysis(state);
+    
     return {
+      'runtime_environment': analysis.runtimeInfo,
+      'dependency_status': analysis.dependencies,
+      'development_tools': analysis.devTools,
+      'common_issues': analysis.detectedIssues,
+      'autonomous_fixes': analysis.autonomousFixes,
+      'environment_score': analysis.healthScore,
+      'optimization_suggestions': analysis.optimizations,
+    };
+  }
+  
+  @override
+  Future<bool> canExecuteAutonomously(Map<String, dynamic> context) async {
+    // Check if environment analysis can be performed safely
+    return _hasRequiredPermissions() && _isEnvironmentStable();
+  }
+}
+```
+
+### 3. Graceful Degradation Handlers
+
+```dart
+abstract class DegradationHandler {
+  bool canHandle(OperationalMode fromMode, OperationalMode toMode);
+  Future<void> handleTransition(
+    OperationalMode fromMode, 
+    OperationalMode toMode,
+    ProxyState state
+  );
+  Future<Map<String, dynamic>> getCapabilitiesInMode(OperationalMode mode);
+}
+
+class AlwaysAvailableHandler extends DegradationHandler {
+  @override
+  bool canHandle(OperationalMode fromMode, OperationalMode toMode) {
+    return toMode == OperationalMode.proxyOnly;
+  }
+  
+  @override
+  Future<void> handleTransition(
+    OperationalMode fromMode, 
+    OperationalMode toMode,
+    ProxyState state
+  ) async {
+    // Ensure proxy remains fully functional
+    await _enableProxyOnlyMode(state);
+    await _activateAllDiagnosticTools();
+    await _preserveSessionContext(state);
+  }
+  
+  @override
+  Future<Map<String, dynamic>> getCapabilitiesInMode(
+    OperationalMode mode
+  ) async {
+    return {
+      'available_tools': _getAvailableProxyTools(),
+      'diagnostic_capabilities': _getDiagnosticCapabilities(),
+      'autonomous_recovery': _getRecoveryCapabilities(),
+      'session_preservation': _getSessionCapabilities(),
+    };
+  }
+}
+```
+
+### 2. Phase 2 Enhanced Proxy Tools
+
+```dart
+// Phase 2: All proxy tools support autonomous execution
+abstract class ProxyTool {
+  String get name;
+  String get description;
+  Map<String, dynamic> get schema;
+  
+  // Phase 2: Autonomous execution support
+  bool get supportsAutonomousExecution => false;
+  
+  Future<Map<String, dynamic>> execute(
+    Map<String, dynamic> arguments,
+    ProxyState state
+  );
+  
+  // Phase 2: Progressive enhancement
+  Future<Map<String, dynamic>> executeWithGracefulDegradation(
+    Map<String, dynamic> arguments,
+    ProxyState state
+  ) async {
+    try {
+      return await execute(arguments, state);
+    } catch (e) {
+      return _generateFallbackResponse(e, arguments, state);
+    }
+  }
+}
+
+// Enhanced proxy tools for Phase 2
+class EnhancedProxyStatusTool extends ProxyTool {
+  @override
+  String get name => 'proxy_status';
+  
+  @override
+  String get description => 'Comprehensive system diagnostics and autonomous guidance';
+  
+  @override
+  bool get supportsAutonomousExecution => true;
+  
+  @override
+  Future<Map<String, dynamic>> execute(
+    Map<String, dynamic> arguments,
+    ProxyState state
+  ) async {
+    final environmentAnalysis = await _analyzeEnvironment(state);
+    final sessionHealth = await _calculateSessionHealth(state);
+    final autonomousActions = await _generateAutonomousActions(state);
+    
+    return {
+      // Basic status (Phase 0)
       'binary_path': state.binaryPath,
       'binary_status': _getBinaryStatus(state),
       'process_state': state.processState.toString(),
-      'environment': _detectEnvironment(state),
-      'last_error': state.lastError,
-      'uptime': _calculateUptime(state),
-      'restart_count': state.restartCount,
-      'monitoring_active': state.monitoringActive,
-      'next_steps': _generateNextSteps(state)
+      
+      // Phase 2: Enhanced diagnostics
+      'operational_mode': state.operationalMode.toString(),
+      'autonomy_level': state.currentAutonomyLevel.toString(),
+      'session_health': sessionHealth.toJson(),
+      'environment_analysis': environmentAnalysis,
+      
+      // Phase 2: Autonomous capabilities
+      'available_autonomous_actions': autonomousActions,
+      'recovery_options': await _getRecoveryOptions(state),
+      'pattern_analysis': state.patternAnalysis.toJson(),
+      
+      // Phase 2: Agent-optimized guidance
+      'next_steps': _generateContextualNextSteps(state),
+      'success_probabilities': state.successProbabilities,
+      'estimated_resolution_time': _estimateResolutionTime(state),
+    };
+  }
+}
+
+class SessionRecoveryTool extends ProxyTool {
+  @override
+  String get name => 'proxy_recover_session';
+  
+  @override
+  String get description => 'Advanced session recovery with context preservation';
+  
+  @override
+  bool get supportsAutonomousExecution => true;
+  
+  @override
+  Future<Map<String, dynamic>> execute(
+    Map<String, dynamic> arguments,
+    ProxyState state
+  ) async {
+    final recoveryReport = await _toolCycleTracker.generateRecoveryReport();
+    final contextAnalysis = await _analyzeSessionContext(state);
+    
+    return {
+      'recovery_status': recoveryReport.toJson(),
+      'session_context': contextAnalysis,
+      'resume_command': recoveryReport.resumeCommandText,
+      'autonomous_recovery_actions': recoveryReport.autonomousActions,
+      'context_preservation_score': _calculateContextScore(state),
+      'recovery_workflow': _generateRecoveryWorkflow(recoveryReport),
     };
   }
 }
@@ -598,16 +1177,33 @@ abstract class ProcessMonitor {
 - **Timeout accuracy** under system stress
 - **File watching efficiency** with rapid changes
 
-## Clean Code Principles
+## Phase 2 Quality Gates and Success Criteria
 
-While maintaining pragmatic development practices, the codebase follows clean code principles where feasible:
+### Agent Autonomy Metrics
+- **90% autonomous resolution** - Agents resolve issues without human intervention
+- **< 5 second diagnostic feedback** - Fast problem identification and guidance
+- **100% actionable errors** - Every error includes executable recovery steps
+- **Zero session breaks** - All tool cycles complete or provide recovery guidance
+- **Seamless degradation** - Proxy remains useful when target completely fails
 
-### Single Responsibility Principle (SRP)
-- **Each component has one clear responsibility**
-  - TimeoutManager: Only handles timeout logic
-  - ProcessManager: Only manages process lifecycle
-  - ResponseEnhancer: Only enhances responses
-- **Separation of concerns** between request routing, error handling, and process management
+### Operational Excellence
+- **Always-available guarantee** - Proxy never becomes unresponsive
+- **Context preservation** - Development progress maintained through failures
+- **Progressive enhancement** - Smooth transitions between operational modes
+- **Learning adaptation** - Guidance quality improves based on failure patterns
+
+## Clean Code Principles - PHASE 2 ENHANCED
+
+While maintaining pragmatic development practices, the Phase 2 codebase follows clean code principles optimized for AI agent development:
+
+### Single Responsibility Principle (SRP) - Phase 2 Enhanced
+- **Each component has one clear responsibility optimized for agent autonomy**
+  - DiagnosticToolSuite: Autonomous troubleshooting and system analysis
+  - EnhancedToolCycleTracker: Session recovery and context preservation
+  - GracefulDegradationManager: Always-available proxy functionality
+  - AutonomousRecoveryEngine: Independent problem resolution
+- **Clear separation** between diagnostic, recovery, and operational concerns
+- **Agent-centric design** with components optimized for autonomous operation
 
 ### Open/Closed Principle
 - **Extension points** for custom error enhancers and proxy tools
@@ -672,32 +1268,289 @@ if (restartCount > 0 && elapsedTime > methodTimeout) {
 }
 ```
 
-## Multi-Runtime Support
+## Graceful Degradation Architecture - PHASE 2 CORE FEATURE
 
-The proxy is designed to support various MCP server runtimes:
+**Objective**: Ensure the proxy remains useful and provides autonomous guidance even when the target server is completely unavailable.
 
-### Runtime Detection
+### Always-Available Proxy Design
+
 ```dart
-class RuntimeDetector {
-  static String? detectRuntime(String binaryPath) {
-    final extension = path.extension(binaryPath);
-    final firstLine = _readFirstLine(binaryPath);
+class GracefulDegradationManager {
+  final DiagnosticToolSuite _diagnostics;
+  final OperationalMode _currentMode;
+  final Map<OperationalMode, Set<String>> _modeCapabilities;
+  
+  // Core degradation management
+  Future<void> transitionToMode(OperationalMode newMode, ErrorContext context);
+  OperationalMode determineOptimalMode(ProxyState state);
+  
+  // Always-available proxy responses
+  Future<Map<String, dynamic>> handleInitializeRequest(
+    Map<String, dynamic> request,
+    ProxyState state
+  ) async {
+    return {
+      'capabilities': {
+        'tools': await _getAvailableTools(state.operationalMode),
+        'resources': [], // Proxy doesn't provide resources
+        'prompts': [],   // Proxy doesn't provide prompts
+        'experimental': {
+          'proxy_mode': state.operationalMode.toString(),
+          'autonomous_recovery': state.currentAutonomyLevel.toString(),
+        }
+      },
+      'server_info': {
+        'name': 'MCP Development Proxy',
+        'version': '2.0.0-phase2',
+        'mode': state.operationalMode.toString(),
+        'target_status': _getTargetStatus(state),
+        'diagnostic_capabilities': state.diagnosticCapabilities.toJson(),
+      },
+      'proxy_guidance': await _generateInitializationGuidance(state),
+    };
+  }
+  
+  Future<Map<String, dynamic>> handleToolsListRequest(
+    ProxyState state
+  ) async {
+    final availableTools = await _getAvailableTools(state.operationalMode);
     
-    if (extension == '.js' || firstLine?.contains('node') == true) {
-      return 'node';
-    } else if (extension == '.py' || firstLine?.contains('python') == true) {
-      return 'python';
-    } else if (extension == '.dart' || binaryPath.endsWith('_binary')) {
-      return 'dart';
-    }
-    // Add more runtime detection logic
-    return null;
+    return {
+      'tools': availableTools.map((tool) => {
+        'name': tool.name,
+        'description': tool.description,
+        'inputSchema': tool.schema,
+      }).toList(),
+      'proxy_metadata': {
+        'operational_mode': state.operationalMode.toString(),
+        'total_tools': availableTools.length,
+        'autonomous_tools': availableTools.where((t) => t.supportsAutonomousExecution).length,
+        'target_available': state.operationalMode == OperationalMode.targetAvailable,
+      }
+    };
   }
 }
 ```
 
-### Runtime-Specific Features
-- **Compilation guidance** adapted to detected runtime
-- **Error messages** with runtime-specific troubleshooting
-- **Environment validation** for runtime dependencies
-- **Timeout defaults** based on typical runtime performance
+### Progressive Enhancement Strategy
+
+```dart
+class ProgressiveEnhancementEngine {
+  // Seamless transitions between operational modes
+  Future<void> handleTargetAvailabilityChange(
+    bool targetAvailable,
+    ProxyState currentState
+  ) async {
+    if (targetAvailable && currentState.operationalMode == OperationalMode.proxyOnly) {
+      await _transitionToTargetAvailable(currentState);
+    } else if (!targetAvailable && currentState.operationalMode == OperationalMode.targetAvailable) {
+      await _transitionToProxyOnly(currentState);
+    }
+  }
+  
+  Future<void> _transitionToTargetAvailable(ProxyState state) async {
+    // 1. Verify target server is responsive
+    final isHealthy = await _verifyTargetHealth();
+    if (!isHealthy) return;
+    
+    // 2. Synchronize state
+    await _synchronizeProxyState(state);
+    
+    // 3. Enable full tool suite
+    await _enableFullToolSuite();
+    
+    // 4. Preserve any ongoing diagnostic context
+    await _preserveDiagnosticContext(state);
+    
+    // 5. Notify client of enhanced capabilities
+    await _notifyCapabilityEnhancement();
+  }
+  
+  Future<void> _transitionToProxyOnly(ProxyState state) async {
+    // 1. Preserve session context
+    await _preserveSessionContext(state);
+    
+    // 2. Send errors for pending requests
+    await _handlePendingRequestsGracefully(state);
+    
+    // 3. Activate diagnostic-only mode
+    await _activateDiagnosticMode();
+    
+    // 4. Generate recovery guidance
+    await _generateRecoveryGuidance(state);
+  }
+}
+```
+
+### Operational Mode Capabilities Matrix
+
+```dart
+class OperationalModeCapabilities {
+  static const Map<OperationalMode, ModeCapabilities> capabilities = {
+    OperationalMode.proxyOnly: ModeCapabilities(
+      availableTools: [
+        'proxy_status',
+        'proxy_help', 
+        'proxy_restart',
+        'proxy_check_tool_cycles',
+        'proxy_analyze_environment',
+        'proxy_recover_session',
+      ],
+      canForwardRequests: false,
+      canProvideTargetInfo: false,
+      canExecuteAutonomousRecovery: true,
+      canPreserveSessionContext: true,
+      agentGuidanceLevel: AutonomyLevel.high,
+      description: 'Full diagnostic and recovery capabilities without target',
+    ),
+    
+    OperationalMode.targetAvailable: ModeCapabilities(
+      availableTools: [
+        // All proxy tools PLUS target server tools
+        'proxy_status',
+        'proxy_help',
+        'proxy_restart', 
+        'proxy_check_tool_cycles',
+        // ... plus all target server tools via forwarding
+      ],
+      canForwardRequests: true,
+      canProvideTargetInfo: true,
+      canExecuteAutonomousRecovery: true,
+      canPreserveSessionContext: true,
+      agentGuidanceLevel: AutonomyLevel.high,
+      description: 'Full proxy + target capabilities with enhanced monitoring',
+    ),
+    
+    OperationalMode.degraded: ModeCapabilities(
+      availableTools: [
+        'proxy_status',
+        'proxy_help',
+        'proxy_restart',
+        // Limited tool set due to partial failure
+      ],
+      canForwardRequests: false,
+      canProvideTargetInfo: true, // Cached info
+      canExecuteAutonomousRecovery: true,
+      canPreserveSessionContext: true,
+      agentGuidanceLevel: AutonomyLevel.medium,
+      description: 'Reduced capabilities during recovery from partial failures',
+    ),
+  };
+}
+```
+
+### Agent Continuity Preservation
+
+```dart
+class AgentContinuityManager {
+  // Maintain development workflow continuity
+  Future<void> preserveWorkflowContext(
+    ProxyState state,
+    List<String> activeOperations
+  ) async {
+    final context = WorkflowContext(
+      activeOperations: activeOperations,
+      developmentPhase: _detectDevelopmentPhase(state),
+      lastSuccessfulOperations: _getRecentSuccesses(state),
+      failurePatterns: _analyzeFailurePatterns(state),
+    );
+    
+    await _storeContext(context);
+    await _generateContinuityGuidance(context);
+  }
+  
+  // Generate guidance for seamless workflow resumption
+  Future<Map<String, dynamic>> generateResumptionGuidance(
+    WorkflowContext context
+  ) async {
+    return {
+      'workflow_state': context.developmentPhase,
+      'recommended_next_steps': _generateNextSteps(context),
+      'context_preservation_score': _calculatePreservationScore(context),
+      'autonomous_resumption_actions': _getResumptionActions(context),
+      'estimated_resumption_time': _estimateResumptionTime(context),
+    };
+  }
+}
+```
+
+## Multi-Runtime Support - PHASE 2 ENHANCED
+
+The proxy is designed to support various MCP server runtimes with intelligent autonomous guidance:
+
+### Enhanced Runtime Detection
+```dart
+class EnhancedRuntimeDetector {
+  static Future<RuntimeAnalysis> analyzeRuntime(String binaryPath) async {
+    final extension = path.extension(binaryPath);
+    final firstLine = await _readFirstLine(binaryPath);
+    final directoryAnalysis = await _analyzeProjectStructure(binaryPath);
+    
+    final runtime = _detectPrimaryRuntime(extension, firstLine, directoryAnalysis);
+    final dependencies = await _analyzeDependencies(binaryPath, runtime);
+    final buildTools = await _detectBuildTools(binaryPath, runtime);
+    
+    return RuntimeAnalysis(
+      primaryRuntime: runtime,
+      version: await _detectVersion(runtime),
+      buildSystem: buildTools,
+      dependencies: dependencies,
+      compilationRequired: _requiresCompilation(runtime),
+      autonomousCompilationSupported: _supportsAutonomousCompilation(runtime),
+      environmentValidation: await _validateEnvironment(runtime),
+    );
+  }
+  
+  static Map<String, List<String>> get runtimeSpecificCommands => {
+    'dart': [
+      'dart compile exe {source} -o {binary}',
+      'dart analyze',
+      'dart test',
+      'dart pub get',
+    ],
+    'flutter': [
+      'dart compile exe {source} -o {binary}',
+      'flutter analyze', 
+      'flutter test',
+      'flutter doctor',
+      'flutter pub get',
+    ],
+    'python': [
+      'chmod +x {binary}',
+      'python -m py_compile {source}',
+      'pip install -r requirements.txt',
+    ],
+    'node': [
+      'chmod +x {binary}',
+      'npm install',
+      'npm test',
+    ],
+  };
+}
+```
+
+### Runtime-Specific Autonomous Features
+- **Intelligent compilation** with autonomous build command generation
+- **Environment validation** with automatic dependency checking
+- **Error pattern recognition** specific to each runtime
+- **Performance optimization** based on runtime characteristics
+- **Development workflow adaptation** for each ecosystem
+
+## Phase 2 Architecture Summary
+
+**Core Principle**: The proxy is **always available** and **maximally helpful** regardless of target server state.
+
+### Key Architectural Enhancements:
+1. **Always-Available Design** - Never fails to provide useful responses
+2. **Progressive Enhancement** - Seamless transitions between operational modes
+3. **Autonomous Recovery** - AI agents can resolve 90% of issues independently
+4. **Session Continuity** - Development context preserved through all failures
+5. **Intelligent Adaptation** - Learning from patterns to improve guidance
+6. **Runtime Intelligence** - Deep understanding of development environments
+
+### Agent Development Workflow Support:
+- **Never-blocking operations** - All requests complete with actionable results
+- **Autonomous problem resolution** - Agents fix issues without human intervention
+- **Continuous development flow** - Hot reload and recovery without manual steps
+- **Session recovery** - /resume command and context preservation
+- **Learning guidance** - Error messages improve over time based on patterns

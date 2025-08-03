@@ -136,44 +136,134 @@ This implementation plan follows a **hybrid approach**: prioritize architectural
 
 ---
 
-### Phase 1: Foundation Enhancement (UPCOMING)
-**Goal:** Enhance existing clean components with advanced capabilities
-**Estimated:** ~8-10 agent sessions (after Phase 0 completion)
+### Phase 1: Foundation Enhancement (DETAILED ROADMAP ALIGNMENT)
+**Goal:** Enhance existing clean components with advanced capabilities + P0 Critical configurable timeouts
+**Estimated:** ~6-8 agent sessions (matches implementation-roadmap.md)
+**Priority:** Includes P0 Critical requirement from requirements.md R1
+**Dependencies:** Phase 0 complete (80% done)
 
-#### 1.1 Configurable Timeout System 📋 **TASK-004** (Moved from Phase 0)
+#### 1.1 Configurable Timeout System 📋 **TASK-008** (P0 Critical)
+**Priority:** CRITICAL - Addresses P0 requirement from requirements.md R1
 **Complexity:** Medium - 2-3 agent sessions
+**Dependencies:** Phase 0 TimeoutManager complete
+
 **Target:** Enhance TimeoutManager with runtime configuration capabilities
-- **EXTEND**: TimeoutManager with ConfigurableTimeoutManager class
-- **ADD**: JSON/YAML configuration file support
-- **ADD**: Environment variable configuration (MCP_TIMEOUT_*)
-- **ADD**: Runtime timeout updates via API
-- **ADD**: Timeout profile system (dev/prod/test/custom)
-- **ADD**: Configuration validation with helpful error messages
-- **ADD**: Hot-reload configuration without restart
-- **MAINTAIN**: Backward compatibility with existing TimeoutManager
-- **RESULT**: Flexible timeout management for different deployment environments
+- **TASK-008A**: ConfigurableTimeoutManager implementation
+  - **EXTEND**: TimeoutManager with ConfigurableTimeoutManager class
+  - **ADD**: JSON/YAML configuration file support (mcp_timeout_config.yaml)
+  - **ADD**: Environment variable configuration (MCP_TIMEOUT_*)
+  - **ADD**: Runtime timeout updates via configuration API
+  - **INTEGRATE**: With existing TimeoutManager for backward compatibility
+  - **RESULT**: Flexible timeout configuration for various deployment scenarios
 
-#### 1.2 Advanced Timeout Management
-- Enhance existing TimeoutManager with adaptive timeouts
-- Add operation-specific timeout hints (build operations = 5min)
-- Implement intelligent timeout adjustments
+- **TASK-008B**: Timeout profile system
+  - **ADD**: Timeout profile system (dev/prod/test/custom profiles)
+  - **ADD**: Configuration validation with helpful error messages
+  - **ADD**: Hot-reload configuration without proxy restart
+  - **ADD**: Profile switching via diagnostic tools
+  - **RESULT**: Environment-specific timeout management
 
-#### 1.3 Enhanced Error Classification  
-- Extend existing ResponseEnhancer with pattern recognition
-- Add contextual guidance templates
-- Improve recovery instruction accuracy
+**Success Criteria (R1 Acceptance):**
+- ✅ TASK-008A: Configurable timeouts for all operation types
+- ✅ TASK-008A: Environment variable support for deployment flexibility
+- ✅ TASK-008A: Backward compatibility with existing TimeoutManager
+- ✅ TASK-008B: Profile-based timeout management
+- ✅ TASK-008B: Hot-reload configuration without service restart
 
-#### 1.4 Process State Enhancement
-- Extend existing ProxyState with health monitoring
-- Add restart rate limiting and pattern analysis
-- Implement detailed crash context reporting
+#### 1.2 Advanced Timeout Management 📋 **TASK-009**
+**Priority:** MEDIUM - Enhance existing TimeoutManager
+**Complexity:** Medium - 2-3 agent sessions
+**Dependencies:** TASK-008 complete
+
+**Target:** Enhance existing TimeoutManager with adaptive behavior
+- **TASK-009A**: Adaptive timeout intelligence
+  - **ENHANCE**: TimeoutManager with operation-specific timeout hints
+  - **ADD**: Build operation detection (5+ minute timeouts)
+  - **ADD**: Quick operation detection (shortened timeouts)
+  - **ADD**: Historical performance analysis
+  - **RESULT**: Smarter timeout behavior based on operation patterns
+
+- **TASK-009B**: Intelligent timeout adjustments
+  - **ADD**: Timeout pattern analysis and learning
+  - **ADD**: Dynamic timeout adjustment based on success rates
+  - **ADD**: Server performance profiling
+  - **RESULT**: Reduced false timeout errors and better workflow continuity
+
+**Success Criteria:**
+- ✅ TASK-009A: Operation-specific timeout intelligence
+- ✅ TASK-009A: Build/quick operation detection
+- ✅ TASK-009B: Adaptive behavior based on server performance
+- ✅ TASK-009B: Reduced false positive timeout errors
+- ✅ Better agent workflow continuity
+
+#### 1.3 Enhanced Error Classification 📋 **TASK-010**
+**Priority:** MEDIUM - Extend existing ResponseEnhancer  
+**Complexity:** Medium - 2-3 agent sessions
+**Dependencies:** Phase 0 ResponseEnhancer complete
+
+**Target:** Extend existing ResponseEnhancer with pattern recognition
+- **TASK-010A**: Error pattern recognition system
+  - **ENHANCE**: ResponseEnhancer with advanced error classification
+  - **ADD**: Pattern recognition for common failure types
+  - **ADD**: Context-aware error categorization
+  - **ADD**: Runtime-specific error templates
+  - **RESULT**: More precise error classification and guidance
+
+- **TASK-010B**: Enhanced guidance templates
+  - **ADD**: Contextual guidance template system
+  - **ADD**: Progressive troubleshooting step generation
+  - **ADD**: Recovery instruction accuracy improvements
+  - **ADD**: Environment-specific guidance adaptation
+  - **RESULT**: Better guidance based on failure patterns
+
+**Success Criteria:**
+- ✅ TASK-010A: Advanced error pattern recognition
+- ✅ TASK-010A: Runtime-specific error guidance
+- ✅ TASK-010B: Improved recovery instruction accuracy
+- ✅ TASK-010B: Reduced false positive guidance
+
+#### 1.4 Process State Enhancement 📋 **TASK-011**
+**Priority:** MEDIUM - Extend existing ProxyState
+**Complexity:** Low - 1-2 agent sessions
+**Dependencies:** Phase 0 ProxyState complete
+
+**Target:** Extend existing ProxyState with comprehensive health monitoring
+- **TASK-011A**: Advanced health monitoring
+  - **ENHANCE**: ProxyState with comprehensive health metrics
+  - **ADD**: Process responsiveness monitoring
+  - **ADD**: Performance metrics collection (CPU, memory, response times)
+  - **ADD**: Health trend analysis
+  - **RESULT**: Rich diagnostic information for agents
+
+- **TASK-011B**: Intelligent restart behavior
+  - **ADD**: Restart rate limiting and pattern analysis
+  - **ADD**: Exponential backoff with intelligent jitter
+  - **ADD**: Detailed crash context reporting
+  - **ADD**: Restart reason classification and tracking
+  - **RESULT**: Intelligent restart behavior and comprehensive monitoring
+
+**Success Criteria:**
+- ✅ TASK-011A: Comprehensive process health visibility
+- ✅ TASK-011A: Performance metrics collection and analysis
+- ✅ TASK-011B: Intelligent restart behavior with rate limiting
+- ✅ TASK-011B: Detailed diagnostic information for autonomous troubleshooting
+
+**Phase 1 Deliverable:** Enhanced foundation components with intelligent behavior enabling advanced agent capabilities
+
+**Phase 1 Quality Gates:**
+- [ ] TASK-008A/B: ConfigurableTimeoutManager supports runtime configuration
+- [ ] TASK-009A/B: Adaptive timeout behavior reduces false timeout errors
+- [ ] TASK-010A/B: Enhanced error classification provides precise guidance
+- [ ] TASK-011A/B: Process state monitoring enables predictive health management
+- [ ] Performance overhead remains < 1ms for forwarded requests
+- [ ] All P0 requirements (R1) fully satisfied
 
 ### Phase 2: Agent Autonomy (UPCOMING)
 **Goal:** Enable agents to diagnose and resolve issues independently
 **Estimated:** ~8-10 agent sessions
 
 #### 2.1 Enhanced Diagnostic Tools
-- Extend existing RequestRouter with proxy tools
+- Extend existing RequestRouter with proxy diagnostic tools
 - Add proxy_status, proxy_help, proxy_restart tools
 - Implement comprehensive troubleshooting guidance
 
@@ -262,25 +352,33 @@ This implementation plan follows a **hybrid approach**: prioritize architectural
 - `_scheduleRestart()`: Remove manual cleanup logic, use component cleanup
 - `constructor`: Remove 7+ state fields, inject ProxyState
 
-## **Expected File Structure After Cleanup**
+## **Expected File Structure After Phase 2**
 
 ```
 lib/
 ├── src/
 │   ├── core/
-│   │   ├── proxy_state.dart          [NEW - replaces 7+ scattered fields]
-│   │   └── tool_cycle_tracker.dart   [NEW - replaces manual Sets/Maps]
-│   ├── managers/                     [EXISTING - already good]
+│   │   ├── proxy_state.dart          [✅ EXISTING - enhanced in Phase 1.4 - TASK-011A/B]
+│   │   ├── enhanced_proxy_state.dart [NEW - TASK-011A]
+│   │   └── tool_cycle_tracker.dart   [✅ EXISTING - enhanced in Phase 2.2]
+│   ├── managers/                     [✅ EXISTING - foundation components]
 │   │   ├── process_manager.dart      
-│   │   ├── timeout_manager.dart      
-│   │   └── file_watcher.dart         
-│   ├── enhancers/                    [EXISTING - expand usage]
-│   │   ├── response_enhancer.dart    
-│   │   └── error_context.dart        [NEW - for context-aware errors]
-│   └── routing/                      [EXISTING - use more extensively]
-│       ├── request_router.dart       
-│       └── proxy_handlers.dart       
-├── mcp_dev_proxy.dart               [HEAVILY MODIFIED - from 644 to ~200 lines]
+│   │   ├── timeout_manager.dart      [Enhanced in Phase 1.1 - TASK-008A/009A]
+│   │   ├── configurable_timeout_manager.dart  [NEW - TASK-008A/B]
+│   │   ├── file_watcher.dart         
+│   │   └── graceful_degradation_manager.dart  [NEW - Phase 2.3]
+│   ├── enhancers/                    [✅ EXISTING - enhanced in Phase 1.3]
+│   │   ├── response_enhancer.dart    [Enhanced in Phase 1.3 - TASK-010A/B]
+│   │   ├── error_context.dart        [✅ EXISTING - enhanced in Phase 1.3]
+│   │   └── error_pattern_recognizer.dart  [NEW - TASK-010A]
+│   ├── routing/                      [✅ EXISTING - enhanced capabilities]
+│   │   ├── request_router.dart       [Enhanced with diagnostic tool routing]
+│   │   └── proxy_handlers.dart       
+│   ├── diagnostics/                  [NEW - Phase 2 components]
+│   │   └── diagnostic_tools.dart     [NEW - Phase 2.1]
+│   └── recovery/                     [NEW - Phase 2 components]
+│       └── session_recovery.dart     [NEW - Phase 2.2]
+├── mcp_dev_proxy.dart               [✅ CLEAN - ~200 lines orchestrator]
 └── [other existing files unchanged]
 ```
 
