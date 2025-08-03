@@ -2,7 +2,7 @@
 
 ## Overview
 
-This roadmap outlines the implementation strategy for transforming the current basic proxy into a comprehensive AI agent development tool. The approach emphasizes **incremental delivery** with each phase providing immediate value while building toward the complete vision.
+This roadmap outlines the implementation strategy for transforming the current basic proxy into a comprehensive AI agent development tool. The approach emphasizes **architecture-first cleanup** - Phase 0 Foundation is **80% complete** as of August 2025, with clean components ready for feature enhancement.
 
 ## Current State Assessment
 
@@ -13,106 +13,84 @@ Based on the existing README and codebase structure, the current implementation 
 ✅ **Basic hot reload** - File change detection and restart  
 ✅ **Development metadata** - Proxy identification in responses  
 
-**Missing critical features for AI agents:**
-❌ Timeout management with actionable guidance  
-❌ Enhanced error messages with recovery instructions  
-❌ Tool cycle tracking for session recovery  
-❌ Diagnostic tools for autonomous troubleshooting  
-❌ Graceful degradation when target server fails  
+**Architecture Foundation Status:**
+✅ **Timeout management with actionable guidance** - TimeoutManager implemented  
+✅ **Enhanced error messages with recovery instructions** - ResponseEnhancer implemented  
+✅ **Request routing for proxy vs target** - RequestRouter implemented
+✅ **Unified state management** - ProxyState implemented
+🚧 **Tool cycle tracking for session recovery** - ToolCycleTracker ready for implementation
+📋 **Graceful degradation when target server fails** - Enhancement phase  
 
 ## Implementation Strategy
 
-### Phase 1: Foundation (Weeks 1-2)
-**Goal:** Eliminate hanging operations and provide basic AI agent support
+### Phase 0: Architecture Foundation (80% COMPLETE)
+**Goal:** Clean monolithic architecture to enable feature development - **NEARLY DONE**
 
-#### 1.1 Timeout Management System
+#### 0.1 Timeout Management System ✅ **COMPLETED**
 ```
 Priority: CRITICAL - Directly addresses #1 agent blocker
-Effort: 3-5 days
+Complexity: Medium - 2-3 agent sessions
 Dependencies: None
 
 Tasks:
-- Implement TimeoutManager with method-specific timeouts
-- Add timeout error generation with basic guidance
-- Integrate timeout handling into existing request flow
-- Add late response filtering
+- ✅ TimeoutManager implemented with method-specific timeouts
+- ✅ Timeout error generation with basic guidance integrated
+- ✅ Timeout handling integrated into existing request flow
+- ✅ Late response filtering implemented
 
 Success Criteria:
-- No request hangs longer than defined timeout
-- All timeouts return actionable error messages
-- Agents receive immediate feedback instead of waiting indefinitely
+- ✅ No request hangs longer than defined timeout
+- ✅ All timeouts return actionable error messages
+- ✅ Agents receive immediate feedback instead of waiting indefinitely
 ```
 
-#### 1.2 Enhanced Error Message Framework
+#### 0.2 Enhanced Error Message Framework ✅ **COMPLETED**
 ```
 Priority: HIGH - Critical for autonomous agent development
-Effort: 2-3 days  
+Complexity: Low - 1-2 agent sessions  
 Dependencies: None
 
 Tasks:
-- Create structured error format for machine parsing
-- Implement ResponseEnhancer component
-- Add context-aware guidance generation
-- Enhance existing crash and startup errors
+- ✅ Structured error format created for machine parsing
+- ✅ ResponseEnhancer component implemented
+- ✅ Context-aware guidance generation added
+- ✅ Existing crash and startup errors enhanced
 
 Success Criteria:
-- All errors include structured guidance
-- Agents can parse and act on error responses
-- Context-specific recovery instructions provided
+- ✅ All errors include structured guidance
+- ✅ Agents can parse and act on error responses
+- ✅ Context-specific recovery instructions provided
 ```
 
-#### 1.3 Process State Management
+#### 0.3 Process State Management ✅ **COMPLETED**
 ```
 Priority: MEDIUM - Foundation for advanced features
-Effort: 2-3 days
+Complexity: Low - 1-2 agent sessions
 Dependencies: Enhanced error messages
 
 Tasks:
-- Refactor ProcessManager with proper state tracking
-- Add health monitoring and status reporting
-- Improve crash detection with detailed context
-- Implement restart rate limiting
+- ✅ ProxyState implemented with unified state tracking
+- ✅ Health monitoring and status reporting added
+- ✅ Crash detection improved with detailed context
+- ✅ Restart rate limiting implemented
 
 Success Criteria:
-- Clear process state visibility
-- Improved crash recovery with context
-- Foundation for diagnostic tools
+- ✅ Clear process state visibility
+- ✅ Improved crash recovery with context
+- ✅ Foundation for diagnostic tools established
 ```
 
-**Phase 1 Deliverable:** Agents never hang and always receive actionable guidance
-
-### Phase 2: Agent Autonomy (Weeks 3-4)
-**Goal:** Enable agents to diagnose and resolve issues independently
-
-#### 2.1 Diagnostic Tool System
-```
-Priority: HIGH - Enables autonomous troubleshooting
-Effort: 4-5 days
-Dependencies: Process state management
-
-Tasks:
-- Implement RequestRouter for proxy vs target routing
-- Create proxy_status tool with comprehensive state reporting
-- Add proxy_help tool with usage guidance
-- Build proxy_restart tool for manual recovery
-
-Success Criteria:
-- Agents can access proxy status independently
-- Self-service diagnostics available when target fails
-- Comprehensive troubleshooting guidance provided
-```
-
-#### 2.2 Tool Cycle Tracking
+#### 0.4 Complete Tool Cycle Logic 🚧 **IN PROGRESS**
 ```
 Priority: HIGH - Prevents Claude session breaks
-Effort: 3-4 days
+Complexity: Medium - 2-3 agent sessions
 Dependencies: Enhanced error messages
 
 Tasks:
-- Implement ToolCycleTracker component
-- Track tool_use → tool_result cycles
-- Add proxy_check_tool_cycles diagnostic tool
-- Generate session recovery guidance
+- 🚧 Implement ToolCycleTracker component (TASK-006)
+- 🚧 Integrate ToolCycleTracker with restart/timeout flows (TASK-007)
+- 📋 Add proxy_check_tool_cycles diagnostic tool
+- 📋 Generate session recovery guidance
 
 Success Criteria:
 - Incomplete tool cycles detected and reported
@@ -120,17 +98,117 @@ Success Criteria:
 - API validation errors prevented
 ```
 
+**Phase 0 Deliverable:** Clean architecture foundation with 80% monolithic code eliminated
+
+### Phase 1: Foundation Enhancement
+**Goal:** Enhance existing clean components with advanced capabilities
+
+#### 1.1 Advanced Timeout Management
+```
+Priority: MEDIUM - Enhance existing TimeoutManager
+Complexity: Medium - 2-3 agent sessions
+Dependencies: Phase 0 complete
+
+Tasks:
+- Enhance existing TimeoutManager with adaptive timeouts
+- Add operation-specific timeout hints (build operations = 5min)
+- Implement intelligent timeout adjustments
+- Add timeout pattern analysis
+
+Success Criteria:
+- Smarter timeout behavior based on operation type
+- Reduced false timeout errors
+- Better agent workflow continuity
+```
+
+#### 1.2 Enhanced Error Classification
+```
+Priority: MEDIUM - Extend existing ResponseEnhancer
+Complexity: Medium - 2-3 agent sessions
+Dependencies: Phase 0 complete
+
+Tasks:
+- Extend existing ResponseEnhancer with pattern recognition
+- Add contextual guidance templates
+- Improve recovery instruction accuracy
+- Implement error categorization system
+
+Success Criteria:
+- More precise error classification
+- Better guidance based on failure patterns
+- Reduced false positive guidance
+```
+
+#### 1.3 Process State Enhancement
+```
+Priority: MEDIUM - Extend existing ProxyState
+Complexity: Low - 1-2 agent sessions
+Dependencies: Phase 0 complete
+
+Tasks:
+- Extend existing ProxyState with health monitoring
+- Add restart rate limiting and pattern analysis
+- Implement detailed crash context reporting
+- Add performance metrics collection
+
+Success Criteria:
+- Comprehensive process health visibility
+- Intelligent restart behavior
+- Rich diagnostic information for agents
+```
+
+**Phase 1 Deliverable:** Enhanced foundation components with intelligent behavior
+
+### Phase 2: Agent Autonomy
+**Goal:** Enable agents to diagnose and resolve issues independently
+
+#### 2.1 Enhanced Diagnostic Tools
+```
+Priority: HIGH - Enables autonomous troubleshooting
+Complexity: High - 3-4 agent sessions
+Dependencies: Phase 1 complete
+
+Tasks:
+- Extend existing RequestRouter with proxy tools
+- Add proxy_status, proxy_help, proxy_restart tools
+- Implement comprehensive troubleshooting guidance
+- Create diagnostic workflow automation
+
+Success Criteria:
+- Agents can access proxy status independently
+- Self-service diagnostics available when target fails
+- Comprehensive troubleshooting guidance provided
+```
+
+#### 2.2 Advanced Tool Cycle Features
+```
+Priority: HIGH - Builds on existing ToolCycleTracker
+Complexity: Medium - 2-3 agent sessions
+Dependencies: Phase 0 ToolCycleTracker complete
+
+Tasks:
+- Enhance existing ToolCycleTracker with session recovery
+- Add proxy_check_tool_cycles diagnostic tool
+- Generate /resume command guidance
+- Implement cycle pattern analysis
+
+Success Criteria:
+- Advanced session recovery capabilities
+- Proactive cycle issue detection
+- Automated recovery guidance generation
+```
+
 #### 2.3 Graceful Degradation
 ```
 Priority: MEDIUM - Improves agent experience
-Effort: 2-3 days
-Dependencies: Diagnostic tools
+Complexity: Medium - 2-3 agent sessions
+Dependencies: Enhanced diagnostic tools
 
 Tasks:
-- Always-available proxy responses
-- Proxy tool provision when target unavailable
-- Enhanced initialize responses with guidance
+- Always-available proxy responses when target fails
 - Progressive enhancement based on target availability
+- Enhanced initialize responses with guidance
+- Seamless fallback mechanisms
 
 Success Criteria:
 - Proxy remains useful when target completely fails
@@ -140,32 +218,14 @@ Success Criteria:
 
 **Phase 2 Deliverable:** Agents can resolve 90% of issues without human intervention
 
-### Phase 3: Advanced Intelligence (Weeks 5-6)
+### Phase 3: Advanced Intelligence
 **Goal:** Predictive failure detection and automated optimization
 
-#### 3.1 Advanced Error Classification
-```
-Priority: MEDIUM - Improves error quality
-Effort: 3-4 days
-Dependencies: Phase 2 complete
-
-Tasks:
-- Implement sophisticated error type detection
-- Add pattern recognition for common failures
-- Create contextual guidance templates
-- Improve recovery instruction accuracy
-
-Success Criteria:
-- More precise error classification
-- Better guidance based on failure patterns
-- Reduced false positive guidance
-```
-
-#### 3.2 Performance Monitoring
+#### 3.1 Performance Monitoring
 ```
 Priority: LOW - Quality of life improvements
-Effort: 2-3 days
-Dependencies: Advanced error classification
+Complexity: Low - 1-2 agent sessions
+Dependencies: Phase 2 complete
 
 Tasks:
 - Add request latency monitoring
@@ -179,10 +239,10 @@ Success Criteria:
 - Resource usage monitoring
 ```
 
-#### 3.3 Intelligent Restart Strategies
+#### 3.2 Intelligent Restart Strategies
 ```
 Priority: LOW - Advanced optimization
-Effort: 3-4 days
+Complexity: Medium - 2-3 agent sessions
 Dependencies: Performance monitoring
 
 Tasks:
@@ -197,6 +257,24 @@ Success Criteria:
 - Improved stability through adaptive behavior
 ```
 
+#### 3.3 AI-Powered Guidance
+```
+Priority: LOW - Future enhancement
+Complexity: High - 3-4 agent sessions
+Dependencies: All previous phases
+
+Tasks:
+- Implement pattern learning from agent interactions
+- Add contextual guidance improvement over time
+- Create adaptive error message optimization
+- Develop predictive issue detection
+
+Success Criteria:
+- Self-improving guidance quality
+- Proactive issue prevention
+- Personalized agent workflow optimization
+```
+
 **Phase 3 Deliverable:** Intelligent, self-optimizing development environment
 
 ## Implementation Details
@@ -208,10 +286,10 @@ Success Criteria:
 - Focus on integration tests for agent workflow scenarios
 - Maintain 90%+ test coverage throughout development
 
-#### 2. **Incremental Integration**
-- Preserve existing functionality while adding new features
-- Use feature flags for gradual rollout of new capabilities
-- Maintain backward compatibility with current usage
+#### 2. **Component Enhancement**
+- Build on existing clean architecture components
+- Enhance functionality through component extension, not modification
+- Maintain clean separation of concerns throughout
 
 #### 3. **Validation Strategy**
 - Test with real AI agent development scenarios
@@ -244,22 +322,29 @@ Success Criteria:
 
 ### Quality Gates
 
+#### Phase 0 Criteria (80% COMPLETE)
+- [x] MCPDevProxy class reduced from 644 to ~250 lines
+- [x] Clean component architecture with single responsibilities
+- [x] Zero code duplication between components
+- [ ] ToolCycleTracker implementation complete
+- [ ] End-to-end functionality verification
+
 #### Phase 1 Criteria
-- [ ] Zero hanging operations in test scenarios
-- [ ] All errors include actionable guidance
+- [ ] Advanced timeout management with adaptive behavior
+- [ ] Enhanced error classification and guidance
+- [ ] Comprehensive process state monitoring
 - [ ] Performance overhead < 1ms for forwarded requests
-- [ ] Existing functionality preserved
 
 #### Phase 2 Criteria  
 - [ ] Agents can diagnose issues independently
-- [ ] Tool cycle tracking prevents API errors
+- [ ] Advanced tool cycle tracking with session recovery
 - [ ] Proxy remains available when target fails
 - [ ] 90% autonomous issue resolution in test scenarios
 
 #### Phase 3 Criteria
-- [ ] Intelligent error classification and guidance
 - [ ] Performance monitoring and optimization
-- [ ] Adaptive restart strategies
+- [ ] Intelligent restart strategies
+- [ ] AI-powered guidance improvements
 - [ ] Comprehensive agent workflow optimization
 
 ## Success Metrics
@@ -276,15 +361,16 @@ Success Criteria:
 - **Development experience** - Smooth iteration cycles
 - **Debugging efficiency** - Clear diagnostic information
 
-## Timeline Summary
+## Implementation Effort Summary
 
 ```
-Week 1-2: Foundation (Timeouts, Error Enhancement, State Management)
-Week 3-4: Agent Autonomy (Diagnostics, Tool Cycles, Degradation)  
-Week 5-6: Advanced Intelligence (Classification, Monitoring, Optimization)
+Phase 0: Architecture Foundation (80% complete - 3 tasks remaining)
+Phase 1: Foundation Enhancement (~6-8 agent sessions)
+Phase 2: Agent Autonomy (~8-10 agent sessions)  
+Phase 3: Advanced Intelligence (~6-8 agent sessions)
 
-Total: 6 weeks to complete vision
-Critical Path: Timeout Management → Enhanced Errors → Diagnostic Tools
+Total: ~20-25 focused agent sessions to complete vision
+Critical Path: Complete Phase 0 → Foundation Enhancement → Agent Autonomy
 ```
 
 ## Post-Implementation

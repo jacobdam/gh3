@@ -1,43 +1,61 @@
-# Current Sprint Tasks (REVISED - DELETION-FOCUSED)
+# Current Sprint Tasks (Phase 0 - Architecture Foundation)
 
 ## Overview
-Sprint Goal: **DELETE LEGACY CODE & LEVERAGE EXISTING COMPONENTS**
-Timeline: 1 week (reduced scope)
-Start Date: 2025-08-03
-Approach: "Delete and fix over create new" - use existing TASK-001/002/003 components
+Sprint Goal: **COMPLETE PHASE 0 ARCHITECTURE FOUNDATION (80% COMPLETE)**
+Estimated: ~4-5 agent sessions (3 tasks remaining)
+Start Date: 2025-08-03  
+Status: **80% complete** - Ready to finish Phase 0 and move to Phase 1 enhancements
+Approach: "Architecture-first cleanup" - leveraging existing clean components
 
 ## Task Status
 
-### Ready for Development (PRIORITIZED TASKS)
+### Phase 0 Remaining Tasks (80% COMPLETE - 3 TASKS LEFT)
+
 - [ ] **CLEANUP-004**: Delete redundant cleanup logic from MCPDevProxy (HIGH)
-  - Priority: P1 (High)
-  - Effort: 2 hours
+  - Priority: P0 (Phase 0 completion)
+  - Complexity: Low - 1 agent session
   - **Target**: Delete ~50 lines of redundant cleanup logic (ProxyState already handles TTL)
   - **Result**: Remove Timer management, cleanup constants, periodic cleanup methods
   - **Status**: Ready for immediate development
 
 - [ ] **TASK-006**: Implement ToolCycleTracker class (HIGH)
-  - Priority: P1 (High) 
-  - Effort: 3 hours
+  - Priority: P0 (Phase 0 completion)
+  - Complexity: Medium - 2 agent sessions  
   - **Target**: Create missing ToolCycleTracker implementation (tests exist but class missing)
   - **Result**: Comprehensive tool cycle management with recovery guidance
   - **Status**: Ready for development (task definition created)
 
 - [ ] **TASK-007**: Complete component integration verification (HIGH)
-  - Priority: P1 (High)
-  - Effort: 2 hours  
+  - Priority: P0 (Phase 0 completion)
+  - Complexity: Low - 1 agent session
   - **Target**: Verify all components work together, complete architecture transformation
   - **Result**: Full technical-design.md architecture implemented and verified
   - **Status**: Ready for development (depends on TASK-006)
 
-### ✅ **INFRASTRUCTURE COMPLETED (DO NOT MODIFY)**
-- [x] TASK-001: TimeoutManager class ✅ 
-- [x] TASK-002: ResponseEnhancer class ✅
-- [x] TASK-003: RequestRouter class ✅
+### ✅ **PHASE 0 COMPLETED TASKS (80% DONE)**
+- [x] **0.1** CLEANUP-001: Delete Inline Request Handling ✅ 
+- [x] **0.2** CLEANUP-002: Delete Scattered State Management ✅
+- [x] **0.3** CLEANUP-003: Delete Hardcoded Error Building ✅
+- [x] **TASK-001**: TimeoutManager class ✅ 
+- [x] **TASK-002**: ResponseEnhancer class ✅
+- [x] **TASK-003**: RequestRouter class ✅
 
-### CANCELLED/DEFERRED (Not needed for core functionality)
-- ~~TASK-004: Configurable timeout system~~ - Basic TimeoutManager sufficient
-- ~~TASK-005: ErrorContext classification~~ - Basic ResponseEnhancer sufficient
+### 📋 **UPCOMING PHASES (After Phase 0 Complete)**
+
+#### Phase 1: Foundation Enhancement (~6-8 agent sessions)
+- Advanced timeout management with adaptive behavior
+- Enhanced error classification and pattern recognition  
+- Process state enhancement with health monitoring
+
+#### Phase 2: Agent Autonomy (~8-10 agent sessions)
+- Enhanced diagnostic tools (proxy_status, proxy_help, proxy_restart)
+- Advanced tool cycle features with session recovery
+- Graceful degradation when target unavailable
+
+#### Phase 3: Advanced Intelligence (~6-8 agent sessions)  
+- Performance monitoring and optimization
+- Intelligent restart strategies with pattern analysis
+- AI-powered guidance improvements
 
 ### In Progress
 <!-- Tasks currently being worked on will be moved here -->
@@ -90,7 +108,7 @@ Approach: "Delete and fix over create new" - use existing TASK-001/002/003 compo
     - Clean compilation with zero errors or warnings
     - Perfect example of "delete-first" architecture improvement
 
-- [x] TASK-001: Extract and implement TimeoutManager class (Phase 1.1)
+- [x] TASK-001: Extract and implement TimeoutManager class (Phase 0 Infrastructure)
   - Priority: P0 (Critical)
   - Completed: [Commit 14a80d9](https://github.com/user/repo/commit/14a80d9)
   - Features implemented:
@@ -101,7 +119,7 @@ Approach: "Delete and fix over create new" - use existing TASK-001/002/003 compo
     - Integration with MCPDevProxy
     - All existing functionality preserved
 
-- [x] TASK-002: Extract and implement ResponseEnhancer class (Phase 1.1)
+- [x] TASK-002: Extract and implement ResponseEnhancer class (Phase 0 Infrastructure)
   - Priority: P0 (Critical)
   - Completed: [Commit 15000a3](https://github.com/user/repo/commit/15000a3) - projects/mcp-proxy branch
   - Features implemented:
@@ -113,8 +131,10 @@ Approach: "Delete and fix over create new" - use existing TASK-001/002/003 compo
     - Integration with MCPDevProxy replacing inline enhancement
     - All existing functionality preserved
 
-## Sprint Notes
-- Focus on extracting components first to establish clean architecture
-- Each component should have >90% test coverage
-- Follow clean code principles from technical design
+## Phase 0 Completion Notes
+- **80% Complete**: Major architecture cleanup done, 3 tasks remaining
+- **Next Priority**: Complete CLEANUP-004, TASK-006, TASK-007 to finish Phase 0
+- **Success Metrics**: MCPDevProxy class reduced from 644 lines to ~250 lines  
+- **Architecture Quality**: Clean component separation, dependency injection, testability
+- **Ready for Phase 1**: Foundation enhancement of existing clean components
 - Create comprehensive handoff notes for each session

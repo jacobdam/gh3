@@ -2,7 +2,7 @@
 
 ## Overview
 
-This implementation plan prioritizes deletion of legacy code and architectural cleanup over new feature development. Based on analysis of docs vs source code misalignments, the focus is **"delete and fix over create new"**.
+This implementation plan follows a **hybrid approach**: prioritize architectural cleanup to establish a clean foundation, then incrementally add roadmap features. The strategy is **"clean architecture first, then enhance systematically"**.
 
 ## Current State Analysis
 
@@ -18,13 +18,14 @@ This implementation plan prioritizes deletion of legacy code and architectural c
 - **Hardcoded error building** - prevents context-aware guidance
 - **Ad-hoc tool cycle tracking** - incomplete detection logic
 
-## Implementation Phases (REVISED)
+## Implementation Phases (HYBRID APPROACH)
 
-### Phase 1: Critical Legacy Code Deletion (P0 - BREAKING CHANGES OK)
-**Timeline: 3-4 days**
-**Note: Breaking changes acceptable - no real customers**
+### Phase 0: Architecture Foundation (P0 - BREAKING CHANGES OK) ✅ **80% COMPLETE**
+**Goal:** Clean monolithic architecture to enable feature development
+**Estimated:** ~4-5 agent sessions (3 tasks remaining)
+**Note:** Breaking changes acceptable - no real customers
 
-#### 1.1 Delete Inline Request Handling ✅ **COMPLETED**
+#### 0.1 Delete Inline Request Handling ✅ **COMPLETED**
 **Target: Remove 130+ lines from MCPDevProxy.handleClientInput()**
 - [x] **DELETE**: Inline `initialize` request handling (lines 194-230) ✅
 - [x] **DELETE**: Inline `tools/list` handling (lines 231-268) ✅
@@ -34,7 +35,7 @@ This implementation plan prioritizes deletion of legacy code and architectural c
 - [x] **RESULT**: MCPDevProxy.handleClientInput() reduces from 130 to ~46 lines ✅
 - **Completed**: CLEANUP-001 (2025-08-03) - Deleted 83 lines of inline logic
 
-#### 1.2 Delete Scattered State Management ✅ **COMPLETED**
+#### 0.2 Delete Scattered State Management ✅ **COMPLETED**
 **Target: Remove 7+ state tracking variables**
 - [x] **DELETE**: `_pendingRequests` Map (line 36) ✅
 - [x] **DELETE**: `_requestTimestamps` Map (line 37-38) ✅
@@ -47,7 +48,7 @@ This implementation plan prioritizes deletion of legacy code and architectural c
 - [x] **RESULT**: MCPDevProxy constructor reduces from 15+ fields to clean dependencies ✅
 - **Completed**: CLEANUP-002 (2025-08-03) - Created unified ProxyState, deleted 7 scattered variables
 
-#### 1.3 Delete Hardcoded Error Building ✅ **COMPLETED**
+#### 0.3 Delete Hardcoded Error Building ✅ **COMPLETED**
 **Target: Remove hardcoded error logic**
 - [x] **DELETE**: `_buildServerUnavailableDetails()` method (50 lines) ✅
 - [x] **DELETE**: Hardcoded error details throughout handleClientInput ✅
@@ -55,10 +56,8 @@ This implementation plan prioritizes deletion of legacy code and architectural c
 - [x] **RESULT**: Consistent, context-aware error responses ✅
 - **Completed**: CLEANUP-003 (2025-08-03) - Deleted all hardcoded error building (~63 lines)
 
-### Phase 2: Replace Ad-hoc Tool Cycle Logic (P0)
-**Timeline: 2 days**
-
-#### 2.1 Delete Ad-hoc Tool Tracking 🚧 **IN PROGRESS**
+#### 0.4 Complete Tool Cycle Logic 🚧 **IN PROGRESS**
+**Complexity: Medium - 2-3 agent sessions**
 **Target: Remove scattered tool cycle management**
 - [x] **DELETE**: Manual `_pendingToolUses` Set tracking (lines 174-179) ✅
 - [x] **DELETE**: Manual `_toolUseTimestamps` Map tracking (lines 42-43) ✅
@@ -69,10 +68,10 @@ This implementation plan prioritizes deletion of legacy code and architectural c
 - [ ] **RESULT**: Structured cycle reporting, proper recovery guidance
 - **Status**: Scattered tracking deleted via CLEANUP-002, implementation needed
 
-### Phase 3: Delete Redundant Binary Monitoring (P1)  
-**Timeline: 1 day**
+#### 0.5 Delete Redundant Code 📋 **READY FOR DEVELOPMENT**
+**Complexity: Low - 1-2 agent sessions**
 
-#### 3.1 Remove Duplicate File Monitoring
+**0.5.1 Remove Duplicate File Monitoring**
 **Target: FileWatcher already exists, remove redundant monitoring**
 - [ ] **DELETE**: `_startBinaryMonitoring()` method (lines 503-521)
 - [ ] **DELETE**: `_stopBinaryMonitoring()` method (lines 518-521) 
@@ -80,10 +79,7 @@ This implementation plan prioritizes deletion of legacy code and architectural c
 - [ ] **INTEGRATE**: Binary availability checking into existing FileWatcher
 - [ ] **RESULT**: Single file monitoring system, no duplication
 
-### Phase 4: Delete Manual Cleanup Logic (P1)
-**Timeline: 1 day**
-
-#### 4.1 Remove Manual Lifecycle Management 📋 **READY FOR DEVELOPMENT**
+**0.5.2 Remove Manual Lifecycle Management 📋 **READY FOR DEVELOPMENT**
 **Target: Components should manage their own cleanup**
 - [ ] **DELETE**: `_startPeriodicCleanup()` method (lines 594-598) 📋 **CLEANUP-004**
 - [ ] **DELETE**: `_stopPeriodicCleanup()` method (lines 601-604) 📋 **CLEANUP-004**
@@ -93,10 +89,8 @@ This implementation plan prioritizes deletion of legacy code and architectural c
 - [ ] **RESULT**: Components responsible for their own state management
 - **Status**: CLEANUP-004 task definition ready, ~50 lines to delete
 
-### Phase 5: Architecture Validation (P1)
-**Timeline: 1 day**
-
-#### 5.1 Verify Component Integration 📋 **READY FOR DEVELOPMENT**
+#### 0.6 Architecture Validation 📋 **READY FOR DEVELOPMENT**
+**Complexity: Low - 1-2 agent sessions**
 **Target: Ensure all components work together properly**
 - [ ] **VERIFY**: RequestRouter handles all request types 📋 **TASK-007**
 - [ ] **VERIFY**: TimeoutManager integrated for all timeouts 📋 **TASK-007**
@@ -106,12 +100,62 @@ This implementation plan prioritizes deletion of legacy code and architectural c
 - [ ] **RESULT**: Clean architecture with proper separation of concerns
 - **Status**: TASK-007 task definition ready, depends on TASK-006
 
-## ⚠️ **DELETED PHASES** (No longer needed)
+### Phase 1: Foundation Enhancement (UPCOMING)
+**Goal:** Enhance existing clean components with advanced capabilities
+**Estimated:** ~6-8 agent sessions (after Phase 0 completion)
 
-~~**Phase 3: Multi-Runtime Support**~~ - Can be added later incrementally
-~~**Phase 4: Enhanced Diagnostic Tools**~~ - Existing tools sufficient for now  
-~~**Phase 5: Testing & Quality**~~ - Focus on component testing only
-~~**Phase 6: Documentation & Polish**~~ - Lower priority
+#### 1.1 Advanced Timeout Management
+- Enhance existing TimeoutManager with adaptive timeouts
+- Add operation-specific timeout hints (build operations = 5min)
+- Implement intelligent timeout adjustments
+
+#### 1.2 Enhanced Error Classification  
+- Extend existing ResponseEnhancer with pattern recognition
+- Add contextual guidance templates
+- Improve recovery instruction accuracy
+
+#### 1.3 Process State Enhancement
+- Extend existing ProxyState with health monitoring
+- Add restart rate limiting and pattern analysis
+- Implement detailed crash context reporting
+
+### Phase 2: Agent Autonomy (UPCOMING)
+**Goal:** Enable agents to diagnose and resolve issues independently
+**Estimated:** ~8-10 agent sessions
+
+#### 2.1 Enhanced Diagnostic Tools
+- Extend existing RequestRouter with proxy tools
+- Add proxy_status, proxy_help, proxy_restart tools
+- Implement comprehensive troubleshooting guidance
+
+#### 2.2 Advanced Tool Cycle Features
+- Enhance existing ToolCycleTracker with session recovery
+- Add proxy_check_tool_cycles diagnostic tool
+- Generate /resume command guidance
+
+#### 2.3 Graceful Degradation
+- Always-available proxy responses when target fails
+- Progressive enhancement based on target availability
+- Enhanced initialize responses with guidance
+
+### Phase 3: Advanced Intelligence (UPCOMING)
+**Goal:** Predictive failure detection and automated optimization
+**Estimated:** ~6-8 agent sessions
+
+#### 3.1 Advanced Error Classification
+- Sophisticated error type detection
+- Pattern recognition for common failures
+- Contextual guidance templates
+
+#### 3.2 Performance Monitoring
+- Request latency monitoring
+- Restart frequency and success rate tracking
+- Memory usage and performance monitoring
+
+#### 3.3 Intelligent Restart Strategies
+- Exponential backoff with jitter
+- Restart pattern analysis
+- Adaptive timeout adjustments
 
 ## Critical Success Metrics (REVISED)
 
@@ -193,14 +237,22 @@ lib/
 
 ## **Success Criteria**
 
-### **Immediate Success (After Phase 1)** ✅ **ACHIEVED**
+### **Architecture Foundation Success (Phase 0)** ✅ **80% COMPLETE**
 - [x] MCPDevProxy class under 250 lines (from 644) ✅ **MASSIVE PROGRESS**
 - [x] No inline request handling in MCPDevProxy ✅ **CLEANUP-001**
 - [x] No scattered state variables (7+ → 1 ProxyState) ✅ **CLEANUP-002**
 - [x] All errors use ResponseEnhancer + ErrorContext ✅ **CLEANUP-003**
 - [x] All requests route through RequestRouter ✅ **CLEANUP-001**
 
-### **Final Success (After Phase 5)** 🎯 **NEARLY COMPLETE**
+### **Feature Enhancement Success (Phases 1-3)** 📋 **UPCOMING**
+- [ ] Advanced timeout management with adaptive behavior
+- [ ] Enhanced error classification and guidance  
+- [ ] Comprehensive diagnostic tools for agent autonomy
+- [ ] Graceful degradation when target unavailable
+- [ ] 90% autonomous issue resolution
+- [ ] Intelligent restart strategies and optimization
+
+### **Architecture Foundation Success (Phase 0)** 🎯 **NEARLY COMPLETE**
 - [ ] MCPDevProxy is pure orchestrator (~200 lines) 🎯 **3 tasks remaining**
 - [x] Each component has single responsibility ✅
 - [x] Zero code duplication between components ✅ **Major deletions completed**
@@ -226,18 +278,23 @@ lib/
 - ✅ **Performance optimization** - Clean architecture enables later optimization
 - ✅ **Advanced error enhancement** - Basic ErrorContext sufficient initially
 
-## **Next Actions (IMMEDIATE)** 🎯 **FINAL 3 TASKS**
+## **Next Actions (IMMEDIATE)** 🎯 **COMPLETE PHASE 0**
 
-1. **CLEANUP-004**: Delete redundant cleanup logic from MCPDevProxy (2 hours)
+**Architecture Foundation Completion (3 tasks remaining):**
+
+1. **CLEANUP-004**: Delete redundant cleanup logic from MCPDevProxy
+   - **Complexity**: Low - 1 agent session
    - Delete ~50 lines of redundant Timer management and cleanup methods
    - ProxyState already handles TTL cleanup internally
 
-2. **TASK-006**: Implement ToolCycleTracker class (3 hours)
+2. **TASK-006**: Implement ToolCycleTracker class
+   - **Complexity**: Medium - 2 agent sessions  
    - Tests exist but implementation class is missing
    - Create comprehensive tool cycle management with recovery guidance
 
-3. **TASK-007**: Complete component integration verification (2 hours)
+3. **TASK-007**: Complete component integration verification
+   - **Complexity**: Low - 1 agent session
    - Verify all components work together per technical-design.md
    - Final architecture validation and end-to-end testing
 
-**Status**: 80%+ architecture transformation complete, final cleanup phase
+**Status**: Phase 0 80% complete, then ready for Phase 1 feature enhancements
