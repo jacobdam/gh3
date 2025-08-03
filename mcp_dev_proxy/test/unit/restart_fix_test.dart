@@ -35,8 +35,9 @@ void main() {
 
     test('should send error responses for pending requests during restart',
         () async {
-      // SKIP: CI environment socket issues - low priority until sprint revamp completed  
-      skip('CI environment socket issues - SocketException: Write failed (Broken pipe)');
+      // SKIP: CI environment socket issues - low priority until sprint revamp completed
+      skip(
+          'CI environment socket issues - SocketException: Write failed (Broken pipe)');
       // Create a mock stdout to capture responses
       final stdoutBuffer = <String>[];
       final mockStdout = _MockIOSink(stdoutBuffer);

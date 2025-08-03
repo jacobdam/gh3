@@ -22,7 +22,8 @@ void main() {
 
     test('should work with empty streams (headless mode)', () async {
       // SKIP: CI environment socket issues - low priority until sprint revamp completed
-      skip('CI environment socket issues - SocketException: Write failed (Broken pipe)');
+      skip(
+          'CI environment socket issues - SocketException: Write failed (Broken pipe)');
       final proxy = MCPDevProxy(
         targetBinary: testBinary.path,
         stdinStream: const Stream.empty(),
@@ -42,7 +43,8 @@ void main() {
 
     test('should work with custom stdin stream', () async {
       // SKIP: CI environment socket issues - low priority until sprint revamp completed
-      skip('CI environment socket issues - SocketException: Write failed (Broken pipe)');
+      skip(
+          'CI environment socket issues - SocketException: Write failed (Broken pipe)');
       final inputController = StreamController<String>();
       final outputBuffer = <String>[];
 
