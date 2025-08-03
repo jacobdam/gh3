@@ -15,7 +15,6 @@ import "src/routing/proxy_handlers.dart";
 import "src/routing/request_router.dart";
 
 class MCPDevProxy {
-
   MCPDevProxy({
     required this.targetBinary,
     required this.stdinStream,
@@ -127,11 +126,13 @@ class MCPDevProxy {
       );
 
       // Monitor process exit
-      unawaited(_processManager.waitForExit().then((exitCode) {
-        if (exitCode != null) {
-          _handleProcessCrash(exitCode);
-        }
-      }),);
+      unawaited(
+        _processManager.waitForExit().then((exitCode) {
+          if (exitCode != null) {
+            _handleProcessCrash(exitCode);
+          }
+        }),
+      );
 
       _logger.info("Target process started successfully");
       _stopBinaryMonitoring(); // Stop monitoring once successfully started
@@ -147,7 +148,8 @@ class MCPDevProxy {
 
       // Don"t rethrow - let proxy continue running but with startup error set
       _logger.warning(
-          "Proxy will continue running but target process failed to start",);
+        "Proxy will continue running but target process failed to start",
+      );
     }
   }
 
@@ -302,9 +304,11 @@ class MCPDevProxy {
         TimeoutManager(); // Reinitialize for the restarted process
 
     // Then restart the process
-    unawaited(_processManager.restart().catchError((Object error) {
-      _logger.severe("Failed to restart target process: $error");
-    }),);
+    unawaited(
+      _processManager.restart().catchError((Object error) {
+        _logger.severe("Failed to restart target process: $error");
+      }),
+    );
   }
 
   void _sendErrorToClient(dynamic id, MCPError error) {
@@ -317,7 +321,9 @@ class MCPDevProxy {
     _requestRouter.registerRoute("proxy_status", ProxyStatusHandler(this));
     _requestRouter.registerRoute("proxy_help", ProxyHelpHandler());
     _requestRouter.registerRoute(
-        "proxy_check_tool_cycles", ProxyToolCycleHandler(this),);
+      "proxy_check_tool_cycles",
+      ProxyToolCycleHandler(this),
+    );
 
     // Register handlers for when target server is unavailable
     _requestRouter.registerRoute("initialize", InitializeHandler(this));
@@ -369,11 +375,12 @@ class MCPDevProxy {
 
       if (toolName == null) {
         _sendErrorToClient(
-            message.id,
-            MCPError(
-              code: -32602,
-              message: "Missing tool name in request",
-            ),);
+          message.id,
+          MCPError(
+            code: -32602,
+            message: "Missing tool name in request",
+          ),
+        );
         return;
       }
 
@@ -393,18 +400,20 @@ class MCPDevProxy {
       } on Exception catch (e) {
         if (e is RouteNotFoundException) {
           _sendErrorToClient(
-              message.id,
-              MCPError(
-                code: -32601,
-                message: "Unknown tool: $toolName",
-              ),);
+            message.id,
+            MCPError(
+              code: -32601,
+              message: "Unknown tool: $toolName",
+            ),
+          );
         } else {
           _sendErrorToClient(
-              message.id,
-              MCPError(
-                code: -32603,
-                message: "Internal error: $e",
-              ),);
+            message.id,
+            MCPError(
+              code: -32603,
+              message: "Internal error: $e",
+            ),
+          );
         }
       }
     } else {
@@ -456,14 +465,20 @@ class MCPDevProxy {
   void _startRequestTimeout(MCPMessage message) {
     if (message.id == null) return;
 
-    final timeout = _timeoutManager.getTimeout(message.method ?? "",
-        message.params as Map<String, dynamic>? ?? <String, dynamic>{},);
+    final timeout = _timeoutManager.getTimeout(
+      message.method ?? "",
+      message.params as Map<String, dynamic>? ?? <String, dynamic>{},
+    );
 
-    _timeoutManager.startTimeout(message.id.toString(), message.method ?? "",
-        () => _handleRequestTimeout(message),);
+    _timeoutManager.startTimeout(
+      message.id.toString(),
+      message.method ?? "",
+      () => _handleRequestTimeout(message),
+    );
 
     _logger.fine(
-        "Started ${timeout.inSeconds}s timeout for ${message.method} (id: ${message.id})",);
+      "Started ${timeout.inSeconds}s timeout for ${message.method} (id: ${message.id})",
+    );
   }
 
   void _cancelRequestTimeout(dynamic id) {
@@ -482,8 +497,10 @@ class MCPDevProxy {
     _cancelRequestTimeout(id);
 
     // Create timeout error using TimeoutManager
-    final timeout = _timeoutManager.getTimeout(originalMessage.method ?? "",
-        originalMessage.params as Map<String, dynamic>? ?? <String, dynamic>{},);
+    final timeout = _timeoutManager.getTimeout(
+      originalMessage.method ?? "",
+      originalMessage.params as Map<String, dynamic>? ?? <String, dynamic>{},
+    );
     final operationContext = {
       "proxy": "mcp_dev_proxy",
       "proxy_capabilities": [
@@ -497,7 +514,11 @@ class MCPDevProxy {
     };
 
     final timeoutErrorData = _timeoutManager.createTimeoutError(
-        id.toString(), originalMessage.method ?? "", timeout, operationContext,);
+      id.toString(),
+      originalMessage.method ?? "",
+      timeout,
+      operationContext,
+    );
 
     final timeoutError =
         MCPError.fromJson(timeoutErrorData["error"] as Map<String, dynamic>);
@@ -554,7 +575,8 @@ class MCPDevProxy {
 
     if (staleRequestIds.isNotEmpty || staleToolUseIds.isNotEmpty) {
       _logger.info(
-          "Cleaned up ${staleRequestIds.length} stale requests and ${staleToolUseIds.length} stale tool_uses",);
+        "Cleaned up ${staleRequestIds.length} stale requests and ${staleToolUseIds.length} stale tool_uses",
+      );
     }
   }
 }

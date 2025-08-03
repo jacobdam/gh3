@@ -1,5 +1,4 @@
 class ErrorContext {
-
   ErrorContext({
     this.detectedRuntime,
     this.targetCommand,

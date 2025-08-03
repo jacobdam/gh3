@@ -68,8 +68,10 @@ void main() {
       expect(response["result"], isNotNull);
       expect(response["result"]["serverInfo"]["name"], equals("mcp_dev_proxy"));
       expect(response["result"]["instructions"], isA<String>());
-      expect(response["result"]["instructions"],
-          contains("Target MCP server is not available"),);
+      expect(
+        response["result"]["instructions"],
+        contains("Target MCP server is not available"),
+      );
     });
 
     test("proxy provides tools when target unavailable", () async {
@@ -174,7 +176,8 @@ void main() {
         }
       });
 
-      final detected = await logCompleter.future.timeout(const Duration(seconds: 10));
+      final detected =
+          await logCompleter.future.timeout(const Duration(seconds: 10));
 
       expect(detected, isTrue);
 

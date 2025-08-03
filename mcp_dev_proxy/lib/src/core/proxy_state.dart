@@ -51,7 +51,7 @@ class ProxyState {
     _lastRestartReason = null;
   }
 
-  // Startup state management  
+  // Startup state management
   void setStartupError(String? error) {
     _startupError = error;
   }

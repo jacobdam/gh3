@@ -1,7 +1,6 @@
 import "dart:convert";
 
 class MCPMessage {
-
   MCPMessage({
     required this.jsonrpc,
     this.id,
@@ -89,7 +88,6 @@ class MCPMessage {
 }
 
 class MCPError {
-
   MCPError({
     required this.code,
     required this.message,

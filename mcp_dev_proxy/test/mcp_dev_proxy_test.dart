@@ -108,8 +108,10 @@ void main() {
       final response = jsonDecode(outputLines.last);
       if (response["result"] != null && response["result"]["content"] != null) {
         expect(response["result"]["content"], isA<List<dynamic>>());
-        expect(response["result"]["content"][0]["text"],
-            contains("MCP Dev Proxy Status"),);
+        expect(
+          response["result"]["content"][0]["text"],
+          contains("MCP Dev Proxy Status"),
+        );
       } else {
         // Handle error response
         expect(response["error"], isNotNull);
@@ -136,8 +138,10 @@ void main() {
       expect(outputLines.length, greaterThan(0));
       final response = jsonDecode(outputLines.last);
       if (response["result"] != null && response["result"]["content"] != null) {
-        expect(response["result"]["content"][0]["text"],
-            contains("Tool Cycle Check"),);
+        expect(
+          response["result"]["content"][0]["text"],
+          contains("Tool Cycle Check"),
+        );
       } else {
         // Handle error response
         expect(response["error"], isNotNull);
@@ -199,7 +203,11 @@ void main() {
 
     test("formats message correctly", () {
       final message = MCPMessage(
-          jsonrpc: "2.0", id: 1, method: "test", params: {"key": "value"},);
+        jsonrpc: "2.0",
+        id: 1,
+        method: "test",
+        params: {"key": "value"},
+      );
 
       final formatted = MCPProtocol.formatMessage(message);
       final parsed = jsonDecode(formatted);
@@ -228,7 +236,6 @@ void main() {
 }
 
 class _MockIOSink implements IOSink {
-
   _MockIOSink(this.lines);
   final List<String> lines;
 

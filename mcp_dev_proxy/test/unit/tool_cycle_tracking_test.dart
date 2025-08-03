@@ -81,17 +81,24 @@ void main() {
 
       // Create mix of pending and completed cycles
       tracker.startToolCycle(
-          toolCallId1, DateTime.now().subtract(const Duration(minutes: 5)),);
+        toolCallId1,
+        DateTime.now().subtract(const Duration(minutes: 5)),
+      );
       tracker.startToolCycle(
-          toolCallId2, DateTime.now().subtract(const Duration(minutes: 2)),);
+        toolCallId2,
+        DateTime.now().subtract(const Duration(minutes: 2)),
+      );
       tracker.completeToolCycle(toolCallId1);
 
       final report = tracker.getReport();
 
       expect(report.totalPending, equals(1));
       expect(report.pendingIds, contains(toolCallId2));
-      expect(report.hasApiRisk, isTrue,
-          reason: "Pending cycles create API validation risk",);
+      expect(
+        report.hasApiRisk,
+        isTrue,
+        reason: "Pending cycles create API validation risk",
+      );
       expect(report.recoveryGuidance, contains("/resume"));
       expect(report.recoveryGuidance, contains("Claude session"));
     });
@@ -129,11 +136,13 @@ class ToolCycleTracker {
   void completeToolCycle(String toolCallId) {
     final cycle = _pendingCycles.remove(toolCallId);
     if (cycle != null) {
-      _completedCycles.add(ToolCycleInfo(
-        id: cycle.id,
-        startTime: cycle.startTime,
-        status: ToolCycleStatus.completed,
-      ),);
+      _completedCycles.add(
+        ToolCycleInfo(
+          id: cycle.id,
+          startTime: cycle.startTime,
+          status: ToolCycleStatus.completed,
+        ),
+      );
     }
   }
 
@@ -141,7 +150,9 @@ class ToolCycleTracker {
   List<ToolCycleInfo> getCompletedCycles() => _completedCycles;
 
   void sendErrorsForPendingCycles(
-      String reason, void Function(Map<String, dynamic>) onError,) {
+    String reason,
+    void Function(Map<String, dynamic>) onError,
+  ) {
     for (final cycle in _pendingCycles.values) {
       onError({
         "jsonrpc": "2.0",
@@ -191,7 +202,6 @@ class ToolCycleTracker {
 }
 
 class ToolCycleInfo {
-
   ToolCycleInfo({
     required this.id,
     required this.startTime,
@@ -209,7 +219,6 @@ enum ToolCycleStatus {
 }
 
 class ToolCycleReport {
-
   ToolCycleReport({
     required this.totalPending,
     required this.pendingIds,

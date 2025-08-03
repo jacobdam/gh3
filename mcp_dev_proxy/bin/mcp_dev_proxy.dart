@@ -19,7 +19,8 @@ void main(List<String> arguments) async {
     stderr.writeln();
     stderr.writeln("Example:");
     stderr.writeln(
-        "  mcp_dev_proxy ./mcp_flutter_automation/mcp_flutter_automation_binary",);
+      "  mcp_dev_proxy ./mcp_flutter_automation/mcp_flutter_automation_binary",
+    );
     exit(1);
   }
 

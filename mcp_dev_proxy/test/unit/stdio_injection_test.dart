@@ -21,23 +21,32 @@ void main() {
       await tempDir.delete(recursive: true);
     });
 
-    test("should work with empty streams (headless mode)", () async {
-      // SKIP: CI environment socket issues - low priority until sprint revamp completed
-    },
-        skip:
-            "CI environment socket issues - SocketException: Write failed (Broken pipe)",);
+    test(
+      "should work with empty streams (headless mode)",
+      () async {
+        // SKIP: CI environment socket issues - low priority until sprint revamp completed
+      },
+      skip:
+          "CI environment socket issues - SocketException: Write failed (Broken pipe)",
+    );
 
-    test("should work with custom stdin stream", () async {
-      // SKIP: CI environment socket issues - low priority until sprint revamp completed
-    },
-        skip:
-            "CI environment socket issues - SocketException: Write failed (Broken pipe)",);
+    test(
+      "should work with custom stdin stream",
+      () async {
+        // SKIP: CI environment socket issues - low priority until sprint revamp completed
+      },
+      skip:
+          "CI environment socket issues - SocketException: Write failed (Broken pipe)",
+    );
 
-    test("should work with custom stdout sink", () async {
-      // SKIP: CI environment socket issues - low priority until sprint revamp completed
-    },
-        skip:
-            "CI environment socket issues - SocketException: Write failed (Broken pipe)",);
+    test(
+      "should work with custom stdout sink",
+      () async {
+        // SKIP: CI environment socket issues - low priority until sprint revamp completed
+      },
+      skip:
+          "CI environment socket issues - SocketException: Write failed (Broken pipe)",
+    );
 
     test("should use provided streams directly", () {
       // This test verifies the streams are used as provided
@@ -58,7 +67,6 @@ void main() {
 }
 
 class _MockIOSink implements IOSink {
-
   _MockIOSink(this.buffer);
   final List<String> buffer;
 

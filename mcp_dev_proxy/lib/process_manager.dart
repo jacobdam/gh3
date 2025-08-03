@@ -12,7 +12,6 @@ class ProcessStartupException implements Exception {
 }
 
 class ProcessManager {
-
   ProcessManager({
     required this.targetBinary,
     this.arguments = const [],

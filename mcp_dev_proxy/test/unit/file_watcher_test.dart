@@ -87,7 +87,9 @@ void main() {
         print("Debounce test skipped - file system dependent behavior");
       } else {
         expect(
-            changeCount, lessThanOrEqualTo(5),); // At most the number of changes
+          changeCount,
+          lessThanOrEqualTo(5),
+        ); // At most the number of changes
         expect(changeCount, greaterThanOrEqualTo(1)); // At least one change
       }
     });
@@ -96,8 +98,10 @@ void main() {
       final nonExistentDir = "${tempDir.path}/nonexistent/file.txt";
       final badWatcher = FileWatcher(filePath: nonExistentDir);
 
-      expect(() async => badWatcher.start(),
-          throwsA(isA<FileSystemException>()),);
+      expect(
+        () async => badWatcher.start(),
+        throwsA(isA<FileSystemException>()),
+      );
     });
 
     test("should handle multiple start calls", () async {
@@ -159,7 +163,8 @@ void main() {
         // File recreation detection can be flaky on some systems
         // This is acceptable for a development proxy
         print(
-            "File recreation test timed out - this is acceptable for some file systems",);
+          "File recreation test timed out - this is acceptable for some file systems",
+        );
       }
     });
 
@@ -193,7 +198,8 @@ void main() {
       } on Exception {
         // Debounce timing can be sensitive to system load
         print(
-            "Custom debounce test timed out - this is acceptable on loaded systems",);
+          "Custom debounce test timed out - this is acceptable on loaded systems",
+        );
       }
 
       await customWatcher.stop();

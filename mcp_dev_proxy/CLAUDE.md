@@ -155,3 +155,7 @@ See `.dev-tracking/tasks/current-sprint.md` for current status and task assignme
 7. **Include sprint tracking updates in the same commit as feature implementation**
 8. **Mark dependent tasks as ready when dependencies are satisfied**
 9. **Verify ALL acceptance criteria are met before marking tasks complete**
+
+## Quick Development Tips
+- Run dart fix --apply for automate dart analyze fix
+- **Dart Fix Formatting Note**: `dart fix` can cause format issues, it should run `dart format .` after that

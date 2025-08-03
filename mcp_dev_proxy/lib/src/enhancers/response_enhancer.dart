@@ -49,11 +49,14 @@ class ResponseEnhancer {
     // Apply enhancers
     for (final enhancer in _enhancers) {
       if (enhancer.canHandle(errorType, context)) {
-        final enhanced = enhancer.enhance({
-          "code": code ?? _getDefaultCode(errorType),
-          "message": message,
-          "data": errorData,
-        }, context,);
+        final enhanced = enhancer.enhance(
+          {
+            "code": code ?? _getDefaultCode(errorType),
+            "message": message,
+            "data": errorData,
+          },
+          context,
+        );
 
         errorData = enhanced["data"] as Map<String, dynamic>? ?? errorData;
       }
@@ -102,8 +105,10 @@ class ResponseEnhancer {
     );
   }
 
-  MCPError createServerUnavailableError(ErrorContext context,
-      {Map<String, dynamic>? additionalData,}) {
+  MCPError createServerUnavailableError(
+    ErrorContext context, {
+    Map<String, dynamic>? additionalData,
+  }) {
     final binaryExists = context.environment?["binaryExists"] == "true";
     final startupError = context.lastOutput;
 

@@ -42,7 +42,10 @@ void main() {
       });
 
       test("should use custom timeout when configured", () {
-        timeoutManager.setCustomTimeout("custom/method", const Duration(seconds: 45));
+        timeoutManager.setCustomTimeout(
+          "custom/method",
+          const Duration(seconds: 45),
+        );
         final timeout = timeoutManager.getTimeout("custom/method", null);
         expect(timeout, equals(const Duration(seconds: 45)));
       });
@@ -60,15 +63,23 @@ void main() {
         const requestId = "test-request-1";
 
         timeoutManager.startTimeout(
-            requestId, "tools/call", () => completer.complete(true),);
+          requestId,
+          "tools/call",
+          () => completer.complete(true),
+        );
 
         expect(timeoutManager.hasActiveTimeout(requestId), isTrue);
 
         // Wait a bit longer than the timeout (use short timeout for testing)
         timeoutManager.setCustomTimeout(
-            "tools/call", const Duration(milliseconds: 50),);
+          "tools/call",
+          const Duration(milliseconds: 50),
+        );
         timeoutManager.startTimeout(
-            "test-fast", "tools/call", () => completer.complete(true),);
+          "test-fast",
+          "tools/call",
+          () => completer.complete(true),
+        );
 
         final result =
             await completer.future.timeout(const Duration(milliseconds: 100));
@@ -90,9 +101,15 @@ void main() {
         var callCount = 0;
 
         timeoutManager.startTimeout(
-            "request-1", "initialize", () => callCount++,);
+          "request-1",
+          "initialize",
+          () => callCount++,
+        );
         timeoutManager.startTimeout(
-            "request-1", "tools/call", () => callCount++,);
+          "request-1",
+          "tools/call",
+          () => callCount++,
+        );
 
         expect(timeoutManager.hasActiveTimeout("request-1"), isTrue);
         expect(timeoutManager.getActiveTimeoutCount(), equals(1));
@@ -105,7 +122,10 @@ void main() {
         const requestId = "test-request";
 
         timeoutManager.startTimeout(
-            requestId, "initialize", () => wasCalled = true,);
+          requestId,
+          "initialize",
+          () => wasCalled = true,
+        );
         expect(timeoutManager.hasActiveTimeout(requestId), isTrue);
 
         timeoutManager.cancelTimeout(requestId);
@@ -118,8 +138,10 @@ void main() {
       });
 
       test("should handle canceling non-existent timeout gracefully", () {
-        expect(() => timeoutManager.cancelTimeout("non-existent"),
-            returnsNormally,);
+        expect(
+          () => timeoutManager.cancelTimeout("non-existent"),
+          returnsNormally,
+        );
       });
 
       test("should reduce active timeout count when canceled", () {
@@ -139,7 +161,11 @@ void main() {
     group("createTimeoutError", () {
       test("should create timeout error with basic information", () {
         final error = timeoutManager.createTimeoutError(
-            "test-request", "tools/call", const Duration(seconds: 90), null,);
+          "test-request",
+          "tools/call",
+          const Duration(seconds: 90),
+          null,
+        );
 
         expect(error["error"]["code"], equals(-32603));
         expect(error["error"]["message"], equals("Request timeout"));
@@ -155,29 +181,45 @@ void main() {
         };
 
         final error = timeoutManager.createTimeoutError(
-            "test-request", "tools/call", const Duration(seconds: 120), context,);
+          "test-request",
+          "tools/call",
+          const Duration(seconds: 120),
+          context,
+        );
 
         expect(error["error"]["data"]["context"], equals(context));
       });
 
       test("should include helpful timeout guidance", () {
         final error = timeoutManager.createTimeoutError(
-            "test-request", "tools/call", const Duration(seconds: 90), null,);
+          "test-request",
+          "tools/call",
+          const Duration(seconds: 90),
+          null,
+        );
 
-        expect(error["error"]["data"]["suggestion"],
-            contains("Tool execution exceeded timeout"),);
+        expect(
+          error["error"]["data"]["suggestion"],
+          contains("Tool execution exceeded timeout"),
+        );
       });
     });
 
     group("Custom timeout configuration", () {
       test("should allow setting custom timeouts", () {
-        timeoutManager.setCustomTimeout("custom/method", const Duration(minutes: 5));
+        timeoutManager.setCustomTimeout(
+          "custom/method",
+          const Duration(minutes: 5),
+        );
         final timeout = timeoutManager.getTimeout("custom/method", null);
         expect(timeout, equals(const Duration(minutes: 5)));
       });
 
       test("should clear custom timeout", () {
-        timeoutManager.setCustomTimeout("custom/method", const Duration(minutes: 5));
+        timeoutManager.setCustomTimeout(
+          "custom/method",
+          const Duration(minutes: 5),
+        );
         timeoutManager.clearCustomTimeout("custom/method");
 
         final timeout = timeoutManager.getTimeout("custom/method", null);
@@ -190,10 +232,14 @@ void main() {
 
         timeoutManager.clearAllCustomTimeouts();
 
-        expect(timeoutManager.getTimeout("method1", null),
-            equals(const Duration(seconds: 30)),);
-        expect(timeoutManager.getTimeout("method2", null),
-            equals(const Duration(seconds: 30)),);
+        expect(
+          timeoutManager.getTimeout("method1", null),
+          equals(const Duration(seconds: 30)),
+        );
+        expect(
+          timeoutManager.getTimeout("method2", null),
+          equals(const Duration(seconds: 30)),
+        );
       });
     });
 
@@ -202,7 +248,10 @@ void main() {
         final stopwatch = Stopwatch()..start();
         final completer = Completer<void>();
 
-        timeoutManager.setCustomTimeout("test", const Duration(milliseconds: 100));
+        timeoutManager.setCustomTimeout(
+          "test",
+          const Duration(milliseconds: 100),
+        );
         timeoutManager.startTimeout("accuracy-test", "test", () {
           stopwatch.stop();
           completer.complete();

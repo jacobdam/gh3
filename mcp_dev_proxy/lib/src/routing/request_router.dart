@@ -5,7 +5,6 @@ library;
 
 /// Exception thrown when a route is not found for a given method
 class RouteNotFoundException implements Exception {
-
   const RouteNotFoundException(this.method);
   final String method;
 
@@ -15,7 +14,6 @@ class RouteNotFoundException implements Exception {
 
 /// Context object passed through request handling pipeline
 class RequestContext {
-
   RequestContext(this.method, this.params, this.id);
   final String method;
   final Map<String, dynamic> params;
@@ -31,11 +29,10 @@ class RequestContext {
   T? getMetadata<T>(String key) {
     return _metadata[key] as T?;
   }
-
 }
 
 /// Abstract base class for request handlers
-/// 
+///
 /// This is kept as an abstract class (rather than a top-level function) to:
 /// 1. Provide type safety for the handler registry
 /// 2. Enable polymorphism across multiple handler implementations

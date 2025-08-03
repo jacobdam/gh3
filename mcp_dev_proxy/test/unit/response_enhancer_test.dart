@@ -4,7 +4,6 @@ import "package:mcp_dev_proxy/src/enhancers/response_enhancer.dart";
 import "package:test/test.dart";
 
 class MockErrorEnhancer extends ErrorEnhancer {
-
   MockErrorEnhancer(this.supportedType, this.enhancementData);
   final ErrorType supportedType;
   final Map<String, dynamic> enhancementData;
@@ -20,7 +19,8 @@ class MockErrorEnhancer extends ErrorEnhancer {
     ErrorContext context,
   ) {
     final data = Map<String, dynamic>.from(
-        error["data"] as Map<dynamic, dynamic>? ?? <String, dynamic>{},);
+      error["data"] as Map<dynamic, dynamic>? ?? <String, dynamic>{},
+    );
     data.addAll(enhancementData);
     return {
       ...error,
@@ -203,8 +203,10 @@ void main() {
         expect(error.data["operation"], equals("test_operation"));
         expect(error.data["timeout_ms"], equals(30000));
         expect(error.data["proxy"], equals("mcp_dev_proxy"));
-        expect(error.data["recovery_hint"],
-            contains("Check if the target server"),);
+        expect(
+          error.data["recovery_hint"],
+          contains("Check if the target server"),
+        );
       });
     });
 
@@ -216,8 +218,10 @@ void main() {
         );
 
         expect(error.code, equals(-32603));
-        expect(error.message,
-            equals("Tool execution interrupted by server restart"),);
+        expect(
+          error.message,
+          equals("Tool execution interrupted by server restart"),
+        );
         expect(error.data["tool_use_id"], equals("tool_123"));
         expect(error.data["reason"], equals("binary_updated"));
         expect(error.data["proxy"], equals("mcp_dev_proxy"));

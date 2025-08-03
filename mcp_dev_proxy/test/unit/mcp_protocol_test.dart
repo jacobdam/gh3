@@ -104,7 +104,9 @@ void main() {
       expect(enhanced.result["proxy"]["name"], equals("mcp_dev_proxy"));
       expect(enhanced.result["proxy"]["version"], equals("1.0.0"));
       expect(
-          enhanced.result["proxy"]["target"], equals("mcp_flutter_automation"),);
+        enhanced.result["proxy"]["target"],
+        equals("mcp_flutter_automation"),
+      );
       expect(enhanced.result["data"], equals("test"));
     });
 
@@ -172,8 +174,10 @@ void main() {
       expect(error.message, equals("MCP server restarting"));
       expect(error.data["reason"], equals("binary_updated"));
       expect(error.data["proxy"], equals("mcp_dev_proxy"));
-      expect(error.data["message"],
-          contains("Server is restarting due to binary_updated"),);
+      expect(
+        error.data["message"],
+        contains("Server is restarting due to binary_updated"),
+      );
     });
 
     test("should convert to JSON", () {

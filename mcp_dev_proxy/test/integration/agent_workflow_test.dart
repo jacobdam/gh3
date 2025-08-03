@@ -161,14 +161,23 @@ void main() {
 
       // Verify no hanging operations throughout cycle
       for (final response in responses) {
-        expect(response["id"], isNotNull,
-            reason: "All responses should have IDs",);
+        expect(
+          response["id"],
+          isNotNull,
+          reason: "All responses should have IDs",
+        );
         if (response.containsKey("error")) {
           final error = response["error"] as Map<String, dynamic>;
-          expect(error["data"]["guidance"], isA<String>(),
-              reason: "Errors should include guidance",);
-          expect(error["data"]["next_steps"], isA<List<dynamic>>(),
-              reason: "Errors should include next steps",);
+          expect(
+            error["data"]["guidance"],
+            isA<String>(),
+            reason: "Errors should include guidance",
+          );
+          expect(
+            error["data"]["next_steps"],
+            isA<List<dynamic>>(),
+            reason: "Errors should include next steps",
+          );
         }
       }
 
@@ -177,10 +186,16 @@ void main() {
           responses.where((r) => r.containsKey("error")).toList();
       for (final errorResponse in errorResponses) {
         final data = errorResponse["error"]["data"] as Map<String, dynamic>;
-        expect(data["next_steps"], isNotEmpty,
-            reason: "Should provide autonomous recovery steps",);
-        expect(data["proxy_tools"], isNotEmpty,
-            reason: "Should suggest diagnostic tools",);
+        expect(
+          data["next_steps"],
+          isNotEmpty,
+          reason: "Should provide autonomous recovery steps",
+        );
+        expect(
+          data["proxy_tools"],
+          isNotEmpty,
+          reason: "Should suggest diagnostic tools",
+        );
       }
 
       print("Agent Workflow Steps Completed:");
@@ -205,12 +220,16 @@ void main() {
 
       expect(sessionRecoveryGuidance["guidance"], contains("/resume"));
       expect(
-          sessionRecoveryGuidance["explanation"], contains("API validation"),);
+        sessionRecoveryGuidance["explanation"],
+        contains("API validation"),
+      );
       final recoverySteps = sessionRecoveryGuidance["recovery_steps"]! as List;
       expect(
-          recoverySteps.any(
-              (step) => step.toString().contains("proxy_check_tool_cycles"),),
-          isTrue,);
+        recoverySteps.any(
+          (step) => step.toString().contains("proxy_check_tool_cycles"),
+        ),
+        isTrue,
+      );
     });
 
     test("should handle various MCP server types", () {

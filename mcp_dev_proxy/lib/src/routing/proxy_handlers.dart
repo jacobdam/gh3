@@ -8,7 +8,6 @@ import "request_router.dart";
 
 /// Handler for proxy_status tool calls
 class ProxyStatusHandler extends RequestHandler {
-
   ProxyStatusHandler(this._proxy);
   final MCPDevProxy _proxy;
 
@@ -127,7 +126,6 @@ For more details, check the proxy logs and use `proxy_status` for current state.
 
 /// Handler for proxy_check_tool_cycles tool calls
 class ProxyToolCycleHandler extends RequestHandler {
-
   ProxyToolCycleHandler(this._proxy);
   final MCPDevProxy _proxy;
 
@@ -192,7 +190,6 @@ This can cause:
 
 /// Handler for initialize requests when target is unavailable
 class InitializeHandler extends RequestHandler {
-
   InitializeHandler(this._proxy);
   final MCPDevProxy _proxy;
 

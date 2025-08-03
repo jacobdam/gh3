@@ -142,7 +142,6 @@ void main() async {
 }
 
 class _MockIOSink implements IOSink {
-
   _MockIOSink(this.buffer);
   final List<String> buffer;
 

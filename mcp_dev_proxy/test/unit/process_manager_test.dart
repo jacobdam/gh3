@@ -52,7 +52,8 @@ void main() {
       } on Exception {
         // stdout capture can be timing-sensitive in test environments
         print(
-            "stdout test timed out - this is acceptable in some test environments",);
+          "stdout test timed out - this is acceptable in some test environments",
+        );
       }
     });
 
@@ -132,7 +133,8 @@ void main() {
       } on Exception {
         // stdin interaction can be flaky in test environments
         print(
-            "stdin test timed out - this is acceptable in some test environments",);
+          "stdin test timed out - this is acceptable in some test environments",
+        );
       }
 
       await catManager.stop();

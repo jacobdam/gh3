@@ -4,7 +4,6 @@ import "package:logging/logging.dart";
 import "package:watcher/watcher.dart";
 
 class FileWatcher {
-
   FileWatcher({
     required this.filePath,
     this.debounceDelay = const Duration(milliseconds: 500),
@@ -38,15 +37,18 @@ class FileWatcher {
     _changeController = StreamController<void>.broadcast();
     _watcher = DirectoryWatcher(directory.path);
 
-    _watcherSubscription = _watcher!.events.listen((event) {
-      if (event.path.endsWith(fileName) &&
-          (event.type == ChangeType.MODIFY || event.type == ChangeType.ADD)) {
-        _logger.fine("File change detected: ${event.path} (${event.type})");
-        _debounceChange();
-      }
-    }, onError: (Object error) {
-      _logger.warning("File watcher error: $error");
-    },);
+    _watcherSubscription = _watcher!.events.listen(
+      (event) {
+        if (event.path.endsWith(fileName) &&
+            (event.type == ChangeType.MODIFY || event.type == ChangeType.ADD)) {
+          _logger.fine("File change detected: ${event.path} (${event.type})");
+          _debounceChange();
+        }
+      },
+      onError: (Object error) {
+        _logger.warning("File watcher error: $error");
+      },
+    );
   }
 
   void _debounceChange() {
