@@ -1,5 +1,4 @@
 import 'package:test/test.dart';
-import 'dart:async';
 import 'dart:io';
 
 void main() {
@@ -68,11 +67,6 @@ void main() {
       workflowSteps.add('4. Auto-connection triggered');
 
       // Step 5: Agent tests functionality
-      final toolsListRequest = {
-        'jsonrpc': '2.0',
-        'id': 'tools-1',
-        'method': 'tools/list'
-      };
 
       final toolsListResponse = {
         'jsonrpc': '2.0',

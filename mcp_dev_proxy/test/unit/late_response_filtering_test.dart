@@ -19,7 +19,7 @@ void main() {
       final requestId = 'test-timeout-tracking';
 
       // Start timeout
-      final timer = timeoutManager.startTimeout(
+      timeoutManager.startTimeout(
         requestId,
         'tools/list',
         () {

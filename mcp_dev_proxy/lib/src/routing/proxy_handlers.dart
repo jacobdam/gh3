@@ -61,9 +61,7 @@ ${binaryExists ? 'Binary exists but failed to start. Check if it\'s executable a
 
 /// Handler for proxy_help tool calls
 class ProxyHelpHandler extends RequestHandler {
-  final dynamic _proxy;
-
-  ProxyHelpHandler(this._proxy);
+  ProxyHelpHandler(dynamic proxy);
 
   @override
   Future<Map<String, dynamic>> handle(
