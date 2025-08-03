@@ -31,3 +31,6 @@ This is an MCP server for Flutter automation, designed for AI code agents to int
 - Test with example Flutter app for widget inspection workflows
 - Focus on widget boundary detection and coordinate mapping issues
 - Use MCP tools discovery at start of each session
+
+## Development Tasks
+- compile the mcp server in order to verify it

@@ -489,20 +489,7 @@ class FlutterController {
         _logger.warning('Test extension failed: $e');
       }
 
-      // Fallback to flutter driver screenshot
-      try {
-        final response = await app.vmService!.callServiceExtension(
-          'ext.flutter.driver.screenshot',
-          isolateId: app.isolateId,
-        );
-
-        if (response.json != null && response.json!.containsKey('screenshot')) {
-          _logger.info('Screenshot captured via flutter driver extension');
-          return response.json!['screenshot'] as String?;
-        }
-      } catch (e) {
-        _logger.fine('Driver screenshot extension not available: $e');
-      }
+      // Flutter Driver fallback removed - heavy dependencies not worth the complexity
 
       // List available extensions for debugging
       try {
@@ -577,7 +564,7 @@ class FlutterController {
 
       _logger.severe('=== ALL SCREENSHOT METHODS FAILED ===');
       throw Exception(
-          'No screenshot methods available. Tried: VM Service extensions, Backup script fallback');
+          'No screenshot methods available. Tried: Custom gh3 extension, Direct VM service connection');
     } catch (e) {
       _logger.severe('=== SCREENSHOT DEBUG END ===');
       _logger.severe('Final error: $e');
@@ -659,6 +646,24 @@ class FlutterController {
   /// Get widget tree via root widget (most basic approach)
   Future<Map<String, dynamic>> _getWidgetTreeViaRootWidget(
       FlutterApp app) async {
+    // Try with deeper subtree depth first
+    try {
+      final deepResponse = await app.vmService!.callServiceExtension(
+        'ext.flutter.inspector.getRootWidget',
+        isolateId: app.isolateId,
+        args: {
+          'objectGroup': 'inspector',
+          'subtreeDepth': 15, // Much deeper than default
+        },
+      );
+      final deepResult = deepResponse.json ?? {};
+      if (deepResult.isNotEmpty) {
+        return deepResult;
+      }
+    } catch (e) {
+      // Fallback to standard approach
+    }
+
     final response = await app.vmService!.callServiceExtension(
       'ext.flutter.inspector.getRootWidget',
       isolateId: app.isolateId,
@@ -670,6 +675,26 @@ class FlutterController {
   /// Get widget tree via summary tree
   Future<Map<String, dynamic>> _getWidgetTreeViaSummaryTree(
       FlutterApp app) async {
+    // Try detailed tree first (not summary)
+    try {
+      final detailResponse = await app.vmService!.callServiceExtension(
+        'ext.flutter.inspector.getRootWidgetTree',
+        isolateId: app.isolateId,
+        args: {
+          'isSummaryTree': false, // Get detailed tree
+          'maxDepth': 20,
+          'withPreviews': false,
+          'objectGroup': 'inspector',
+        },
+      );
+      final detailResult = detailResponse.json ?? {};
+      if (detailResult.isNotEmpty) {
+        return detailResult;
+      }
+    } catch (e) {
+      // Fallback to summary
+    }
+
     final response = await app.vmService!.callServiceExtension(
       'ext.flutter.inspector.getRootWidgetTree',
       isolateId: app.isolateId,

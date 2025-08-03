@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:logging/logging.dart';
 import 'flutter_controller.dart';
-import 'widget_inspector.dart';
 
 // Simplified MCP server base class for testing
 abstract class MCPBase {
@@ -14,7 +13,6 @@ abstract class MCPBase {
 class FlutterAutomationMCPServer extends MCPBase {
   final _logger = Logger('FlutterAutomationMCPServer');
   late final FlutterController _controller;
-  late final WidgetInspector _widgetInspector;
 
   FlutterAutomationMCPServer()
       : super(
@@ -24,7 +22,6 @@ class FlutterAutomationMCPServer extends MCPBase {
           },
         ) {
     _controller = FlutterController();
-    _widgetInspector = WidgetInspector(_controller);
   }
 
   FlutterController get controller => _controller;
@@ -127,14 +124,6 @@ class FlutterAutomationMCPServer extends MCPBase {
             'count': logs.length,
           };
 
-        case 'get_widget_tree':
-          final appId = params['appId'] as String;
-          final tree = await _controller.getWidgetTree(appId);
-          return {
-            'success': true,
-            'widgetTree': tree,
-          };
-
         case 'list_apps':
           final apps = _controller.listApps();
           return {
@@ -148,131 +137,6 @@ class FlutterAutomationMCPServer extends MCPBase {
           return {
             'success': true,
             'appInfo': info,
-          };
-
-        case 'inspect_widget_tree':
-          final appId = params['appId'] as String;
-          final includeWidgetBounds =
-              params['includeWidgetBounds'] as bool? ?? true;
-          final includeWidgetTree =
-              params['includeWidgetTree'] as bool? ?? true;
-          final filename = params['filename'] as String?;
-
-          final result = await _widgetInspector.inspectWithScreenshot(
-            appId,
-            includeWidgetBounds: includeWidgetBounds,
-            includeWidgetTree: includeWidgetTree,
-            filename: filename,
-          );
-
-          // Return compact response to avoid token limits
-          final compactResponse = {
-            'success': true,
-            'appId': result.appId,
-            'timestamp': result.timestamp.toIso8601String(),
-            'widgetCount': result.widgets.length,
-            'screenshotSaved': filename != null,
-          };
-
-          // Only include screenshot in response if no filename (not saving to file)
-          // Screenshot base64 is very large (~40K+ tokens), so exclude when saving to file
-          if (filename == null) {
-            // Even when not saving, check size and warn about potential token limits
-            final screenshotSize = result.screenshotBase64.length;
-            if (screenshotSize > 50000) {
-              // ~50KB base64 ≈ 25K tokens
-              compactResponse['screenshotWarning'] =
-                  'Screenshot too large for response, use filename parameter';
-              compactResponse['screenshotSize'] = screenshotSize;
-            } else {
-              compactResponse['screenshotBase64'] = result.screenshotBase64;
-            }
-          } else {
-            compactResponse['screenshotPath'] =
-                '/path/to/project/$filename.png';
-            compactResponse['screenshotSize'] = result.screenshotBase64.length;
-          }
-
-          // Include widget summary (limited to avoid token overflow)
-          if (includeWidgetBounds && result.widgets.isNotEmpty) {
-            compactResponse['widgetSummary'] = result.widgets
-                .take(20)
-                .map((w) => {
-                      'type': w.type,
-                      'id': w.id,
-                      'bounds': w.renderBox != null
-                          ? {
-                              'x': w.renderBox!.x,
-                              'y': w.renderBox!.y,
-                              'width': w.renderBox!.width,
-                              'height': w.renderBox!.height,
-                            }
-                          : null,
-                    })
-                .toList();
-          }
-
-          // Include minimal widget tree info to avoid token overflow
-          if (includeWidgetTree && result.widgetTree.isNotEmpty) {
-            final tree = result.widgetTree;
-            final resultData = tree['result'];
-            if (resultData is Map<String, dynamic>) {
-              compactResponse['widgetTreeSummary'] = {
-                'rootType': resultData['widgetRuntimeType'] ?? 'Unknown',
-                'hasChildren': resultData['hasChildren'] ?? false,
-                'childCount': resultData['children']?.length ?? 0,
-              };
-            } else {
-              compactResponse['widgetTreeSummary'] = {
-                'error': 'Unexpected tree structure'
-              };
-            }
-          }
-
-          return compactResponse;
-
-        case 'get_widgets_at_position':
-          final appId = params['appId'] as String;
-          final x = (params['x'] as num).toDouble();
-          final y = (params['y'] as num).toDouble();
-
-          final widgets =
-              await _widgetInspector.getWidgetsAtPosition(appId, x, y);
-
-          return {
-            'success': true,
-            'widgets': widgets.map((w) => w.toJson()).toList(),
-            'position': {'x': x, 'y': y},
-            'count': widgets.length,
-          };
-
-        case 'create_annotated_screenshot':
-          final appId = params['appId'] as String;
-          final showWidgetBounds = params['showWidgetBounds'] as bool? ?? true;
-          final showWidgetLabels = params['showWidgetLabels'] as bool? ?? false;
-          final filename =
-              params['filename'] as String? ?? 'annotated_screenshot.png';
-
-          final screenshotBytes =
-              await _widgetInspector.createAnnotatedScreenshot(
-            appId,
-            showWidgetBounds: showWidgetBounds,
-            showWidgetLabels: showWidgetLabels,
-          );
-
-          // Save to file
-          final appInfo = _controller.getAppInfo(appId);
-          final filePath = '${appInfo['projectPath']}/$filename';
-          final file = File(filePath);
-          await file.writeAsBytes(screenshotBytes);
-
-          return {
-            'success': true,
-            'filename': filename,
-            'filepath': filePath,
-            'size_bytes': screenshotBytes.length,
-            'showWidgetBounds': showWidgetBounds,
-            'showWidgetLabels': showWidgetLabels,
           };
 
         default:
@@ -467,17 +331,6 @@ class FlutterAutomationMCPServer extends MCPBase {
                 },
               },
               {
-                'name': 'get_widget_tree',
-                'description': 'Get widget tree from a running Flutter app',
-                'inputSchema': {
-                  'type': 'object',
-                  'properties': {
-                    'appId': {'type': 'string'},
-                  },
-                  'required': ['appId'],
-                },
-              },
-              {
                 'name': 'list_apps',
                 'description': 'List all managed Flutter apps',
                 'inputSchema': {
@@ -492,87 +345,6 @@ class FlutterAutomationMCPServer extends MCPBase {
                   'type': 'object',
                   'properties': {
                     'appId': {'type': 'string'},
-                  },
-                  'required': ['appId'],
-                },
-              },
-              {
-                'name': 'inspect_widget_tree',
-                'description':
-                    'Capture screenshot with widget tree inspection and coordinate mapping',
-                'inputSchema': {
-                  'type': 'object',
-                  'properties': {
-                    'appId': {
-                      'type': 'string',
-                      'description': 'ID of the Flutter app'
-                    },
-                    'includeWidgetBounds': {
-                      'type': 'boolean',
-                      'description':
-                          'Include widget boundary information (default: true)'
-                    },
-                    'includeWidgetTree': {
-                      'type': 'boolean',
-                      'description':
-                          'Include full widget tree data (default: true)'
-                    },
-                    'filename': {
-                      'type': 'string',
-                      'description':
-                          'Optional base filename for saving inspection data'
-                    },
-                  },
-                  'required': ['appId'],
-                },
-              },
-              {
-                'name': 'get_widgets_at_position',
-                'description': 'Find widgets at a specific screen coordinate',
-                'inputSchema': {
-                  'type': 'object',
-                  'properties': {
-                    'appId': {
-                      'type': 'string',
-                      'description': 'ID of the Flutter app'
-                    },
-                    'x': {
-                      'type': 'number',
-                      'description': 'X coordinate on screen'
-                    },
-                    'y': {
-                      'type': 'number',
-                      'description': 'Y coordinate on screen'
-                    },
-                  },
-                  'required': ['appId', 'x', 'y'],
-                },
-              },
-              {
-                'name': 'create_annotated_screenshot',
-                'description':
-                    'Create screenshot with widget boundary overlays',
-                'inputSchema': {
-                  'type': 'object',
-                  'properties': {
-                    'appId': {
-                      'type': 'string',
-                      'description': 'ID of the Flutter app'
-                    },
-                    'showWidgetBounds': {
-                      'type': 'boolean',
-                      'description':
-                          'Show widget boundary lines (default: true)'
-                    },
-                    'showWidgetLabels': {
-                      'type': 'boolean',
-                      'description': 'Show widget type labels (default: false)'
-                    },
-                    'filename': {
-                      'type': 'string',
-                      'description':
-                          'Filename for annotated screenshot (default: annotated_screenshot.png)'
-                    },
                   },
                   'required': ['appId'],
                 },
