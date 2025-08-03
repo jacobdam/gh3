@@ -8,8 +8,27 @@ Approach: "Delete and fix over create new" - use existing TASK-001/002/003 compo
 
 ## Task Status
 
-### Ready for Development (NEW DELETION TASKS)
-<!-- Tasks ready to be worked on -->
+### Ready for Development (PRIORITIZED TASKS)
+- [ ] **CLEANUP-004**: Delete redundant cleanup logic from MCPDevProxy (HIGH)
+  - Priority: P1 (High)
+  - Effort: 2 hours
+  - **Target**: Delete ~50 lines of redundant cleanup logic (ProxyState already handles TTL)
+  - **Result**: Remove Timer management, cleanup constants, periodic cleanup methods
+  - **Status**: Ready for immediate development
+
+- [ ] **TASK-006**: Implement ToolCycleTracker class (HIGH)
+  - Priority: P1 (High) 
+  - Effort: 3 hours
+  - **Target**: Create missing ToolCycleTracker implementation (tests exist but class missing)
+  - **Result**: Comprehensive tool cycle management with recovery guidance
+  - **Status**: Ready for development (task definition created)
+
+- [ ] **TASK-007**: Complete component integration verification (HIGH)
+  - Priority: P1 (High)
+  - Effort: 2 hours  
+  - **Target**: Verify all components work together, complete architecture transformation
+  - **Result**: Full technical-design.md architecture implemented and verified
+  - **Status**: Ready for development (depends on TASK-006)
 
 ### ✅ **INFRASTRUCTURE COMPLETED (DO NOT MODIFY)**
 - [x] TASK-001: TimeoutManager class ✅ 
