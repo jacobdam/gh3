@@ -32,7 +32,6 @@ class MCPDevProxy {
     _requestRouter = RequestRouter();
     _proxyState = ProxyState();
     _setupRequestRouter();
-    _startPeriodicCleanup();
   }
   final Logger _logger = Logger("MCPDevProxy");
   final String targetBinary;
@@ -51,13 +50,8 @@ class MCPDevProxy {
   StreamSubscription<String>? _stdinSubscription;
 
   Timer? _binaryMonitorTimer;
-  Timer? _cleanupTimer; // Timer for periodic cleanup
   late TimeoutManager _timeoutManager;
 
-  // Cleanup configuration
-  static const Duration _maxRequestAge = Duration(minutes: 10);
-  static const Duration _maxToolUseAge = Duration(minutes: 5);
-  static const Duration _cleanupInterval = Duration(minutes: 1);
 
   @visibleForTesting
   ProcessManager get processManager => _processManager;
@@ -532,7 +526,6 @@ class MCPDevProxy {
     await _stdoutSubscription?.cancel();
     await _fileWatchSubscription?.cancel();
     _stopBinaryMonitoring();
-    _stopPeriodicCleanup();
 
     // Cancel all pending timeouts
     _timeoutManager.dispose();
@@ -544,39 +537,4 @@ class MCPDevProxy {
   }
 
   /// Start periodic cleanup of stale pending requests and tool uses
-  void _startPeriodicCleanup() {
-    _cleanupTimer = Timer.periodic(_cleanupInterval, (_) {
-      _cleanupStaleEntries();
-    });
-  }
-
-  /// Stop periodic cleanup
-  void _stopPeriodicCleanup() {
-    _cleanupTimer?.cancel();
-    _cleanupTimer = null;
-  }
-
-  /// Clean up stale entries that have exceeded their TTL
-  void _cleanupStaleEntries() {
-    // Clean up stale pending requests
-    final staleRequestIds = _proxyState.getStaleRequestIds(_maxRequestAge);
-    for (final id in staleRequestIds) {
-      _logger.warning("Cleaning up stale pending request: $id");
-      _timeoutManager.cancelTimeout(id.toString());
-    }
-    _proxyState.removeStaleRequests(staleRequestIds);
-
-    // Clean up stale tool uses
-    final staleToolUseIds = _proxyState.getStaleToolUseIds(_maxToolUseAge);
-    for (final id in staleToolUseIds) {
-      _logger.warning("Cleaning up stale tool_use: $id");
-    }
-    _proxyState.removeStaleToolUses(staleToolUseIds);
-
-    if (staleRequestIds.isNotEmpty || staleToolUseIds.isNotEmpty) {
-      _logger.info(
-        "Cleaned up ${staleRequestIds.length} stale requests and ${staleToolUseIds.length} stale tool_uses",
-      );
-    }
-  }
 }
