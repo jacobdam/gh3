@@ -53,4 +53,9 @@ class ErrorContext {
       "timestamp": timestamp.toIso8601String(),
     };
   }
+
+  /// Convert to structured log format (can be overridden by subclasses)
+  Map<String, dynamic> toStructuredLog() {
+    return toJson();
+  }
 }

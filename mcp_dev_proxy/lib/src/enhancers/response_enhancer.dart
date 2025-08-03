@@ -1,5 +1,6 @@
 import "../../mcp_protocol.dart";
 import "error_context.dart";
+import "enhanced_error_context.dart";
 
 abstract class ErrorEnhancer {
   bool canHandle(ErrorType errorType, ErrorContext context);
@@ -155,6 +156,79 @@ class ResponseEnhancer {
       message: message,
       data: data,
     );
+  }
+
+  /// Create enhanced error with automatic classification
+  MCPError createEnhancedError(
+    dynamic error,
+    String operation, {
+    String? correlationId,
+    Map<String, dynamic>? context,
+    ErrorContext? baseContext,
+  }) {
+    final enhancedContext = EnhancedErrorContext.classify(
+      error,
+      operation,
+      context,
+    );
+
+    // Create enhanced context with correlation ID
+    final contextWithCorrelation = enhancedContext.copyWith(
+      correlationId: correlationId,
+    );
+
+    // Include base context if provided
+    if (baseContext != null) {
+      final combinedContext = contextWithCorrelation.copyWith(
+        detectedRuntime: baseContext.detectedRuntime,
+        targetCommand: baseContext.targetCommand,
+        environment: baseContext.environment,
+        workingDirectory: baseContext.workingDirectory,
+        lastOutput: baseContext.lastOutput,
+      );
+      return _createErrorFromEnhancedContext(combinedContext);
+    }
+
+    return _createErrorFromEnhancedContext(contextWithCorrelation);
+  }
+
+  /// Create MCP error from enhanced context
+  MCPError _createErrorFromEnhancedContext(EnhancedErrorContext context) {
+    final structuredLog = context.toStructuredLog();
+
+    return MCPError(
+      code: _getCodeForCategory(context.category),
+      message: context.errorMessage,
+      data: {
+        "proxy": "mcp_dev_proxy",
+        "enhanced_error": structuredLog,
+        "severity": context.severity.name,
+        "category": context.category.name,
+        "operation": context.operation,
+        "recovery_suggestions": context.recoverySuggestions,
+        "is_retryable": context.isRetryable(),
+        "retry_delay_seconds": context.getRecommendedRetryDelay()?.inSeconds,
+        if (context.correlationId != null) "correlation_id": context.correlationId,
+      },
+    );
+  }
+
+  /// Get appropriate error code for category
+  int _getCodeForCategory(ErrorCategory category) {
+    switch (category) {
+      case ErrorCategory.network:
+        return -32300; // Transport error
+      case ErrorCategory.protocol:
+        return -32700; // Parse error
+      case ErrorCategory.application:
+        return -32601; // Method not found
+      case ErrorCategory.system:
+        return -32603; // Internal error
+      case ErrorCategory.user:
+        return -32602; // Invalid params
+      case ErrorCategory.unknown:
+        return -32603; // Internal error
+    }
   }
 
   int _getDefaultCode(ErrorType errorType) {
