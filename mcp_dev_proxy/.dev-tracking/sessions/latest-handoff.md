@@ -10,7 +10,7 @@
   - Implementation plan with 6 phases
   - Agent workflow guide
 - ✅ Updated CLAUDE.md with workflow instructions
-- ✅ Set up .kiro task tracking system
+- ✅ Set up .dev-tracking task tracking system
 - ✅ Created task definitions for Phase 1
 - ✅ Established templates for PRs and handoffs
 
@@ -27,7 +27,7 @@ Phase 1 implementation can begin immediately with:
 
 ### Notes
 - All documentation is in `docs/` directory
-- Task tracking is in `.kiro/tasks/`
+- Task tracking is in `.dev-tracking/tasks/`
 - Follow the workflow in CLAUDE.md for each session
 - Create feature branches for each task
 - Aim for >90% test coverage on all new code
