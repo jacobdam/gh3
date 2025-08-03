@@ -1,9 +1,9 @@
 import "dart:async";
 import "dart:io";
-import "package:test/test.dart";
 
-import "../../lib/src/enhancers/error_context.dart";
-import "../../lib/src/enhancers/enhanced_error_context.dart";
+import "package:mcp_dev_proxy/src/enhancers/enhanced_error_context.dart";
+import "package:mcp_dev_proxy/src/enhancers/error_context.dart";
+import "package:test/test.dart";
 
 void main() {
   group("ErrorSeverity", () {
@@ -78,7 +78,7 @@ void main() {
     });
 
     test("classify should create EnhancedErrorContext from error", () {
-      final socketError = const SocketException("Connection refused");
+      const socketError = SocketException("Connection refused");
       final context = EnhancedErrorContext.classify(
         socketError,
         "server_connect",
@@ -158,11 +158,13 @@ void main() {
   group("ErrorClassifier", () {
     test("categorizeError should classify network errors", () {
       expect(
-        ErrorClassifier.categorizeError(const SocketException("Connection refused")),
+        ErrorClassifier.categorizeError(
+            const SocketException("Connection refused")),
         ErrorCategory.network,
       );
       expect(
-        ErrorClassifier.categorizeError(TimeoutException("Timeout", const Duration(seconds: 30))),
+        ErrorClassifier.categorizeError(
+            TimeoutException("Timeout", const Duration(seconds: 30))),
         ErrorCategory.network,
       );
       expect(
@@ -180,7 +182,8 @@ void main() {
 
     test("categorizeError should classify system errors", () {
       expect(
-        ErrorClassifier.categorizeError(const FileSystemException("File not found")),
+        ErrorClassifier.categorizeError(
+            const FileSystemException("File not found")),
         ErrorCategory.system,
       );
       expect(
@@ -198,15 +201,18 @@ void main() {
 
     test("determineSeverity should assign appropriate severity", () {
       expect(
-        ErrorClassifier.determineSeverity(ErrorCategory.network, const SocketException("Connection refused")),
+        ErrorClassifier.determineSeverity(
+            ErrorCategory.network, const SocketException("Connection refused")),
         ErrorSeverity.error,
       );
       expect(
-        ErrorClassifier.determineSeverity(ErrorCategory.system, const ProcessException("ls", [])),
+        ErrorClassifier.determineSeverity(
+            ErrorCategory.system, const ProcessException("ls", [])),
         ErrorSeverity.critical,
       );
       expect(
-        ErrorClassifier.determineSeverity(ErrorCategory.user, Exception("Invalid input")),
+        ErrorClassifier.determineSeverity(
+            ErrorCategory.user, Exception("Invalid input")),
         ErrorSeverity.error,
       );
     });
@@ -217,28 +223,35 @@ void main() {
         const SocketException("Connection refused"),
       );
       expect(networkSuggestions, isNotEmpty);
-      expect(networkSuggestions, contains(matches(RegExp(r"server|connection|network", caseSensitive: false))));
+      expect(
+          networkSuggestions,
+          contains(matches(
+              RegExp("server|connection|network", caseSensitive: false))));
 
       final protocolSuggestions = ErrorClassifier.generateRecoverySuggestions(
         ErrorCategory.protocol,
         const FormatException("Invalid JSON"),
       );
       expect(protocolSuggestions, isNotEmpty);
-      expect(protocolSuggestions, contains(matches(RegExp(r"json|format", caseSensitive: false))));
+      expect(protocolSuggestions,
+          contains(matches(RegExp("json|format", caseSensitive: false))));
     });
   });
 
   group("Error Classification Integration", () {
     test("should handle nested exceptions", () {
-      final nestedError = Exception("Wrapped: ${const SocketException('Connection refused')}");
+      final nestedError =
+          Exception("Wrapped: ${const SocketException('Connection refused')}");
       final context = EnhancedErrorContext.classify(nestedError, "connect", {});
 
       // Should still be able to classify based on nested error information
-      expect(context.category, isIn([ErrorCategory.network, ErrorCategory.unknown]));
+      expect(context.category,
+          isIn([ErrorCategory.network, ErrorCategory.unknown]));
     });
 
     test("should handle null errors gracefully", () {
-      final context = EnhancedErrorContext.classify(null, "unknown_operation", {});
+      final context =
+          EnhancedErrorContext.classify(null, "unknown_operation", {});
 
       expect(context.category, ErrorCategory.unknown);
       expect(context.severity, ErrorSeverity.error);
@@ -246,7 +259,7 @@ void main() {
     });
 
     test("classification should be consistent", () {
-      final error = const SocketException("Connection refused");
+      const error = SocketException("Connection refused");
       final context1 = EnhancedErrorContext.classify(error, "connect", {});
       final context2 = EnhancedErrorContext.classify(error, "connect", {});
 

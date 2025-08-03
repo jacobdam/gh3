@@ -1,6 +1,6 @@
 import "../../mcp_protocol.dart";
-import "error_context.dart";
 import "enhanced_error_context.dart";
+import "error_context.dart";
 
 abstract class ErrorEnhancer {
   bool canHandle(ErrorType errorType, ErrorContext context);
@@ -208,7 +208,8 @@ class ResponseEnhancer {
         "recovery_suggestions": context.recoverySuggestions,
         "is_retryable": context.isRetryable(),
         "retry_delay_seconds": context.getRecommendedRetryDelay()?.inSeconds,
-        if (context.correlationId != null) "correlation_id": context.correlationId,
+        if (context.correlationId != null)
+          "correlation_id": context.correlationId,
       },
     );
   }

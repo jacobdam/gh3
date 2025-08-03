@@ -37,8 +37,8 @@ class EnhancedErrorContext extends ErrorContext {
     super.environment,
     super.workingDirectory,
     super.lastOutput,
-    DateTime? timestamp,
-  }) : super(timestamp: timestamp);
+    super.timestamp,
+  });
 
   final ErrorSeverity severity;
   final ErrorCategory category;
@@ -57,7 +57,8 @@ class EnhancedErrorContext extends ErrorContext {
   ]) {
     final category = ErrorClassifier.categorizeError(error);
     final severity = ErrorClassifier.determineSeverity(category, error);
-    final suggestions = ErrorClassifier.generateRecoverySuggestions(category, error);
+    final suggestions =
+        ErrorClassifier.generateRecoverySuggestions(category, error);
 
     return EnhancedErrorContext(
       severity: severity,
@@ -70,14 +71,14 @@ class EnhancedErrorContext extends ErrorContext {
     );
   }
 
-
   /// Determine if error is retryable
   bool isRetryable() {
     switch (category) {
       case ErrorCategory.network:
         return true; // Network issues are often transient
       case ErrorCategory.system:
-        return severity != ErrorSeverity.critical; // Some system errors are retryable
+        return severity !=
+            ErrorSeverity.critical; // Some system errors are retryable
       case ErrorCategory.protocol:
         return false; // Protocol errors usually require fixes
       case ErrorCategory.application:
@@ -195,7 +196,7 @@ class ErrorClassifier {
     if (error is TimeoutException) return ErrorCategory.network;
     if (error is HttpException) return ErrorCategory.network;
 
-    // Protocol errors  
+    // Protocol errors
     if (error is FormatException) return ErrorCategory.protocol;
 
     // System errors
@@ -244,7 +245,8 @@ class ErrorClassifier {
   }
 
   /// Determine error severity based on category and error details
-  static ErrorSeverity determineSeverity(ErrorCategory category, dynamic error) {
+  static ErrorSeverity determineSeverity(
+      ErrorCategory category, dynamic error) {
     switch (category) {
       case ErrorCategory.network:
         if (error is TimeoutException) return ErrorSeverity.warning;

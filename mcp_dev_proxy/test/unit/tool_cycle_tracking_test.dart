@@ -1,5 +1,5 @@
-import "package:test/test.dart";
 import "package:mcp_dev_proxy/src/core/tool_cycle_tracker.dart";
+import "package:test/test.dart";
 
 void main() {
   group("Tool Cycle Tracking (T6.1-T6.3)", () {

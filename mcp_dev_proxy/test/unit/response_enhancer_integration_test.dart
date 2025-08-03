@@ -1,10 +1,9 @@
 import "dart:async";
 import "dart:io";
-import "package:test/test.dart";
 
-import "../../lib/src/enhancers/response_enhancer.dart";
-import "../../lib/src/enhancers/error_context.dart";
-import "../../lib/src/enhancers/enhanced_error_context.dart";
+import "package:mcp_dev_proxy/src/enhancers/error_context.dart";
+import "package:mcp_dev_proxy/src/enhancers/response_enhancer.dart";
+import "package:test/test.dart";
 
 void main() {
   group("ResponseEnhancer Enhanced Error Integration", () {
@@ -15,7 +14,7 @@ void main() {
     });
 
     test("createEnhancedError should classify network errors properly", () {
-      final error = const SocketException("Connection refused");
+      const error = SocketException("Connection refused");
       final mcpError = enhancer.createEnhancedError(
         error,
         "server_connect",
@@ -35,7 +34,7 @@ void main() {
     });
 
     test("createEnhancedError should classify protocol errors properly", () {
-      final error = const FormatException("Invalid JSON");
+      const error = FormatException("Invalid JSON");
       final mcpError = enhancer.createEnhancedError(
         error,
         "parse_response",
@@ -50,7 +49,7 @@ void main() {
     });
 
     test("createEnhancedError should classify system errors properly", () {
-      final error = const ProcessException("ls", []);
+      const error = ProcessException("ls", []);
       final mcpError = enhancer.createEnhancedError(
         error,
         "execute_command",
@@ -71,14 +70,15 @@ void main() {
         lastOutput: "Server starting...",
       );
 
-      final error = const SocketException("Connection timeout");
+      const error = SocketException("Connection timeout");
       final mcpError = enhancer.createEnhancedError(
         error,
         "server_connect",
         baseContext: baseContext,
       );
 
-      final enhancedError = mcpError.data["enhanced_error"] as Map<String, dynamic>;
+      final enhancedError =
+          mcpError.data["enhanced_error"] as Map<String, dynamic>;
       expect(enhancedError["detectedRuntime"], "dart");
       expect(enhancedError["targetCommand"], "dart run server.dart");
       expect(enhancedError["environment"], {"PATH": "/usr/bin"});
@@ -99,7 +99,8 @@ void main() {
     });
 
     test("createEnhancedError should include structured logging data", () {
-      final error = TimeoutException("Operation timed out", const Duration(seconds: 30));
+      final error =
+          TimeoutException("Operation timed out", const Duration(seconds: 30));
       final mcpError = enhancer.createEnhancedError(
         error,
         "fetch_data",
@@ -107,7 +108,8 @@ void main() {
         context: {"timeout": 30, "retries": 2},
       );
 
-      final enhancedError = mcpError.data["enhanced_error"] as Map<String, dynamic>;
+      final enhancedError =
+          mcpError.data["enhanced_error"] as Map<String, dynamic>;
       expect(enhancedError["timestamp"], isA<String>());
       expect(enhancedError["severity"], "warning");
       expect(enhancedError["category"], "network");
@@ -135,7 +137,8 @@ void main() {
 
     test("enhanced errors should maintain all existing functionality", () {
       // Test that existing methods still work
-      final timeoutError = enhancer.createTimeoutError("test_op", const Duration(seconds: 30));
+      final timeoutError =
+          enhancer.createTimeoutError("test_op", const Duration(seconds: 30));
       expect(timeoutError.code, -32603);
       expect(timeoutError.message, "Operation timed out");
 
@@ -149,7 +152,7 @@ void main() {
     });
 
     test("enhanced error data should be comprehensive", () {
-      final error = const FileSystemException("Permission denied", "/tmp/file");
+      const error = FileSystemException("Permission denied", "/tmp/file");
       final mcpError = enhancer.createEnhancedError(
         error,
         "file_access",
@@ -167,7 +170,10 @@ void main() {
       expect(mcpError.data["correlation_id"], "fs_789");
 
       final suggestions = mcpError.data["recovery_suggestions"] as List;
-      expect(suggestions.any((s) => s.toString().toLowerCase().contains("permission")), isTrue);
+      expect(
+          suggestions
+              .any((s) => s.toString().toLowerCase().contains("permission")),
+          isTrue);
     });
   });
 }
