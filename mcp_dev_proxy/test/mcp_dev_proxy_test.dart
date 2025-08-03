@@ -132,7 +132,7 @@ void main() {
       final response = jsonDecode(outputLines.last);
       if (response['result'] != null && response['result']['content'] != null) {
         expect(response['result']['content'][0]['text'],
-            contains('Tool Cycle Status'));
+            contains('Tool Cycle Check'));
       } else {
         // Handle error response
         expect(response['error'], isNotNull);

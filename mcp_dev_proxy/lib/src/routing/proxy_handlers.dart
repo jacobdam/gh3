@@ -28,8 +28,8 @@ class ProxyStatusHandler extends RequestHandler {
   String _buildProxyStatusReport() {
     final targetBinary = _proxy.targetBinary as String;
     final processManager = _proxy.processManager;
-    final startupError = (_proxy as dynamic)._startupError;
-    final binaryMonitorTimer = (_proxy as dynamic)._binaryMonitorTimer;
+    final startupError = _proxy.startupError;
+    final binaryMonitorTimer = _proxy.binaryMonitorTimer;
 
     final binaryExists = File(targetBinary).existsSync();
     final status = binaryExists
@@ -146,7 +146,7 @@ class ProxyToolCycleHandler extends RequestHandler {
   }
 
   String _buildToolCycleReport() {
-    final pendingToolUses = (_proxy as dynamic)._pendingToolUses as Set<String>;
+    final pendingToolUses = _proxy.pendingToolUses;
 
     if (pendingToolUses.isEmpty) {
       return '''

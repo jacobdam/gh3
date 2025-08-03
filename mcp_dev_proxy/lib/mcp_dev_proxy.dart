@@ -67,6 +67,11 @@ class MCPDevProxy {
     _startPeriodicCleanup();
   }
 
+  // Getters for proxy handlers
+  String? get startupError => _startupError;
+  Timer? get binaryMonitorTimer => _binaryMonitorTimer;
+  Set<String> get pendingToolUses => Set.unmodifiable(_pendingToolUses);
+
   Future<void> start() async {
     _logger.info('Starting MCP Dev Proxy');
     _logger.info('Target binary: $targetBinary');
