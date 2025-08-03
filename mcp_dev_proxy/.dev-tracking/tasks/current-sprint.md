@@ -1,15 +1,15 @@
 # Current Sprint Tasks (Phase 0 - Architecture Foundation)
 
 ## Overview
-Sprint Goal: **COMPLETE PHASE 0 ARCHITECTURE FOUNDATION (90% COMPLETE)**
-Estimated: ~4-5 agent sessions (2 tasks remaining)
+Sprint Goal: **COMPLETE PHASE 0 ARCHITECTURE FOUNDATION (85% COMPLETE)**
+Estimated: ~4-5 agent sessions (3 tasks remaining)
 Start Date: 2025-08-03  
-Status: **90% complete** - Ready to finish Phase 0 and move to Phase 1 enhancements
+Status: **85% complete** - Ready to finish Phase 0 and move to Phase 1 enhancements
 Approach: "Architecture-first cleanup" - leveraging existing clean components
 
 ## Task Status
 
-### Phase 0 Remaining Tasks (90% COMPLETE - 2 TASKS LEFT)
+### Phase 0 Remaining Tasks (85% COMPLETE - 3 TASKS LEFT)
 
 - [x] **CLEANUP-004**: Delete redundant cleanup logic from MCPDevProxy ✅ 
   - Priority: P0 (Phase 0 completion)
@@ -26,6 +26,13 @@ Approach: "Architecture-first cleanup" - leveraging existing clean components
     - MCPDevProxy reduced from 583 to 540 lines (43 lines deleted)
     - Clean compilation with zero errors or warnings
 
+- [ ] **TASK-005**: Enhanced ErrorContext classification system (HIGH)
+  - Priority: P0 (Phase 0 completion)
+  - Complexity: Medium - 2 agent sessions
+  - **Target**: Implement comprehensive error classification with severity, categories, recovery suggestions
+  - **Result**: Enhanced debugging with structured error context and classification
+  - **Status**: Ready for development (TASK-002 ✅ complete)
+
 - [ ] **TASK-006**: Implement ToolCycleTracker class (HIGH)
   - Priority: P0 (Phase 0 completion)
   - Complexity: Medium - 2 agent sessions  
@@ -38,9 +45,9 @@ Approach: "Architecture-first cleanup" - leveraging existing clean components
   - Complexity: Low - 1 agent session
   - **Target**: Verify all components work together, complete architecture transformation
   - **Result**: Full technical-design.md architecture implemented and verified
-  - **Status**: Ready for development (depends on TASK-006)
+  - **Status**: Ready for development (depends on TASK-005, TASK-006)
 
-### ✅ **PHASE 0 COMPLETED TASKS (90% DONE)**
+### ✅ **PHASE 0 COMPLETED TASKS (85% DONE)**
 - [x] **0.1** CLEANUP-001: Delete Inline Request Handling ✅ 
 - [x] **0.2** CLEANUP-002: Delete Scattered State Management ✅
 - [x] **0.3** CLEANUP-003: Delete Hardcoded Error Building ✅
