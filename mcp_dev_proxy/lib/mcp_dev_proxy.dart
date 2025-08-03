@@ -6,6 +6,7 @@ import 'package:meta/meta.dart';
 import 'file_watcher.dart';
 import 'mcp_protocol.dart';
 import 'process_manager.dart';
+import 'src/managers/timeout_manager.dart';
 
 class MCPDevProxy {
   final Logger _logger = Logger('MCPDevProxy');
@@ -30,13 +31,7 @@ class MCPDevProxy {
   final Map<dynamic, MCPMessage> _pendingRequests = {};
   Timer? _binaryMonitorTimer;
   final Set<String> _pendingToolUses = {}; // Track incomplete tool_use cycles
-  final Map<dynamic, Timer> _requestTimeouts = {}; // Track request timeouts
-  
-  // Timeout durations for different request types
-  static const Duration _defaultTimeout = Duration(seconds: 30);
-  static const Duration _toolCallTimeout = Duration(seconds: 120); // Tools can be complex
-  static const Duration _listTimeout = Duration(seconds: 10); // Lists should be fast
-  static const Duration _initializeTimeout = Duration(seconds: 15);
+  late TimeoutManager _timeoutManager;
 
   MCPDevProxy({
     required this.targetBinary,
@@ -50,6 +45,7 @@ class MCPDevProxy {
       arguments: arguments,
     );
     _fileWatcher = FileWatcher(filePath: targetBinary);
+    _timeoutManager = TimeoutManager();
   }
 
   Future<void> start() async {
@@ -352,10 +348,8 @@ Use the 'proxy_status' tool for detailed information and 'proxy_help' for guidan
     _pendingToolUses.clear();
     
     // Cancel all pending timeouts
-    for (final timer in _requestTimeouts.values) {
-      timer.cancel();
-    }
-    _requestTimeouts.clear();
+    _timeoutManager.dispose();
+    _timeoutManager = TimeoutManager(); // Reinitialize for the restarted process
 
     // Then restart the process
     _processManager.restart().catchError((error) {
@@ -631,31 +625,19 @@ Use `proxy_status` for overall server health and `proxy_help` for general guidan
   void _startRequestTimeout(MCPMessage message) {
     if (message.id == null) return;
     
-    // Determine appropriate timeout based on request type
-    Duration timeout;
-    if (message.method == 'initialize') {
-      timeout = _initializeTimeout;
-    } else if (message.method == 'tools/call') {
-      timeout = _toolCallTimeout;
-    } else if (message.method?.endsWith('/list') == true) {
-      // All list operations (tools/list, resources/list, prompts/list)
-      timeout = _listTimeout;
-    } else {
-      timeout = _defaultTimeout;
-    }
+    final timeout = _timeoutManager.getTimeout(message.method ?? '', message.params);
     
-    _cancelRequestTimeout(message.id); // Cancel any existing timeout
-    
-    _requestTimeouts[message.id] = Timer(timeout, () {
-      _handleRequestTimeout(message);
-    });
+    _timeoutManager.startTimeout(
+      message.id.toString(),
+      message.method ?? '',
+      () => _handleRequestTimeout(message)
+    );
     
     _logger.fine('Started ${timeout.inSeconds}s timeout for ${message.method} (id: ${message.id})');
   }
   
   void _cancelRequestTimeout(dynamic id) {
-    final timer = _requestTimeouts.remove(id);
-    timer?.cancel();
+    _timeoutManager.cancelTimeout(id.toString());
   }
   
   void _handleRequestTimeout(MCPMessage originalMessage) {
@@ -669,56 +651,30 @@ Use `proxy_status` for overall server health and `proxy_help` for general guidan
     _pendingToolUses.remove(id.toString());
     _cancelRequestTimeout(id);
     
-    // Create timeout error with helpful guidance
-    final timeoutError = MCPError(
-      code: -32603,
-      message: 'Request timeout',
-      data: {
-        'method': originalMessage.method,
-        'timeout_seconds': _getTimeoutForMethod(originalMessage.method).inSeconds,
-        'proxy': 'mcp_dev_proxy',
-        'proxy_capabilities': [
-          'crash_recovery',
-          'hot_reload',
-          'error_buffering',
-          'debug_info'
-        ],
-        'guidance': _buildTimeoutGuidance(originalMessage.method),
-        'recovery_hint': 'The target MCP server may be unresponsive. Check server logs or restart the connection.',
-      },
+    // Create timeout error using TimeoutManager
+    final timeout = _timeoutManager.getTimeout(originalMessage.method ?? '', originalMessage.params);
+    final operationContext = {
+      'proxy': 'mcp_dev_proxy',
+      'proxy_capabilities': [
+        'crash_recovery',
+        'hot_reload',
+        'error_buffering',
+        'debug_info'
+      ],
+      'recovery_hint': 'The target MCP server may be unresponsive. Check server logs or restart the connection.',
+    };
+    
+    final timeoutErrorData = _timeoutManager.createTimeoutError(
+      id.toString(),
+      originalMessage.method ?? '',
+      timeout,
+      operationContext
     );
     
+    final timeoutError = MCPError.fromJson(timeoutErrorData['error']);
     _sendErrorToClient(id, timeoutError);
   }
   
-  Duration _getTimeoutForMethod(String? method) {
-    if (method == 'initialize') {
-      return _initializeTimeout;
-    } else if (method == 'tools/call') {
-      return _toolCallTimeout;
-    } else if (method?.endsWith('/list') == true) {
-      return _listTimeout;
-    } else {
-      return _defaultTimeout;
-    }
-  }
-  
-  String _buildTimeoutGuidance(String? method) {
-    switch (method) {
-      case 'initialize':
-        return 'Server took too long to initialize. Check if the binary is working correctly.';
-      case 'tools/call':
-        return 'Tool execution exceeded timeout. The tool may be stuck in an infinite loop or blocked on I/O.';
-      case 'tools/list':
-        return 'Server took too long to list available tools. Check server implementation.';
-      case 'resources/list':
-        return 'Server took too long to list resources. Check server implementation.';
-      case 'prompts/list':
-        return 'Server took too long to list prompts. Check server implementation.';
-      default:
-        return 'Request took longer than expected. The target server may be unresponsive.';
-    }
-  }
 
   Future<void> stop() async {
     _logger.info('Stopping MCP Dev Proxy');
@@ -729,10 +685,7 @@ Use `proxy_status` for overall server health and `proxy_help` for general guidan
     _stopBinaryMonitoring();
     
     // Cancel all pending timeouts
-    for (final timer in _requestTimeouts.values) {
-      timer.cancel();
-    }
-    _requestTimeouts.clear();
+    _timeoutManager.dispose();
 
     await _processManager.stop();
     await _fileWatcher.stop();
