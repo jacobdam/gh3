@@ -246,7 +246,9 @@ class ErrorClassifier {
 
   /// Determine error severity based on category and error details
   static ErrorSeverity determineSeverity(
-      ErrorCategory category, dynamic error) {
+    ErrorCategory category,
+    dynamic error,
+  ) {
     switch (category) {
       case ErrorCategory.network:
         if (error is TimeoutException) return ErrorSeverity.warning;

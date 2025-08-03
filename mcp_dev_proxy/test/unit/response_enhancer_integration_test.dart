@@ -29,7 +29,7 @@ void main() {
       expect(mcpError.data["operation"], "server_connect");
       expect(mcpError.data["is_retryable"], isTrue);
       expect(mcpError.data["retry_delay_seconds"], isA<int>());
-      expect(mcpError.data["recovery_suggestions"], isA<List>());
+      expect(mcpError.data["recovery_suggestions"], isA<List<dynamic>>());
       expect(mcpError.data["correlation_id"], "req_123");
     });
 
@@ -116,7 +116,7 @@ void main() {
       expect(enhancedError["operation"], "fetch_data");
       expect(enhancedError["correlation_id"], "op_456");
       expect(enhancedError["debug_info"], {"timeout": 30, "retries": 2});
-      expect(enhancedError["recovery_suggestions"], isA<List>());
+      expect(enhancedError["recovery_suggestions"], isA<List<dynamic>>());
       expect(enhancedError["is_retryable"], isTrue);
       expect(enhancedError["retry_delay"], isA<int>());
     });
@@ -165,15 +165,15 @@ void main() {
       expect(mcpError.data["severity"], "error");
       expect(mcpError.data["category"], "system");
       expect(mcpError.data["operation"], "file_access");
-      expect(mcpError.data["recovery_suggestions"], isA<List>());
+      expect(mcpError.data["recovery_suggestions"], isA<List<dynamic>>());
       expect(mcpError.data["is_retryable"], isA<bool>());
       expect(mcpError.data["correlation_id"], "fs_789");
 
-      final suggestions = mcpError.data["recovery_suggestions"] as List;
+      final suggestions = mcpError.data["recovery_suggestions"] as List<dynamic>;
       expect(
           suggestions
               .any((s) => s.toString().toLowerCase().contains("permission")),
-          isTrue);
+          isTrue,);
     });
   });
 }

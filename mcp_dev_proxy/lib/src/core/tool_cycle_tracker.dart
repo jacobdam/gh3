@@ -125,9 +125,7 @@ class ToolCycleTracker {
   /// Remove stale cycles that have been pending too long
   void cleanupStaleCycles(Duration maxAge) {
     final staleIds = getStaleCycles(maxAge).map((c) => c.id).toList();
-    for (final id in staleIds) {
-      _pendingCycles.remove(id);
-    }
+    staleIds.forEach(_pendingCycles.remove);
   }
 
   /// Clear all tracked cycles (used for testing or complete reset)
@@ -218,9 +216,13 @@ class ToolCycleReport {
   String get severity {
     if (totalPending == 0) return "info";
     if (totalPending >= 3 ||
-        longestPendingDuration > const Duration(minutes: 10)) return "critical";
+        longestPendingDuration > const Duration(minutes: 10)) {
+      return "critical";
+    }
     if (totalPending >= 2 ||
-        longestPendingDuration > const Duration(minutes: 5)) return "warning";
+        longestPendingDuration > const Duration(minutes: 5)) {
+      return "warning";
+    }
     return "info";
   }
 }
