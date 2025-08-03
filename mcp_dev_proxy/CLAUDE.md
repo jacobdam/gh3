@@ -36,14 +36,22 @@ Development proxy for MCP servers with crash reporting and hot-reload capabiliti
    - Create feature branch: `feature/[task-id]-description`
    - Follow TDD: Write tests → Implement → Refactor
    - Make regular commits with task progress
-   - Update task status in sprint tracking
+   - Update task status in sprint tracking during development
 
-4. **Before Ending Session**
+4. **Task Completion Process (CRITICAL)**
+   - **BEFORE committing feature**: Update sprint tracking to mark task as completed
+   - Include task completion details (commit hash, features implemented)
+   - Update any dependent tasks to show resolved dependencies
+   - Commit feature implementation AND sprint tracking updates together
+   - Run final tests and code analysis
+   - Verify all acceptance criteria are met
+
+5. **Before Ending Session**
    - Review all uncommitted files: `git status`
    - Clean up any temporary files or experiments
    - Ensure all relevant changes are committed
    - Create handoff note in `.dev-tracking/sessions/[date]-[session]-handoff.md`
-   - Update task progress in `.dev-tracking/tasks/current-sprint.md`
+   - Update overall session progress in `.dev-tracking/tasks/current-sprint.md`
    - Commit all changes with clear messages
    - Verify no unintended files are left uncommitted
 
@@ -52,6 +60,14 @@ Development proxy for MCP servers with crash reporting and hot-reload capabiliti
 - **Stdio Injection**: Constructor accepts `stdinStream`/`stdoutSink` parameters with smart defaults
 - **File Watcher**: Detects binary changes and triggers automatic restart
 - **Clean Code**: Follow principles outlined in `docs/technical-design.md`
+
+### TodoWrite Workflow (MANDATORY)
+- **Start Session**: Create todos for session planning and task selection
+- **Task Development**: Break complex tasks into smaller todo items
+- **Progress Tracking**: Mark todos as in_progress when starting, completed when done
+- **Sprint Updates**: Include "Update sprint tracking" as a todo for every task completion
+- **Commit Preparation**: Use todos to ensure all steps are completed before committing
+- **Session Handoff**: Create todo for session handoff documentation
 
 ### Testing Requirements
 - Unit tests must achieve >90% coverage
@@ -98,3 +114,12 @@ Focus on Phase 1 (Core Infrastructure) tasks:
 3. Component extraction following SRP
 
 See `.dev-tracking/tasks/current-sprint.md` for specific task assignments.
+
+## CRITICAL WORKFLOW REQUIREMENTS
+⚠️ **MANDATORY PROCESS** - Failure to follow will result in project management issues:
+
+1. **ALWAYS update sprint tracking BEFORE committing completed tasks**
+2. **Use TodoWrite tool to track all development steps and ensure nothing is missed**
+3. **Include sprint tracking updates in the same commit as feature implementation**
+4. **Mark dependent tasks as ready when dependencies are satisfied**
+5. **Verify all acceptance criteria are met before marking tasks complete**
