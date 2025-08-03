@@ -159,12 +159,14 @@ void main() {
     test("categorizeError should classify network errors", () {
       expect(
         ErrorClassifier.categorizeError(
-            const SocketException("Connection refused"),),
+          const SocketException("Connection refused"),
+        ),
         ErrorCategory.network,
       );
       expect(
         ErrorClassifier.categorizeError(
-            TimeoutException("Timeout", const Duration(seconds: 30)),),
+          TimeoutException("Timeout", const Duration(seconds: 30)),
+        ),
         ErrorCategory.network,
       );
       expect(
@@ -183,7 +185,8 @@ void main() {
     test("categorizeError should classify system errors", () {
       expect(
         ErrorClassifier.categorizeError(
-            const FileSystemException("File not found"),),
+          const FileSystemException("File not found"),
+        ),
         ErrorCategory.system,
       );
       expect(
@@ -202,20 +205,23 @@ void main() {
     test("determineSeverity should assign appropriate severity", () {
       expect(
         ErrorClassifier.determineSeverity(
-            ErrorCategory.network,
-            const SocketException("Connection refused"),),
+          ErrorCategory.network,
+          const SocketException("Connection refused"),
+        ),
         ErrorSeverity.error,
       );
       expect(
         ErrorClassifier.determineSeverity(
-            ErrorCategory.system,
-            const ProcessException("ls", []),),
+          ErrorCategory.system,
+          const ProcessException("ls", []),
+        ),
         ErrorSeverity.critical,
       );
       expect(
         ErrorClassifier.determineSeverity(
-            ErrorCategory.user,
-            Exception("Invalid input"),),
+          ErrorCategory.user,
+          Exception("Invalid input"),
+        ),
         ErrorSeverity.error,
       );
     });
@@ -227,17 +233,27 @@ void main() {
       );
       expect(networkSuggestions, isNotEmpty);
       expect(
-          networkSuggestions,
-          contains(matches(
-              RegExp("server|connection|network", caseSensitive: false),),),);
+        networkSuggestions,
+        contains(
+          matches(
+            RegExp("server|connection|network", caseSensitive: false),
+          ),
+        ),
+      );
 
       final protocolSuggestions = ErrorClassifier.generateRecoverySuggestions(
         ErrorCategory.protocol,
         const FormatException("Invalid JSON"),
       );
       expect(protocolSuggestions, isNotEmpty);
-      expect(protocolSuggestions,
-          contains(matches(RegExp("json|format", caseSensitive: false),),),);
+      expect(
+        protocolSuggestions,
+        contains(
+          matches(
+            RegExp("json|format", caseSensitive: false),
+          ),
+        ),
+      );
     });
   });
 
@@ -248,13 +264,20 @@ void main() {
       final context = EnhancedErrorContext.classify(nestedError, "connect", {});
 
       // Should still be able to classify based on nested error information
-      expect(context.category,
-          isIn([ErrorCategory.network, ErrorCategory.unknown],),);
+      expect(
+        context.category,
+        isIn(
+          [ErrorCategory.network, ErrorCategory.unknown],
+        ),
+      );
     });
 
     test("should handle null errors gracefully", () {
-      final context =
-          EnhancedErrorContext.classify(null, "unknown_operation", {},);
+      final context = EnhancedErrorContext.classify(
+        null,
+        "unknown_operation",
+        {},
+      );
 
       expect(context.category, ErrorCategory.unknown);
       expect(context.severity, ErrorSeverity.error);

@@ -169,11 +169,13 @@ void main() {
       expect(mcpError.data["is_retryable"], isA<bool>());
       expect(mcpError.data["correlation_id"], "fs_789");
 
-      final suggestions = mcpError.data["recovery_suggestions"] as List<dynamic>;
+      final suggestions =
+          mcpError.data["recovery_suggestions"] as List<dynamic>;
       expect(
-          suggestions
-              .any((s) => s.toString().toLowerCase().contains("permission")),
-          isTrue,);
+        suggestions
+            .any((s) => s.toString().toLowerCase().contains("permission")),
+        isTrue,
+      );
     });
   });
 }
