@@ -1,0 +1,35 @@
+name: Test
+
+on:
+  push:
+    branches: [ main, projects/mcp-proxy ]
+  pull_request:
+    branches: [ main, projects/mcp-proxy ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Setup Dart
+      uses: dart-lang/setup-dart@v1
+      with:
+        sdk: stable
+        
+    - name: Install dependencies
+      working-directory: mcp_dev_proxy
+      run: dart pub get
+      
+    - name: Verify formatting
+      working-directory: mcp_dev_proxy
+      run: dart format --output=none --set-exit-if-changed .
+      
+    - name: Analyze project source
+      working-directory: mcp_dev_proxy
+      run: dart analyze --fatal-infos --fatal-warnings
+      
+    - name: Run tests
+      working-directory: mcp_dev_proxy
+      run: dart test
