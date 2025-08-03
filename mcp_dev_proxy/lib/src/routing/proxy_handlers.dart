@@ -29,7 +29,6 @@ class ProxyStatusHandler extends RequestHandler {
   String _buildProxyStatusReport() {
     final targetBinary = _proxy.targetBinary;
     final startupError = _proxy.startupError;
-    final binaryMonitorTimer = _proxy.binaryMonitorTimer;
 
     final binaryExists = File(targetBinary).existsSync();
     final status = binaryExists
@@ -42,7 +41,7 @@ class ProxyStatusHandler extends RequestHandler {
 **Target Binary:** `$targetBinary`
 **Status:** $status
 **Process Running:** ${_proxy.isProcessRunning}
-**Monitoring Active:** ${binaryMonitorTimer != null}
+**File Watching:** Active
 
 ## Current State
 ${startupError != null ? "⚠️ Startup Error: $startupError" : "✅ Proxy running normally"}
@@ -145,27 +144,39 @@ class ProxyToolCycleHandler extends RequestHandler {
   }
 
   String _buildToolCycleReport() {
-    final pendingToolUses = _proxy.pendingToolUses;
+    final report = _proxy.toolCycleTracker.getReport();
+    final pendingCycles = _proxy.toolCycleTracker.getPendingCycleIds();
 
-    if (pendingToolUses.isEmpty) {
+    if (pendingCycles.isEmpty) {
       return """
 # Tool Cycle Check
 
 ✅ **No incomplete tool cycles detected**
 
 All tool_use requests have been properly completed with tool_result responses.
+
+## Status Summary
+- Pending Cycles: ${report.totalPending}
+- Risk Level: ${report.severity}
+- Needs Attention: ${report.needsAttention ? 'Yes' : 'No'}
 """;
     }
 
-    final pendingList = pendingToolUses.map((id) => "- `$id`").join("\n");
+    final pendingList = pendingCycles.map((id) => "- `$id`").join("\n");
 
     return """
 # Tool Cycle Check
 
-⚠️ **${pendingToolUses.length} incomplete tool cycle(s) detected**
+⚠️ **${pendingCycles.length} incomplete tool cycle(s) detected**
 
 ## Pending Tool Uses
 $pendingList
+
+## Status Summary
+- Pending Cycles: ${report.totalPending}
+- Risk Level: ${report.severity}
+- Needs Attention: ${report.needsAttention ? 'Yes' : 'No'}
+- Longest Pending: ${report.longestPendingDuration.inSeconds}s
 
 ## What This Means
 These tool_use requests were sent but never received corresponding tool_result responses.

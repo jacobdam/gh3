@@ -8,6 +8,7 @@ import "file_watcher.dart";
 import "mcp_protocol.dart";
 import "process_manager.dart";
 import "src/core/proxy_state.dart";
+import "src/core/tool_cycle_tracker.dart";
 import "src/enhancers/error_context.dart";
 import "src/enhancers/response_enhancer.dart";
 import "src/managers/timeout_manager.dart";
@@ -31,6 +32,7 @@ class MCPDevProxy {
     _responseEnhancer = ResponseEnhancer();
     _requestRouter = RequestRouter();
     _proxyState = ProxyState();
+    _toolCycleTracker = ToolCycleTracker();
     _setupRequestRouter();
   }
   final Logger _logger = Logger("MCPDevProxy");
@@ -44,12 +46,12 @@ class MCPDevProxy {
   late RequestRouter _requestRouter;
   late ProxyState _proxyState;
   late FileWatcher _fileWatcher;
+  late ToolCycleTracker _toolCycleTracker;
 
   StreamSubscription<String>? _stdoutSubscription;
   StreamSubscription<void>? _fileWatchSubscription;
   StreamSubscription<String>? _stdinSubscription;
 
-  Timer? _binaryMonitorTimer;
   late TimeoutManager _timeoutManager;
 
   @visibleForTesting
@@ -57,9 +59,9 @@ class MCPDevProxy {
 
   // Getters for proxy handlers
   String? get startupError => _proxyState.startupError;
-  Timer? get binaryMonitorTimer => _binaryMonitorTimer;
   Set<String> get pendingToolUses => _proxyState.pendingToolUses;
   ProxyState get proxyState => _proxyState;
+  ToolCycleTracker get toolCycleTracker => _toolCycleTracker;
 
   // Process state getters (public interface instead of @visibleForTesting processManager)
   bool get isProcessRunning => _processManager.isRunning;
@@ -104,7 +106,7 @@ class MCPDevProxy {
     if (!binaryFile.existsSync()) {
       _proxyState.setStartupError("Binary not found: $targetBinary");
       _logger.warning("Target binary does not exist: $targetBinary");
-      _startBinaryMonitoring();
+      // FileWatcher will detect when binary becomes available and trigger restart
       return;
     }
 
@@ -128,7 +130,6 @@ class MCPDevProxy {
       );
 
       _logger.info("Target process started successfully");
-      _stopBinaryMonitoring(); // Stop monitoring once successfully started
     } on Exception catch (e) {
       _logger.severe("Failed to start target process: $e");
 
@@ -171,7 +172,7 @@ class MCPDevProxy {
     if (message.method == "tools/call") {
       final toolUseId = message.id?.toString();
       if (toolUseId != null) {
-        _proxyState.addPendingToolUse(toolUseId);
+        _toolCycleTracker.startToolCycle(toolUseId, DateTime.now());
         _logger.fine("Tracking tool_use: $toolUseId");
       }
     }
@@ -232,6 +233,7 @@ class MCPDevProxy {
       final toolUseId = message.id.toString();
       if (_proxyState.pendingToolUses.contains(toolUseId)) {
         _proxyState.removePendingToolUse(toolUseId);
+        _toolCycleTracker.completeToolCycle(toolUseId);
         _logger.fine("Completed tool_use cycle: $toolUseId");
       }
     }
@@ -285,6 +287,7 @@ class MCPDevProxy {
     // Also send error responses for incomplete tool_use cycles
     for (final toolUseId in _proxyState.pendingToolUses) {
       _logger.warning("Sending error for incomplete tool_use: $toolUseId");
+      _toolCycleTracker.markCycleInterrupted(toolUseId, reason);
       final toolError =
           _responseEnhancer.createToolInterruptedError(toolUseId, reason);
       _sendErrorToClient(toolUseId, toolError);
@@ -435,25 +438,6 @@ class MCPDevProxy {
     stdoutSink.writeln(line);
   }
 
-  void _startBinaryMonitoring() {
-    _stopBinaryMonitoring(); // Stop any existing monitoring
-
-    _logger.info("Starting binary availability monitoring");
-    _binaryMonitorTimer = Timer.periodic(const Duration(seconds: 2), (_) {
-      final binaryFile = File(targetBinary);
-      if (binaryFile.existsSync()) {
-        _logger
-            .info("Binary now available, attempting to start target process");
-        _stopBinaryMonitoring();
-        unawaited(_startTargetProcess());
-      }
-    });
-  }
-
-  void _stopBinaryMonitoring() {
-    _binaryMonitorTimer?.cancel();
-    _binaryMonitorTimer = null;
-  }
 
   void _startRequestTimeout(MCPMessage message) {
     if (message.id == null) return;
@@ -487,6 +471,7 @@ class MCPDevProxy {
     // Remove from pending requests and tool uses
     _proxyState.removePendingRequest(id);
     _proxyState.removePendingToolUse(id.toString());
+    _toolCycleTracker.markCycleInterrupted(id.toString(), "Request timeout");
     _cancelRequestTimeout(id);
 
     // Create timeout error using TimeoutManager
@@ -524,10 +509,12 @@ class MCPDevProxy {
     await _stdinSubscription?.cancel();
     await _stdoutSubscription?.cancel();
     await _fileWatchSubscription?.cancel();
-    _stopBinaryMonitoring();
 
     // Cancel all pending timeouts
     _timeoutManager.dispose();
+    
+    // Dispose tool cycle tracker
+    _toolCycleTracker.dispose();
 
     await _processManager.stop();
     await _fileWatcher.stop();
