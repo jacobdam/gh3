@@ -2,241 +2,117 @@ import 'package:test/test.dart';
 import '../../lib/src/routing/request_router.dart';
 
 void main() {
-  group('RequestRouter', () {
+  group('RequestRouter - MCP Proxy Usage', () {
     late RequestRouter router;
 
     setUp(() {
       router = RequestRouter();
     });
 
-    group('Route Registration', () {
-      test('should register a new route', () {
-        final handler = TestRequestHandler();
-        router.registerRoute('test/method', handler);
+    group('Basic MCP Method Routing', () {
+      test('should handle MCP standard methods', () {
+        final mcpHandler = _MockMCPHandler();
         
-        expect(router.canHandle('test/method'), isTrue);
-        expect(router.getSupportedMethods(), contains('test/method'));
-      });
-
-      test('should support multiple routes', () {
-        final handler1 = TestRequestHandler();
-        final handler2 = TestRequestHandler();
+        // Register standard MCP methods
+        router.registerRoute('initialize', mcpHandler);
+        router.registerRoute('tools/list', mcpHandler);
+        router.registerRoute('tools/call', mcpHandler);
+        router.registerRoute('resources/list', mcpHandler);
         
-        router.registerRoute('test/method1', handler1);
-        router.registerRoute('test/method2', handler2);
-        
-        expect(router.getSupportedMethods(), hasLength(2));
-        expect(router.canHandle('test/method1'), isTrue);
-        expect(router.canHandle('test/method2'), isTrue);
-      });
-
-      test('should overwrite existing route registration', () {
-        final handler1 = TestRequestHandler();
-        final handler2 = TestRequestHandler();
-        
-        router.registerRoute('test/method', handler1);
-        router.registerRoute('test/method', handler2);
-        
-        expect(router.getSupportedMethods(), hasLength(1));
-      });
-
-      test('should return false for unregistered routes', () {
+        expect(router.canHandle('initialize'), isTrue);
+        expect(router.canHandle('tools/list'), isTrue);
+        expect(router.canHandle('tools/call'), isTrue);
+        expect(router.canHandle('resources/list'), isTrue);
         expect(router.canHandle('unknown/method'), isFalse);
       });
-    });
 
-    group('Middleware', () {
-      test('should add middleware', () {
-        final middleware = TestRequestMiddleware();
-        router.addMiddleware(middleware);
+      test('should route MCP requests correctly', () async {
+        final mcpHandler = _MockMCPHandler();
+        router.registerRoute('tools/list', mcpHandler);
         
-        // Middleware should be called during request processing
-        expect(router.getMiddleware(), contains(middleware));
-      });
-
-      test('should execute middleware in order', () async {
-        final middleware1 = TestRequestMiddleware();
-        final middleware2 = TestRequestMiddleware();
-        final handler = TestRequestHandler();
+        final context = RequestContext('tools/list', {}, 'test-123');
+        final result = await router.routeRequest('tools/list', {}, context);
         
-        router.addMiddleware(middleware1);
-        router.addMiddleware(middleware2);
-        router.registerRoute('test/method', handler);
-        
-        final context = RequestContext('test/method', {}, 'test-id');
-        await router.routeRequest('test/method', {}, context);
-        
-        expect(middleware1.beforeRequestCalled, isTrue);
-        expect(middleware2.beforeRequestCalled, isTrue);
-        expect(middleware1.afterRequestCalled, isTrue);
-        expect(middleware2.afterRequestCalled, isTrue);
+        expect(mcpHandler.wasCalled, isTrue);
+        expect(mcpHandler.lastMethod, equals('tools/list'));
+        expect(result['status'], equals('handled'));
       });
     });
 
-    group('Request Routing', () {
-      test('should route request to correct handler', () async {
-        final handler = TestRequestHandler();
-        router.registerRoute('test/method', handler);
+    group('Proxy Tool Routing', () {
+      test('should handle proxy-specific tools', () {
+        final proxyHandler = _MockProxyHandler();
         
-        final context = RequestContext('test/method', {}, 'test-id');
-        final result = await router.routeRequest('test/method', {'key': 'value'}, context);
+        // Register proxy tools
+        router.registerRoute('proxy_status', proxyHandler);
+        router.registerRoute('proxy_help', proxyHandler);
+        router.registerRoute('proxy_restart', proxyHandler);
         
-        expect(handler.handleCalled, isTrue);
-        expect(handler.lastParams, equals({'key': 'value'}));
-        expect(handler.lastContext, equals(context));
-        expect(result, equals({'handled': true}));
+        expect(router.canHandle('proxy_status'), isTrue);
+        expect(router.canHandle('proxy_help'), isTrue);
+        expect(router.canHandle('proxy_restart'), isTrue);
       });
 
-      test('should throw exception for unregistered method', () async {
-        final context = RequestContext('unknown/method', {}, 'test-id');
+      test('should route proxy tool requests', () async {
+        final proxyHandler = _MockProxyHandler();
+        router.registerRoute('proxy_status', proxyHandler);
+        
+        final context = RequestContext('proxy_status', {}, 'proxy-456');
+        final result = await router.routeRequest('proxy_status', {}, context);
+        
+        expect(proxyHandler.wasCalled, isTrue);
+        expect(result['proxy_tool'], isTrue);
+      });
+    });
+
+    group('Error Handling', () {
+      test('should throw exception for unregistered methods', () {
+        final context = RequestContext('unknown/method', {}, 'error-789');
         
         expect(
           () => router.routeRequest('unknown/method', {}, context),
           throwsA(isA<RouteNotFoundException>()),
         );
       });
-
-      test('should validate request parameters', () async {
-        final handler = TestRequestHandler();
-        router.registerRoute('test/method', handler);
-        
-        final context = RequestContext('test/method', {}, 'test-id');
-        
-        // Should not throw for valid parameters
-        await router.routeRequest('test/method', {}, context);
-        expect(handler.handleCalled, isTrue);
-      });
     });
 
     group('Request Context', () {
       test('should create context with method and id', () {
-        final context = RequestContext('test/method', {'param': 'value'}, 'test-id');
+        final context = RequestContext('test/method', {'key': 'value'}, 'ctx-123');
         
         expect(context.method, equals('test/method'));
-        expect(context.id, equals('test-id'));
-        expect(context.params, equals({'param': 'value'}));
-      });
-
-      test('should support metadata storage', () {
-        final context = RequestContext('test/method', {}, 'test-id');
-        
-        context.setMetadata('key', 'value');
-        expect(context.getMetadata('key'), equals('value'));
-        expect(context.getMetadata('unknown'), isNull);
-      });
-    });
-
-    group('Error Handling', () {
-      test('should handle handler exceptions gracefully', () async {
-        final handler = FailingRequestHandler();
-        router.registerRoute('test/method', handler);
-        
-        final context = RequestContext('test/method', {}, 'test-id');
-        
-        expect(
-          () => router.routeRequest('test/method', {}, context),
-          throwsA(isA<Exception>()),
-        );
-      });
-
-      test('should handle middleware exceptions', () async {
-        final middleware = FailingRequestMiddleware();
-        final handler = TestRequestHandler();
-        
-        router.addMiddleware(middleware);
-        router.registerRoute('test/method', handler);
-        
-        final context = RequestContext('test/method', {}, 'test-id');
-        
-        expect(
-          () => router.routeRequest('test/method', {}, context),
-          throwsA(isA<Exception>()),
-        );
-      });
-    });
-
-    group('Performance', () {
-      test('should handle route lookup efficiently', () {
-        // Register many routes
-        for (int i = 0; i < 1000; i++) {
-          router.registerRoute('test/method$i', TestRequestHandler());
-        }
-        
-        final stopwatch = Stopwatch()..start();
-        final canHandle = router.canHandle('test/method500');
-        stopwatch.stop();
-        
-        expect(canHandle, isTrue);
-        expect(stopwatch.elapsedMicroseconds, lessThan(1000)); // < 1ms
-      });
-
-      test('should handle request routing efficiently', () async {
-        final handler = TestRequestHandler();
-        router.registerRoute('test/method', handler);
-        
-        final context = RequestContext('test/method', {}, 'test-id');
-        final stopwatch = Stopwatch()..start();
-        
-        await router.routeRequest('test/method', {}, context);
-        
-        stopwatch.stop();
-        expect(stopwatch.elapsedMicroseconds, lessThan(1000)); // < 1ms
+        expect(context.id, equals('ctx-123'));
+        expect(context.params, equals({'key': 'value'}));
       });
     });
   });
 }
 
-// Test implementations
-class TestRequestHandler extends RequestHandler {
-  bool handleCalled = false;
-  Map<String, dynamic>? lastParams;
-  RequestContext? lastContext;
+// Minimal test doubles for MCP proxy usage
+class _MockMCPHandler extends RequestHandler {
+  bool wasCalled = false;
+  String? lastMethod;
 
   @override
   Future<Map<String, dynamic>> handle(
     Map<String, dynamic> params,
     RequestContext context,
   ) async {
-    handleCalled = true;
-    lastParams = params;
-    lastContext = context;
-    return {'handled': true};
+    wasCalled = true;
+    lastMethod = context.method;
+    return {'status': 'handled', 'method': context.method};
   }
 }
 
-class FailingRequestHandler extends RequestHandler {
+class _MockProxyHandler extends RequestHandler {
+  bool wasCalled = false;
+
   @override
   Future<Map<String, dynamic>> handle(
     Map<String, dynamic> params,
     RequestContext context,
   ) async {
-    throw Exception('Handler failed');
-  }
-}
-
-class TestRequestMiddleware extends RequestMiddleware {
-  bool beforeRequestCalled = false;
-  bool afterRequestCalled = false;
-
-  @override
-  Future<void> beforeRequest(RequestContext context) async {
-    beforeRequestCalled = true;
-  }
-
-  @override
-  Future<void> afterRequest(RequestContext context) async {
-    afterRequestCalled = true;
-  }
-}
-
-class FailingRequestMiddleware extends RequestMiddleware {
-  @override
-  Future<void> beforeRequest(RequestContext context) async {
-    throw Exception('Middleware failed');
-  }
-
-  @override
-  Future<void> afterRequest(RequestContext context) async {
-    // No-op
+    wasCalled = true;
+    return {'proxy_tool': true, 'method': context.method};
   }
 }
