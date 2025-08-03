@@ -7,6 +7,7 @@ import 'file_watcher.dart';
 import 'mcp_protocol.dart';
 import 'process_manager.dart';
 import 'src/managers/timeout_manager.dart';
+import 'src/enhancers/response_enhancer.dart';
 
 class MCPDevProxy {
   final Logger _logger = Logger('MCPDevProxy');
@@ -16,6 +17,7 @@ class MCPDevProxy {
   final IOSink stdoutSink;
 
   late ProcessManager _processManager;
+  late ResponseEnhancer _responseEnhancer;
 
   @visibleForTesting
   ProcessManager get processManager => _processManager;
@@ -46,6 +48,7 @@ class MCPDevProxy {
     );
     _fileWatcher = FileWatcher(filePath: targetBinary);
     _timeoutManager = TimeoutManager();
+    _responseEnhancer = ResponseEnhancer();
   }
 
   Future<void> start() async {
@@ -285,7 +288,8 @@ Use the 'proxy_status' tool for detailed information and 'proxy_help' for guidan
     }
 
     // Add proxy metadata and restart notification
-    final enhancedMessage = message.withProxyMetadata(
+    final enhancedMessage = _responseEnhancer.enhanceResponse(
+      message,
       proxyEvent: _restartPending ? 'restarted' : null,
       reason: _lastRestartReason,
     );
@@ -307,7 +311,7 @@ Use the 'proxy_status' tool for detailed information and 'proxy_help' for guidan
     _logger.warning('Target process crashed with exit code: $exitCode');
 
     final stderr = _processManager.lastStderr;
-    final crashError = MCPError.serverCrash(exitCode, stderr);
+    final crashError = _responseEnhancer.createServerCrashError(exitCode, stderr);
 
     // Send error responses for all pending requests
     for (final entry in _pendingRequests.entries) {
@@ -324,7 +328,7 @@ Use the 'proxy_status' tool for detailed information and 'proxy_help' for guidan
 
     // First, send error responses for all pending requests
     // This prevents client hanging when process is restarted
-    final restartError = MCPError.serverRestart(reason);
+    final restartError = _responseEnhancer.createServerRestartError(reason);
     for (final entry in _pendingRequests.entries) {
       _sendErrorToClient(entry.key, restartError);
     }
@@ -333,16 +337,7 @@ Use the 'proxy_status' tool for detailed information and 'proxy_help' for guidan
     // Also send error responses for incomplete tool_use cycles
     for (final toolUseId in _pendingToolUses) {
       _logger.warning('Sending error for incomplete tool_use: $toolUseId');
-      final toolError = MCPError(
-        code: -32603,
-        message: 'Tool execution interrupted by server restart',
-        data: {
-          'tool_use_id': toolUseId,
-          'reason': reason,
-          'proxy': 'mcp_dev_proxy',
-          'recovery_hint': 'Use /resume command to start a fresh session without incomplete tool cycles',
-        },
-      );
+      final toolError = _responseEnhancer.createToolInterruptedError(toolUseId, reason);
       _sendErrorToClient(toolUseId, toolError);
     }
     _pendingToolUses.clear();
