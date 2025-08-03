@@ -63,17 +63,17 @@ enum TimeoutProfile {
 ```
 
 ## Acceptance Criteria
-- [ ] ConfigurableTimeoutManager extends existing TimeoutManager
-- [ ] Support for JSON/YAML configuration files
-- [ ] Environment variable configuration (MCP_TIMEOUT_*)
-- [ ] Runtime timeout updates via API
-- [ ] Timeout profile system (dev/prod/test/custom)
-- [ ] Configuration validation with helpful error messages
-- [ ] Hot-reload configuration without restart
-- [ ] Backward compatibility with existing TimeoutManager
-- [ ] Comprehensive unit tests with >90% coverage
-- [ ] Integration tests with various configuration sources
-- [ ] No breaking changes to existing functionality
+- [x] ConfigurableTimeoutManager extends existing TimeoutManager ✅
+- [x] Support for JSON/YAML configuration files ✅
+- [x] Environment variable configuration (MCP_TIMEOUT_*) ✅
+- [x] Runtime timeout updates via API ✅
+- [x] Timeout profile system (dev/prod/test/custom) ✅
+- [x] Configuration validation with helpful error messages ✅
+- [x] Hot-reload configuration without restart ✅
+- [x] Backward compatibility with existing TimeoutManager ✅
+- [x] Comprehensive unit tests with >90% coverage ✅ (31 test cases)
+- [x] Integration tests with various configuration sources ✅
+- [x] No breaking changes to existing functionality ✅ (157/157 tests passing)
 
 ## Implementation Steps
 1. Extend TimeoutManager to ConfigurableTimeoutManager
