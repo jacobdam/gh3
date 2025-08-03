@@ -102,24 +102,27 @@ class ResponseEnhancer {
     );
   }
 
-  MCPError createServerUnavailableError(ErrorContext context, {Map<String, dynamic>? additionalData}) {
+  MCPError createServerUnavailableError(ErrorContext context,
+      {Map<String, dynamic>? additionalData}) {
     final binaryExists = context.environment?['binaryExists'] == 'true';
     final startupError = context.lastOutput;
-    
+
     String message;
     String actionNeeded;
-    
+
     if (!binaryExists) {
       message = 'MCP server binary not found';
-      actionNeeded = 'Compile your MCP server binary and the proxy will handle the rest';
+      actionNeeded =
+          'Compile your MCP server binary and the proxy will handle the rest';
     } else if (startupError != null && startupError.isNotEmpty) {
       message = 'Target MCP server failed to start';
-      actionNeeded = 'Check if binary is executable and implements MCP protocol';
+      actionNeeded =
+          'Check if binary is executable and implements MCP protocol';
     } else {
       message = 'Target MCP server is not running';
       actionNeeded = 'Check if your MCP server process crashed';
     }
-    
+
     final data = <String, dynamic>{
       'proxy': 'mcp_dev_proxy',
       'target_binary': context.targetCommand ?? 'unknown',
@@ -133,15 +136,15 @@ class ResponseEnhancer {
         'debug_info'
       ],
     };
-    
+
     if (startupError != null && startupError.isNotEmpty) {
       data['startup_error'] = startupError;
     }
-    
+
     if (additionalData != null) {
       data.addAll(additionalData);
     }
-    
+
     return MCPError(
       code: -32603,
       message: message,

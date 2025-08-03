@@ -301,7 +301,6 @@ class MCPDevProxy {
     });
   }
 
-
   void _sendErrorToClient(dynamic id, MCPError error) {
     final errorResponse = MCPMessage.createErrorResponse(id, error);
     _sendToClient(errorResponse);
@@ -313,7 +312,7 @@ class MCPDevProxy {
     _requestRouter.registerRoute('proxy_help', ProxyHelpHandler(this));
     _requestRouter.registerRoute(
         'proxy_check_tool_cycles', ProxyToolCycleHandler(this));
-    
+
     // Register handlers for when target server is unavailable
     _requestRouter.registerRoute('initialize', InitializeHandler(this));
     _requestRouter.registerRoute('tools/list', ToolsListHandler(this));
@@ -322,12 +321,14 @@ class MCPDevProxy {
   /// Route requests through request router when target is unavailable
   Future<void> _routeRequestWhenUnavailable(MCPMessage message) async {
     final method = message.method;
-    
+
     if (method != null && _requestRouter.canHandle(method)) {
       try {
-        final context = RequestContext(method, message.params ?? {}, message.id?.toString() ?? '');
-        final result = await _requestRouter.routeRequest(method, message.params ?? {}, context);
-        
+        final context = RequestContext(
+            method, message.params ?? {}, message.id?.toString() ?? '');
+        final result = await _requestRouter.routeRequest(
+            method, message.params ?? {}, context);
+
         final response = MCPMessage(
           jsonrpc: '2.0',
           id: message.id,
@@ -354,7 +355,7 @@ class MCPDevProxy {
         _sendErrorToClient(message.id, error);
       }
     } else if (method == 'tools/call') {
-      // Handle proxy tool calls 
+      // Handle proxy tool calls
       final params = message.params as Map<String, dynamic>?;
       final toolName = params?['name'] as String?;
 
@@ -369,8 +370,10 @@ class MCPDevProxy {
       }
 
       try {
-        final context = RequestContext(toolName, params ?? {}, message.id?.toString() ?? '');
-        final result = await _requestRouter.routeRequest(toolName, params ?? {}, context);
+        final context = RequestContext(
+            toolName, params ?? {}, message.id?.toString() ?? '');
+        final result =
+            await _requestRouter.routeRequest(toolName, params ?? {}, context);
 
         final response = MCPMessage(
           jsonrpc: '2.0',
@@ -415,7 +418,6 @@ class MCPDevProxy {
       _sendErrorToClient(message.id, error);
     }
   }
-
 
   void _sendToClient(MCPMessage message) {
     final line = MCPProtocol.formatMessage(message);

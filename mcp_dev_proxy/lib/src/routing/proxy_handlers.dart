@@ -204,16 +204,18 @@ class InitializeHandler extends RequestHandler {
     final binaryExists = File(targetBinary).existsSync();
     final processManager = _proxy.processManager;
     final proxyState = _proxy.proxyState;
-    
+
     String status;
     String actionNeeded;
-    
+
     if (!binaryExists) {
       status = 'Binary not found';
-      actionNeeded = 'Compile your MCP server binary: dart compile exe bin/your_server.dart -o ${targetBinary.split('/').last}';
+      actionNeeded =
+          'Compile your MCP server binary: dart compile exe bin/your_server.dart -o ${targetBinary.split('/').last}';
     } else if (proxyState.startupError != null) {
       status = 'Binary exists but failed to start: ${proxyState.startupError}';
-      actionNeeded = 'Check if binary is executable and implements MCP protocol';
+      actionNeeded =
+          'Check if binary is executable and implements MCP protocol';
     } else if (processManager.isStarting) {
       status = 'Target MCP server is starting up';
       actionNeeded = 'Please wait for the server to start';
@@ -221,7 +223,7 @@ class InitializeHandler extends RequestHandler {
       status = 'Target MCP server is not running';
       actionNeeded = 'Check if your MCP server process crashed';
     }
-    
+
     final instructionsText = '''
 Target MCP server is not available.
 
@@ -267,7 +269,8 @@ class ToolsListHandler extends RequestHandler {
       'tools': [
         {
           'name': 'proxy_status',
-          'description': 'Get current proxy status and target binary information',
+          'description':
+              'Get current proxy status and target binary information',
           'inputSchema': {
             'type': 'object',
             'properties': {},
@@ -283,7 +286,8 @@ class ToolsListHandler extends RequestHandler {
         },
         {
           'name': 'proxy_check_tool_cycles',
-          'description': 'Check for incomplete tool_use cycles that may cause API errors',
+          'description':
+              'Check for incomplete tool_use cycles that may cause API errors',
           'inputSchema': {
             'type': 'object',
             'properties': {},
