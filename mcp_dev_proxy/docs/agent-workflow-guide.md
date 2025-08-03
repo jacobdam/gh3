@@ -8,14 +8,14 @@ This guide provides detailed instructions for code agents (Claude) working on th
 ### 1. Health Check (30 seconds)
 ```bash
 # Run the project health check script
-.dev-tracking/scripts/health-check.sh
+dev-tracking/scripts/health-check.sh
 ```
 
 ### 2. Context Review (2 minutes)
 ```bash
 # Read current project state
-cat .dev-tracking/tasks/current-sprint.md
-cat .dev-tracking/sessions/latest-handoff.md
+cat dev-tracking/tasks/current-sprint.md
+cat dev-tracking/sessions/latest-handoff.md
 git status
 ```
 

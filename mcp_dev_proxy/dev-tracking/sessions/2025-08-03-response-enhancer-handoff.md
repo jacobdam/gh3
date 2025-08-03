@@ -28,7 +28,7 @@
 - `lib/src/enhancers/response_enhancer.dart` (113 lines)
 - `lib/src/enhancers/error_context.dart` (54 lines)
 - `test/unit/response_enhancer_test.dart` (295 lines)
-- `.dev-tracking/tasks/definitions/TASK-002.md` (126 lines)
+- `dev-tracking/tasks/definitions/TASK-002.md` (126 lines)
 
 ### Integration Points Updated:
 - MCPDevProxy line 297: `_responseEnhancer.enhanceResponse()`
@@ -73,7 +73,7 @@
 - **Resolution**: Updated CLAUDE.md workflow with mandatory definition checks
 
 ### Workflow Corrections Applied:
-1. Always read `.dev-tracking/tasks/definitions/TASK-XXX.md` first
+1. Always read `dev-tracking/tasks/definitions/TASK-XXX.md` first
 2. Create task definition if missing before proceeding
 3. Verify against definition throughout development
 4. Update definition file to mark acceptance criteria completed
@@ -119,7 +119,7 @@
 3. **TASK-004 (Timeout system)**: Complex but high-impact improvement
 
 ### Process Reminders:
-- **Always check** `.dev-tracking/tasks/definitions/TASK-XXX.md` first
+- **Always check** `dev-tracking/tasks/definitions/TASK-XXX.md` first
 - **Use TodoWrite** extensively for step tracking
 - **Verify acceptance criteria** before marking complete
 - **Update both** sprint tracking and task definition files

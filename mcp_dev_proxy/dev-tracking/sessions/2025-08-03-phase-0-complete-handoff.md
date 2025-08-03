@@ -93,7 +93,7 @@
 ### **Key Files Modified**:
 - `lib/mcp_dev_proxy.dart` - ToolCycleTracker integration + duplicate monitoring removal
 - `lib/src/routing/proxy_handlers.dart` - Enhanced ProxyToolCycleHandler with ToolCycleReport
-- `.dev-tracking/tasks/current-sprint.md` - Updated to reflect 100% Phase 0 completion
+- `dev-tracking/tasks/current-sprint.md` - Updated to reflect 100% Phase 0 completion
 
 ### **Testing Status**:
 - All unit tests passing (125+ tests)

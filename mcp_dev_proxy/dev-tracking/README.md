@@ -5,7 +5,7 @@ This directory contains project management artifacts for the MCP Development Pro
 ## Directory Structure
 
 ```
-.dev-tracking/
+dev-tracking/
 ├── tasks/
 │   ├── current-sprint.md      # Active sprint task tracking
 │   └── definitions/           # Detailed task definitions

@@ -24,8 +24,8 @@ Development proxy for MCP servers with crash reporting and hot-reload capabiliti
 
    ```bash
    # Check current status
-   cat .dev-tracking/tasks/current-sprint.md
-   cat .dev-tracking/sessions/latest-handoff.md
+   cat dev-tracking/tasks/current-sprint.md
+   cat dev-tracking/sessions/latest-handoff.md
    git status
    ```
 
@@ -47,7 +47,7 @@ Development proxy for MCP servers with crash reporting and hot-reload capabiliti
 - Continue "In Progress" tasks first
 - Address critical system/design issues
 - Pick from "Ready for Development" queue
-- **MANDATORY**: Check task definition in `.dev-tracking/tasks/definitions/TASK-XXX.md`
+- **MANDATORY**: Check task definition in `dev-tracking/tasks/definitions/TASK-XXX.md`
 - If task definition doesn't exist, create it before starting implementation
 
 ### Development Process
@@ -73,8 +73,8 @@ Development proxy for MCP servers with crash reporting and hot-reload capabiliti
 - Review all uncommitted files: `git status`
 - Clean up any temporary files or experiments
 - Ensure all meaningful changes are committed
-- Create handoff note in `.dev-tracking/sessions/[date]-[session]-handoff.md`
-- Update overall session progress in `.dev-tracking/tasks/current-sprint.md`
+- Create handoff note in `dev-tracking/sessions/[date]-[session]-handoff.md`
+- Update overall session progress in `dev-tracking/tasks/current-sprint.md`
 - Commit all changes with clear messages
 - **Leave clear next steps** for subsequent agent sessions
 
@@ -120,7 +120,7 @@ Development proxy for MCP servers with crash reporting and hot-reload capabiliti
 
 - Review uncommitted files with git status (MANDATORY - CLAUDE.md #65)
 - Clean up temporary files and ensure meaningful changes committed (MANDATORY - CLAUDE.md #66-67)
-- Create handoff note in .dev-tracking/sessions/[date]-[session]-handoff.md (MANDATORY - CLAUDE.md #68)
+- Create handoff note in dev-tracking/sessions/[date]-[session]-handoff.md (MANDATORY - CLAUDE.md #68)
 - Update overall session progress in current-sprint.md (MANDATORY - CLAUDE.md #69)
 - Leave clear next steps for subsequent agent sessions (MANDATORY - CLAUDE.md #71)
 
@@ -191,7 +191,7 @@ Co-Authored-By: Claude <noreply@anthropic.com>"
 
 **System Improvements Needed**: Performance, architecture, process optimizations
 
-See `.dev-tracking/tasks/current-sprint.md` for current status and task assignments.
+See `dev-tracking/tasks/current-sprint.md` for current status and task assignments.
 
 ## CRITICAL WORKFLOW REQUIREMENTS
 

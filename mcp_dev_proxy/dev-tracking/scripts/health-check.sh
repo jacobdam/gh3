@@ -12,12 +12,12 @@ missing_definitions=0
 while IFS= read -r line; do
     if [[ "$line" =~ TASK-[0-9]+ ]]; then
         task_id=$(echo "$line" | grep -o 'TASK-[0-9]*')
-        if [ ! -f ".dev-tracking/tasks/definitions/${task_id}.md" ]; then
+        if [ ! -f "dev-tracking/tasks/definitions/${task_id}.md" ]; then
             echo "❌ Missing: ${task_id}.md"
             missing_definitions=$((missing_definitions + 1))
         fi
     fi
-done < .dev-tracking/tasks/current-sprint.md
+done < dev-tracking/tasks/current-sprint.md
 
 if [ $missing_definitions -eq 0 ]; then
     echo "✅ All Ready tasks have definition files"
