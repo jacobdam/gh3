@@ -10,6 +10,7 @@ import 'src/managers/timeout_manager.dart';
 import 'src/enhancers/response_enhancer.dart';
 import 'src/routing/request_router.dart';
 import 'src/routing/proxy_handlers.dart';
+import 'src/core/proxy_state.dart';
 
 class MCPDevProxy {
   final Logger _logger = Logger('MCPDevProxy');
@@ -21,6 +22,7 @@ class MCPDevProxy {
   late ProcessManager _processManager;
   late ResponseEnhancer _responseEnhancer;
   late RequestRouter _requestRouter;
+  late ProxyState _proxyState;
 
   @visibleForTesting
   ProcessManager get processManager => _processManager;
@@ -30,17 +32,8 @@ class MCPDevProxy {
   StreamSubscription? _fileWatchSubscription;
   StreamSubscription? _stdinSubscription;
 
-  bool _restartPending = false;
-  String? _lastRestartReason;
-  String? _startupError; // Track startup failures
-  final Map<dynamic, MCPMessage> _pendingRequests = {};
-  final Map<dynamic, DateTime> _requestTimestamps =
-      {}; // Track when requests were added
   Timer? _binaryMonitorTimer;
   Timer? _cleanupTimer; // Timer for periodic cleanup
-  final Set<String> _pendingToolUses = {}; // Track incomplete tool_use cycles
-  final Map<String, DateTime> _toolUseTimestamps =
-      {}; // Track when tool uses were added
   late TimeoutManager _timeoutManager;
 
   // Cleanup configuration
@@ -63,14 +56,15 @@ class MCPDevProxy {
     _timeoutManager = TimeoutManager();
     _responseEnhancer = ResponseEnhancer();
     _requestRouter = RequestRouter();
+    _proxyState = ProxyState();
     _setupRequestRouter();
     _startPeriodicCleanup();
   }
 
   // Getters for proxy handlers
-  String? get startupError => _startupError;
+  String? get startupError => _proxyState.startupError;
   Timer? get binaryMonitorTimer => _binaryMonitorTimer;
-  Set<String> get pendingToolUses => Set.unmodifiable(_pendingToolUses);
+  Set<String> get pendingToolUses => _proxyState.pendingToolUses;
 
   Future<void> start() async {
     _logger.info('Starting MCP Dev Proxy');
@@ -83,7 +77,7 @@ class MCPDevProxy {
     _startStdinListener();
 
     _logger.info('MCP Dev Proxy started successfully');
-    if (_startupError != null) {
+    if (_proxyState.startupError != null) {
       _logger.info('Proxy is running but target process is not available');
       _logger.info('Waiting for binary to become available...');
     }
@@ -104,12 +98,12 @@ class MCPDevProxy {
   }
 
   Future<void> _startTargetProcess() async {
-    _startupError = null; // Reset startup error
+    _proxyState.clearStartupError(); // Reset startup error
 
     // Check if binary exists before attempting to start
     final binaryFile = File(targetBinary);
     if (!binaryFile.existsSync()) {
-      _startupError = 'Binary not found: $targetBinary';
+      _proxyState.setStartupError('Binary not found: $targetBinary');
       _logger.warning('Target binary does not exist: $targetBinary');
       _startBinaryMonitoring();
       return;
@@ -138,9 +132,9 @@ class MCPDevProxy {
 
       // Capture startup error details for better error messages
       if (e is ProcessStartupException) {
-        _startupError = e.message;
+        _proxyState.setStartupError(e.message);
       } else {
-        _startupError = 'Failed to start: $e';
+        _proxyState.setStartupError('Failed to start: $e');
       }
 
       // Don't rethrow - let proxy continue running but with startup error set
@@ -174,16 +168,14 @@ class MCPDevProxy {
     if (message.method == 'tools/call') {
       final toolUseId = message.id?.toString();
       if (toolUseId != null) {
-        _pendingToolUses.add(toolUseId);
-        _toolUseTimestamps[toolUseId] = DateTime.now();
+        _proxyState.addPendingToolUse(toolUseId);
         _logger.fine('Tracking tool_use: $toolUseId');
       }
     }
 
     // Track requests for error handling and timeouts
     if (message.isRequest && message.id != null) {
-      _pendingRequests[message.id] = message;
-      _requestTimestamps[message.id] = DateTime.now();
+      _proxyState.addPendingRequest(message.id, message);
       _startRequestTimeout(message);
     }
 
@@ -219,13 +211,11 @@ class MCPDevProxy {
 
     // Remove from pending requests and track tool_result completion
     if (message.isResponse && message.id != null) {
-      _pendingRequests.remove(message.id);
-      _requestTimestamps.remove(message.id);
+      _proxyState.removePendingRequest(message.id);
       _cancelRequestTimeout(message.id);
       final toolUseId = message.id.toString();
-      if (_pendingToolUses.contains(toolUseId)) {
-        _pendingToolUses.remove(toolUseId);
-        _toolUseTimestamps.remove(toolUseId);
+      if (_proxyState.pendingToolUses.contains(toolUseId)) {
+        _proxyState.removePendingToolUse(toolUseId);
         _logger.fine('Completed tool_use cycle: $toolUseId');
       }
     }
@@ -233,13 +223,12 @@ class MCPDevProxy {
     // Add proxy metadata and restart notification
     final enhancedMessage = _responseEnhancer.enhanceResponse(
       message,
-      proxyEvent: _restartPending ? 'restarted' : null,
-      reason: _lastRestartReason,
+      proxyEvent: _proxyState.restartPending ? 'restarted' : null,
+      reason: _proxyState.lastRestartReason,
     );
 
-    if (_restartPending) {
-      _restartPending = false;
-      _lastRestartReason = null;
+    if (_proxyState.restartPending) {
+      _proxyState.clearRestartPending();
     }
 
     // Forward to client
@@ -258,37 +247,33 @@ class MCPDevProxy {
         _responseEnhancer.createServerCrashError(exitCode, stderr);
 
     // Send error responses for all pending requests
-    for (final entry in _pendingRequests.entries) {
+    for (final entry in _proxyState.pendingRequests.entries) {
       _sendErrorToClient(entry.key, crashError);
     }
-    _pendingRequests.clear();
-    _requestTimestamps.clear();
+    _proxyState.clearAllPendingRequests();
   }
 
   void _scheduleRestart(String reason) {
     _logger.info('Scheduling restart due to: $reason');
 
-    _restartPending = true;
-    _lastRestartReason = reason;
+    _proxyState.markRestartPending(reason);
 
     // First, send error responses for all pending requests
     // This prevents client hanging when process is restarted
     final restartError = _responseEnhancer.createServerRestartError(reason);
-    for (final entry in _pendingRequests.entries) {
+    for (final entry in _proxyState.pendingRequests.entries) {
       _sendErrorToClient(entry.key, restartError);
     }
-    _pendingRequests.clear();
-    _requestTimestamps.clear();
+    _proxyState.clearAllPendingRequests();
 
     // Also send error responses for incomplete tool_use cycles
-    for (final toolUseId in _pendingToolUses) {
+    for (final toolUseId in _proxyState.pendingToolUses) {
       _logger.warning('Sending error for incomplete tool_use: $toolUseId');
       final toolError =
           _responseEnhancer.createToolInterruptedError(toolUseId, reason);
       _sendErrorToClient(toolUseId, toolError);
     }
-    _pendingToolUses.clear();
-    _toolUseTimestamps.clear();
+    _proxyState.clearAllPendingToolUses();
 
     // Cancel all pending timeouts
     _timeoutManager.dispose();
@@ -329,9 +314,9 @@ class MCPDevProxy {
           'Don\'t worry about crashes - I\'ll restart and notify clients'
         ]
       };
-    } else if (_startupError != null) {
-      details['startup_error'] = _startupError;
-      details['message'] = 'Target MCP server failed to start: $_startupError';
+    } else if (_proxyState.startupError != null) {
+      details['startup_error'] = _proxyState.startupError;
+      details['message'] = 'Target MCP server failed to start: ${_proxyState.startupError}';
       details['status'] = 'startup_failed';
       details['action_needed'] = 'Check your MCP server implementation';
     } else if (_processManager.isStarting) {
@@ -488,10 +473,8 @@ class MCPDevProxy {
     _logger.warning('Request timeout: ${originalMessage.method} (id: $id)');
 
     // Remove from pending requests and tool uses
-    _pendingRequests.remove(id);
-    _requestTimestamps.remove(id);
-    _pendingToolUses.remove(id.toString());
-    _toolUseTimestamps.remove(id.toString());
+    _proxyState.removePendingRequest(id);
+    _proxyState.removePendingToolUse(id.toString());
     _cancelRequestTimeout(id);
 
     // Create timeout error using TimeoutManager
@@ -549,36 +532,20 @@ class MCPDevProxy {
 
   /// Clean up stale entries that have exceeded their TTL
   void _cleanupStaleEntries() {
-    final now = DateTime.now();
-
     // Clean up stale pending requests
-    final staleRequestIds = <dynamic>[];
-    for (final entry in _requestTimestamps.entries) {
-      if (now.difference(entry.value) > _maxRequestAge) {
-        staleRequestIds.add(entry.key);
-      }
-    }
-
+    final staleRequestIds = _proxyState.getStaleRequestIds(_maxRequestAge);
     for (final id in staleRequestIds) {
       _logger.warning('Cleaning up stale pending request: $id');
-      _pendingRequests.remove(id);
-      _requestTimestamps.remove(id);
       _timeoutManager.cancelTimeout(id.toString());
     }
+    _proxyState.removeStaleRequests(staleRequestIds);
 
     // Clean up stale tool uses
-    final staleToolUseIds = <String>[];
-    for (final entry in _toolUseTimestamps.entries) {
-      if (now.difference(entry.value) > _maxToolUseAge) {
-        staleToolUseIds.add(entry.key);
-      }
-    }
-
+    final staleToolUseIds = _proxyState.getStaleToolUseIds(_maxToolUseAge);
     for (final id in staleToolUseIds) {
       _logger.warning('Cleaning up stale tool_use: $id');
-      _pendingToolUses.remove(id);
-      _toolUseTimestamps.remove(id);
     }
+    _proxyState.removeStaleToolUses(staleToolUseIds);
 
     if (staleRequestIds.isNotEmpty || staleToolUseIds.isNotEmpty) {
       _logger.info(
