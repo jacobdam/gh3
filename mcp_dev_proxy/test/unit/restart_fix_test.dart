@@ -77,15 +77,15 @@ class _MockIOSink implements IOSink {
   @override
   void addError(Object error, [StackTrace? stackTrace]) {}
   @override
-  Future addStream(Stream<List<int>> stream) async {}
+  Future<void> addStream(Stream<List<int>> stream) async {}
   @override
-  Future close() async {}
+  Future<void> close() async {}
   @override
-  Future get done => Future.value();
+  Future<void> get done => Future<void>.value();
   @override
-  Future flush() async {}
+  Future<void> flush() async {}
   @override
-  void writeAll(Iterable objects, [String sep = ""]) {}
+  void writeAll(Iterable<Object?> objects, [String sep = ""]) {}
   @override
   void writeCharCode(int charCode) {}
 }

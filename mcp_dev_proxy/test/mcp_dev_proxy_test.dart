@@ -45,7 +45,7 @@ void main() {
         'method': 'initialize',
         'params': {
           'protocolVersion': '2024-11-05',
-          'capabilities': {},
+          'capabilities': <String, dynamic>{},
           'clientInfo': {'name': 'test', 'version': '1.0'}
         }
       };
@@ -53,7 +53,7 @@ void main() {
       inputController.add(jsonEncode(initMessage));
 
       // Give some time for processing
-      await Future.delayed(Duration(milliseconds: 100));
+      await Future<void>.delayed(Duration(milliseconds: 100));
 
       expect(outputLines.length, greaterThan(0));
       final response = jsonDecode(outputLines.first);
@@ -70,18 +70,18 @@ void main() {
         'jsonrpc': '2.0',
         'id': 2,
         'method': 'tools/list',
-        'params': {}
+        'params': <String, dynamic>{}
       };
 
       inputController.add(jsonEncode(toolsListMessage));
 
-      await Future.delayed(Duration(milliseconds: 100));
+      await Future<void>.delayed(Duration(milliseconds: 100));
 
       expect(outputLines.length, greaterThan(0));
       final response = jsonDecode(outputLines.last);
-      expect(response['result']['tools'], isA<List>());
+      expect(response['result']['tools'], isA<List<dynamic>>());
 
-      final tools = response['result']['tools'] as List;
+      final tools = response['result']['tools'] as List<dynamic>;
       final toolNames = tools.map((t) => t['name']).toList();
       expect(toolNames, contains('proxy_status'));
       expect(toolNames, contains('proxy_help'));
@@ -95,17 +95,17 @@ void main() {
         'jsonrpc': '2.0',
         'id': 3,
         'method': 'tools/call',
-        'params': {'name': 'proxy_status', 'arguments': {}}
+        'params': {'name': 'proxy_status', 'arguments': <String, dynamic>{}}
       };
 
       inputController.add(jsonEncode(toolCallMessage));
 
-      await Future.delayed(Duration(milliseconds: 100));
+      await Future<void>.delayed(Duration(milliseconds: 100));
 
       expect(outputLines.length, greaterThan(0));
       final response = jsonDecode(outputLines.last);
       if (response['result'] != null && response['result']['content'] != null) {
-        expect(response['result']['content'], isA<List>());
+        expect(response['result']['content'], isA<List<dynamic>>());
         expect(response['result']['content'][0]['text'],
             contains('MCP Dev Proxy Status'));
       } else {
@@ -121,12 +121,15 @@ void main() {
         'jsonrpc': '2.0',
         'id': 4,
         'method': 'tools/call',
-        'params': {'name': 'proxy_check_tool_cycles', 'arguments': {}}
+        'params': {
+          'name': 'proxy_check_tool_cycles',
+          'arguments': <String, dynamic>{}
+        }
       };
 
       inputController.add(jsonEncode(toolCallMessage));
 
-      await Future.delayed(Duration(milliseconds: 100));
+      await Future<void>.delayed(Duration(milliseconds: 100));
 
       expect(outputLines.length, greaterThan(0));
       final response = jsonDecode(outputLines.last);
@@ -146,12 +149,12 @@ void main() {
         'jsonrpc': '2.0',
         'id': 5,
         'method': 'tools/call',
-        'params': {'name': 'unknown_tool', 'arguments': {}}
+        'params': {'name': 'unknown_tool', 'arguments': <String, dynamic>{}}
       };
 
       inputController.add(jsonEncode(toolCallMessage));
 
-      await Future.delayed(Duration(milliseconds: 100));
+      await Future<void>.delayed(Duration(milliseconds: 100));
 
       expect(outputLines.length, greaterThan(0));
       final response = jsonDecode(outputLines.last);
@@ -164,7 +167,7 @@ void main() {
 
       inputController.add('invalid json');
 
-      await Future.delayed(Duration(milliseconds: 100));
+      await Future<void>.delayed(Duration(milliseconds: 100));
 
       // Should not crash, just log warning
       expect(true, isTrue);
@@ -215,7 +218,7 @@ void main() {
 
     test('creates server restart errors with proxy capabilities', () {
       final error = MCPError.serverRestart('test_reason');
-      expect(error.data['proxy_capabilities'], isA<List>());
+      expect(error.data['proxy_capabilities'], isA<List<dynamic>>());
       expect(error.data['proxy_capabilities'], contains('crash_recovery'));
       expect(error.data['proxy_capabilities'], contains('hot_reload'));
     });
@@ -242,13 +245,13 @@ class _MockIOSink implements IOSink {
   Encoding encoding = utf8;
 
   @override
-  Future get done => Future.value();
+  Future<void> get done => Future<void>.value();
 
   @override
-  Future close() => Future.value();
+  Future<void> close() => Future<void>.value();
 
   @override
-  Future flush() => Future.value();
+  Future<void> flush() => Future<void>.value();
 
   @override
   void add(List<int> data) {}
@@ -257,10 +260,10 @@ class _MockIOSink implements IOSink {
   void addError(Object error, [StackTrace? stackTrace]) {}
 
   @override
-  Future addStream(Stream<List<int>> stream) => Future.value();
+  Future<void> addStream(Stream<List<int>> stream) => Future<void>.value();
 
   @override
-  void writeAll(Iterable objects, [String separator = ""]) {}
+  void writeAll(Iterable<Object?> objects, [String separator = ""]) {}
 
   @override
   void writeCharCode(int charCode) {}

@@ -55,7 +55,7 @@ class ResponseEnhancer {
           'data': errorData,
         }, context);
 
-        errorData = enhanced['data'] ?? errorData;
+        errorData = enhanced['data'] as Map<String, dynamic>? ?? errorData;
       }
     }
 

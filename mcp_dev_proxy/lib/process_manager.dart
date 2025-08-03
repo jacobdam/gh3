@@ -63,7 +63,7 @@ class ProcessManager {
           .transform(const LineSplitter())
           .listen(
             (line) => _stdoutController?.add(line),
-            onError: (error) => _logger.warning('Stdout error: $error'),
+            onError: (Object error) => _logger.warning('Stdout error: $error'),
           );
 
       _process!.stderr
@@ -74,7 +74,7 @@ class ProcessManager {
           _stderrBuffer += '$line\n';
           _stderrController?.add(line);
         },
-        onError: (error) => _logger.warning('Stderr error: $error'),
+        onError: (Object error) => _logger.warning('Stderr error: $error'),
       );
 
       _logger.info('Process started with PID: ${_process!.pid}');

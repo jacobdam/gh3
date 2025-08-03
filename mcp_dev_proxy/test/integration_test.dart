@@ -23,7 +23,7 @@ void main() {
       proxyInput = proxyProcess.stdin;
 
       // Give proxy time to start
-      await Future.delayed(Duration(milliseconds: 500));
+      await Future<void>.delayed(Duration(milliseconds: 500));
     });
 
     tearDown(() async {
@@ -39,7 +39,7 @@ void main() {
         'method': 'initialize',
         'params': {
           'protocolVersion': '2024-11-05',
-          'capabilities': {},
+          'capabilities': <String, dynamic>{},
           'clientInfo': {'name': 'integration_test', 'version': '1.0'}
         }
       };
@@ -47,7 +47,7 @@ void main() {
       proxyInput.writeln(jsonEncode(initRequest));
 
       final responseCompleter = Completer<Map<String, dynamic>>();
-      late StreamSubscription subscription;
+      late StreamSubscription<String> subscription;
 
       subscription = proxyOutput.listen((line) {
         try {
@@ -78,13 +78,13 @@ void main() {
         'jsonrpc': '2.0',
         'id': 2,
         'method': 'tools/list',
-        'params': {}
+        'params': <String, dynamic>{}
       };
 
       proxyInput.writeln(jsonEncode(toolsRequest));
 
       final responseCompleter = Completer<Map<String, dynamic>>();
-      late StreamSubscription subscription;
+      late StreamSubscription<String> subscription;
 
       subscription = proxyOutput.listen((line) {
         try {
@@ -101,8 +101,8 @@ void main() {
       final response =
           await responseCompleter.future.timeout(Duration(seconds: 5));
 
-      expect(response['result']['tools'], isA<List>());
-      final tools = response['result']['tools'] as List;
+      expect(response['result']['tools'], isA<List<dynamic>>());
+      final tools = response['result']['tools'] as List<dynamic>;
       final toolNames = tools.map((t) => t['name']).toList();
       expect(toolNames, contains('proxy_status'));
       expect(toolNames, contains('proxy_help'));
@@ -114,13 +114,13 @@ void main() {
         'jsonrpc': '2.0',
         'id': 3,
         'method': 'tools/call',
-        'params': {'name': 'proxy_status', 'arguments': {}}
+        'params': {'name': 'proxy_status', 'arguments': <String, dynamic>{}}
       };
 
       proxyInput.writeln(jsonEncode(toolCallRequest));
 
       final responseCompleter = Completer<Map<String, dynamic>>();
-      late StreamSubscription subscription;
+      late StreamSubscription<String> subscription;
 
       subscription = proxyOutput.listen((line) {
         try {
@@ -139,7 +139,7 @@ void main() {
 
       // Check if response has result or error
       if (response.containsKey('result') && response['result'] != null) {
-        expect(response['result']['content'], isA<List>());
+        expect(response['result']['content'], isA<List<dynamic>>());
         final content = response['result']['content'][0]['text'] as String;
         expect(content, contains('MCP Dev Proxy Status'));
         expect(content, contains('Target Binary:'));
@@ -162,7 +162,7 @@ void main() {
 
       // Monitor proxy logs for restart activity
       final logCompleter = Completer<bool>();
-      late StreamSubscription subscription;
+      late StreamSubscription<String> subscription;
 
       subscription = proxyProcess.stderr
           .transform(utf8.decoder)
@@ -202,7 +202,7 @@ void main() async {
         'id': message['id'],
         'result': {
           'protocolVersion': '2024-11-05',
-          'capabilities': {'tools': {}},
+          'capabilities': {'tools': <String, dynamic>{}},'
           'serverInfo': {'name': 'mock_server', 'version': '1.0.0'}
         }
       };
@@ -243,7 +243,7 @@ void main() async {
       final proxyInput = proxyProcess.stdin;
 
       // Give time for both to start
-      await Future.delayed(Duration(seconds: 2));
+      await Future<void>.delayed(Duration(seconds: 2));
 
       try {
         // Send initialize request through proxy
@@ -253,7 +253,7 @@ void main() async {
           'method': 'initialize',
           'params': {
             'protocolVersion': '2024-11-05',
-            'capabilities': {},
+            'capabilities': <String, dynamic>{},
             'clientInfo': {'name': 'e2e_test', 'version': '1.0'}
           }
         };
@@ -261,7 +261,7 @@ void main() async {
         proxyInput.writeln(jsonEncode(initRequest));
 
         final responseCompleter = Completer<Map<String, dynamic>>();
-        late StreamSubscription subscription;
+        late StreamSubscription<String> subscription;
 
         subscription = proxyOutput.listen((line) {
           try {

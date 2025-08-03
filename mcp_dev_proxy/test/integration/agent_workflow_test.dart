@@ -166,7 +166,7 @@ void main() {
           final error = response['error'] as Map<String, dynamic>;
           expect(error['data']['guidance'], isA<String>(),
               reason: 'Errors should include guidance');
-          expect(error['data']['next_steps'], isA<List>(),
+          expect(error['data']['next_steps'], isA<List<dynamic>>(),
               reason: 'Errors should include next steps');
         }
       }

@@ -3,10 +3,11 @@ library;
 
 import 'dart:io';
 import 'request_router.dart';
+import '../../mcp_dev_proxy.dart';
 
 /// Handler for proxy_status tool calls
 class ProxyStatusHandler extends RequestHandler {
-  final dynamic _proxy;
+  final MCPDevProxy _proxy;
 
   ProxyStatusHandler(this._proxy);
 
@@ -26,8 +27,7 @@ class ProxyStatusHandler extends RequestHandler {
   }
 
   String _buildProxyStatusReport() {
-    final targetBinary = _proxy.targetBinary as String;
-    final processManager = _proxy.processManager;
+    final targetBinary = _proxy.targetBinary;
     final startupError = _proxy.startupError;
     final binaryMonitorTimer = _proxy.binaryMonitorTimer;
 
@@ -41,7 +41,7 @@ class ProxyStatusHandler extends RequestHandler {
 
 **Target Binary:** `$targetBinary`
 **Status:** $status
-**Process Running:** ${processManager.isRunning}
+**Process Running:** ${_proxy.isProcessRunning}
 **Monitoring Active:** ${binaryMonitorTimer != null}
 
 ## Current State
@@ -61,7 +61,7 @@ ${binaryExists ? 'Binary exists but failed to start. Check if it\'s executable a
 
 /// Handler for proxy_help tool calls
 class ProxyHelpHandler extends RequestHandler {
-  ProxyHelpHandler(dynamic proxy);
+  ProxyHelpHandler(MCPDevProxy proxy);
 
   @override
   Future<Map<String, dynamic>> handle(
@@ -126,7 +126,7 @@ For more details, check the proxy logs and use `proxy_status` for current state.
 
 /// Handler for proxy_check_tool_cycles tool calls
 class ProxyToolCycleHandler extends RequestHandler {
-  final dynamic _proxy;
+  final MCPDevProxy _proxy;
 
   ProxyToolCycleHandler(this._proxy);
 
@@ -191,7 +191,7 @@ This can cause:
 
 /// Handler for initialize requests when target is unavailable
 class InitializeHandler extends RequestHandler {
-  final dynamic _proxy;
+  final MCPDevProxy _proxy;
 
   InitializeHandler(this._proxy);
 
@@ -200,9 +200,8 @@ class InitializeHandler extends RequestHandler {
     Map<String, dynamic> params,
     RequestContext context,
   ) async {
-    final targetBinary = _proxy.targetBinary as String;
+    final targetBinary = _proxy.targetBinary;
     final binaryExists = File(targetBinary).existsSync();
-    final processManager = _proxy.processManager;
     final proxyState = _proxy.proxyState;
 
     String status;
@@ -216,7 +215,7 @@ class InitializeHandler extends RequestHandler {
       status = 'Binary exists but failed to start: ${proxyState.startupError}';
       actionNeeded =
           'Check if binary is executable and implements MCP protocol';
-    } else if (processManager.isStarting) {
+    } else if (_proxy.isProcessStarting) {
       status = 'Target MCP server is starting up';
       actionNeeded = 'Please wait for the server to start';
     } else {
@@ -243,9 +242,9 @@ Use the 'proxy_status' tool for detailed information and 'proxy_help' for guidan
     return {
       'protocolVersion': '2024-11-05',
       'capabilities': {
-        'tools': {},
-        'resources': {},
-        'prompts': {},
+        'tools': <String, dynamic>{},
+        'resources': <String, dynamic>{},
+        'prompts': <String, dynamic>{},
       },
       'serverInfo': {
         'name': 'mcp_dev_proxy',
@@ -258,7 +257,7 @@ Use the 'proxy_status' tool for detailed information and 'proxy_help' for guidan
 
 /// Handler for tools/list requests when target is unavailable
 class ToolsListHandler extends RequestHandler {
-  ToolsListHandler(dynamic proxy);
+  ToolsListHandler(MCPDevProxy proxy);
 
   @override
   Future<Map<String, dynamic>> handle(
@@ -273,7 +272,7 @@ class ToolsListHandler extends RequestHandler {
               'Get current proxy status and target binary information',
           'inputSchema': {
             'type': 'object',
-            'properties': {},
+            'properties': <String, dynamic>{},
           },
         },
         {
@@ -281,7 +280,7 @@ class ToolsListHandler extends RequestHandler {
           'description': 'Get help on how to work with the MCP dev proxy',
           'inputSchema': {
             'type': 'object',
-            'properties': {},
+            'properties': <String, dynamic>{},
           },
         },
         {
@@ -290,7 +289,7 @@ class ToolsListHandler extends RequestHandler {
               'Check for incomplete tool_use cycles that may cause API errors',
           'inputSchema': {
             'type': 'object',
-            'properties': {},
+            'properties': <String, dynamic>{},
           },
         },
       ],

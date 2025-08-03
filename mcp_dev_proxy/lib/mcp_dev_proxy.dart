@@ -29,9 +29,9 @@ class MCPDevProxy {
   ProcessManager get processManager => _processManager;
   late FileWatcher _fileWatcher;
 
-  StreamSubscription? _stdoutSubscription;
-  StreamSubscription? _fileWatchSubscription;
-  StreamSubscription? _stdinSubscription;
+  StreamSubscription<String>? _stdoutSubscription;
+  StreamSubscription<void>? _fileWatchSubscription;
+  StreamSubscription<String>? _stdinSubscription;
 
   Timer? _binaryMonitorTimer;
   Timer? _cleanupTimer; // Timer for periodic cleanup
@@ -67,6 +67,10 @@ class MCPDevProxy {
   Timer? get binaryMonitorTimer => _binaryMonitorTimer;
   Set<String> get pendingToolUses => _proxyState.pendingToolUses;
   ProxyState get proxyState => _proxyState;
+
+  // Process state getters (public interface instead of @visibleForTesting processManager)
+  bool get isProcessRunning => _processManager.isRunning;
+  bool get isProcessStarting => _processManager.isStarting;
 
   Future<void> start() async {
     _logger.info('Starting MCP Dev Proxy');
@@ -116,7 +120,8 @@ class MCPDevProxy {
 
       _stdoutSubscription = _processManager.stdout.listen(
         _handleTargetOutput,
-        onError: (error) => _logger.warning('Target stdout error: $error'),
+        onError: (Object error) =>
+            _logger.warning('Target stdout error: $error'),
         onDone: () => _handleTargetExit(),
       );
 
@@ -148,7 +153,7 @@ class MCPDevProxy {
   void _startStdinListener() {
     _stdinSubscription = stdinStream.listen(
       handleClientInput,
-      onError: (error) => _logger.warning('Stdin error: $error'),
+      onError: (Object error) => _logger.warning('Stdin error: $error'),
       onDone: () {
         _logger.info('Stdin closed, shutting down proxy');
         stop();
@@ -296,7 +301,7 @@ class MCPDevProxy {
         TimeoutManager(); // Reinitialize for the restarted process
 
     // Then restart the process
-    _processManager.restart().catchError((error) {
+    _processManager.restart().catchError((Object error) {
       _logger.severe('Failed to restart target process: $error');
     });
   }
@@ -324,10 +329,12 @@ class MCPDevProxy {
 
     if (method != null && _requestRouter.canHandle(method)) {
       try {
-        final context = RequestContext(
-            method, message.params ?? {}, message.id?.toString() ?? '');
-        final result = await _requestRouter.routeRequest(
-            method, message.params ?? {}, context);
+        final params =
+            message.params as Map<String, dynamic>? ?? <String, dynamic>{};
+        final context =
+            RequestContext(method, params, message.id?.toString() ?? '');
+        final result =
+            await _requestRouter.routeRequest(method, params, context);
 
         final response = MCPMessage(
           jsonrpc: '2.0',
@@ -370,10 +377,11 @@ class MCPDevProxy {
       }
 
       try {
-        final context = RequestContext(
-            toolName, params ?? {}, message.id?.toString() ?? '');
+        final safeParams = params ?? <String, dynamic>{};
+        final context =
+            RequestContext(toolName, safeParams, message.id?.toString() ?? '');
         final result =
-            await _requestRouter.routeRequest(toolName, params ?? {}, context);
+            await _requestRouter.routeRequest(toolName, safeParams, context);
 
         final response = MCPMessage(
           jsonrpc: '2.0',
@@ -447,8 +455,8 @@ class MCPDevProxy {
   void _startRequestTimeout(MCPMessage message) {
     if (message.id == null) return;
 
-    final timeout =
-        _timeoutManager.getTimeout(message.method ?? '', message.params);
+    final timeout = _timeoutManager.getTimeout(message.method ?? '',
+        message.params as Map<String, dynamic>? ?? <String, dynamic>{});
 
     _timeoutManager.startTimeout(message.id.toString(), message.method ?? '',
         () => _handleRequestTimeout(message));
@@ -473,8 +481,8 @@ class MCPDevProxy {
     _cancelRequestTimeout(id);
 
     // Create timeout error using TimeoutManager
-    final timeout = _timeoutManager.getTimeout(
-        originalMessage.method ?? '', originalMessage.params);
+    final timeout = _timeoutManager.getTimeout(originalMessage.method ?? '',
+        originalMessage.params as Map<String, dynamic>? ?? <String, dynamic>{});
     final operationContext = {
       'proxy': 'mcp_dev_proxy',
       'proxy_capabilities': [
@@ -490,7 +498,8 @@ class MCPDevProxy {
     final timeoutErrorData = _timeoutManager.createTimeoutError(
         id.toString(), originalMessage.method ?? '', timeout, operationContext);
 
-    final timeoutError = MCPError.fromJson(timeoutErrorData['error']);
+    final timeoutError =
+        MCPError.fromJson(timeoutErrorData['error'] as Map<String, dynamic>);
     _sendErrorToClient(id, timeoutError);
   }
 

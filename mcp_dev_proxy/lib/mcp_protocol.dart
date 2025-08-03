@@ -19,12 +19,14 @@ class MCPMessage {
 
   factory MCPMessage.fromJson(Map<String, dynamic> json) {
     return MCPMessage(
-      jsonrpc: json['jsonrpc'] ?? '2.0',
+      jsonrpc: json['jsonrpc'] is String ? json['jsonrpc'] as String : '2.0',
       id: json['id'],
-      method: json['method'],
+      method: json['method'] is String ? json['method'] as String? : null,
       params: json['params'],
       result: json['result'],
-      error: json['error'] != null ? MCPError.fromJson(json['error']) : null,
+      error: json['error'] != null && json['error'] is Map<String, dynamic>
+          ? MCPError.fromJson(json['error'] as Map<String, dynamic>)
+          : null,
     );
   }
 
@@ -59,13 +61,18 @@ class MCPMessage {
     if (reason != null) proxyData['reason'] = reason;
 
     if (result != null) {
+      final Map<String, dynamic> resultMap;
+      if (result is Map<String, dynamic>) {
+        resultMap = Map<String, dynamic>.from(result as Map<String, dynamic>);
+        resultMap['proxy'] = proxyData;
+      } else {
+        resultMap = {'original_result': result, 'proxy': proxyData};
+      }
+
       return MCPMessage(
         jsonrpc: jsonrpc,
         id: id,
-        result: {
-          if (result is Map<String, dynamic>) ...result,
-          'proxy': proxyData,
-        },
+        result: resultMap,
       );
     }
 
@@ -94,8 +101,10 @@ class MCPError {
 
   factory MCPError.fromJson(Map<String, dynamic> json) {
     return MCPError(
-      code: json['code'],
-      message: json['message'],
+      code: json['code'] is int ? json['code'] as int : -32603,
+      message: json['message'] is String
+          ? json['message'] as String
+          : 'Unknown error',
       data: json['data'],
     );
   }
@@ -169,8 +178,11 @@ class MCPError {
 class MCPProtocol {
   static MCPMessage? parseMessage(String line) {
     try {
-      final json = jsonDecode(line) as Map<String, dynamic>;
-      return MCPMessage.fromJson(json);
+      final decoded = jsonDecode(line);
+      if (decoded is! Map<String, dynamic>) {
+        return null;
+      }
+      return MCPMessage.fromJson(decoded);
     } catch (e) {
       return null;
     }

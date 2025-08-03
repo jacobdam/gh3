@@ -9,7 +9,7 @@ class FileWatcher {
   final Duration debounceDelay;
 
   DirectoryWatcher? _watcher;
-  StreamSubscription? _watcherSubscription;
+  StreamSubscription<WatchEvent>? _watcherSubscription;
   Timer? _debounceTimer;
   StreamController<void>? _changeController;
 
@@ -44,7 +44,7 @@ class FileWatcher {
         _logger.fine('File change detected: ${event.path} (${event.type})');
         _debounceChange();
       }
-    }, onError: (error) {
+    }, onError: (Object error) {
       _logger.warning('File watcher error: $error');
     });
   }

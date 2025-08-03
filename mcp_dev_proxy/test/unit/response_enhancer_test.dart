@@ -19,7 +19,8 @@ class MockErrorEnhancer extends ErrorEnhancer {
     Map<String, dynamic> error,
     ErrorContext context,
   ) {
-    final data = Map<String, dynamic>.from(error['data'] ?? {});
+    final data = Map<String, dynamic>.from(
+        error['data'] as Map<dynamic, dynamic>? ?? <String, dynamic>{});
     data.addAll(enhancementData);
     return {
       ...error,
@@ -67,7 +68,7 @@ void main() {
         final originalMessage = MCPMessage(
           jsonrpc: '2.0',
           id: '123',
-          result: {'tools': []},
+          result: {'tools': <Map<String, dynamic>>[]},
         );
 
         final enhanced = enhancer.enhanceResponse(originalMessage);

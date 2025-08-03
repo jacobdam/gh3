@@ -74,11 +74,11 @@ void main() {
       // Make multiple rapid changes
       for (int i = 0; i < 5; i++) {
         await testFile.writeAsString('content $i');
-        await Future.delayed(const Duration(milliseconds: 20));
+        await Future<void>.delayed(const Duration(milliseconds: 20));
       }
 
       // Wait for debounce period plus some buffer
-      await Future.delayed(const Duration(milliseconds: 300));
+      await Future<void>.delayed(const Duration(milliseconds: 300));
 
       // Debouncing behavior can be system-dependent
       // The important thing is that it doesn't crash and provides some debouncing
@@ -127,7 +127,7 @@ void main() {
       await otherFile.writeAsString('other content');
 
       // Wait a bit
-      await Future.delayed(const Duration(milliseconds: 200));
+      await Future<void>.delayed(const Duration(milliseconds: 200));
 
       expect(changeDetected, isFalse);
     });
@@ -145,7 +145,7 @@ void main() {
 
       // Delete and recreate the file with a delay
       await testFile.delete();
-      await Future.delayed(const Duration(milliseconds: 100));
+      await Future<void>.delayed(const Duration(milliseconds: 100));
       await testFile.writeAsString('recreated content');
 
       // Wait for change detection with more lenient timeout
@@ -182,7 +182,7 @@ void main() {
 
       // Make rapid changes
       await testFile.writeAsString('content 1');
-      await Future.delayed(const Duration(milliseconds: 25));
+      await Future<void>.delayed(const Duration(milliseconds: 25));
       await testFile.writeAsString('content 2');
 
       // Wait for custom debounce period

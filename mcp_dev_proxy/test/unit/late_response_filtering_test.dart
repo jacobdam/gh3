@@ -107,7 +107,7 @@ void main() {
       expect(timeoutManager.hasActiveTimeout(requestId), isTrue);
 
       // Wait for timeout to trigger
-      await Future.delayed(Duration(milliseconds: 100));
+      await Future<void>.delayed(Duration(milliseconds: 100));
 
       // Only the second timeout should have triggered
       expect(timeoutCount, equals(1), reason: 'Only one timeout should occur');

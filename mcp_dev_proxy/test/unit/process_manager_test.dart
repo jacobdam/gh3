@@ -160,7 +160,7 @@ void main() {
       await stderrManager.start();
 
       // Wait a bit for stderr to be captured
-      await Future.delayed(const Duration(milliseconds: 500));
+      await Future<void>.delayed(const Duration(milliseconds: 500));
 
       expect(stderrManager.lastStderr, contains('line1'));
       expect(stderrManager.lastStderr, contains('line2'));
