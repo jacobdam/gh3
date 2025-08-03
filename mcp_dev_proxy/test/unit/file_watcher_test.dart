@@ -92,11 +92,11 @@ void main() {
     });
 
     test('should throw when file does not exist', () async {
-      final nonExistentFile = File('${tempDir.path}/nonexistent.txt');
-      final badWatcher = FileWatcher(filePath: nonExistentFile.path);
+      final nonExistentDir = '${tempDir.path}/nonexistent/file.txt';
+      final badWatcher = FileWatcher(filePath: nonExistentDir);
 
-      expect(() => badWatcher.start(), throwsA(isA<FileSystemException>()));
-    }, skip: 'TODO: Fix async exception handling in FileWatcher.start()');
+      expect(() async => await badWatcher.start(), throwsA(isA<FileSystemException>()));
+    });
 
     test('should handle multiple start calls', () async {
       await fileWatcher.start();

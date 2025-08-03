@@ -28,6 +28,11 @@ class FileWatcher {
     final directory = file.parent;
     final fileName = file.uri.pathSegments.last;
 
+    // Check if directory exists before starting watcher
+    if (!directory.existsSync()) {
+      throw FileSystemException('Directory does not exist', directory.path);
+    }
+
     _logger.info('Starting file watcher for: $filePath');
 
     _changeController = StreamController<void>.broadcast();

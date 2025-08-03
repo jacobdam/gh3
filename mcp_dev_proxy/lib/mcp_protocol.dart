@@ -131,6 +131,7 @@ class MCPError {
 
   static MCPError serverUnavailable([Map<String, dynamic>? details]) {
     final data = details ?? {};
+    data['proxy'] = 'mcp_dev_proxy';
     data['proxy_capabilities'] = [
       'crash_recovery',
       'hot_reload',

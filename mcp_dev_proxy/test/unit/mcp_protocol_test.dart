@@ -163,7 +163,7 @@ void main() {
       expect(error.code, equals(-32603));
       expect(error.message, equals('MCP server unavailable'));
       expect(error.data['proxy'], equals('mcp_dev_proxy'));
-    }, skip: 'TODO: Fix proxy field assignment in MCPError.serverUnavailable()');
+    });
 
     test('should create server restart error', () {
       final error = MCPError.serverRestart('binary_updated');

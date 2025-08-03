@@ -8,6 +8,8 @@ import 'mcp_protocol.dart';
 import 'process_manager.dart';
 import 'src/managers/timeout_manager.dart';
 import 'src/enhancers/response_enhancer.dart';
+import 'src/routing/request_router.dart';
+import 'src/routing/proxy_handlers.dart';
 
 class MCPDevProxy {
   final Logger _logger = Logger('MCPDevProxy');
@@ -18,6 +20,7 @@ class MCPDevProxy {
 
   late ProcessManager _processManager;
   late ResponseEnhancer _responseEnhancer;
+  late RequestRouter _requestRouter;
 
   @visibleForTesting
   ProcessManager get processManager => _processManager;
@@ -31,9 +34,17 @@ class MCPDevProxy {
   String? _lastRestartReason;
   String? _startupError; // Track startup failures
   final Map<dynamic, MCPMessage> _pendingRequests = {};
+  final Map<dynamic, DateTime> _requestTimestamps = {}; // Track when requests were added
   Timer? _binaryMonitorTimer;
+  Timer? _cleanupTimer; // Timer for periodic cleanup
   final Set<String> _pendingToolUses = {}; // Track incomplete tool_use cycles
+  final Map<String, DateTime> _toolUseTimestamps = {}; // Track when tool uses were added
   late TimeoutManager _timeoutManager;
+  
+  // Cleanup configuration
+  static const Duration _maxRequestAge = Duration(minutes: 10);
+  static const Duration _maxToolUseAge = Duration(minutes: 5);
+  static const Duration _cleanupInterval = Duration(minutes: 1);
 
   MCPDevProxy({
     required this.targetBinary,
@@ -49,6 +60,9 @@ class MCPDevProxy {
     _fileWatcher = FileWatcher(filePath: targetBinary);
     _timeoutManager = TimeoutManager();
     _responseEnhancer = ResponseEnhancer();
+    _requestRouter = RequestRouter();
+    _setupRequestRouter();
+    _startPeriodicCleanup();
   }
 
   Future<void> start() async {
@@ -154,6 +168,7 @@ class MCPDevProxy {
       final toolUseId = message.id?.toString();
       if (toolUseId != null) {
         _pendingToolUses.add(toolUseId);
+        _toolUseTimestamps[toolUseId] = DateTime.now();
         _logger.fine('Tracking tool_use: $toolUseId');
       }
     }
@@ -161,6 +176,7 @@ class MCPDevProxy {
     // Track requests for error handling and timeouts
     if (message.isRequest && message.id != null) {
       _pendingRequests[message.id] = message;
+      _requestTimestamps[message.id] = DateTime.now();
       _startRequestTimeout(message);
     }
 
@@ -242,8 +258,8 @@ Use the 'proxy_status' tool for detailed information and 'proxy_help' for guidan
           );
           _sendToClient(response);
         } else if (message.method == 'tools/call') {
-          // Handle proxy tool calls - always respond even when target is unavailable
-          _handleProxyToolCall(message);
+          // Handle proxy tool calls via router
+          _routeProxyToolCall(message);
         } else {
           // For other requests, standard unavailable error
           final errorDetails = _buildServerUnavailableDetails();
@@ -279,10 +295,12 @@ Use the 'proxy_status' tool for detailed information and 'proxy_help' for guidan
     // Remove from pending requests and track tool_result completion
     if (message.isResponse && message.id != null) {
       _pendingRequests.remove(message.id);
+      _requestTimestamps.remove(message.id);
       _cancelRequestTimeout(message.id);
       final toolUseId = message.id.toString();
       if (_pendingToolUses.contains(toolUseId)) {
         _pendingToolUses.remove(toolUseId);
+        _toolUseTimestamps.remove(toolUseId);
         _logger.fine('Completed tool_use cycle: $toolUseId');
       }
     }
@@ -318,6 +336,7 @@ Use the 'proxy_status' tool for detailed information and 'proxy_help' for guidan
       _sendErrorToClient(entry.key, crashError);
     }
     _pendingRequests.clear();
+    _requestTimestamps.clear();
   }
 
   void _scheduleRestart(String reason) {
@@ -333,6 +352,7 @@ Use the 'proxy_status' tool for detailed information and 'proxy_help' for guidan
       _sendErrorToClient(entry.key, restartError);
     }
     _pendingRequests.clear();
+    _requestTimestamps.clear();
 
     // Also send error responses for incomplete tool_use cycles
     for (final toolUseId in _pendingToolUses) {
@@ -341,6 +361,7 @@ Use the 'proxy_status' tool for detailed information and 'proxy_help' for guidan
       _sendErrorToClient(toolUseId, toolError);
     }
     _pendingToolUses.clear();
+    _toolUseTimestamps.clear();
     
     // Cancel all pending timeouts
     _timeoutManager.dispose();
@@ -408,189 +429,51 @@ Use the 'proxy_status' tool for detailed information and 'proxy_help' for guidan
     _sendToClient(errorResponse);
   }
 
-  void _handleProxyToolCall(MCPMessage message) {
+  /// Setup request router with proxy tool handlers
+  void _setupRequestRouter() {
+    _requestRouter.registerRoute('proxy_status', ProxyStatusHandler(this));
+    _requestRouter.registerRoute('proxy_help', ProxyHelpHandler(this));
+    _requestRouter.registerRoute('proxy_check_tool_cycles', ProxyToolCycleHandler(this));
+  }
+
+  /// Route proxy tool calls through the request router
+  Future<void> _routeProxyToolCall(MCPMessage message) async {
     final params = message.params as Map<String, dynamic>?;
     final toolName = params?['name'] as String?;
     
-    Map<String, dynamic> result;
-    
-    switch (toolName) {
-      case 'proxy_status':
-        result = {
-          'content': [
-            {
-              'type': 'text',
-              'text': _buildProxyStatusReport(),
-            }
-          ]
-        };
-        break;
-      case 'proxy_help':
-        result = {
-          'content': [
-            {
-              'type': 'text', 
-              'text': _buildProxyHelpText(),
-            }
-          ]
-        };
-        break;
-      case 'proxy_check_tool_cycles':
-        result = {
-          'content': [
-            {
-              'type': 'text',
-              'text': _buildToolCycleReport(),
-            }
-          ]
-        };
-        break;
-      default:
+    if (toolName == null) {
+      _sendErrorToClient(message.id, MCPError(
+        code: -32602,
+        message: 'Missing tool name in request',
+      ));
+      return;
+    }
+
+    try {
+      final context = RequestContext(toolName, params ?? {}, message.id.toString());
+      final result = await _requestRouter.routeRequest(toolName, params ?? {}, context);
+      
+      final response = MCPMessage(
+        jsonrpc: '2.0',
+        id: message.id,
+        result: result,
+      );
+      _sendToClient(response);
+    } catch (e) {
+      if (e is RouteNotFoundException) {
         _sendErrorToClient(message.id, MCPError(
           code: -32601,
           message: 'Unknown tool: $toolName',
         ));
-        return;
+      } else {
+        _sendErrorToClient(message.id, MCPError(
+          code: -32603,
+          message: 'Internal error: $e',
+        ));
+      }
     }
-    
-    final response = MCPMessage(
-      jsonrpc: '2.0',
-      id: message.id,
-      result: result,
-    );
-    _sendToClient(response);
   }
 
-  String _buildProxyStatusReport() {
-    final binaryExists = File(targetBinary).existsSync();
-    final status = binaryExists ? 'Binary exists but process failed to start' : 'Binary not found';
-    
-    return '''
-# MCP Dev Proxy Status
-
-**Target Binary:** `$targetBinary`
-**Status:** $status
-**Process Running:** ${_processManager.isRunning}
-**Monitoring Active:** ${_binaryMonitorTimer != null}
-
-## Current State
-${_startupError != null ? '⚠️ Startup Error: $_startupError' : '✅ Proxy running normally'}
-
-## Next Steps
-${binaryExists ? 
-  'Binary exists but failed to start. Check if it\'s executable and implements MCP protocol.' :
-  'Compile your MCP server binary: `dart compile exe bin/your_server.dart -o ${targetBinary.split('/').last}`'
-}
-
-## Proxy Capabilities
-- 🔄 Crash Recovery: Auto-restart on crashes
-- 🔥 Hot Reload: Detect binary changes and restart  
-- 📦 Error Buffering: Handle pending requests during restarts
-- 🔍 Debug Info: Enhanced error messages with context
-''';
-  }
-
-  String _buildProxyHelpText() {
-    return '''
-# MCP Development Proxy Help
-
-## What This Proxy Does
-The MCP Dev Proxy sits between MCP clients and your MCP server, providing development-focused enhancements:
-
-- **Crash Recovery:** Automatically restarts your server when it crashes
-- **Hot Reload:** Detects when you recompile your binary and restarts
-- **Error Buffering:** Handles requests gracefully during server restarts
-- **Debug Information:** Provides detailed error context and guidance
-
-## How to Work With the Proxy
-
-### 1. Compile Your MCP Server
-```bash
-dart compile exe bin/your_mcp_server.dart -o ${targetBinary.split('/').last}
-```
-
-### 2. Update Your Binary
-When you make code changes, just recompile. The proxy will:
-- Detect the binary change
-- Restart your server automatically
-- Handle any pending requests gracefully
-
-### 3. Handle Crashes
-If your server crashes, the proxy will:
-- Capture the crash details (exit code, stderr)
-- Automatically restart the process
-- Provide error context to help with debugging
-
-### 4. Monitor Status
-Use the `proxy_status` tool to check:
-- Current binary status
-- Process state
-- Error details
-- Next steps
-
-## Integration Tips
-- Point your MCP client to this proxy instead of directly to your server
-- The proxy handles all MCP protocol forwarding transparently
-- Your server gets automatic resilience without any code changes
-- Check error messages for specific guidance when issues occur
-
-## Current Configuration
-- **Target Binary:** `$targetBinary`
-- **Arguments:** ${arguments.isEmpty ? 'None' : arguments.join(' ')}
-- **Monitoring:** Active (checks every 2 seconds)
-''';
-  }
-
-  String _buildToolCycleReport() {
-    final incompleteCount = _pendingToolUses.length;
-    
-    if (incompleteCount == 0) {
-      return '''
-# Tool Cycle Status: ✅ Clean
-
-No incomplete tool_use cycles detected. All tool calls have proper tool_result responses.
-
-This is the healthy state - no API errors should occur from incomplete tool cycles.
-''';
-    }
-    
-    return '''
-# Tool Cycle Status: ⚠️ Issues Detected
-
-**Incomplete tool_use cycles found: $incompleteCount**
-
-## What This Means
-You have tool_use blocks that were sent but never received corresponding tool_result responses. This typically happens when:
-
-1. **Server Crash:** The MCP server crashed after receiving tool_use but before sending tool_result
-2. **Connection Lost:** Network/process interruption during tool execution
-3. **Session Resume:** Previous session was interrupted mid-tool-call
-
-## Why This Causes API Errors
-Claude expects every tool_use to have a matching tool_result. When this doesn't happen, you get:
-```
-API Error: 400 - tool_use ids were found without tool_result blocks
-```
-
-## How to Fix This
-**Option 1: Resume Session (Recommended)**
-Use `/resume` command to start a fresh conversation without incomplete tool cycles.
-
-**Option 2: Wait for Auto-Recovery**
-If your MCP server comes online, the proxy will attempt to complete pending tool calls.
-
-## Incomplete Tool IDs
-${_pendingToolUses.map((id) => '- $id').join('\n')}
-
-## Prevention
-The proxy now tracks tool cycles and will:
-- Send error responses for incomplete tools during restarts
-- Provide this diagnostic tool to detect issues
-- Guide you on recovery steps
-
-Use `proxy_status` for overall server health and `proxy_help` for general guidance.
-''';
-  }
 
   void _sendToClient(MCPMessage message) {
     final line = MCPProtocol.formatMessage(message);
@@ -643,7 +526,9 @@ Use `proxy_status` for overall server health and `proxy_help` for general guidan
     
     // Remove from pending requests and tool uses
     _pendingRequests.remove(id);
+    _requestTimestamps.remove(id);
     _pendingToolUses.remove(id.toString());
+    _toolUseTimestamps.remove(id.toString());
     _cancelRequestTimeout(id);
     
     // Create timeout error using TimeoutManager
@@ -678,6 +563,7 @@ Use `proxy_status` for overall server health and `proxy_help` for general guidan
     await _stdoutSubscription?.cancel();
     await _fileWatchSubscription?.cancel();
     _stopBinaryMonitoring();
+    _stopPeriodicCleanup();
     
     // Cancel all pending timeouts
     _timeoutManager.dispose();
@@ -686,5 +572,57 @@ Use `proxy_status` for overall server health and `proxy_help` for general guidan
     await _fileWatcher.stop();
 
     _logger.info('MCP Dev Proxy stopped');
+  }
+
+
+  /// Start periodic cleanup of stale pending requests and tool uses
+  void _startPeriodicCleanup() {
+    _cleanupTimer = Timer.periodic(_cleanupInterval, (_) {
+      _cleanupStaleEntries();
+    });
+  }
+
+  /// Stop periodic cleanup
+  void _stopPeriodicCleanup() {
+    _cleanupTimer?.cancel();
+    _cleanupTimer = null;
+  }
+
+  /// Clean up stale entries that have exceeded their TTL
+  void _cleanupStaleEntries() {
+    final now = DateTime.now();
+    
+    // Clean up stale pending requests
+    final staleRequestIds = <dynamic>[];
+    for (final entry in _requestTimestamps.entries) {
+      if (now.difference(entry.value) > _maxRequestAge) {
+        staleRequestIds.add(entry.key);
+      }
+    }
+    
+    for (final id in staleRequestIds) {
+      _logger.warning('Cleaning up stale pending request: $id');
+      _pendingRequests.remove(id);
+      _requestTimestamps.remove(id);
+      _timeoutManager.cancelTimeout(id.toString());
+    }
+    
+    // Clean up stale tool uses
+    final staleToolUseIds = <String>[];
+    for (final entry in _toolUseTimestamps.entries) {
+      if (now.difference(entry.value) > _maxToolUseAge) {
+        staleToolUseIds.add(entry.key);
+      }
+    }
+    
+    for (final id in staleToolUseIds) {
+      _logger.warning('Cleaning up stale tool_use: $id');
+      _pendingToolUses.remove(id);
+      _toolUseTimestamps.remove(id);
+    }
+    
+    if (staleRequestIds.isNotEmpty || staleToolUseIds.isNotEmpty) {
+      _logger.info('Cleaned up ${staleRequestIds.length} stale requests and ${staleToolUseIds.length} stale tool_uses');
+    }
   }
 }
