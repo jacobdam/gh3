@@ -19,7 +19,8 @@
       "Bash(chmod:*)",
       "Bash(timeout 30 dart test:*)",
       "Bash(mkdir:*)",
-      "Bash(mv:*)"
+      "Bash(mv:*)",
+      "Bash(grep:*)"
     ]
   },
   "disabledMcpjsonServers": [
