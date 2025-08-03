@@ -47,7 +47,7 @@ void main(List<String> args) async {
 
       // Add delay for slow mode testing
       if (isSlowMode) {
-        await Future.delayed(const Duration(milliseconds: 100));
+        await Future<void>.delayed(const Duration(milliseconds: 100));
       }
 
       // Generate appropriate response based on method
@@ -59,7 +59,7 @@ void main(List<String> args) async {
       stderr.writeln("[FAKE-MCP] Error parsing JSON: $e");
       // Invalid JSON - just ignore for testing
     }
-  }).asFuture();
+  }).asFuture<void>();
 }
 
 Map<String, dynamic> _generateResponse(String? method, dynamic id) {

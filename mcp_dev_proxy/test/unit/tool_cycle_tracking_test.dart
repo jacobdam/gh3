@@ -141,7 +141,7 @@ class ToolCycleTracker {
   List<ToolCycleInfo> getCompletedCycles() => _completedCycles;
 
   void sendErrorsForPendingCycles(
-      String reason, Function(Map<String, dynamic>) onError) {
+      String reason, void Function(Map<String, dynamic>) onError) {
     for (final cycle in _pendingCycles.values) {
       onError({
         "jsonrpc": "2.0",

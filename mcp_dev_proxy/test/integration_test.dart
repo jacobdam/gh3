@@ -202,7 +202,7 @@ void main() async {
         "id": message["id"],
         "result": {
           "protocolVersion": "2024-11-05",
-          "capabilities": {"tools": <String, dynamic>{}},"
+          "capabilities": {"tools": <String, dynamic>{}},
           "serverInfo": {"name": "mock_server", "version": "1.0.0"}
         }
       };
@@ -211,7 +211,7 @@ void main() async {
       final response = {
         "jsonrpc": "2.0",
         "id": message["id"],
-        "result": {"tools": []}
+        "result": {"tools": <Map<String, dynamic>>[]}
       };
       print(jsonEncode(response));
     }
