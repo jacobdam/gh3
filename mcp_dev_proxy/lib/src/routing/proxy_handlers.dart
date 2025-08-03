@@ -30,10 +30,12 @@ class ProxyStatusHandler extends RequestHandler {
     final processManager = _proxy.processManager;
     final startupError = (_proxy as dynamic)._startupError;
     final binaryMonitorTimer = (_proxy as dynamic)._binaryMonitorTimer;
-    
+
     final binaryExists = File(targetBinary).existsSync();
-    final status = binaryExists ? 'Binary exists but process failed to start' : 'Binary not found';
-    
+    final status = binaryExists
+        ? 'Binary exists but process failed to start'
+        : 'Binary not found';
+
     return '''
 # MCP Dev Proxy Status
 
@@ -46,10 +48,7 @@ class ProxyStatusHandler extends RequestHandler {
 ${startupError != null ? '⚠️ Startup Error: $startupError' : '✅ Proxy running normally'}
 
 ## Next Steps
-${binaryExists ? 
-  'Binary exists but failed to start. Check if it\'s executable and implements MCP protocol.' :
-  'Compile your MCP server binary: `dart compile exe bin/your_server.dart -o ${targetBinary.split('/').last}`'
-}
+${binaryExists ? 'Binary exists but failed to start. Check if it\'s executable and implements MCP protocol.' : 'Compile your MCP server binary: `dart compile exe bin/your_server.dart -o ${targetBinary.split('/').last}`'}
 
 ## Proxy Capabilities
 - 🔄 Crash Recovery: Auto-restart on crashes
@@ -150,7 +149,7 @@ class ProxyToolCycleHandler extends RequestHandler {
 
   String _buildToolCycleReport() {
     final pendingToolUses = (_proxy as dynamic)._pendingToolUses as Set<String>;
-    
+
     if (pendingToolUses.isEmpty) {
       return '''
 # Tool Cycle Check
@@ -162,7 +161,7 @@ All tool_use requests have been properly completed with tool_result responses.
     }
 
     final pendingList = pendingToolUses.map((id) => '- `$id`').join('\n');
-    
+
     return '''
 # Tool Cycle Check
 

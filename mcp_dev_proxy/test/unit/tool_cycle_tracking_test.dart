@@ -30,7 +30,7 @@ void main() {
 
     test('should complete tool cycles when tool_result received (T6.2)', () {
       final toolCallId = 'tool-call-456';
-      
+
       // Start and complete cycle
       tracker.startToolCycle(toolCallId, DateTime.now());
       tracker.completeToolCycle(toolCallId);
@@ -38,7 +38,7 @@ void main() {
       // Verify cycle is completed and removed from pending
       final pendingCycles = tracker.getPendingCycles();
       expect(pendingCycles.length, equals(0));
-      
+
       final completedCycles = tracker.getCompletedCycles();
       expect(completedCycles.length, equals(1));
       expect(completedCycles.first.id, equals(toolCallId));
@@ -62,7 +62,7 @@ void main() {
 
       // Verify error responses sent for all pending cycles
       expect(errorResponses.length, equals(2));
-      
+
       for (final response in errorResponses) {
         expect(response['error'], isNotNull);
         expect(response['error']['message'], contains('interrupted'));
@@ -79,17 +79,20 @@ void main() {
     test('should generate tool cycle diagnostic report', () {
       final toolCallId1 = 'diagnostic-1';
       final toolCallId2 = 'diagnostic-2';
-      
+
       // Create mix of pending and completed cycles
-      tracker.startToolCycle(toolCallId1, DateTime.now().subtract(Duration(minutes: 5)));
-      tracker.startToolCycle(toolCallId2, DateTime.now().subtract(Duration(minutes: 2)));
+      tracker.startToolCycle(
+          toolCallId1, DateTime.now().subtract(Duration(minutes: 5)));
+      tracker.startToolCycle(
+          toolCallId2, DateTime.now().subtract(Duration(minutes: 2)));
       tracker.completeToolCycle(toolCallId1);
 
       final report = tracker.getReport();
-      
+
       expect(report.totalPending, equals(1));
       expect(report.pendingIds, contains(toolCallId2));
-      expect(report.hasApiRisk, isTrue, reason: 'Pending cycles create API validation risk');
+      expect(report.hasApiRisk, isTrue,
+          reason: 'Pending cycles create API validation risk');
       expect(report.recoveryGuidance, contains('/resume'));
       expect(report.recoveryGuidance, contains('Claude session'));
     });
@@ -97,13 +100,13 @@ void main() {
     test('should detect stale tool cycles', () {
       final staleId = 'stale-cycle';
       final staleTime = DateTime.now().subtract(Duration(minutes: 10));
-      
+
       tracker.startToolCycle(staleId, staleTime);
-      
+
       final staleCycles = tracker.getStaleCycles(Duration(minutes: 5));
       expect(staleCycles.length, equals(1));
       expect(staleCycles.first.id, equals(staleId));
-      
+
       // Verify stale cycle cleanup
       tracker.cleanupStaleCycles(Duration(minutes: 5));
       expect(tracker.getPendingCycles().length, equals(0));
@@ -138,7 +141,8 @@ class ToolCycleTracker {
   List<ToolCycleInfo> getPendingCycles() => _pendingCycles.values.toList();
   List<ToolCycleInfo> getCompletedCycles() => _completedCycles;
 
-  void sendErrorsForPendingCycles(String reason, Function(Map<String, dynamic>) onError) {
+  void sendErrorsForPendingCycles(
+      String reason, Function(Map<String, dynamic>) onError) {
     for (final cycle in _pendingCycles.values) {
       onError({
         'jsonrpc': '2.0',
@@ -163,9 +167,9 @@ class ToolCycleTracker {
       totalPending: _pendingCycles.length,
       pendingIds: _pendingCycles.keys.toList(),
       hasApiRisk: _pendingCycles.isNotEmpty,
-      recoveryGuidance: _pendingCycles.isNotEmpty 
-        ? 'Use /resume command to recover Claude session after incomplete tool cycles'
-        : 'No pending tool cycles detected',
+      recoveryGuidance: _pendingCycles.isNotEmpty
+          ? 'Use /resume command to recover Claude session after incomplete tool cycles'
+          : 'No pending tool cycles detected',
     );
   }
 

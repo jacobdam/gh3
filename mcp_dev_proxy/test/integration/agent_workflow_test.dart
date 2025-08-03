@@ -22,10 +22,10 @@ void main() {
 
       // Step 1: Agent starts with missing binary
       workflowSteps.add('1. Missing binary detected');
-      
+
       // Simulate proxy detecting missing binary
       expect(await testBinary.exists(), isFalse);
-      
+
       final missingBinaryError = {
         'jsonrpc': '2.0',
         'id': 'init-1',
@@ -35,20 +35,25 @@ void main() {
           'data': {
             'problem': 'Binary not found at ${testBinary.path}',
             'context': 'Proxy attempted to start target server',
-            'guidance': 'Compile your MCP server using appropriate build command',
-            'next_steps': ['compile_binary', 'verify_path', 'check_proxy_status'],
+            'guidance':
+                'Compile your MCP server using appropriate build command',
+            'next_steps': [
+              'compile_binary',
+              'verify_path',
+              'check_proxy_status'
+            ],
             'proxy_tools': ['proxy_status', 'proxy_help']
           }
         }
       };
-      
+
       responses.add(missingBinaryError);
       workflowSteps.add('2. Received compilation guidance');
 
       // Verify agent receives actionable guidance
       final error = missingBinaryError['error'] as Map<String, dynamic>;
       final data = error['data'] as Map<String, dynamic>;
-      
+
       expect(data['guidance'], contains('Compile'));
       expect(data['next_steps'], contains('compile_binary'));
       expect(data['proxy_tools'], contains('proxy_status'));
@@ -115,7 +120,8 @@ void main() {
       workflowSteps.add('7. Received crash debugging guidance');
 
       // Step 8: Agent modifies code and recompiles
-      await testBinary.writeAsString('#!/bin/bash\necho "MCP server v2 started"');
+      await testBinary
+          .writeAsString('#!/bin/bash\necho "MCP server v2 started"');
       await Process.run('chmod', ['+x', testBinary.path]);
       workflowSteps.add('8. Code modified and recompiled');
 
@@ -160,20 +166,26 @@ void main() {
 
       // Verify no hanging operations throughout cycle
       for (final response in responses) {
-        expect(response['id'], isNotNull, reason: 'All responses should have IDs');
+        expect(response['id'], isNotNull,
+            reason: 'All responses should have IDs');
         if (response.containsKey('error')) {
           final error = response['error'] as Map<String, dynamic>;
-          expect(error['data']['guidance'], isA<String>(), reason: 'Errors should include guidance');
-          expect(error['data']['next_steps'], isA<List>(), reason: 'Errors should include next steps');
+          expect(error['data']['guidance'], isA<String>(),
+              reason: 'Errors should include guidance');
+          expect(error['data']['next_steps'], isA<List>(),
+              reason: 'Errors should include next steps');
         }
       }
 
       // Verify autonomous recovery guidance provided
-      final errorResponses = responses.where((r) => r.containsKey('error')).toList();
+      final errorResponses =
+          responses.where((r) => r.containsKey('error')).toList();
       for (final errorResponse in errorResponses) {
         final data = errorResponse['error']['data'] as Map<String, dynamic>;
-        expect(data['next_steps'], isNotEmpty, reason: 'Should provide autonomous recovery steps');
-        expect(data['proxy_tools'], isNotEmpty, reason: 'Should suggest diagnostic tools');
+        expect(data['next_steps'], isNotEmpty,
+            reason: 'Should provide autonomous recovery steps');
+        expect(data['proxy_tools'], isNotEmpty,
+            reason: 'Should suggest diagnostic tools');
       }
 
       print('Agent Workflow Steps Completed:');
@@ -187,7 +199,8 @@ void main() {
       final sessionRecoveryGuidance = {
         'incomplete_cycles': 2,
         'guidance': 'Use /resume command to recover Claude session',
-        'explanation': 'Incomplete tool_use → tool_result cycles can cause API validation errors',
+        'explanation':
+            'Incomplete tool_use → tool_result cycles can cause API validation errors',
         'recovery_steps': [
           'Use /resume command in Claude',
           'Check proxy_check_tool_cycles for status',
@@ -196,9 +209,13 @@ void main() {
       };
 
       expect(sessionRecoveryGuidance['guidance'], contains('/resume'));
-      expect(sessionRecoveryGuidance['explanation'], contains('API validation'));
+      expect(
+          sessionRecoveryGuidance['explanation'], contains('API validation'));
       final recoverySteps = sessionRecoveryGuidance['recovery_steps'] as List;
-      expect(recoverySteps.any((step) => step.toString().contains('proxy_check_tool_cycles')), isTrue);
+      expect(
+          recoverySteps.any(
+              (step) => step.toString().contains('proxy_check_tool_cycles')),
+          isTrue);
     });
 
     test('should handle various MCP server types', () {

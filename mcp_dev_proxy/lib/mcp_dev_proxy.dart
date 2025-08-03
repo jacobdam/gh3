@@ -34,13 +34,15 @@ class MCPDevProxy {
   String? _lastRestartReason;
   String? _startupError; // Track startup failures
   final Map<dynamic, MCPMessage> _pendingRequests = {};
-  final Map<dynamic, DateTime> _requestTimestamps = {}; // Track when requests were added
+  final Map<dynamic, DateTime> _requestTimestamps =
+      {}; // Track when requests were added
   Timer? _binaryMonitorTimer;
   Timer? _cleanupTimer; // Timer for periodic cleanup
   final Set<String> _pendingToolUses = {}; // Track incomplete tool_use cycles
-  final Map<String, DateTime> _toolUseTimestamps = {}; // Track when tool uses were added
+  final Map<String, DateTime> _toolUseTimestamps =
+      {}; // Track when tool uses were added
   late TimeoutManager _timeoutManager;
-  
+
   // Cleanup configuration
   static const Duration _maxRequestAge = Duration(minutes: 10);
   static const Duration _maxToolUseAge = Duration(minutes: 5);
@@ -201,7 +203,7 @@ Proxy Capabilities:
 
 Use the 'proxy_status' tool for detailed information and 'proxy_help' for guidance.
 ''';
-          
+
           final initResponse = {
             'protocolVersion': '2024-11-05',
             'capabilities': {
@@ -227,7 +229,8 @@ Use the 'proxy_status' tool for detailed information and 'proxy_help' for guidan
             'tools': [
               {
                 'name': 'proxy_status',
-                'description': 'Get current proxy status and target binary information',
+                'description':
+                    'Get current proxy status and target binary information',
                 'inputSchema': {
                   'type': 'object',
                   'properties': {},
@@ -243,7 +246,8 @@ Use the 'proxy_status' tool for detailed information and 'proxy_help' for guidan
               },
               {
                 'name': 'proxy_check_tool_cycles',
-                'description': 'Check for incomplete tool_use cycles that may cause API errors',
+                'description':
+                    'Check for incomplete tool_use cycles that may cause API errors',
                 'inputSchema': {
                   'type': 'object',
                   'properties': {},
@@ -329,7 +333,8 @@ Use the 'proxy_status' tool for detailed information and 'proxy_help' for guidan
     _logger.warning('Target process crashed with exit code: $exitCode');
 
     final stderr = _processManager.lastStderr;
-    final crashError = _responseEnhancer.createServerCrashError(exitCode, stderr);
+    final crashError =
+        _responseEnhancer.createServerCrashError(exitCode, stderr);
 
     // Send error responses for all pending requests
     for (final entry in _pendingRequests.entries) {
@@ -357,15 +362,17 @@ Use the 'proxy_status' tool for detailed information and 'proxy_help' for guidan
     // Also send error responses for incomplete tool_use cycles
     for (final toolUseId in _pendingToolUses) {
       _logger.warning('Sending error for incomplete tool_use: $toolUseId');
-      final toolError = _responseEnhancer.createToolInterruptedError(toolUseId, reason);
+      final toolError =
+          _responseEnhancer.createToolInterruptedError(toolUseId, reason);
       _sendErrorToClient(toolUseId, toolError);
     }
     _pendingToolUses.clear();
     _toolUseTimestamps.clear();
-    
+
     // Cancel all pending timeouts
     _timeoutManager.dispose();
-    _timeoutManager = TimeoutManager(); // Reinitialize for the restarted process
+    _timeoutManager =
+        TimeoutManager(); // Reinitialize for the restarted process
 
     // Then restart the process
     _processManager.restart().catchError((error) {
@@ -433,26 +440,31 @@ Use the 'proxy_status' tool for detailed information and 'proxy_help' for guidan
   void _setupRequestRouter() {
     _requestRouter.registerRoute('proxy_status', ProxyStatusHandler(this));
     _requestRouter.registerRoute('proxy_help', ProxyHelpHandler(this));
-    _requestRouter.registerRoute('proxy_check_tool_cycles', ProxyToolCycleHandler(this));
+    _requestRouter.registerRoute(
+        'proxy_check_tool_cycles', ProxyToolCycleHandler(this));
   }
 
   /// Route proxy tool calls through the request router
   Future<void> _routeProxyToolCall(MCPMessage message) async {
     final params = message.params as Map<String, dynamic>?;
     final toolName = params?['name'] as String?;
-    
+
     if (toolName == null) {
-      _sendErrorToClient(message.id, MCPError(
-        code: -32602,
-        message: 'Missing tool name in request',
-      ));
+      _sendErrorToClient(
+          message.id,
+          MCPError(
+            code: -32602,
+            message: 'Missing tool name in request',
+          ));
       return;
     }
 
     try {
-      final context = RequestContext(toolName, params ?? {}, message.id.toString());
-      final result = await _requestRouter.routeRequest(toolName, params ?? {}, context);
-      
+      final context =
+          RequestContext(toolName, params ?? {}, message.id.toString());
+      final result =
+          await _requestRouter.routeRequest(toolName, params ?? {}, context);
+
       final response = MCPMessage(
         jsonrpc: '2.0',
         id: message.id,
@@ -461,19 +473,22 @@ Use the 'proxy_status' tool for detailed information and 'proxy_help' for guidan
       _sendToClient(response);
     } catch (e) {
       if (e is RouteNotFoundException) {
-        _sendErrorToClient(message.id, MCPError(
-          code: -32601,
-          message: 'Unknown tool: $toolName',
-        ));
+        _sendErrorToClient(
+            message.id,
+            MCPError(
+              code: -32601,
+              message: 'Unknown tool: $toolName',
+            ));
       } else {
-        _sendErrorToClient(message.id, MCPError(
-          code: -32603,
-          message: 'Internal error: $e',
-        ));
+        _sendErrorToClient(
+            message.id,
+            MCPError(
+              code: -32603,
+              message: 'Internal error: $e',
+            ));
       }
     }
   }
-
 
   void _sendToClient(MCPMessage message) {
     final line = MCPProtocol.formatMessage(message);
@@ -502,37 +517,37 @@ Use the 'proxy_status' tool for detailed information and 'proxy_help' for guidan
 
   void _startRequestTimeout(MCPMessage message) {
     if (message.id == null) return;
-    
-    final timeout = _timeoutManager.getTimeout(message.method ?? '', message.params);
-    
-    _timeoutManager.startTimeout(
-      message.id.toString(),
-      message.method ?? '',
-      () => _handleRequestTimeout(message)
-    );
-    
-    _logger.fine('Started ${timeout.inSeconds}s timeout for ${message.method} (id: ${message.id})');
+
+    final timeout =
+        _timeoutManager.getTimeout(message.method ?? '', message.params);
+
+    _timeoutManager.startTimeout(message.id.toString(), message.method ?? '',
+        () => _handleRequestTimeout(message));
+
+    _logger.fine(
+        'Started ${timeout.inSeconds}s timeout for ${message.method} (id: ${message.id})');
   }
-  
+
   void _cancelRequestTimeout(dynamic id) {
     _timeoutManager.cancelTimeout(id.toString());
   }
-  
+
   void _handleRequestTimeout(MCPMessage originalMessage) {
     final id = originalMessage.id;
     if (id == null) return;
-    
+
     _logger.warning('Request timeout: ${originalMessage.method} (id: $id)');
-    
+
     // Remove from pending requests and tool uses
     _pendingRequests.remove(id);
     _requestTimestamps.remove(id);
     _pendingToolUses.remove(id.toString());
     _toolUseTimestamps.remove(id.toString());
     _cancelRequestTimeout(id);
-    
+
     // Create timeout error using TimeoutManager
-    final timeout = _timeoutManager.getTimeout(originalMessage.method ?? '', originalMessage.params);
+    final timeout = _timeoutManager.getTimeout(
+        originalMessage.method ?? '', originalMessage.params);
     final operationContext = {
       'proxy': 'mcp_dev_proxy',
       'proxy_capabilities': [
@@ -541,20 +556,16 @@ Use the 'proxy_status' tool for detailed information and 'proxy_help' for guidan
         'error_buffering',
         'debug_info'
       ],
-      'recovery_hint': 'The target MCP server may be unresponsive. Check server logs or restart the connection.',
+      'recovery_hint':
+          'The target MCP server may be unresponsive. Check server logs or restart the connection.',
     };
-    
+
     final timeoutErrorData = _timeoutManager.createTimeoutError(
-      id.toString(),
-      originalMessage.method ?? '',
-      timeout,
-      operationContext
-    );
-    
+        id.toString(), originalMessage.method ?? '', timeout, operationContext);
+
     final timeoutError = MCPError.fromJson(timeoutErrorData['error']);
     _sendErrorToClient(id, timeoutError);
   }
-  
 
   Future<void> stop() async {
     _logger.info('Stopping MCP Dev Proxy');
@@ -564,7 +575,7 @@ Use the 'proxy_status' tool for detailed information and 'proxy_help' for guidan
     await _fileWatchSubscription?.cancel();
     _stopBinaryMonitoring();
     _stopPeriodicCleanup();
-    
+
     // Cancel all pending timeouts
     _timeoutManager.dispose();
 
@@ -573,7 +584,6 @@ Use the 'proxy_status' tool for detailed information and 'proxy_help' for guidan
 
     _logger.info('MCP Dev Proxy stopped');
   }
-
 
   /// Start periodic cleanup of stale pending requests and tool uses
   void _startPeriodicCleanup() {
@@ -591,7 +601,7 @@ Use the 'proxy_status' tool for detailed information and 'proxy_help' for guidan
   /// Clean up stale entries that have exceeded their TTL
   void _cleanupStaleEntries() {
     final now = DateTime.now();
-    
+
     // Clean up stale pending requests
     final staleRequestIds = <dynamic>[];
     for (final entry in _requestTimestamps.entries) {
@@ -599,14 +609,14 @@ Use the 'proxy_status' tool for detailed information and 'proxy_help' for guidan
         staleRequestIds.add(entry.key);
       }
     }
-    
+
     for (final id in staleRequestIds) {
       _logger.warning('Cleaning up stale pending request: $id');
       _pendingRequests.remove(id);
       _requestTimestamps.remove(id);
       _timeoutManager.cancelTimeout(id.toString());
     }
-    
+
     // Clean up stale tool uses
     final staleToolUseIds = <String>[];
     for (final entry in _toolUseTimestamps.entries) {
@@ -614,15 +624,16 @@ Use the 'proxy_status' tool for detailed information and 'proxy_help' for guidan
         staleToolUseIds.add(entry.key);
       }
     }
-    
+
     for (final id in staleToolUseIds) {
       _logger.warning('Cleaning up stale tool_use: $id');
       _pendingToolUses.remove(id);
       _toolUseTimestamps.remove(id);
     }
-    
+
     if (staleRequestIds.isNotEmpty || staleToolUseIds.isNotEmpty) {
-      _logger.info('Cleaned up ${staleRequestIds.length} stale requests and ${staleToolUseIds.length} stale tool_uses');
+      _logger.info(
+          'Cleaned up ${staleRequestIds.length} stale requests and ${staleToolUseIds.length} stale tool_uses');
     }
   }
 }

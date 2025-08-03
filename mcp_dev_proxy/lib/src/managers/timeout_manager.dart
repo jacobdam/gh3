@@ -16,7 +16,7 @@ class TimeoutManager {
 
   Duration getTimeout(String method, Map<String, dynamic>? params) {
     _ensureNotDisposed();
-    
+
     // Check for custom timeout in params (for long-running operations)
     if (params != null && params.containsKey('timeout_seconds')) {
       final timeoutSeconds = params['timeout_seconds'];
@@ -36,10 +36,10 @@ class TimeoutManager {
 
   Timer startTimeout(String requestId, String method, Function onTimeout) {
     _ensureNotDisposed();
-    
+
     // Cancel any existing timeout for this request
     cancelTimeout(requestId);
-    
+
     final timeout = getTimeout(method, null);
     final timer = Timer(timeout, () {
       _activeTimeouts.remove(requestId);
@@ -47,14 +47,14 @@ class TimeoutManager {
         onTimeout();
       }
     });
-    
+
     _activeTimeouts[requestId] = timer;
     return timer;
   }
 
   void cancelTimeout(String requestId) {
     if (_disposed) return;
-    
+
     final timer = _activeTimeouts.remove(requestId);
     timer?.cancel();
   }
@@ -109,9 +109,9 @@ class TimeoutManager {
 
   void dispose() {
     if (_disposed) return;
-    
+
     _disposed = true;
-    
+
     // Cancel all active timeouts
     for (final timer in _activeTimeouts.values) {
       timer.cancel();
@@ -127,7 +127,7 @@ class TimeoutManager {
       case 'initialize':
         return 'Server initialization took too long. Check if the server binary is working correctly.';
       case 'tools/list':
-      case 'resources/list':  
+      case 'resources/list':
       case 'prompts/list':
         return 'List operation exceeded timeout. Server may be unresponsive or overloaded.';
       default:

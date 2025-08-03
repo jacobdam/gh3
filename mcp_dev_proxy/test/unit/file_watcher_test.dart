@@ -95,7 +95,8 @@ void main() {
       final nonExistentDir = '${tempDir.path}/nonexistent/file.txt';
       final badWatcher = FileWatcher(filePath: nonExistentDir);
 
-      expect(() async => await badWatcher.start(), throwsA(isA<FileSystemException>()));
+      expect(() async => await badWatcher.start(),
+          throwsA(isA<FileSystemException>()));
     });
 
     test('should handle multiple start calls', () async {

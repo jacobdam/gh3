@@ -38,7 +38,7 @@ void main() {
 
     test('handles initialize request when target unavailable', () async {
       await proxy.start();
-      
+
       final initMessage = {
         'jsonrpc': '2.0',
         'id': 1,
@@ -51,10 +51,10 @@ void main() {
       };
 
       inputController.add(jsonEncode(initMessage));
-      
+
       // Give some time for processing
       await Future.delayed(Duration(milliseconds: 100));
-      
+
       expect(outputLines.length, greaterThan(0));
       final response = jsonDecode(outputLines.first);
       expect(response['jsonrpc'], equals('2.0'));
@@ -65,7 +65,7 @@ void main() {
 
     test('provides proxy tools when target unavailable', () async {
       await proxy.start();
-      
+
       final toolsListMessage = {
         'jsonrpc': '2.0',
         'id': 2,
@@ -74,13 +74,13 @@ void main() {
       };
 
       inputController.add(jsonEncode(toolsListMessage));
-      
+
       await Future.delayed(Duration(milliseconds: 100));
-      
+
       expect(outputLines.length, greaterThan(0));
       final response = jsonDecode(outputLines.last);
       expect(response['result']['tools'], isA<List>());
-      
+
       final tools = response['result']['tools'] as List;
       final toolNames = tools.map((t) => t['name']).toList();
       expect(toolNames, contains('proxy_status'));
@@ -90,66 +90,59 @@ void main() {
 
     test('tracks tool_use cycles', () async {
       await proxy.start();
-      
+
       final toolCallMessage = {
         'jsonrpc': '2.0',
         'id': 3,
         'method': 'tools/call',
-        'params': {
-          'name': 'proxy_status',
-          'arguments': {}
-        }
+        'params': {'name': 'proxy_status', 'arguments': {}}
       };
 
       inputController.add(jsonEncode(toolCallMessage));
-      
+
       await Future.delayed(Duration(milliseconds: 100));
-      
+
       expect(outputLines.length, greaterThan(0));
       final response = jsonDecode(outputLines.last);
       expect(response['result']['content'], isA<List>());
-      expect(response['result']['content'][0]['text'], contains('MCP Dev Proxy Status'));
+      expect(response['result']['content'][0]['text'],
+          contains('MCP Dev Proxy Status'));
     });
 
     test('handles proxy_check_tool_cycles tool', () async {
       await proxy.start();
-      
+
       final toolCallMessage = {
         'jsonrpc': '2.0',
         'id': 4,
         'method': 'tools/call',
-        'params': {
-          'name': 'proxy_check_tool_cycles',
-          'arguments': {}
-        }
+        'params': {'name': 'proxy_check_tool_cycles', 'arguments': {}}
       };
 
       inputController.add(jsonEncode(toolCallMessage));
-      
+
       await Future.delayed(Duration(milliseconds: 100));
-      
+
       expect(outputLines.length, greaterThan(0));
       final response = jsonDecode(outputLines.last);
-      expect(response['result']['content'][0]['text'], contains('Tool Cycle Status'));
+      expect(response['result']['content'][0]['text'],
+          contains('Tool Cycle Status'));
     });
 
     test('handles unknown tool gracefully', () async {
       await proxy.start();
-      
+
       final toolCallMessage = {
         'jsonrpc': '2.0',
         'id': 5,
         'method': 'tools/call',
-        'params': {
-          'name': 'unknown_tool',
-          'arguments': {}
-        }
+        'params': {'name': 'unknown_tool', 'arguments': {}}
       };
 
       inputController.add(jsonEncode(toolCallMessage));
-      
+
       await Future.delayed(Duration(milliseconds: 100));
-      
+
       expect(outputLines.length, greaterThan(0));
       final response = jsonDecode(outputLines.last);
       expect(response['error'], isNotNull);
@@ -158,11 +151,11 @@ void main() {
 
     test('handles malformed JSON gracefully', () async {
       await proxy.start();
-      
+
       inputController.add('invalid json');
-      
+
       await Future.delayed(Duration(milliseconds: 100));
-      
+
       // Should not crash, just log warning
       expect(true, isTrue);
     });
@@ -176,7 +169,7 @@ void main() {
         'method': 'test',
         'params': {'key': 'value'}
       };
-      
+
       final message = MCPProtocol.parseMessage(jsonEncode(json));
       expect(message, isNotNull);
       expect(message!.jsonrpc, equals('2.0'));
@@ -191,12 +184,8 @@ void main() {
 
     test('formats message correctly', () {
       final message = MCPMessage(
-        jsonrpc: '2.0',
-        id: 1,
-        method: 'test',
-        params: {'key': 'value'}
-      );
-      
+          jsonrpc: '2.0', id: 1, method: 'test', params: {'key': 'value'});
+
       final formatted = MCPProtocol.formatMessage(message);
       final parsed = jsonDecode(formatted);
       expect(parsed['jsonrpc'], equals('2.0'));
@@ -207,7 +196,7 @@ void main() {
     test('creates error responses', () {
       final error = MCPError.serverUnavailable({'test': 'data'});
       final response = MCPMessage.createErrorResponse(1, error);
-      
+
       expect(response.id, equals(1));
       expect(response.error, isNotNull);
       expect(response.error!.code, equals(-32603));
@@ -225,44 +214,44 @@ void main() {
 
 class _MockIOSink implements IOSink {
   final List<String> lines;
-  
+
   _MockIOSink(this.lines);
-  
+
   @override
   void writeln([Object? obj = ""]) {
     lines.add(obj.toString());
   }
-  
+
   @override
   void write(Object? obj) {
     lines.add(obj.toString());
   }
-  
+
   // Minimal implementation of other required methods
   @override
   Encoding encoding = utf8;
-  
+
   @override
   Future get done => Future.value();
-  
+
   @override
   Future close() => Future.value();
-  
+
   @override
   Future flush() => Future.value();
-  
+
   @override
   void add(List<int> data) {}
-  
+
   @override
   void addError(Object error, [StackTrace? stackTrace]) {}
-  
+
   @override
   Future addStream(Stream<List<int>> stream) => Future.value();
-  
+
   @override
   void writeAll(Iterable objects, [String separator = ""]) {}
-  
+
   @override
   void writeCharCode(int charCode) {}
 }

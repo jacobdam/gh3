@@ -1,14 +1,14 @@
 /// Request routing system for MCP Dev Proxy
-/// 
+///
 /// Provides method-based request routing with middleware support.
 library;
 
 /// Exception thrown when a route is not found for a given method
 class RouteNotFoundException implements Exception {
   final String method;
-  
+
   const RouteNotFoundException(this.method);
-  
+
   @override
   String toString() => 'Route not found for method: $method';
 }
@@ -19,19 +19,19 @@ class RequestContext {
   final Map<String, dynamic> params;
   final String id;
   final Map<String, dynamic> _metadata = {};
-  
+
   RequestContext(this.method, this.params, this.id);
-  
+
   /// Store metadata for the request
   void setMetadata(String key, dynamic value) {
     _metadata[key] = value;
   }
-  
+
   /// Retrieve metadata for the request
   T? getMetadata<T>(String key) {
     return _metadata[key] as T?;
   }
-  
+
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -39,7 +39,7 @@ class RequestContext {
           runtimeType == other.runtimeType &&
           method == other.method &&
           id == other.id;
-  
+
   @override
   int get hashCode => method.hashCode ^ id.hashCode;
 }
@@ -57,7 +57,7 @@ abstract class RequestHandler {
 abstract class RequestMiddleware {
   /// Called before request handling
   Future<void> beforeRequest(RequestContext context);
-  
+
   /// Called after request handling
   Future<void> afterRequest(RequestContext context);
 }
@@ -66,34 +66,34 @@ abstract class RequestMiddleware {
 class RequestRouter {
   final Map<String, RequestHandler> _routes = {};
   final List<RequestMiddleware> _middleware = [];
-  
+
   /// Register a route handler for the given method
   void registerRoute(String method, RequestHandler handler) {
     _routes[method] = handler;
   }
-  
+
   /// Add middleware to the processing pipeline
   void addMiddleware(RequestMiddleware middleware) {
     _middleware.add(middleware);
   }
-  
+
   /// Check if the router can handle the given method
   bool canHandle(String method) {
     return _routes.containsKey(method);
   }
-  
+
   /// Get list of all supported methods
   List<String> getSupportedMethods() {
     return _routes.keys.toList();
   }
-  
+
   /// Get list of registered middleware (for testing)
   List<RequestMiddleware> getMiddleware() {
     return List.unmodifiable(_middleware);
   }
-  
+
   /// Route a request to the appropriate handler
-  /// 
+  ///
   /// Executes middleware before and after the handler.
   /// Throws [RouteNotFoundException] if no handler is registered for the method.
   Future<Map<String, dynamic>> routeRequest(
@@ -105,21 +105,21 @@ class RequestRouter {
     if (handler == null) {
       throw RouteNotFoundException(method);
     }
-    
+
     // Execute before middleware
     for (final middleware in _middleware) {
       await middleware.beforeRequest(context);
     }
-    
+
     try {
       // Execute handler
       final result = await handler.handle(params, context);
-      
+
       // Execute after middleware
       for (final middleware in _middleware.reversed) {
         await middleware.afterRequest(context);
       }
-      
+
       return result;
     } catch (e) {
       // Still run after middleware on error, but don't catch their exceptions

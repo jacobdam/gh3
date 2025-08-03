@@ -8,7 +8,7 @@ void main() {
     late Process proxyProcess;
     late Stream<String> proxyOutput;
     late IOSink proxyInput;
-    
+
     setUp(() async {
       // Start the proxy with a non-existent target
       proxyProcess = await Process.start(
@@ -16,16 +16,16 @@ void main() {
         ['./test_target_binary'],
         mode: ProcessStartMode.normal,
       );
-      
+
       proxyOutput = proxyProcess.stdout
           .transform(utf8.decoder)
           .transform(const LineSplitter());
       proxyInput = proxyProcess.stdin;
-      
+
       // Give proxy time to start
       await Future.delayed(Duration(milliseconds: 500));
     });
-    
+
     tearDown(() async {
       proxyInput.close();
       proxyProcess.kill();
@@ -48,7 +48,7 @@ void main() {
 
       final responseCompleter = Completer<Map<String, dynamic>>();
       late StreamSubscription subscription;
-      
+
       subscription = proxyOutput.listen((line) {
         try {
           final response = jsonDecode(line) as Map<String, dynamic>;
@@ -61,15 +61,16 @@ void main() {
         }
       });
 
-      final response = await responseCompleter.future
-          .timeout(Duration(seconds: 5));
-      
+      final response =
+          await responseCompleter.future.timeout(Duration(seconds: 5));
+
       expect(response['jsonrpc'], equals('2.0'));
       expect(response['id'], equals(1));
       expect(response['result'], isNotNull);
       expect(response['result']['serverInfo']['name'], equals('mcp_dev_proxy'));
       expect(response['result']['instructions'], isA<String>());
-      expect(response['result']['instructions'], contains('Target MCP server is not available'));
+      expect(response['result']['instructions'],
+          contains('Target MCP server is not available'));
     });
 
     test('proxy provides tools when target unavailable', () async {
@@ -84,7 +85,7 @@ void main() {
 
       final responseCompleter = Completer<Map<String, dynamic>>();
       late StreamSubscription subscription;
-      
+
       subscription = proxyOutput.listen((line) {
         try {
           final response = jsonDecode(line) as Map<String, dynamic>;
@@ -97,9 +98,9 @@ void main() {
         }
       });
 
-      final response = await responseCompleter.future
-          .timeout(Duration(seconds: 5));
-      
+      final response =
+          await responseCompleter.future.timeout(Duration(seconds: 5));
+
       expect(response['result']['tools'], isA<List>());
       final tools = response['result']['tools'] as List;
       final toolNames = tools.map((t) => t['name']).toList();
@@ -113,17 +114,14 @@ void main() {
         'jsonrpc': '2.0',
         'id': 3,
         'method': 'tools/call',
-        'params': {
-          'name': 'proxy_status',
-          'arguments': {}
-        }
+        'params': {'name': 'proxy_status', 'arguments': {}}
       };
 
       proxyInput.writeln(jsonEncode(toolCallRequest));
 
       final responseCompleter = Completer<Map<String, dynamic>>();
       late StreamSubscription subscription;
-      
+
       subscription = proxyOutput.listen((line) {
         try {
           final response = jsonDecode(line) as Map<String, dynamic>;
@@ -136,9 +134,9 @@ void main() {
         }
       });
 
-      final response = await responseCompleter.future
-          .timeout(Duration(seconds: 5));
-      
+      final response =
+          await responseCompleter.future.timeout(Duration(seconds: 5));
+
       expect(response['result']['content'], isA<List>());
       final content = response['result']['content'][0]['text'] as String;
       expect(content, contains('MCP Dev Proxy Status'));
@@ -156,23 +154,22 @@ void main() {
       // Monitor proxy logs for restart activity
       final logCompleter = Completer<bool>();
       late StreamSubscription subscription;
-      
+
       subscription = proxyProcess.stderr
           .transform(utf8.decoder)
           .transform(const LineSplitter())
           .listen((line) {
-        if (line.contains('Binary now available') || 
+        if (line.contains('Binary now available') ||
             line.contains('attempting to start target process')) {
           logCompleter.complete(true);
           subscription.cancel();
         }
       });
 
-      final detected = await logCompleter.future
-          .timeout(Duration(seconds: 10));
-      
+      final detected = await logCompleter.future.timeout(Duration(seconds: 10));
+
       expect(detected, isTrue);
-      
+
       // Clean up
       await testBinary.delete();
     });
@@ -215,11 +212,13 @@ void main() async {
 
       // Compile the mock server
       final compileResult = await Process.run('dart', [
-        'compile', 'exe', 
-        './mock_mcp_server.dart', 
-        '-o', './mock_mcp_server_binary'
+        'compile',
+        'exe',
+        './mock_mcp_server.dart',
+        '-o',
+        './mock_mcp_server_binary'
       ]);
-      
+
       expect(compileResult.exitCode, equals(0));
 
       // Start proxy with the mock server
@@ -228,12 +227,12 @@ void main() async {
         ['./mock_mcp_server_binary'],
         mode: ProcessStartMode.normal,
       );
-      
+
       final proxyOutput = proxyProcess.stdout
           .transform(utf8.decoder)
           .transform(const LineSplitter());
       final proxyInput = proxyProcess.stdin;
-      
+
       // Give time for both to start
       await Future.delayed(Duration(seconds: 2));
 
@@ -254,7 +253,7 @@ void main() async {
 
         final responseCompleter = Completer<Map<String, dynamic>>();
         late StreamSubscription subscription;
-        
+
         subscription = proxyOutput.listen((line) {
           try {
             final response = jsonDecode(line) as Map<String, dynamic>;
@@ -267,17 +266,16 @@ void main() async {
           }
         });
 
-        final response = await responseCompleter.future
-            .timeout(Duration(seconds: 10));
-        
+        final response =
+            await responseCompleter.future.timeout(Duration(seconds: 10));
+
         // Should get response from mock server (not proxy fallback)
         expect(response['result']['serverInfo']['name'], equals('mock_server'));
-        
       } finally {
         proxyInput.close();
         proxyProcess.kill();
         await proxyProcess.exitCode;
-        
+
         // Clean up files
         await File('./mock_mcp_server.dart').delete();
         await File('./mock_mcp_server_binary').delete();

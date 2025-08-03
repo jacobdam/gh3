@@ -20,7 +20,7 @@ enum ErrorType {
 
 class ResponseEnhancer {
   final List<ErrorEnhancer> _enhancers = [];
-  
+
   void addEnhancer(ErrorEnhancer enhancer) {
     _enhancers.add(enhancer);
   }
@@ -44,7 +44,7 @@ class ResponseEnhancer {
     Map<String, dynamic>? data,
   }) {
     var errorData = data ?? <String, dynamic>{};
-    
+
     // Apply enhancers
     for (final enhancer in _enhancers) {
       if (enhancer.canHandle(errorType, context)) {
@@ -53,11 +53,11 @@ class ResponseEnhancer {
           'message': message,
           'data': errorData,
         }, context);
-        
+
         errorData = enhanced['data'] ?? errorData;
       }
     }
-    
+
     return MCPError(
       code: code ?? _getDefaultCode(errorType),
       message: message,
@@ -81,7 +81,8 @@ class ResponseEnhancer {
         'operation': operation,
         'timeout_ms': timeout.inMilliseconds,
         'proxy': 'mcp_dev_proxy',
-        'recovery_hint': 'Check if the target server is responding or increase timeout',
+        'recovery_hint':
+            'Check if the target server is responding or increase timeout',
       },
     );
   }
@@ -94,7 +95,8 @@ class ResponseEnhancer {
         'tool_use_id': toolUseId,
         'reason': reason,
         'proxy': 'mcp_dev_proxy',
-        'recovery_hint': 'Use /resume command to start a fresh session without incomplete tool cycles',
+        'recovery_hint':
+            'Use /resume command to start a fresh session without incomplete tool cycles',
       },
     );
   }

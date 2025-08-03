@@ -17,7 +17,7 @@ void main() {
     test('should track active timeouts and prevent duplicates', () async {
       final responses = <Map<String, dynamic>>[];
       final requestId = 'test-timeout-tracking';
-      
+
       // Start timeout
       final timer = timeoutManager.startTimeout(
         requestId,
@@ -38,18 +38,19 @@ void main() {
 
       // Cancel timeout (simulating successful response)
       timeoutManager.cancelTimeout(requestId);
-      
+
       // Verify timeout is removed
       expect(timeoutManager.hasActiveTimeout(requestId), isFalse);
       expect(timeoutManager.getActiveTimeoutCount(), equals(0));
-      expect(responses.length, equals(0), reason: 'No timeout should occur after cancellation');
+      expect(responses.length, equals(0),
+          reason: 'No timeout should occur after cancellation');
     });
 
     test('should create structured timeout errors', () {
       final requestId = 'test-timeout-error';
       final method = 'tools/call';
       final timeout = Duration(seconds: 90);
-      
+
       final timeoutError = timeoutManager.createTimeoutError(
         requestId,
         method,
@@ -61,7 +62,7 @@ void main() {
       expect(timeoutError['jsonrpc'], equals('2.0'));
       expect(timeoutError['id'], equals(requestId));
       expect(timeoutError['error'], isNotNull);
-      
+
       final error = timeoutError['error'];
       expect(error['code'], equals(-32603));
       expect(error['message'], equals('Request timeout'));
@@ -110,24 +111,31 @@ void main() {
 
       // Only the second timeout should have triggered
       expect(timeoutCount, equals(1), reason: 'Only one timeout should occur');
-      expect(responses.length, equals(1), reason: 'Only one response should be sent');
+      expect(responses.length, equals(1),
+          reason: 'Only one response should be sent');
       expect(responses.first['error'], equals('second_timeout'));
     });
 
     test('should handle timeout configuration correctly', () {
       // Test default timeouts
-      expect(timeoutManager.getTimeout('initialize', null), equals(Duration(seconds: 15)));
-      expect(timeoutManager.getTimeout('tools/list', null), equals(Duration(seconds: 10)));
-      expect(timeoutManager.getTimeout('tools/call', null), equals(Duration(seconds: 90)));
-      expect(timeoutManager.getTimeout('unknown/method', null), equals(Duration(seconds: 30)));
+      expect(timeoutManager.getTimeout('initialize', null),
+          equals(Duration(seconds: 15)));
+      expect(timeoutManager.getTimeout('tools/list', null),
+          equals(Duration(seconds: 10)));
+      expect(timeoutManager.getTimeout('tools/call', null),
+          equals(Duration(seconds: 90)));
+      expect(timeoutManager.getTimeout('unknown/method', null),
+          equals(Duration(seconds: 30)));
 
       // Test custom timeout configuration
       timeoutManager.setCustomTimeout('custom/method', Duration(seconds: 45));
-      expect(timeoutManager.getTimeout('custom/method', null), equals(Duration(seconds: 45)));
+      expect(timeoutManager.getTimeout('custom/method', null),
+          equals(Duration(seconds: 45)));
 
       // Test parameter-based timeout
       final longRunningParams = {'timeout_seconds': 300};
-      expect(timeoutManager.getTimeout('tools/call', longRunningParams), equals(Duration(seconds: 300)));
+      expect(timeoutManager.getTimeout('tools/call', longRunningParams),
+          equals(Duration(seconds: 300)));
     });
   });
 }
