@@ -32,7 +32,7 @@ bin/mcp_flutter_automation
 # AI Development artifacts (prevents session pollution)
 screenshot_*.png
 *_inspection.json
-*_debug_*
+debug_*
 test_screenshot_*
 *_test_output/
 *.tmp
