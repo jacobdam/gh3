@@ -10,7 +10,7 @@ import "process_manager.dart";
 import "src/core/proxy_state.dart";
 import "src/core/tool_cycle_tracker.dart";
 import "src/enhancers/response_enhancer.dart";
-import "src/managers/timeout_manager.dart";
+import "src/managers/configurable_timeout_manager.dart";
 import "src/orchestration/error_coordinator.dart";
 import "src/orchestration/message_orchestrator.dart";
 import "src/orchestration/proxy_lifecycle_manager.dart";
@@ -30,7 +30,7 @@ class MCPDevProxy {
       arguments: arguments,
     );
     _fileWatcher = FileWatcher(filePath: targetBinary);
-    _timeoutManager = TimeoutManager();
+    _timeoutManager = ConfigurableTimeoutManager();
     _responseEnhancer = ResponseEnhancer();
     _requestRouter = RequestRouter();
     _proxyState = ProxyState();
@@ -78,7 +78,7 @@ class MCPDevProxy {
   late ProxyState _proxyState;
   late FileWatcher _fileWatcher;
   late ToolCycleTracker _toolCycleTracker;
-  late TimeoutManager _timeoutManager;
+  late ConfigurableTimeoutManager _timeoutManager;
 
   // Orchestration components
   late ProxyLifecycleManager _lifecycleManager;
