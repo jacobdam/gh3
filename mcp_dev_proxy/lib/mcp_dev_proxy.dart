@@ -10,7 +10,7 @@ import "process_manager.dart";
 import "src/core/proxy_state.dart";
 import "src/core/tool_cycle_tracker.dart";
 import "src/enhancers/response_enhancer.dart";
-import "src/managers/configurable_timeout_manager.dart";
+import "src/managers/adaptive_timeout_manager.dart";
 import "src/orchestration/error_coordinator.dart";
 import "src/orchestration/message_orchestrator.dart";
 import "src/orchestration/proxy_lifecycle_manager.dart";
@@ -30,7 +30,7 @@ class MCPDevProxy {
       arguments: arguments,
     );
     _fileWatcher = FileWatcher(filePath: targetBinary);
-    _timeoutManager = ConfigurableTimeoutManager();
+    _timeoutManager = AdaptiveTimeoutManager();
     _responseEnhancer = ResponseEnhancer();
     _requestRouter = RequestRouter();
     _proxyState = ProxyState();
@@ -78,7 +78,7 @@ class MCPDevProxy {
   late ProxyState _proxyState;
   late FileWatcher _fileWatcher;
   late ToolCycleTracker _toolCycleTracker;
-  late ConfigurableTimeoutManager _timeoutManager;
+  late AdaptiveTimeoutManager _timeoutManager;
 
   // Orchestration components
   late ProxyLifecycleManager _lifecycleManager;
@@ -153,8 +153,24 @@ class MCPDevProxy {
 
     // Remove from pending requests and track tool_result completion
     if (message.isResponse && message.id != null) {
-      _proxyState.removePendingRequest(message.id);
+      final requestInfo = _proxyState.removePendingRequest(message.id);
       _timeoutManager.cancelTimeout(message.id.toString());
+      
+      // Record timeout operation for adaptive learning
+      if (requestInfo != null) {
+        final actualDuration = DateTime.now().difference(requestInfo.timestamp);
+        final method = requestInfo.method ?? "unknown";
+        final requestedTimeout = _timeoutManager.getTimeout(method, null);
+        
+        _timeoutManager.recordOperation(
+          method: method,
+          requestedTimeout: requestedTimeout,
+          actualDuration: actualDuration,
+          success: !message.isError,
+          errorType: message.isError ? "server_error" : null,
+        );
+      }
+      
       final toolUseId = message.id.toString();
       if (_proxyState.pendingToolUses.contains(toolUseId)) {
         _proxyState.removePendingToolUse(toolUseId);

@@ -48,8 +48,8 @@ class ErrorCoordinator {
         _responseEnhancer.createServerCrashError(exitCode, stderr);
 
     // Send error responses for all pending requests
-    for (final entry in _proxyState.pendingRequests.entries) {
-      sendErrorToClient(entry.key, crashError.toJson());
+    for (final requestId in _proxyState.pendingRequests) {
+      sendErrorToClient(requestId, crashError.toJson());
     }
     _proxyState.clearAllPendingRequests();
   }
@@ -62,8 +62,8 @@ class ErrorCoordinator {
 
     // Send error responses for all pending requests
     final restartError = _responseEnhancer.createServerRestartError(reason);
-    for (final entry in _proxyState.pendingRequests.entries) {
-      sendErrorToClient(entry.key, restartError.toJson());
+    for (final requestId in _proxyState.pendingRequests) {
+      sendErrorToClient(requestId, restartError.toJson());
     }
     _proxyState.clearAllPendingRequests();
 

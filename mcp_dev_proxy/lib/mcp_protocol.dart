@@ -46,6 +46,7 @@ class MCPMessage {
   bool get isRequest => method != null;
   bool get isResponse => result != null || error != null;
   bool get isNotification => method != null && id == null;
+  bool get isError => error != null;
 
   MCPMessage withProxyMetadata({String? proxyEvent, String? reason}) {
     if (!isResponse) return this;

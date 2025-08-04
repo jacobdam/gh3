@@ -5,6 +5,19 @@ library;
 
 import "../../mcp_protocol.dart";
 
+/// Information about a pending request
+class RequestInfo {
+  const RequestInfo({
+    required this.message,
+    required this.timestamp,
+  });
+
+  final MCPMessage message;
+  final DateTime timestamp;
+  
+  String? get method => message.method;
+}
+
 /// Unified state management for the MCP Dev Proxy
 class ProxyState {
   // Restart state
@@ -15,8 +28,7 @@ class ProxyState {
   String? _startupError;
 
   // Request tracking
-  final Map<dynamic, MCPMessage> _pendingRequests = {};
-  final Map<dynamic, DateTime> _requestTimestamps = {};
+  final Map<dynamic, RequestInfo> _pendingRequests = {};
 
   // Tool cycle tracking
   final Set<String> _pendingToolUses = {};
@@ -30,10 +42,12 @@ class ProxyState {
   String? get startupError => _startupError;
 
   // Read-only access to request tracking
-  Map<dynamic, MCPMessage> get pendingRequests =>
+  Set<dynamic> get pendingRequests => Set.from(_pendingRequests.keys);
+  Map<dynamic, RequestInfo> get pendingRequestsInfo =>
       Map.unmodifiable(_pendingRequests);
   Map<dynamic, DateTime> get requestTimestamps =>
-      Map.unmodifiable(_requestTimestamps);
+      Map.fromEntries(_pendingRequests.entries.map((e) => 
+          MapEntry(e.key, e.value.timestamp)));
 
   // Read-only access to tool cycle tracking
   Set<String> get pendingToolUses => Set.unmodifiable(_pendingToolUses);
@@ -62,18 +76,18 @@ class ProxyState {
 
   // Request tracking management
   void addPendingRequest(dynamic id, MCPMessage message) {
-    _pendingRequests[id] = message;
-    _requestTimestamps[id] = DateTime.now();
+    _pendingRequests[id] = RequestInfo(
+      message: message,
+      timestamp: DateTime.now(),
+    );
   }
 
-  void removePendingRequest(dynamic id) {
-    _pendingRequests.remove(id);
-    _requestTimestamps.remove(id);
+  RequestInfo? removePendingRequest(dynamic id) {
+    return _pendingRequests.remove(id);
   }
 
   void clearAllPendingRequests() {
     _pendingRequests.clear();
-    _requestTimestamps.clear();
   }
 
   // Tool cycle tracking management
@@ -97,8 +111,8 @@ class ProxyState {
     final now = DateTime.now();
     final staleIds = <dynamic>[];
 
-    for (final entry in _requestTimestamps.entries) {
-      if (now.difference(entry.value) > maxAge) {
+    for (final entry in _pendingRequests.entries) {
+      if (now.difference(entry.value.timestamp) > maxAge) {
         staleIds.add(entry.key);
       }
     }
