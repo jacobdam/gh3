@@ -13,6 +13,48 @@ void main() {
       tracker.dispose();
     });
 
+    test("enforces memory bounds for completed cycles", () async {
+      // Test that completed cycles list is bounded to prevent memory leaks
+      
+      // Add more cycles than the maximum allowed (100)
+      for (int i = 0; i < 150; i++) {
+        final toolCallId = "cycle-$i";
+        tracker.startToolCycle(toolCallId, DateTime.now());
+        tracker.completeToolCycle(toolCallId);
+      }
+      
+      // Verify completed cycles are bounded to maximum
+      final completedCycles = tracker.getCompletedCycles();
+      expect(completedCycles.length, equals(100));
+      
+      // Verify LRU behavior - oldest cycles should be evicted
+      final cycleIds = completedCycles.map((c) => c.id).toList();
+      expect(cycleIds.contains("cycle-0"), isFalse); // Oldest evicted
+      expect(cycleIds.contains("cycle-149"), isTrue); // Newest retained
+      expect(cycleIds.contains("cycle-50"), isTrue); // Within bounds retained
+    });
+
+    test("maintains memory bounds during interrupted cycles", () async {
+      // Test memory bounds work for interrupted cycles too
+      
+      // Add cycles and interrupt them
+      for (int i = 0; i < 120; i++) {
+        final toolCallId = "interrupted-cycle-$i";
+        tracker.startToolCycle(toolCallId, DateTime.now());
+        tracker.markCycleInterrupted(toolCallId, "server restart");
+      }
+      
+      // Verify interrupted cycles are also bounded
+      final completedCycles = tracker.getCompletedCycles();
+      expect(completedCycles.length, equals(100));
+      
+      // Verify all retained cycles have interrupted status
+      for (final cycle in completedCycles) {
+        expect(cycle.status, equals(ToolCycleStatus.interrupted));
+        expect(cycle.interruptionReason, equals("server restart"));
+      }
+    });
+
     test("detects incomplete tool_use cycles", () async {
       const toolCallId = "incomplete-cycle-123";
       final timestamp = DateTime.now();

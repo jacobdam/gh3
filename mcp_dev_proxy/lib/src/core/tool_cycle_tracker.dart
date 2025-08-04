@@ -1,15 +1,28 @@
 import "dart:async";
+import "dart:collection";
 
 /// Tracks tool_use → tool_result cycles to prevent incomplete API interactions
 /// that can break Claude sessions. Provides diagnostic reporting and recovery
 /// guidance for interrupted cycles during server restarts.
 class ToolCycleTracker {
   final Map<String, ToolCycleInfo> _pendingCycles = {};
-  final List<ToolCycleInfo> _completedCycles = [];
+  final Queue<ToolCycleInfo> _completedCycles = Queue<ToolCycleInfo>();
   Timer? _cleanupTimer;
 
   /// Default threshold for considering cycles stale
   static const Duration staleThreshold = Duration(minutes: 5);
+
+  /// Maximum number of completed cycles to retain in memory
+  static const int _maxCompletedCycles = 100;
+
+  /// Add a completed cycle with memory bounds enforcement
+  void _addCompletedCycle(ToolCycleInfo cycle) {
+    _completedCycles.add(cycle);
+    // Enforce memory bounds using LRU eviction
+    while (_completedCycles.length > _maxCompletedCycles) {
+      _completedCycles.removeFirst();
+    }
+  }
 
   /// Start tracking a tool cycle when tool_use message is received
   void startToolCycle(String toolCallId, DateTime timestamp) {
@@ -24,7 +37,7 @@ class ToolCycleTracker {
   void completeToolCycle(String toolCallId) {
     final cycle = _pendingCycles.remove(toolCallId);
     if (cycle != null) {
-      _completedCycles.add(
+      _addCompletedCycle(
         ToolCycleInfo(
           id: cycle.id,
           startTime: cycle.startTime,
@@ -38,7 +51,7 @@ class ToolCycleTracker {
   void markCycleInterrupted(String toolCallId, String reason) {
     final cycle = _pendingCycles.remove(toolCallId);
     if (cycle != null) {
-      _completedCycles.add(
+      _addCompletedCycle(
         ToolCycleInfo(
           id: cycle.id,
           startTime: cycle.startTime,
@@ -53,7 +66,7 @@ class ToolCycleTracker {
   List<ToolCycleInfo> getPendingCycles() => _pendingCycles.values.toList();
 
   /// Get all completed tool cycles (for diagnostic purposes)
-  List<ToolCycleInfo> getCompletedCycles() => _completedCycles;
+  List<ToolCycleInfo> getCompletedCycles() => _completedCycles.toList();
 
   /// Get list of pending cycle IDs
   List<String> getPendingCycleIds() => _pendingCycles.keys.toList();
