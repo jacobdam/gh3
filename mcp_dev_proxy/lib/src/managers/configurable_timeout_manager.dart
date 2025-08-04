@@ -217,7 +217,8 @@ class ConfigurableTimeoutManager extends TimeoutManager {
       config = _convertYamlToMap(yaml);
     } else {
       throw ConfigurationError(
-          "Unsupported configuration file format. Use .json, .yaml, or .yml",);
+        "Unsupported configuration file format. Use .json, .yaml, or .yml",
+      );
     }
 
     if (!validateConfiguration(config)) {
