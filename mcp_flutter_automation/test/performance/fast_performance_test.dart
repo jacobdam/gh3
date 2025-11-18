@@ -25,19 +25,22 @@ void main() {
         // Launch apps concurrently to reduce time
         final futures = <Future>[];
         for (int i = 0; i < appCount; i++) {
-          futures.add(Future(() async {
-            final projectDir =
-                TestUtils.createMockFlutterProject(name: 'fast_perf_test_$i');
-
-            try {
-              await controller.launchApp(
-                appId: 'fast-perf-app-$i',
-                projectPath: projectDir.path,
+          futures.add(
+            Future(() async {
+              final projectDir = TestUtils.createMockFlutterProject(
+                name: 'fast_perf_test_$i',
               );
-            } catch (e) {
-              // Expected to fail due to no flutter command
-            }
-          }));
+
+              try {
+                await controller.launchApp(
+                  appId: 'fast-perf-app-$i',
+                  projectPath: projectDir.path,
+                );
+              } catch (e) {
+                // Expected to fail due to no flutter command
+              }
+            }),
+          );
         }
 
         await Future.wait(futures);
@@ -45,7 +48,9 @@ void main() {
 
         expect(controller.listApps(), hasLength(appCount));
         expect(
-            stopwatch.elapsedMilliseconds, lessThan(10000)); // Should be fast
+          stopwatch.elapsedMilliseconds,
+          lessThan(10000),
+        ); // Should be fast
 
         // Stop all apps concurrently with fast cleanup
         final stopStopwatch = Stopwatch()..start();
@@ -63,7 +68,9 @@ void main() {
         }
 
         expect(
-            stopStopwatch.elapsedMilliseconds, lessThan(5000)); // Fast cleanup
+          stopStopwatch.elapsedMilliseconds,
+          lessThan(5000),
+        ); // Fast cleanup
       });
 
       test('should handle large number of logs efficiently', () async {
@@ -87,8 +94,10 @@ void main() {
         }
 
         stopwatch.stop();
-        expect(stopwatch.elapsedMilliseconds,
-            lessThan(1000)); // Should be very fast
+        expect(
+          stopwatch.elapsedMilliseconds,
+          lessThan(1000),
+        ); // Should be very fast
 
         // Verify logs are managed correctly (should be limited to maxLogLines)
         final logs = controller.getLogs('fast-log-perf-app');
@@ -103,29 +112,34 @@ void main() {
 
         final futures = <Future>[];
         for (int i = 0; i < concurrentCount; i++) {
-          futures.add(Future(() async {
-            final projectDir =
-                TestUtils.createMockFlutterProject(name: 'fast_concurrent_$i');
-
-            try {
-              await controller.launchApp(
-                appId: 'fast-concurrent-app-$i',
-                projectPath: projectDir.path,
-                vmServicePort: 8182 + i,
-                ddsPort: 8181 + i,
+          futures.add(
+            Future(() async {
+              final projectDir = TestUtils.createMockFlutterProject(
+                name: 'fast_concurrent_$i',
               );
-            } catch (e) {
-              // Expected to fail
-            }
-          }));
+
+              try {
+                await controller.launchApp(
+                  appId: 'fast-concurrent-app-$i',
+                  projectPath: projectDir.path,
+                  vmServicePort: 8182 + i,
+                  ddsPort: 8181 + i,
+                );
+              } catch (e) {
+                // Expected to fail
+              }
+            }),
+          );
         }
 
         await Future.wait(futures);
         stopwatch.stop();
 
         expect(controller.listApps(), hasLength(concurrentCount));
-        expect(stopwatch.elapsedMilliseconds,
-            lessThan(15000)); // Should be reasonably fast
+        expect(
+          stopwatch.elapsedMilliseconds,
+          lessThan(15000),
+        ); // Should be reasonably fast
 
         // Verify each app has unique ports
         for (int i = 0; i < concurrentCount; i++) {
@@ -140,8 +154,9 @@ void main() {
         final stopwatch = Stopwatch()..start();
 
         for (int cycle = 0; cycle < cycleCount; cycle++) {
-          final projectDir =
-              TestUtils.createMockFlutterProject(name: 'fast_cycle_$cycle');
+          final projectDir = TestUtils.createMockFlutterProject(
+            name: 'fast_cycle_$cycle',
+          );
 
           // Launch
           try {
@@ -161,8 +176,10 @@ void main() {
         }
 
         stopwatch.stop();
-        expect(stopwatch.elapsedMilliseconds,
-            lessThan(30000)); // Should be faster than before
+        expect(
+          stopwatch.elapsedMilliseconds,
+          lessThan(30000),
+        ); // Should be faster than before
         expect(controller.listApps(), hasLength(cycleCount));
       });
     });
@@ -174,8 +191,9 @@ void main() {
 
         const appCount = 50; // More than the original performance test
         for (int i = 0; i < appCount; i++) {
-          final projectDir =
-              TestUtils.createMockFlutterProject(name: 'fast_temp_test_$i');
+          final projectDir = TestUtils.createMockFlutterProject(
+            name: 'fast_temp_test_$i',
+          );
           expect(projectDir.existsSync(), isTrue);
         }
 
@@ -207,14 +225,18 @@ void main() {
 
           if (i % 1000 == 0) {
             // Check performance periodically
-            expect(stopwatch.elapsedMilliseconds,
-                lessThan(10000)); // Should be fast
+            expect(
+              stopwatch.elapsedMilliseconds,
+              lessThan(10000),
+            ); // Should be fast
           }
         }
 
         stopwatch.stop();
-        expect(stopwatch.elapsedMilliseconds,
-            lessThan(5000)); // Should complete quickly
+        expect(
+          stopwatch.elapsedMilliseconds,
+          lessThan(5000),
+        ); // Should complete quickly
       });
     });
   });
@@ -236,30 +258,33 @@ void main() {
 
       // Mix of different operations
       for (int i = 0; i < highLoadCount; i++) {
-        final projectDir =
-            TestUtils.createMockFlutterProject(name: 'fast_stress_$i');
+        final projectDir = TestUtils.createMockFlutterProject(
+          name: 'fast_stress_$i',
+        );
 
-        operations.add(Future(() async {
-          try {
-            await controller.launchApp(
-              appId: 'fast-stress-app-$i',
-              projectPath: projectDir.path,
-            );
-          } catch (e) {
-            // Expected to fail
-          }
+        operations.add(
+          Future(() async {
+            try {
+              await controller.launchApp(
+                appId: 'fast-stress-app-$i',
+                projectPath: projectDir.path,
+              );
+            } catch (e) {
+              // Expected to fail
+            }
 
-          // Get app info
-          final info = controller.getAppInfo('fast-stress-app-$i');
-          expect(info, isNotNull);
+            // Get app info
+            final info = controller.getAppInfo('fast-stress-app-$i');
+            expect(info, isNotNull);
 
-          // Get logs
-          final logs = controller.getLogs('fast-stress-app-$i');
-          expect(logs, isA<List<String>>());
+            // Get logs
+            final logs = controller.getLogs('fast-stress-app-$i');
+            expect(logs, isA<List<String>>());
 
-          // Stop app
-          await controller.stopApp('fast-stress-app-$i');
-        }));
+            // Stop app
+            await controller.stopApp('fast-stress-app-$i');
+          }),
+        );
       }
 
       final stopwatch = Stopwatch()..start();
@@ -268,8 +293,10 @@ void main() {
 
       // Verify all operations completed successfully
       expect(controller.listApps(), hasLength(highLoadCount));
-      expect(stopwatch.elapsedMilliseconds,
-          lessThan(60000)); // Should complete within 1 minute
+      expect(
+        stopwatch.elapsedMilliseconds,
+        lessThan(60000),
+      ); // Should complete within 1 minute
 
       for (int i = 0; i < highLoadCount; i++) {
         final info = controller.getAppInfo('fast-stress-app-$i');
@@ -282,46 +309,50 @@ void main() {
       final operations = <Future>[];
 
       for (int i = 0; i < errorTestCount; i++) {
-        operations.add(Future(() async {
-          // Try various error-inducing operations
-          try {
-            if (i % 4 == 0) {
-              // Invalid project path
-              await controller.launchApp(
-                appId: 'fast-error-app-$i',
-                projectPath: '/invalid/path/that/does/not/exist',
-              );
-            } else if (i % 4 == 1) {
-              // Duplicate app ID
-              await controller.launchApp(
-                appId: 'fast-duplicate-app',
-                projectPath: TestUtils.createMockFlutterProject().path,
-              );
-            } else if (i % 4 == 2) {
-              // Invalid port numbers
-              await controller.launchApp(
-                appId: 'fast-port-error-app-$i',
-                projectPath: TestUtils.createMockFlutterProject().path,
-                vmServicePort: -1,
-                ddsPort: 99999,
-              );
-            } else {
-              // Operations on non-existent apps
-              await controller.hotReload('fast-non-existent-app-$i');
+        operations.add(
+          Future(() async {
+            // Try various error-inducing operations
+            try {
+              if (i % 4 == 0) {
+                // Invalid project path
+                await controller.launchApp(
+                  appId: 'fast-error-app-$i',
+                  projectPath: '/invalid/path/that/does/not/exist',
+                );
+              } else if (i % 4 == 1) {
+                // Duplicate app ID
+                await controller.launchApp(
+                  appId: 'fast-duplicate-app',
+                  projectPath: TestUtils.createMockFlutterProject().path,
+                );
+              } else if (i % 4 == 2) {
+                // Invalid port numbers
+                await controller.launchApp(
+                  appId: 'fast-port-error-app-$i',
+                  projectPath: TestUtils.createMockFlutterProject().path,
+                  vmServicePort: -1,
+                  ddsPort: 99999,
+                );
+              } else {
+                // Operations on non-existent apps
+                await controller.hotReload('fast-non-existent-app-$i');
+              }
+            } catch (e) {
+              // All these operations should throw exceptions
+              expect(e, isA<Exception>());
             }
-          } catch (e) {
-            // All these operations should throw exceptions
-            expect(e, isA<Exception>());
-          }
-        }));
+          }),
+        );
       }
 
       final stopwatch = Stopwatch()..start();
       await Future.wait(operations);
       stopwatch.stop();
 
-      expect(stopwatch.elapsedMilliseconds,
-          lessThan(30000)); // Should be fast even with errors
+      expect(
+        stopwatch.elapsedMilliseconds,
+        lessThan(30000),
+      ); // Should be fast even with errors
 
       // Controller should still be functional after all the errors
       final workingProjectDir = TestUtils.createMockFlutterProject();

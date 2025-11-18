@@ -7,8 +7,9 @@ import 'package:test/test.dart';
 class TestUtils {
   /// Creates a temporary directory for testing
   static Directory createTempDir() {
-    final tempDir =
-        Directory.systemTemp.createTempSync('flutter_automation_test_');
+    final tempDir = Directory.systemTemp.createTempSync(
+      'flutter_automation_test_',
+    );
     addTearDown(() {
       if (tempDir.existsSync()) {
         tempDir.deleteSync(recursive: true);
@@ -140,14 +141,17 @@ class _MyHomePageState extends State<MyHomePage> {
       'version': version ?? '3.8.1 (stable)',
       'pid': 12345,
       'startTime': DateTime.now().millisecondsSinceEpoch,
-      'isolates': isolateIds
-              ?.map((id) => {
-                    'type': '@Isolate',
-                    'id': id,
-                    'number': id.split('/').last,
-                    'name': 'main',
-                    'isSystemIsolate': false,
-                  })
+      'isolates':
+          isolateIds
+              ?.map(
+                (id) => {
+                  'type': '@Isolate',
+                  'id': id,
+                  'number': id.split('/').last,
+                  'name': 'main',
+                  'isSystemIsolate': false,
+                },
+              )
               .toList() ??
           [
             {
@@ -156,7 +160,7 @@ class _MyHomePageState extends State<MyHomePage> {
               'number': '123456789',
               'name': 'main',
               'isSystemIsolate': false,
-            }
+            },
           ],
     };
   }
@@ -173,13 +177,10 @@ class _MyHomePageState extends State<MyHomePage> {
       0x54, 0x78, 0x9C, 0x63, 0x00, 0x01, 0x00, 0x00,
       0x05, 0x00, 0x01, 0x0D, 0x0A, 0x2D, 0xB4, 0x00,
       0x00, 0x00, 0x00, 0x49, 0x45, 0x4E, 0x44, 0xAE, // IEND chunk
-      0x42, 0x60, 0x82
+      0x42, 0x60, 0x82,
     ];
 
-    return {
-      'type': 'Success',
-      'screenshot': base64Encode(pngBytes),
-    };
+    return {'type': 'Success', 'screenshot': base64Encode(pngBytes)};
   }
 
   /// Creates a mock widget tree response
@@ -207,9 +208,9 @@ class _MyHomePageState extends State<MyHomePage> {
                 'description': 'MyHomePage',
                 'name': 'home',
                 'children': [],
-              }
+              },
             ],
-          }
+          },
         ],
       },
     };
@@ -259,22 +260,19 @@ class CustomMatchers {
 
   /// Matcher for checking base64 encoded images
   static Matcher isBase64Image() {
-    return predicate<String>(
-      (value) {
-        try {
-          final decoded = base64Decode(value);
-          // Check if it starts with PNG signature
-          return decoded.length > 8 &&
-              decoded[0] == 0x89 &&
-              decoded[1] == 0x50 &&
-              decoded[2] == 0x4E &&
-              decoded[3] == 0x47;
-        } catch (e) {
-          return false;
-        }
-      },
-      'is base64 encoded PNG image',
-    );
+    return predicate<String>((value) {
+      try {
+        final decoded = base64Decode(value);
+        // Check if it starts with PNG signature
+        return decoded.length > 8 &&
+            decoded[0] == 0x89 &&
+            decoded[1] == 0x50 &&
+            decoded[2] == 0x4E &&
+            decoded[3] == 0x47;
+      } catch (e) {
+        return false;
+      }
+    }, 'is base64 encoded PNG image');
   }
 }
 

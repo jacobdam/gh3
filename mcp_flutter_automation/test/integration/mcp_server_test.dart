@@ -12,8 +12,9 @@ void main() {
 
     setUp(() {
       server = FlutterAutomationMCPServer();
-      testProjectDir =
-          TestUtils.createMockFlutterProject(name: 'integration_test_app');
+      testProjectDir = TestUtils.createMockFlutterProject(
+        name: 'integration_test_app',
+      );
     });
 
     tearDown(() async {
@@ -55,16 +56,18 @@ void main() {
         expect(params['projectPath'], equals(testProjectDir.path));
       });
 
-      test('launch_app tool should handle missing required parameters',
-          () async {
-        final invalidParams = {
-          'projectPath': testProjectDir.path,
-          // Missing required 'appId' parameter
-        };
+      test(
+        'launch_app tool should handle missing required parameters',
+        () async {
+          final invalidParams = {
+            'projectPath': testProjectDir.path,
+            // Missing required 'appId' parameter
+          };
 
-        // In a real MCP server test, this would return an error response
-        expect(invalidParams.containsKey('appId'), isFalse);
-      });
+          // In a real MCP server test, this would return an error response
+          expect(invalidParams.containsKey('appId'), isFalse);
+        },
+      );
 
       test('launch_app tool should handle invalid project path', () async {
         final invalidParams = {
@@ -73,8 +76,10 @@ void main() {
         };
 
         // The server should handle this gracefully and return an error
-        expect(Directory(invalidParams['projectPath'] as String).existsSync(),
-            isFalse);
+        expect(
+          Directory(invalidParams['projectPath'] as String).existsSync(),
+          isFalse,
+        );
       });
     });
 
@@ -163,8 +168,9 @@ void main() {
 
     setUp(() {
       server = FlutterAutomationMCPServer();
-      testProjectDir =
-          TestUtils.createMockFlutterProject(name: 'real_flutter_test');
+      testProjectDir = TestUtils.createMockFlutterProject(
+        name: 'real_flutter_test',
+      );
     });
 
     tearDown(() async {
@@ -174,8 +180,10 @@ void main() {
     test('should execute flutter devices command', () async {
       try {
         final result = await Process.run('flutter', ['devices', '--machine']);
-        expect(result.exitCode,
-            anyOf(equals(0), equals(1))); // 0 for success, 1 for no devices
+        expect(
+          result.exitCode,
+          anyOf(equals(0), equals(1)),
+        ); // 0 for success, 1 for no devices
 
         if (result.exitCode == 0 && result.stdout.isNotEmpty) {
           final devices = json.decode(result.stdout);
@@ -190,8 +198,10 @@ void main() {
     test('should execute flutter doctor command', () async {
       try {
         final result = await Process.run('flutter', ['doctor', '-v']);
-        expect(result.exitCode,
-            anyOf(equals(0), equals(1))); // Doctor might show warnings
+        expect(
+          result.exitCode,
+          anyOf(equals(0), equals(1)),
+        ); // Doctor might show warnings
         expect(result.stdout, contains('Flutter'));
       } catch (e) {
         print('Flutter not available in test environment: $e');
@@ -225,9 +235,9 @@ void main() {
     setUp(() {
       server = FlutterAutomationMCPServer();
       testProjects = List.generate(
-          3,
-          (i) =>
-              TestUtils.createMockFlutterProject(name: 'concurrent_test_$i'));
+        3,
+        (i) => TestUtils.createMockFlutterProject(name: 'concurrent_test_$i'),
+      );
     });
 
     tearDown(() async {
@@ -240,19 +250,21 @@ void main() {
       final futures = <Future>[];
 
       for (int i = 0; i < testProjects.length; i++) {
-        futures.add(Future(() async {
-          // Simulate tool execution delay
-          await Future.delayed(Duration(milliseconds: 100 * i));
+        futures.add(
+          Future(() async {
+            // Simulate tool execution delay
+            await Future.delayed(Duration(milliseconds: 100 * i));
 
-          // In a real test, this would be MCP tool execution
-          final params = {
-            'appId': 'concurrent-app-$i',
-            'projectPath': testProjects[i].path,
-          };
+            // In a real test, this would be MCP tool execution
+            final params = {
+              'appId': 'concurrent-app-$i',
+              'projectPath': testProjects[i].path,
+            };
 
-          expect(params['appId'], equals('concurrent-app-$i'));
-          return params;
-        }));
+            expect(params['appId'], equals('concurrent-app-$i'));
+            return params;
+          }),
+        );
       }
 
       final results = await Future.wait(futures);
@@ -287,8 +299,10 @@ void main() {
       await server.stop();
 
       // Verify cleanup (in a real test, you'd check that all processes are stopped)
-      expect(server,
-          isNotNull); // Server object still exists but should be cleaned up
+      expect(
+        server,
+        isNotNull,
+      ); // Server object still exists but should be cleaned up
     });
   });
 }

@@ -60,8 +60,11 @@ void main() {
             appId: appId,
             projectPath: testProjectDir.path,
           ),
-          throwsA(predicate((e) =>
-              e is Exception && e.toString().contains('already running'))),
+          throwsA(
+            predicate(
+              (e) => e is Exception && e.toString().contains('already running'),
+            ),
+          ),
         );
       });
 
@@ -118,8 +121,10 @@ void main() {
 
         final apps = controller.listApps();
         expect(apps, hasLength(3));
-        expect(apps.map((app) => app['id']),
-            containsAll(['app-1', 'app-2', 'app-3']));
+        expect(
+          apps.map((app) => app['id']),
+          containsAll(['app-1', 'app-2', 'app-3']),
+        );
       });
 
       test('should get app info correctly', () async {
@@ -150,8 +155,11 @@ void main() {
       test('should throw exception for non-existent app info', () {
         expect(
           () => controller.getAppInfo('non-existent-app'),
-          throwsA(predicate(
-              (e) => e is Exception && e.toString().contains('not found'))),
+          throwsA(
+            predicate(
+              (e) => e is Exception && e.toString().contains('not found'),
+            ),
+          ),
         );
       });
     });
@@ -194,8 +202,11 @@ void main() {
       test('should throw exception for non-existent app logs', () {
         expect(
           () => controller.getLogs('non-existent-app'),
-          throwsA(predicate(
-              (e) => e is Exception && e.toString().contains('not found'))),
+          throwsA(
+            predicate(
+              (e) => e is Exception && e.toString().contains('not found'),
+            ),
+          ),
         );
       });
     });
@@ -204,16 +215,22 @@ void main() {
       test('should throw exception for non-existent app hot reload', () {
         expect(
           () async => await controller.hotReload('non-existent-app'),
-          throwsA(predicate(
-              (e) => e is Exception && e.toString().contains('not found'))),
+          throwsA(
+            predicate(
+              (e) => e is Exception && e.toString().contains('not found'),
+            ),
+          ),
         );
       });
 
       test('should throw exception for non-existent app hot restart', () {
         expect(
           () async => await controller.hotRestart('non-existent-app'),
-          throwsA(predicate(
-              (e) => e is Exception && e.toString().contains('not found'))),
+          throwsA(
+            predicate(
+              (e) => e is Exception && e.toString().contains('not found'),
+            ),
+          ),
         );
       });
 
@@ -236,12 +253,13 @@ void main() {
         } catch (e) {
           // If it fails, should contain appropriate message
           expect(
-              e.toString(),
-              anyOf(
-                contains('not running'),
-                contains('not found'),
-                contains('process'),
-              ));
+            e.toString(),
+            anyOf(
+              contains('not running'),
+              contains('not found'),
+              contains('process'),
+            ),
+          );
         }
       });
 
@@ -264,72 +282,91 @@ void main() {
         } catch (e) {
           // If it fails, should contain appropriate message
           expect(
-              e.toString(),
-              anyOf(
-                contains('not running'),
-                contains('not found'),
-                contains('process'),
-              ));
+            e.toString(),
+            anyOf(
+              contains('not running'),
+              contains('not found'),
+              contains('process'),
+            ),
+          );
         }
       });
     });
 
     group('VM service operations', () {
-      test('should throw exception for screenshot without VM service',
-          () async {
-        const appId = 'no-vm-app';
+      test(
+        'should throw exception for screenshot without VM service',
+        () async {
+          const appId = 'no-vm-app';
 
-        try {
-          await controller.launchApp(
-            appId: appId,
-            projectPath: testProjectDir.path,
+          try {
+            await controller.launchApp(
+              appId: appId,
+              projectPath: testProjectDir.path,
+            );
+          } catch (e) {
+            // Expected - process may fail
+          }
+
+          expect(
+            () async => await controller.captureScreenshot(appId),
+            throwsA(
+              predicate(
+                (e) =>
+                    e is Exception &&
+                    e.toString().contains('VM Service not connected'),
+              ),
+            ),
           );
-        } catch (e) {
-          // Expected - process may fail
-        }
+        },
+      );
 
-        expect(
-          () async => await controller.captureScreenshot(appId),
-          throwsA(predicate((e) =>
-              e is Exception &&
-              e.toString().contains('VM Service not connected'))),
-        );
-      });
+      test(
+        'should throw exception for widget tree without VM service',
+        () async {
+          const appId = 'no-vm-app-2';
 
-      test('should throw exception for widget tree without VM service',
-          () async {
-        const appId = 'no-vm-app-2';
+          try {
+            await controller.launchApp(
+              appId: appId,
+              projectPath: testProjectDir.path,
+            );
+          } catch (e) {
+            // Expected - process may fail
+          }
 
-        try {
-          await controller.launchApp(
-            appId: appId,
-            projectPath: testProjectDir.path,
+          expect(
+            () async => await controller.getWidgetTree(appId),
+            throwsA(
+              predicate(
+                (e) =>
+                    e is Exception &&
+                    e.toString().contains('VM Service not connected'),
+              ),
+            ),
           );
-        } catch (e) {
-          // Expected - process may fail
-        }
-
-        expect(
-          () async => await controller.getWidgetTree(appId),
-          throwsA(predicate((e) =>
-              e is Exception &&
-              e.toString().contains('VM Service not connected'))),
-        );
-      });
+        },
+      );
 
       test('should throw exception for non-existent app screenshot', () {
         expect(
           () async => await controller.captureScreenshot('non-existent-app'),
-          throwsA(predicate(
-              (e) => e is Exception && e.toString().contains('not found'))),
+          throwsA(
+            predicate(
+              (e) => e is Exception && e.toString().contains('not found'),
+            ),
+          ),
         );
       });
 
       test('should throw exception for non-existent app widget tree', () {
         expect(
           () async => await controller.getWidgetTree('non-existent-app'),
-          throwsA(predicate(
-              (e) => e is Exception && e.toString().contains('not found'))),
+          throwsA(
+            predicate(
+              (e) => e is Exception && e.toString().contains('not found'),
+            ),
+          ),
         );
       });
     });
@@ -338,8 +375,11 @@ void main() {
       test('should throw exception for non-existent app stop', () {
         expect(
           () async => await controller.stopApp('non-existent-app'),
-          throwsA(predicate(
-              (e) => e is Exception && e.toString().contains('not found'))),
+          throwsA(
+            predicate(
+              (e) => e is Exception && e.toString().contains('not found'),
+            ),
+          ),
         );
       });
     });
@@ -413,7 +453,9 @@ void main() {
       // App should still be registered but stopped
       final stoppedAppInfo = controller.getAppInfo(appId);
       expect(
-          stoppedAppInfo['state'], anyOf(equals('stopped'), equals('error')));
+        stoppedAppInfo['state'],
+        anyOf(equals('stopped'), equals('error')),
+      );
     });
 
     test('should handle multiple concurrent apps', () async {

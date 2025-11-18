@@ -1,13 +1,7 @@
 import 'dart:io';
 import 'package:vm_service/vm_service.dart';
 
-enum AppState {
-  notStarted,
-  starting,
-  running,
-  stopped,
-  error,
-}
+enum AppState { notStarted, starting, running, stopped, error }
 
 class FlutterApp {
   final String projectPath;

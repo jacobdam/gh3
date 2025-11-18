@@ -72,7 +72,9 @@ void main() {
 
         expect(app.logs, hasLength(1000)); // maxLogLines = 1000
         expect(
-            app.logs.first, equals('Log 500')); // First 500 should be removed
+          app.logs.first,
+          equals('Log 500'),
+        ); // First 500 should be removed
         expect(app.logs.last, equals('Log 1499'));
       });
 

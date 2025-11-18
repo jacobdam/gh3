@@ -178,10 +178,12 @@ class WidgetInspector {
         final size = renderData['size'] ?? renderData;
         final offset = renderData['offset'] ?? renderData;
 
-        final x = (offset['dx'] as num?)?.toDouble() ??
+        final x =
+            (offset['dx'] as num?)?.toDouble() ??
             (offset['x'] as num?)?.toDouble() ??
             0.0;
-        final y = (offset['dy'] as num?)?.toDouble() ??
+        final y =
+            (offset['dy'] as num?)?.toDouble() ??
             (offset['y'] as num?)?.toDouble() ??
             0.0;
         final width = (size['width'] as num?)?.toDouble() ?? 0.0;
@@ -238,8 +240,10 @@ class WidgetInspector {
     double x,
     double y,
   ) async {
-    final result =
-        await inspectWithScreenshot(appId, includeWidgetBounds: true);
+    final result = await inspectWithScreenshot(
+      appId,
+      includeWidgetBounds: true,
+    );
 
     final matchingWidgets = <WidgetInfo>[];
     for (final widget in result.widgets) {
@@ -289,12 +293,12 @@ class WidgetInspectionResult {
   });
 
   Map<String, dynamic> toJson() => {
-        'appId': appId,
-        'screenshotBase64': screenshotBase64,
-        'widgetTree': widgetTree,
-        'widgets': widgets.map((w) => w.toJson()).toList(),
-        'timestamp': timestamp.toIso8601String(),
-      };
+    'appId': appId,
+    'screenshotBase64': screenshotBase64,
+    'widgetTree': widgetTree,
+    'widgets': widgets.map((w) => w.toJson()).toList(),
+    'timestamp': timestamp.toIso8601String(),
+  };
 }
 
 /// Information about a specific widget including render properties
@@ -312,11 +316,11 @@ class WidgetInfo {
   });
 
   Map<String, dynamic> toJson() => {
-        'id': id,
-        'type': type,
-        'properties': properties,
-        'renderBox': renderBox?.toJson(),
-      };
+    'id': id,
+    'type': type,
+    'properties': properties,
+    'renderBox': renderBox?.toJson(),
+  };
 }
 
 /// Render box information including position and size
@@ -343,9 +347,9 @@ class RenderBoxInfo {
   double get area => width * height;
 
   Map<String, dynamic> toJson() => {
-        'x': x,
-        'y': y,
-        'width': width,
-        'height': height,
-      };
+    'x': x,
+    'y': y,
+    'width': width,
+    'height': height,
+  };
 }

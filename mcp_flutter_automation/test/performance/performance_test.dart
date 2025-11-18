@@ -24,19 +24,22 @@ void main() {
         // Launch apps concurrently to reduce time
         final futures = <Future>[];
         for (int i = 0; i < appCount; i++) {
-          futures.add(Future(() async {
-            final projectDir =
-                TestUtils.createMockFlutterProject(name: 'perf_test_$i');
-
-            try {
-              await controller.launchApp(
-                appId: 'perf-app-$i',
-                projectPath: projectDir.path,
+          futures.add(
+            Future(() async {
+              final projectDir = TestUtils.createMockFlutterProject(
+                name: 'perf_test_$i',
               );
-            } catch (e) {
-              // Expected to fail due to no flutter command
-            }
-          }));
+
+              try {
+                await controller.launchApp(
+                  appId: 'perf-app-$i',
+                  projectPath: projectDir.path,
+                );
+              } catch (e) {
+                // Expected to fail due to no flutter command
+              }
+            }),
+          );
         }
 
         await Future.wait(futures);
@@ -55,7 +58,8 @@ void main() {
         stopStopwatch.stop();
 
         print(
-            'Stopped $appCount apps in ${stopStopwatch.elapsedMilliseconds}ms');
+          'Stopped $appCount apps in ${stopStopwatch.elapsedMilliseconds}ms',
+        );
 
         // Verify all apps are stopped
         for (int i = 0; i < appCount; i++) {
@@ -84,7 +88,8 @@ void main() {
 
         stopwatch.stop();
         print(
-            'Log performance test completed in ${stopwatch.elapsedMilliseconds}ms');
+          'Log performance test completed in ${stopwatch.elapsedMilliseconds}ms',
+        );
 
         // Verify logs are managed correctly (should be limited to maxLogLines)
         final logs = controller.getLogs('log-perf-app');
@@ -99,28 +104,32 @@ void main() {
 
         final futures = <Future>[];
         for (int i = 0; i < concurrentCount; i++) {
-          futures.add(Future(() async {
-            final projectDir =
-                TestUtils.createMockFlutterProject(name: 'concurrent_$i');
-
-            try {
-              await controller.launchApp(
-                appId: 'concurrent-app-$i',
-                projectPath: projectDir.path,
-                vmServicePort: 8182 + i,
-                ddsPort: 8181 + i,
+          futures.add(
+            Future(() async {
+              final projectDir = TestUtils.createMockFlutterProject(
+                name: 'concurrent_$i',
               );
-            } catch (e) {
-              // Expected to fail
-            }
-          }));
+
+              try {
+                await controller.launchApp(
+                  appId: 'concurrent-app-$i',
+                  projectPath: projectDir.path,
+                  vmServicePort: 8182 + i,
+                  ddsPort: 8181 + i,
+                );
+              } catch (e) {
+                // Expected to fail
+              }
+            }),
+          );
         }
 
         await Future.wait(futures);
         stopwatch.stop();
 
         print(
-            'Concurrent launch of $concurrentCount apps took ${stopwatch.elapsedMilliseconds}ms');
+          'Concurrent launch of $concurrentCount apps took ${stopwatch.elapsedMilliseconds}ms',
+        );
 
         expect(controller.listApps(), hasLength(concurrentCount));
 
@@ -137,8 +146,9 @@ void main() {
         final stopwatch = Stopwatch()..start();
 
         for (int cycle = 0; cycle < cycleCount; cycle++) {
-          final projectDir =
-              TestUtils.createMockFlutterProject(name: 'cycle_$cycle');
+          final projectDir = TestUtils.createMockFlutterProject(
+            name: 'cycle_$cycle',
+          );
 
           // Launch
           try {
@@ -159,7 +169,8 @@ void main() {
 
         stopwatch.stop();
         print(
-            '$cycleCount start/stop cycles took ${stopwatch.elapsedMilliseconds}ms');
+          '$cycleCount start/stop cycles took ${stopwatch.elapsedMilliseconds}ms',
+        );
 
         expect(controller.listApps(), hasLength(cycleCount));
       });
@@ -172,8 +183,9 @@ void main() {
 
         const appCount = 5; // Reduced from 20 to speed up test
         for (int i = 0; i < appCount; i++) {
-          final projectDir =
-              TestUtils.createMockFlutterProject(name: 'temp_test_$i');
+          final projectDir = TestUtils.createMockFlutterProject(
+            name: 'temp_test_$i',
+          );
           expect(projectDir.existsSync(), isTrue);
         }
 
@@ -205,8 +217,10 @@ void main() {
 
           if (i % 100 == 0) {
             // Check performance periodically
-            expect(stopwatch.elapsedMilliseconds,
-                lessThan(5000)); // Should be fast
+            expect(
+              stopwatch.elapsedMilliseconds,
+              lessThan(5000),
+            ); // Should be fast
           }
         }
 
@@ -233,30 +247,33 @@ void main() {
 
       // Mix of different operations
       for (int i = 0; i < highLoadCount; i++) {
-        final projectDir =
-            TestUtils.createMockFlutterProject(name: 'stress_$i');
+        final projectDir = TestUtils.createMockFlutterProject(
+          name: 'stress_$i',
+        );
 
-        operations.add(Future(() async {
-          try {
-            await controller.launchApp(
-              appId: 'stress-app-$i',
-              projectPath: projectDir.path,
-            );
-          } catch (e) {
-            // Expected to fail
-          }
+        operations.add(
+          Future(() async {
+            try {
+              await controller.launchApp(
+                appId: 'stress-app-$i',
+                projectPath: projectDir.path,
+              );
+            } catch (e) {
+              // Expected to fail
+            }
 
-          // Get app info
-          final info = controller.getAppInfo('stress-app-$i');
-          expect(info, isNotNull);
+            // Get app info
+            final info = controller.getAppInfo('stress-app-$i');
+            expect(info, isNotNull);
 
-          // Get logs
-          final logs = controller.getLogs('stress-app-$i');
-          expect(logs, isA<List<String>>());
+            // Get logs
+            final logs = controller.getLogs('stress-app-$i');
+            expect(logs, isA<List<String>>());
 
-          // Stop app
-          await controller.stopApp('stress-app-$i');
-        }));
+            // Stop app
+            await controller.stopApp('stress-app-$i');
+          }),
+        );
       }
 
       final stopwatch = Stopwatch()..start();
@@ -264,7 +281,8 @@ void main() {
       stopwatch.stop();
 
       print(
-          'High load test with $highLoadCount operations took ${stopwatch.elapsedMilliseconds}ms');
+        'High load test with $highLoadCount operations took ${stopwatch.elapsedMilliseconds}ms',
+      );
 
       // Verify all operations completed successfully
       expect(controller.listApps(), hasLength(highLoadCount));
@@ -280,38 +298,40 @@ void main() {
       final operations = <Future>[];
 
       for (int i = 0; i < errorTestCount; i++) {
-        operations.add(Future(() async {
-          // Try various error-inducing operations
-          try {
-            if (i % 4 == 0) {
-              // Invalid project path
-              await controller.launchApp(
-                appId: 'error-app-$i',
-                projectPath: '/invalid/path/that/does/not/exist',
-              );
-            } else if (i % 4 == 1) {
-              // Duplicate app ID
-              await controller.launchApp(
-                appId: 'duplicate-app',
-                projectPath: TestUtils.createMockFlutterProject().path,
-              );
-            } else if (i % 4 == 2) {
-              // Invalid port numbers
-              await controller.launchApp(
-                appId: 'port-error-app-$i',
-                projectPath: TestUtils.createMockFlutterProject().path,
-                vmServicePort: -1,
-                ddsPort: 99999,
-              );
-            } else {
-              // Operations on non-existent apps
-              await controller.hotReload('non-existent-app-$i');
+        operations.add(
+          Future(() async {
+            // Try various error-inducing operations
+            try {
+              if (i % 4 == 0) {
+                // Invalid project path
+                await controller.launchApp(
+                  appId: 'error-app-$i',
+                  projectPath: '/invalid/path/that/does/not/exist',
+                );
+              } else if (i % 4 == 1) {
+                // Duplicate app ID
+                await controller.launchApp(
+                  appId: 'duplicate-app',
+                  projectPath: TestUtils.createMockFlutterProject().path,
+                );
+              } else if (i % 4 == 2) {
+                // Invalid port numbers
+                await controller.launchApp(
+                  appId: 'port-error-app-$i',
+                  projectPath: TestUtils.createMockFlutterProject().path,
+                  vmServicePort: -1,
+                  ddsPort: 99999,
+                );
+              } else {
+                // Operations on non-existent apps
+                await controller.hotReload('non-existent-app-$i');
+              }
+            } catch (e) {
+              // All these operations should throw exceptions
+              expect(e, isA<Exception>());
             }
-          } catch (e) {
-            // All these operations should throw exceptions
-            expect(e, isA<Exception>());
-          }
-        }));
+          }),
+        );
       }
 
       final stopwatch = Stopwatch()..start();
@@ -319,7 +339,8 @@ void main() {
       stopwatch.stop();
 
       print(
-          'Error handling stress test took ${stopwatch.elapsedMilliseconds}ms');
+        'Error handling stress test took ${stopwatch.elapsedMilliseconds}ms',
+      );
 
       // Controller should still be functional after all the errors
       final workingProjectDir = TestUtils.createMockFlutterProject();

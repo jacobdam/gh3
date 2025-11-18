@@ -17,12 +17,7 @@ class FlutterAutomationMCPServer extends MCPBase {
   late final WidgetInspector _widgetInspector;
 
   FlutterAutomationMCPServer()
-      : super(
-          serverInfo: {
-            'name': 'flutter-automation',
-            'version': '1.0.0',
-          },
-        ) {
+    : super(serverInfo: {'name': 'flutter-automation', 'version': '1.0.0'}) {
     _controller = FlutterController();
     _widgetInspector = WidgetInspector(_controller);
   }
@@ -31,7 +26,9 @@ class FlutterAutomationMCPServer extends MCPBase {
 
   // Simplified tool execution for testing
   Future<Map<String, dynamic>> executeTool(
-      String toolName, Map<String, dynamic> params) async {
+    String toolName,
+    Map<String, dynamic> params,
+  ) async {
     try {
       switch (toolName) {
         case 'launch_app':
@@ -60,40 +57,33 @@ class FlutterAutomationMCPServer extends MCPBase {
         case 'hot_reload':
           final appId = params['appId'] as String;
           await _controller.hotReload(appId);
-          return {
-            'success': true,
-            'message': 'Hot reload completed',
-          };
+          return {'success': true, 'message': 'Hot reload completed'};
 
         case 'hot_restart':
           final appId = params['appId'] as String;
           await _controller.hotRestart(appId);
-          return {
-            'success': true,
-            'message': 'Hot restart completed',
-          };
+          return {'success': true, 'message': 'Hot restart completed'};
 
         case 'stop_app':
           final appId = params['appId'] as String;
           await _controller.stopApp(appId);
-          return {
-            'success': true,
-            'message': 'App stopped',
-          };
+          return {'success': true, 'message': 'App stopped'};
 
         case 'capture_screenshot':
           final appId = params['appId'] as String;
           final filename =
               params['filename'] as String? ?? 'latest_screenshot.png';
           _logger.info(
-              'Received screenshot request for app: $appId, filename: $filename');
+            'Received screenshot request for app: $appId, filename: $filename',
+          );
 
           // Capture screenshot via VM service
           _logger.info('Attempting VM service screenshot...');
           final screenshot = await _controller.captureScreenshot(appId);
           if (screenshot != null) {
             _logger.info(
-                'VM service screenshot successful, size: ${screenshot.length}');
+              'VM service screenshot successful, size: ${screenshot.length}',
+            );
 
             // Save to specified file
             final appInfo = _controller.getAppInfo(appId);
@@ -121,34 +111,21 @@ class FlutterAutomationMCPServer extends MCPBase {
           final appId = params['appId'] as String;
           final count = params['count'] as int?;
           final logs = _controller.getLogs(appId, count: count);
-          return {
-            'success': true,
-            'logs': logs,
-            'count': logs.length,
-          };
+          return {'success': true, 'logs': logs, 'count': logs.length};
 
         case 'get_widget_tree':
           final appId = params['appId'] as String;
           final tree = await _controller.getWidgetTree(appId);
-          return {
-            'success': true,
-            'widgetTree': tree,
-          };
+          return {'success': true, 'widgetTree': tree};
 
         case 'list_apps':
           final apps = _controller.listApps();
-          return {
-            'success': true,
-            'apps': apps,
-          };
+          return {'success': true, 'apps': apps};
 
         case 'get_app_info':
           final appId = params['appId'] as String;
           final info = _controller.getAppInfo(appId);
-          return {
-            'success': true,
-            'appInfo': info,
-          };
+          return {'success': true, 'appInfo': info};
 
         case 'inspect_widget_tree':
           final appId = params['appId'] as String;
@@ -197,18 +174,20 @@ class FlutterAutomationMCPServer extends MCPBase {
           if (includeWidgetBounds && result.widgets.isNotEmpty) {
             compactResponse['widgetSummary'] = result.widgets
                 .take(10)
-                .map((w) => {
-                      'type': w.type,
-                      'id': w.id,
-                      'bounds': w.renderBox != null
-                          ? {
-                              'x': w.renderBox!.x,
-                              'y': w.renderBox!.y,
-                              'width': w.renderBox!.width,
-                              'height': w.renderBox!.height,
-                            }
-                          : null,
-                    })
+                .map(
+                  (w) => {
+                    'type': w.type,
+                    'id': w.id,
+                    'bounds': w.renderBox != null
+                        ? {
+                            'x': w.renderBox!.x,
+                            'y': w.renderBox!.y,
+                            'width': w.renderBox!.width,
+                            'height': w.renderBox!.height,
+                          }
+                        : null,
+                  },
+                )
                 .toList();
           }
 
@@ -224,7 +203,7 @@ class FlutterAutomationMCPServer extends MCPBase {
               };
             } else {
               compactResponse['widgetTreeSummary'] = {
-                'error': 'Unexpected tree structure'
+                'error': 'Unexpected tree structure',
               };
             }
           }
@@ -236,8 +215,11 @@ class FlutterAutomationMCPServer extends MCPBase {
           final x = (params['x'] as num).toDouble();
           final y = (params['y'] as num).toDouble();
 
-          final widgets =
-              await _widgetInspector.getWidgetsAtPosition(appId, x, y);
+          final widgets = await _widgetInspector.getWidgetsAtPosition(
+            appId,
+            x,
+            y,
+          );
 
           return {
             'success': true,
@@ -253,12 +235,12 @@ class FlutterAutomationMCPServer extends MCPBase {
           final filename =
               params['filename'] as String? ?? 'annotated_screenshot.png';
 
-          final screenshotBytes =
-              await _widgetInspector.createAnnotatedScreenshot(
-            appId,
-            showWidgetBounds: showWidgetBounds,
-            showWidgetLabels: showWidgetLabels,
-          );
+          final screenshotBytes = await _widgetInspector
+              .createAnnotatedScreenshot(
+                appId,
+                showWidgetBounds: showWidgetBounds,
+                showWidgetLabels: showWidgetLabels,
+              );
 
           // Save to file
           final appInfo = _controller.getAppInfo(appId);
@@ -279,10 +261,7 @@ class FlutterAutomationMCPServer extends MCPBase {
           throw Exception('Unknown tool: $toolName');
       }
     } catch (e) {
-      return {
-        'success': false,
-        'error': e.toString(),
-      };
+      return {'success': false, 'error': e.toString()};
     }
   }
 
@@ -294,10 +273,7 @@ class FlutterAutomationMCPServer extends MCPBase {
           final result = await Process.run('flutter', ['devices', '--machine']);
           if (result.exitCode == 0) {
             final devices = json.decode(result.stdout);
-            return json.encode({
-              'devices': devices,
-              'count': devices.length,
-            });
+            return json.encode({'devices': devices, 'count': devices.length});
           } else {
             return json.encode({
               'error': 'Failed to get devices: ${result.stderr}',
@@ -312,9 +288,7 @@ class FlutterAutomationMCPServer extends MCPBase {
           throw Exception('Unknown resource: $uri');
       }
     } catch (e) {
-      return json.encode({
-        'error': 'Failed to get resource: $e',
-      });
+      return json.encode({'error': 'Failed to get resource: $e'});
     }
   }
 
@@ -322,44 +296,45 @@ class FlutterAutomationMCPServer extends MCPBase {
     _logger.info('Starting Flutter Automation MCP Server');
 
     // Listen for MCP protocol messages on stdin
-    stdin.transform(utf8.decoder).transform(LineSplitter()).listen(
-      (line) async {
-        if (line.trim().isEmpty) return;
+    stdin
+        .transform(utf8.decoder)
+        .transform(LineSplitter())
+        .listen(
+          (line) async {
+            if (line.trim().isEmpty) return;
 
-        try {
-          final request = json.decode(line);
-          final response = await _handleMCPRequest(request);
-          if (response != null) {
-            stdout.writeln(json.encode(response));
-          }
-        } catch (e) {
-          _logger.severe('Error processing MCP request: $e');
-          // Send error response
-          final errorResponse = {
-            'jsonrpc': '2.0',
-            'id': null,
-            'error': {
-              'code': -32603,
-              'message': 'Internal error: $e',
-            },
-          };
-          stdout.writeln(json.encode(errorResponse));
-        }
-      },
-      onDone: () {
-        _logger.info('MCP server stdin closed, but keeping server alive');
-      },
-      onError: (error) {
-        _logger.severe('MCP server stdin error: $error');
-      },
-    );
+            try {
+              final request = json.decode(line);
+              final response = await _handleMCPRequest(request);
+              if (response != null) {
+                stdout.writeln(json.encode(response));
+              }
+            } catch (e) {
+              _logger.severe('Error processing MCP request: $e');
+              // Send error response
+              final errorResponse = {
+                'jsonrpc': '2.0',
+                'id': null,
+                'error': {'code': -32603, 'message': 'Internal error: $e'},
+              };
+              stdout.writeln(json.encode(errorResponse));
+            }
+          },
+          onDone: () {
+            _logger.info('MCP server stdin closed, but keeping server alive');
+          },
+          onError: (error) {
+            _logger.severe('MCP server stdin error: $error');
+          },
+        );
 
     // Keep the server running indefinitely
     await Completer<void>().future;
   }
 
   Future<Map<String, dynamic>?> _handleMCPRequest(
-      Map<String, dynamic> request) async {
+    Map<String, dynamic> request,
+  ) async {
     final method = request['method'] as String?;
     final params = request['params'] as Map<String, dynamic>? ?? {};
     final id = request['id'];
@@ -371,10 +346,7 @@ class FlutterAutomationMCPServer extends MCPBase {
           'id': id,
           'result': {
             'protocolVersion': '2024-11-05',
-            'capabilities': {
-              'tools': {},
-              'resources': {},
-            },
+            'capabilities': {'tools': {}, 'resources': {}},
             'serverInfo': serverInfo,
           },
         };
@@ -443,12 +415,12 @@ class FlutterAutomationMCPServer extends MCPBase {
                   'properties': {
                     'appId': {
                       'type': 'string',
-                      'description': 'ID of the Flutter app'
+                      'description': 'ID of the Flutter app',
                     },
                     'filename': {
                       'type': 'string',
                       'description':
-                          'Optional filename to save screenshot (defaults to latest_screenshot.png)'
+                          'Optional filename to save screenshot (defaults to latest_screenshot.png)',
                     },
                   },
                   'required': ['appId'],
@@ -480,10 +452,7 @@ class FlutterAutomationMCPServer extends MCPBase {
               {
                 'name': 'list_apps',
                 'description': 'List all managed Flutter apps',
-                'inputSchema': {
-                  'type': 'object',
-                  'properties': {},
-                },
+                'inputSchema': {'type': 'object', 'properties': {}},
               },
               {
                 'name': 'get_app_info',
@@ -505,22 +474,22 @@ class FlutterAutomationMCPServer extends MCPBase {
                   'properties': {
                     'appId': {
                       'type': 'string',
-                      'description': 'ID of the Flutter app'
+                      'description': 'ID of the Flutter app',
                     },
                     'includeWidgetBounds': {
                       'type': 'boolean',
                       'description':
-                          'Include widget boundary information (default: true)'
+                          'Include widget boundary information (default: true)',
                     },
                     'includeWidgetTree': {
                       'type': 'boolean',
                       'description':
-                          'Include full widget tree data (default: true)'
+                          'Include full widget tree data (default: true)',
                     },
                     'filename': {
                       'type': 'string',
                       'description':
-                          'Optional base filename for saving inspection data'
+                          'Optional base filename for saving inspection data',
                     },
                   },
                   'required': ['appId'],
@@ -534,15 +503,15 @@ class FlutterAutomationMCPServer extends MCPBase {
                   'properties': {
                     'appId': {
                       'type': 'string',
-                      'description': 'ID of the Flutter app'
+                      'description': 'ID of the Flutter app',
                     },
                     'x': {
                       'type': 'number',
-                      'description': 'X coordinate on screen'
+                      'description': 'X coordinate on screen',
                     },
                     'y': {
                       'type': 'number',
-                      'description': 'Y coordinate on screen'
+                      'description': 'Y coordinate on screen',
                     },
                   },
                   'required': ['appId', 'x', 'y'],
@@ -557,21 +526,21 @@ class FlutterAutomationMCPServer extends MCPBase {
                   'properties': {
                     'appId': {
                       'type': 'string',
-                      'description': 'ID of the Flutter app'
+                      'description': 'ID of the Flutter app',
                     },
                     'showWidgetBounds': {
                       'type': 'boolean',
                       'description':
-                          'Show widget boundary lines (default: true)'
+                          'Show widget boundary lines (default: true)',
                     },
                     'showWidgetLabels': {
                       'type': 'boolean',
-                      'description': 'Show widget type labels (default: false)'
+                      'description': 'Show widget type labels (default: false)',
                     },
                     'filename': {
                       'type': 'string',
                       'description':
-                          'Filename for annotated screenshot (default: annotated_screenshot.png)'
+                          'Filename for annotated screenshot (default: annotated_screenshot.png)',
                     },
                   },
                   'required': ['appId'],
@@ -613,10 +582,7 @@ class FlutterAutomationMCPServer extends MCPBase {
           'id': id,
           'result': {
             'content': [
-              {
-                'type': 'text',
-                'text': json.encode(result),
-              },
+              {'type': 'text', 'text': json.encode(result)},
             ],
           },
         };
@@ -630,11 +596,7 @@ class FlutterAutomationMCPServer extends MCPBase {
           'id': id,
           'result': {
             'contents': [
-              {
-                'uri': uri,
-                'mimeType': 'application/json',
-                'text': content,
-              },
+              {'uri': uri, 'mimeType': 'application/json', 'text': content},
             ],
           },
         };
@@ -647,10 +609,7 @@ class FlutterAutomationMCPServer extends MCPBase {
         return {
           'jsonrpc': '2.0',
           'id': id,
-          'error': {
-            'code': -32601,
-            'message': 'Method not found: $method',
-          },
+          'error': {'code': -32601, 'message': 'Method not found: $method'},
         };
     }
   }

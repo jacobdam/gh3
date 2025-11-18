@@ -57,7 +57,8 @@ class FlutterController {
     }
 
     logger.info(
-        'Cleaning up $totalApps Flutter processes across ${_allControllers.length} controllers');
+      'Cleaning up $totalApps Flutter processes across ${_allControllers.length} controllers',
+    );
 
     for (final controller in _allControllers) {
       for (final entry in controller._apps.entries) {
@@ -163,8 +164,9 @@ class FlutterController {
         _logger.fine('Flutter stdout: $data');
 
         // Look for VM service URL
-        final vmServiceMatch =
-            RegExp(r'VM Service[^\n]*at[:\s]+(http[^\s]+)').firstMatch(data);
+        final vmServiceMatch = RegExp(
+          r'VM Service[^\n]*at[:\s]+(http[^\s]+)',
+        ).firstMatch(data);
         if (vmServiceMatch != null) {
           app.vmServiceUri = vmServiceMatch.group(1);
           _logger.info('Found VM Service URI: ${app.vmServiceUri}');
@@ -235,7 +237,8 @@ class FlutterController {
             // Test the connection by getting VM info
             final vm = await vmService.getVM().timeout(Duration(seconds: 5));
             _logger.info(
-                '✅ Connected to VM: ${vm.name} via $uri (attempt $attempt)');
+              '✅ Connected to VM: ${vm.name} via $uri (attempt $attempt)',
+            );
             _logger.info('VM isolates: ${vm.isolates?.length ?? 0}');
 
             // Get main isolate
@@ -243,7 +246,8 @@ class FlutterController {
               for (int i = 0; i < vm.isolates!.length; i++) {
                 final isolateRef = vm.isolates![i];
                 _logger.info(
-                    'Isolate $i: id=${isolateRef.id}, name=${isolateRef.name}');
+                  'Isolate $i: id=${isolateRef.id}, name=${isolateRef.name}',
+                );
               }
 
               app.isolateId = vm.isolates!.first.id;
@@ -355,7 +359,8 @@ class FlutterController {
     final app = _apps[appId];
     if (app == null) {
       throw Exception(
-          'App $appId not found. Use launch_app first to start the Flutter app.');
+        'App $appId not found. Use launch_app first to start the Flutter app.',
+      );
     }
 
     _logger.info('=== SCREENSHOT DEBUG START ===');
@@ -378,8 +383,9 @@ class FlutterController {
       if (vm.isolates?.isNotEmpty ?? false) {
         for (int i = 0; i < vm.isolates!.length; i++) {
           final isolateRef = vm.isolates![i];
-          _logger
-              .info('Isolate $i: id=${isolateRef.id}, name=${isolateRef.name}');
+          _logger.info(
+            'Isolate $i: id=${isolateRef.id}, name=${isolateRef.name}',
+          );
         }
 
         final oldIsolateId = app.isolateId;
@@ -389,7 +395,8 @@ class FlutterController {
         // Get detailed isolate info
         final isolate = await app.vmService!.getIsolate(app.isolateId!);
         _logger.info(
-            'Isolate details: runnable=${isolate.runnable}, pauseOnExit=${isolate.pauseOnExit}');
+          'Isolate details: runnable=${isolate.runnable}, pauseOnExit=${isolate.pauseOnExit}',
+        );
         _logger.info('Available extensions: ${isolate.extensionRPCs}');
       } else {
         throw Exception('No isolates found in VM');
@@ -398,7 +405,8 @@ class FlutterController {
       // Try our custom gh3 screenshot extension first (RenderRepaintBoundary approach)
       try {
         _logger.info(
-            'Attempting to call ext.gh3.screenshot with isolate ${app.isolateId}...');
+          'Attempting to call ext.gh3.screenshot with isolate ${app.isolateId}...',
+        );
         final response = await app.vmService!
             .callServiceExtension(
               'ext.gh3.screenshot',
@@ -441,7 +449,8 @@ class FlutterController {
             responseData['screenshot'] != null) {
           final base64Data = responseData['screenshot'] as String;
           _logger.info(
-              'Screenshot captured via custom gh3 extension, size: ${base64Data.length}');
+            'Screenshot captured via custom gh3 extension, size: ${base64Data.length}',
+          );
           _logger.info('Format: ${responseData['format']}');
           _logger.info('Method: ${responseData['method']}');
 
@@ -453,8 +462,9 @@ class FlutterController {
             final filePath = '${app.projectPath}/$fileName';
             final file = File(filePath);
             await file.writeAsBytes(bytes);
-            _logger
-                .info('Screenshot saved to: $filePath (${bytes.length} bytes)');
+            _logger.info(
+              'Screenshot saved to: $filePath (${bytes.length} bytes)',
+            );
 
             // Also save as latest screenshot
             final latestPath = '${app.projectPath}/latest_screenshot.png';
@@ -468,7 +478,8 @@ class FlutterController {
           return base64Data;
         } else {
           _logger.warning(
-              'Response missing success or screenshot field: ${response.json}');
+            'Response missing success or screenshot field: ${response.json}',
+          );
         }
       } catch (e) {
         _logger.severe('=== ext.gh3.screenshot FAILED ===');
@@ -508,8 +519,9 @@ class FlutterController {
       try {
         final vm = await app.vmService!.getVM();
         if (vm.isolates?.isNotEmpty ?? false) {
-          final isolate =
-              await app.vmService!.getIsolate(vm.isolates!.first.id!);
+          final isolate = await app.vmService!.getIsolate(
+            vm.isolates!.first.id!,
+          );
           _logger.info('Available extensions: ${isolate.extensionRPCs}');
         }
       } catch (e) {
@@ -548,16 +560,19 @@ class FlutterController {
               response.json!['screenshot'] != null) {
             final base64Data = response.json!['screenshot'] as String;
             _logger.info(
-                '✅ Direct connection screenshot success: ${base64Data.length} chars');
+              '✅ Direct connection screenshot success: ${base64Data.length} chars',
+            );
 
             // Save screenshot file for consistency
             try {
               final bytes = base64Decode(base64Data);
-              final latestFile =
-                  File('${app.projectPath}/latest_screenshot.png');
+              final latestFile = File(
+                '${app.projectPath}/latest_screenshot.png',
+              );
               await latestFile.writeAsBytes(bytes);
               _logger.info(
-                  'Screenshot saved to: ${latestFile.path} (${bytes.length} bytes)');
+                'Screenshot saved to: ${latestFile.path} (${bytes.length} bytes)',
+              );
             } catch (e) {
               _logger.warning('Failed to save screenshot file: $e');
             }
@@ -566,7 +581,8 @@ class FlutterController {
             return base64Data;
           } else {
             _logger.warning(
-                'Direct connection screenshot failed: ${response.json}');
+              'Direct connection screenshot failed: ${response.json}',
+            );
           }
         }
 
@@ -577,7 +593,8 @@ class FlutterController {
 
       _logger.severe('=== ALL SCREENSHOT METHODS FAILED ===');
       throw Exception(
-          'No screenshot methods available. Tried: VM Service extensions, Backup script fallback');
+        'No screenshot methods available. Tried: VM Service extensions, Backup script fallback',
+      );
     } catch (e) {
       _logger.severe('=== SCREENSHOT DEBUG END ===');
       _logger.severe('Final error: $e');
@@ -632,12 +649,14 @@ class FlutterController {
       final isolate = await app.vmService!.getIsolate(app.isolateId!);
       final extensions = isolate.extensionRPCs ?? [];
 
-      final hasInspector =
-          extensions.any((ext) => ext.startsWith('ext.flutter.inspector'));
+      final hasInspector = extensions.any(
+        (ext) => ext.startsWith('ext.flutter.inspector'),
+      );
 
       if (!hasInspector) {
         throw Exception(
-            'Flutter Inspector extensions not available. Available extensions: $extensions');
+          'Flutter Inspector extensions not available. Available extensions: $extensions',
+        );
       }
 
       // Try to initialize/enable the inspector if needed
@@ -658,7 +677,8 @@ class FlutterController {
 
   /// Get widget tree via root widget (most basic approach)
   Future<Map<String, dynamic>> _getWidgetTreeViaRootWidget(
-      FlutterApp app) async {
+    FlutterApp app,
+  ) async {
     final response = await app.vmService!.callServiceExtension(
       'ext.flutter.inspector.getRootWidget',
       isolateId: app.isolateId,
@@ -669,7 +689,8 @@ class FlutterController {
 
   /// Get widget tree via summary tree
   Future<Map<String, dynamic>> _getWidgetTreeViaSummaryTree(
-      FlutterApp app) async {
+    FlutterApp app,
+  ) async {
     final response = await app.vmService!.callServiceExtension(
       'ext.flutter.inspector.getRootWidgetTree',
       isolateId: app.isolateId,
@@ -684,7 +705,8 @@ class FlutterController {
 
   /// Get widget tree via selected widget
   Future<Map<String, dynamic>> _getWidgetTreeViaSelectedWidget(
-      FlutterApp app) async {
+    FlutterApp app,
+  ) async {
     final response = await app.vmService!.callServiceExtension(
       'ext.flutter.inspector.getSelectedSummaryWidget',
       isolateId: app.isolateId,
@@ -731,11 +753,13 @@ class FlutterController {
 
   List<Map<String, dynamic>> listApps() {
     return _apps.entries
-        .map((entry) => {
-              'id': entry.key,
-              'state': entry.value.state.name,
-              'projectPath': entry.value.projectPath,
-            })
+        .map(
+          (entry) => {
+            'id': entry.key,
+            'state': entry.value.state.name,
+            'projectPath': entry.value.projectPath,
+          },
+        )
         .toList();
   }
 
